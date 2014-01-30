@@ -1,0 +1,24 @@
+settings =
+    [
+        { name="amount"         default=0.0 }
+        { name="startTime"      default=0.0 }
+        { name="depthTexture"  }
+        { name="normalTexture" }
+    ]
+    
+layers =
+    [
+        {
+            color_targets                   = "back_buffer"
+            shader                          = "shaders/HuzeOldAV.shader"
+            technique                       = "SFXDarkVision"
+            generator                       = "fullscreen"
+            parameters                      = {
+                    amount                  = "amount"
+                    startTime               = "startTime"
+                    baseTexture             = { resource="source_buffer" linear=true }
+                    depthTexture            = { resource="depthTexture" linear=true }
+                    normalTexture           = { resource="normalTexture" linear=true }
+                }
+        }      
+    ]
