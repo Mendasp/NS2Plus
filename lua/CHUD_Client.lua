@@ -1,13 +1,13 @@
 Script.Load("lua/Client.lua")
 
+Script.Load("lua/CHUD_Utility.lua")
+Script.Load("lua/CHUD_Lights.lua")
 Script.Load("lua/CHUD_UnitStatus.lua")
 Script.Load("lua/CHUD_HUDElements.lua")
 Script.Load("lua/CHUD_GUIScripts.lua")
 Script.Load("lua/CHUD_Tracers.lua")
-Script.Load("lua/CHUD_Lights.lua")
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_ScoreDisplay.lua")
-Script.Load("lua/CHUD_Utility.lua")
 
 function ApplyCHUDSettings()
 	for name, script in pairs(GetGUIManager().scripts) do
