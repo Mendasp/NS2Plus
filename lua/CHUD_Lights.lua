@@ -31,7 +31,9 @@ local BlockedProps = { 	"models/props/veil/veil_hologram_01.model",
 						"models/props/refinery/refinery_shipping_hologram_animated.model",
 						"models/props/descent/descent_hologram_planet_01.model",
 						"models/props/descent/descent_hologram_planet_02.model",
-						"models/props/descent/descent_hologram_planet_03.model" }
+						"models/props/descent/descent_hologram_planet_03.model",
+						"models/props/descent/descent_hologram_spacestation_01.model"
+					}
 
 						
 local originalSetCommanderPropState = SetCommanderPropState
