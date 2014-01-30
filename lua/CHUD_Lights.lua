@@ -167,5 +167,16 @@ function CHUDLoadLights()
 				LoadMapEntity(prop.className, prop.groupName, prop.values)
 			end
 		end
+		
 	end
 end
+
+function RemovePropDynamics()
+	for _, entity in ientitylist(Shared.GetEntitiesWithClassname("PropDynamic")) do
+		if table.contains (BlockedProps, entity:GetModelName()) and CHUDSettings["nsllights"] then
+			entity:SetModel(nil)
+		end
+	end
+end
+
+Event.Hook("UpdateClient", RemovePropDynamics)
