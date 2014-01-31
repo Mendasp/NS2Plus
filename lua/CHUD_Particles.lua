@@ -12,7 +12,8 @@ local blockedCinematics = {	"cinematics/marine/structures/death_large.cinematic"
 							"cinematics/death_1p.cinematic",
 							"cinematics/alien/death_1p_alien.cinematic",
 							"cinematics/marine/commander_arrow.cinematic",
-							"cinematics/alien/commander_arrow.cinematic"}
+							"cinematics/alien/commander_arrow.cinematic"
+						}
 							
 local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/alien/cyst/enzymecloud_large.cinematic",
@@ -20,7 +21,9 @@ local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/alien/nutrientmist_hive.cinematic",
 							"cinematics/alien/nutrientmist_onos.cinematic",
 							"cinematics/alien/nutrientmist_structure.cinematic",
-							"cinematics/marine/spawn_item.cinematic"}
+							"cinematics/marine/spawn_item.cinematic",
+							"cinematics/common/resnode.cinematic"
+						}
 
 mapCinematicNames = {	"cinematics/environment/biodome/flying_papers.cinematic",
 						"cinematics/environment/biodome/leaves_folliage_01.cinematic",
@@ -67,7 +70,8 @@ mapCinematicNames = {	"cinematics/environment/biodome/flying_papers.cinematic",
 						"cinematics/environment/waterfall_basemist.cinematic",
 						"cinematics/environment/waterfall_emerge.cinematic",
 						"cinematics/environment/waterfall_fine.cinematic",
-						"cinematics/environment/waterfall_large_basemist.cinematic" }
+						"cinematics/environment/waterfall_large_basemist.cinematic"
+					}
 							
 // Precache all the new cinematics
 PrecacheAsset("chud_cinematics/blank.cinematic")

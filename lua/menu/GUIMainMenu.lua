@@ -20,8 +20,7 @@ Script.Load("lua/menu/Ticker.lua")
 Script.Load("lua/ServerBrowser.lua")
 Script.Load("lua/menu/Form.lua")
 Script.Load("lua/menu/ServerList.lua")
-Script.Load("lua/menu/GatherList.lua")
-Script.Load("lua/menu/GatherChat.lua")
+Script.Load("lua/menu/GatherFrame.lua")
 Script.Load("lua/menu/ServerTabs.lua")
 Script.Load("lua/menu/PlayerEntry.lua")
 Script.Load("lua/dkjson.lua")
@@ -406,7 +405,7 @@ function GUIMainMenu:Initialize()
     
     gMainMenu = self
 
-    self:MaybeCreateFirstRunWindow()
+    self:MaybeCreateFirstRunWindow("gameLaunched")
     
     local VoiceChat = Client.GetOptionString("input/VoiceChat", "LeftAlt")
     local ShowMap = Client.GetOptionString("input/ShowMap", "C")
@@ -612,6 +611,7 @@ local function AddFavoritesToServerList(serverList)
         serverEntry.requiresPassword = currentFavorite.requiresPassword or false
         serverEntry.playerSkill = currentFavorite.playerSkill or 0
         serverEntry.rookieFriendly = currentFavorite.rookieFriendly or false
+		serverEntry.gatherServer = currentFavorite.gatherServer or false
         serverEntry.friendsOnServer = false
         serverEntry.lanServer = false
         serverEntry.tickrate = 30
@@ -2353,6 +2353,12 @@ local function SaveOptions(mainMenu)
     
     Client.SetOptionFloat("input/mouse/acceleration-amount", accelerationAmount)
     
+	if string.len(TrimName(nickName)) < 1 then
+		nickName = Client.GetOptionString( kNicknameOptionsKey, Client.GetUserName() )
+		mainMenu.optionElements.NickName:SetValue(nickName)
+		MainMenu_SetAlertMessage("Invalid Nickname")
+	end
+	
     // Some redundancy with ApplySecondaryGraphicsOptions here, no harm.
     OptionsDialogUI_SetValues(
         nickName,
@@ -3091,7 +3097,7 @@ function GUIMainMenu:CreateOptionWindow()
                 label   = "DECAL LIFE TIME",
                 type    = "slider",
                 sliderCallback = OnDecalLifeTimeChanged,
-            },   
+            },  
             {
                 name    = "Infestation",
                 label   = "INFESTATION",
@@ -3329,9 +3335,6 @@ function GUIMainMenu:Update(deltaTime)
             end
         
         end
-
-        self:UpdateGatherList(deltaTime)
-
     end
     
 end
@@ -3632,14 +3635,19 @@ end
 //----------------------------------------
 //  
 //----------------------------------------
-function GUIMainMenu:MaybeCreateFirstRunWindow()
+function GUIMainMenu:MaybeCreateFirstRunWindow(type)
 
     local lastLoadedBuild = Client.GetOptionInteger("lastLoadedBuild", 0)
 
     if lastLoadedBuild == Shared.GetBuildNumber() then
         return
     end
-
+	
+	if self.firstRunWindow ~= nil then
+		self:DestroyWindow( self.firstRunWindow )
+		self.firstRunWindow = nil
+	end
+	
     self.firstRunWindow = self:CreateWindow()  
     self.firstRunWindow:SetWindowName("HINT")
     self.firstRunWindow:SetInitialVisible(true)
@@ -3650,28 +3658,48 @@ function GUIMainMenu:MaybeCreateFirstRunWindow()
     self.firstRunWindow:SetCSSClass("first_run_window")
     self.firstRunWindow:DisableCloseButton()
     self.firstRunWindow:SetLayer(kGUILayerMainMenuDialogs)
-    
+	
     local hint = CreateMenuElement(self.firstRunWindow, "Font")
-    hint:SetCSSClass("first_run_msg")
-    hint:SetText(Locale.ResolveString("OPTIMIZE_FIRST_TIME"))
-    hint:SetTextClipped( true, 380, 300 )
+	local okButton = CreateMenuElement(self.firstRunWindow, "MenuButton")
+	local skipButton = CreateMenuElement(self.firstRunWindow, "MenuButton")
+	
+	skipButton:SetCSSClass("first_run_skip")
+	hint:SetTextClipped( true, 380, 300 )
+	hint:SetCSSClass("first_run_msg")
+	okButton:SetCSSClass("first_run_ok")
+	
+	if type == "gameLaunched" then
+	    
+		hint:SetText(Locale.ResolveString("PATCH_MESSAGE"))
+		
+		okButton:SetText(Locale.ResolveString("PATCH_CHANGELOG"))
+		okButton:AddEventCallbacks({ OnClick = function()
+			Client.ShowWebpage("http://unknownworlds.com/ns2/")
+			end})
 
-    local okButton = CreateMenuElement(self.firstRunWindow, "MenuButton")
-    okButton:SetCSSClass("first_run_ok")
-    okButton:SetText(Locale.ResolveString("OPTIMIZE_CONFIRM"))
-    okButton:AddEventCallbacks({ OnClick = function()
-            Client.SetOptionBoolean("immediateDisconnect", true)
-            Shared.ConsoleCommand("map ns2_descent")
-        end})
+		skipButton:SetText(Locale.ResolveString("PATCH_OK"))
+		skipButton:AddEventCallbacks({OnClick = function()
+				self:DestroyWindow( self.firstRunWindow )
+				self.firstRunWindow = nil
+			end})
+	else
+	
+		hint:SetText(Locale.ResolveString("OPTIMIZE_FIRST_TIME"))
+		
+		okButton:SetText(Locale.ResolveString("OPTIMIZE_CONFIRM"))
+		okButton:AddEventCallbacks({ OnClick = function()
+				Client.SetOptionBoolean("immediateDisconnect", true)
+				Shared.ConsoleCommand("map ns2_descent")
+			end})
 
-    local skipButton = CreateMenuElement(self.firstRunWindow, "MenuButton")
-    skipButton:SetCSSClass("first_run_skip")
-    skipButton:SetText(Locale.ResolveString("OPTIMIZE_SKIP"))
-    skipButton:AddEventCallbacks({OnClick = function()
-            self:DestroyWindow( self.firstRunWindow )
-            self.firstRunWindow = nil
-        end})
-
+		skipButton:SetText(Locale.ResolveString("OPTIMIZE_SKIP"))
+		skipButton:AddEventCallbacks({OnClick = function()
+				self:DestroyWindow( self.firstRunWindow )
+				self.firstRunWindow = nil
+				self:ActivatePlayWindow()
+			end})
+	end
+	
 	MainMenu_OnTooltip()
 
 end
@@ -3703,13 +3731,19 @@ function GUIMainMenu:OnPlayClicked()
     local isRookie = Client.GetOptionBoolean( kRookieOptionsKey, true )
     local doneTutorial = Client.GetOptionBoolean( "playedTutorial", false )
     local stopNagging = Client.GetOptionBoolean( "disableTutorialNag", false )
-
+	local lastLoadedBuild = Client.GetOptionInteger("lastLoadedBuild", 0)
+	
     // TEMP TMEP
     /*
     isRookie = true
     DebugPrint(ToString(isRookie).." "..ToString(doneTutorial).." "..ToString(stopNagging))
     */
 
+	if lastLoadedBuild ~= Shared.GetBuildNumber() then
+		self:MaybeCreateFirstRunWindow()
+        return
+    end
+	
     if not isRookie or doneTutorial or stopNagging then
         self:ActivatePlayWindow()
         return
