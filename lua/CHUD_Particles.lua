@@ -12,7 +12,55 @@ local blockedCinematics = {	"cinematics/marine/structures/death_large.cinematic"
 							"cinematics/death_1p.cinematic",
 							"cinematics/alien/death_1p_alien.cinematic",
 							"cinematics/marine/commander_arrow.cinematic",
-							"cinematics/alien/commander_arrow.cinematic"
+							"cinematics/alien/commander_arrow.cinematic",
+							"cinematics/marine/flamethrower/burning_surface.cinematic",
+							"cinematics/marine/flamethrower/burning_vertical_surface.cinematic",
+							//"cinematics/marine/flamethrower/burn_1p.cinematic",
+							"cinematics/marine/flamethrower/burn_big.cinematic",
+							"cinematics/marine/flamethrower/burn_huge.cinematic",
+							"cinematics/marine/flamethrower/burn_med.cinematic",
+							"cinematics/marine/flamethrower/burn_small.cinematic",
+							"cinematics/marine/flamethrower/burn_small_continuous.cinematic",
+							"cinematics/marine/flamethrower/burn_tiny.cinematic",
+							"cinematics/marine/flamethrower/canister_explosion.cinematic",
+							"cinematics/marine/flamethrower/flame.cinematic",
+							"cinematics/marine/flamethrower/flameout.cinematic",
+							"cinematics/marine/flamethrower/flame_1p.cinematic",
+							"cinematics/marine/flamethrower/flame_impact3.cinematic",
+							"cinematics/marine/flamethrower/flame_residue_1p_part1.cinematic",
+							"cinematics/marine/flamethrower/flame_residue_1p_part2.cinematic",
+							"cinematics/marine/flamethrower/flame_residue_1p_part3.cinematic",
+							//"cinematics/marine/flamethrower/flame_trail_1p_part1.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_1p_part2.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_1p_part3.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_full.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_half.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_light.cinematic",
+							//"cinematics/marine/flamethrower/flame_trail_part1.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_part2.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_part3.cinematic",
+							"cinematics/marine/flamethrower/flame_trail_short.cinematic",
+							"cinematics/marine/flamethrower/impact.cinematic",
+							"cinematics/marine/flamethrower/pilot.cinematic",
+							"cinematics/marine/flamethrower/scorched.cinematic",
+							"cinematics/marine/exo/hurt_view.cinematic",
+							"cinematics/marine/exo/hurt_severe_view.cinematic",
+							"cinematics/marine/heavy/land.cinematic",
+							"cinematics/marine/jetpack/impact.cinematic",
+							"cinematics/marine/minigun/mm_left_shell.cinematic",
+							"cinematics/marine/minigun/mm_shell.cinematic",
+							"cinematics/marine/minigun/overheat.cinematic",
+							//"cinematics/marine/jetpack/trail_1.cinematic",
+							"cinematics/marine/jetpack/trail_2.cinematic",
+							"cinematics/marine/jetpack/trail_2.cinematic",
+							"cinematics/marine/jetpack/trail_2.cinematic",
+							"cinematics/marine/jetpack/trail_3.cinematic",
+							"cinematics/alien/fade/shadowstep.cinematic",
+							"cinematics/alien/fade/shadowstep_silent.cinematic",
+							"cinematics/alien/fade/trail_dark_1.cinematic",
+							"cinematics/alien/fade/trail_dark_2.cinematic",
+							"cinematics/alien/fade/trail_light_1.cinematic",
+							"cinematics/alien/fade/trail_light_2.cinematic",
 						}
 							
 local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
@@ -22,7 +70,8 @@ local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/alien/nutrientmist_onos.cinematic",
 							"cinematics/alien/nutrientmist_structure.cinematic",
 							"cinematics/marine/spawn_item.cinematic",
-							"cinematics/common/resnode.cinematic"
+							"cinematics/common/resnode.cinematic",
+							"cinematics/marine/minigun/muzzle_flash.cinematic",
 						}
 
 mapCinematicNames = {	"cinematics/environment/biodome/flying_papers.cinematic",
@@ -89,6 +138,9 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 					originalSetCinematic(self, "chud_" .. cinematicName)
 				elseif table.contains(blockedCinematics, cinematicName) then
 					originalSetCinematic(self, "chud_cinematics/blank.cinematic")
+				// Easier than doing this in like 10 folders
+				elseif string.find(cinematicName, "ricochetMinigun.cinematic") then
+					originalSetCinematic(self, string.gsub(cinematicName, "ricochetMinigun.cinematic", "ricochet.cinematic"))
 				else
 					originalSetCinematic(self, cinematicName)
 				end
