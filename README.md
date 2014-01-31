@@ -4,9 +4,9 @@
 Custom HUD mod for Natural Selection 2
 
 Latest changes - Build 263 (unreleased):
-- You can now switch the official low lights setting with the NSL lights (chud_lowlights)
+- You can now switch the official low lights setting with the NSL lights, also disables holograms (chud_lowlights)
 - New option to disable ambient sounds (chud_ambient), and added console command to remove them at any point in the game (stopsound)
-- Minimal particles (chud_particles) now also removes map cinematics and holograms, like in NSL maps
+- Minimal particles (chud_particles) now also removes map cinematics, like in NSL maps
 - Removed "Objective completed" sound that still played if you had Waypoints disabled
 - Removed "Upgrade complete" sound that still played even with Unlock alerts disabled
 - Minimal particles additions:
