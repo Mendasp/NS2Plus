@@ -1,3 +1,36 @@
+Script.Load("lua/PhaseGate.lua")
+
+local function GetDestinationLocationName(self)
+
+    local locationEndId = self:GetDestLocationId()
+    local location = Shared.GetEntity(locationEndId)
+    
+    if location then
+        return location:GetName()
+    end
+
+end
+
+function PhaseGate:GetUnitNameOverride(viewer)
+
+    local unitName = GetDisplayName(self)
+
+    if not GetAreEnemies(self, viewer) then
+    
+        local destinationName = GetDestinationLocationName(self)        
+        if destinationName then
+            unitName = unitName .. " to " .. destinationName
+			if CHUDSettings["minnps"] then
+				unitName = destinationName
+			end
+        end
+
+    end
+
+    return unitName
+
+end
+
 Script.Load("lua/Player_Client.lua")
 local function LocalIsFriendlyCommander(player, unit)
     return player:isa("Commander") and ( unit:isa("Player") or (HasMixin(unit, "Selectable") and unit:GetIsSelected(player:GetTeamNumber())) )
@@ -125,7 +158,11 @@ function PlayerUI_GetUnitStatusInfo()
                     
 					if (unit:GetMapName() ~= TechPoint.kMapName and unit:GetMapName() ~= ResourcePoint.kPointMapName) and not player:isa("Commander") then
 						if CHUDSettings["minnps"] and not (unit:isa("Player") and not unit:isa("Embryo")) then
-							description = string.format("%d%%",math.ceil(unit:GetHealthScalar()*100))
+							if unit:GetMapName() == PhaseGate.kMapName then
+								description = string.format("%s (%d%%)",description, math.ceil(unit:GetHealthScalar()*100))
+							else
+								description = string.format("%d%%",math.ceil(unit:GetHealthScalar()*100))
+							end
 							health = 0
 							armor = 0
 							hint = string.format("%d/%d",math.ceil(unit:GetHealth()),math.ceil(unit:GetArmor()))

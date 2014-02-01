@@ -1,5 +1,3 @@
-Script.Load("lua/Class.lua")
-
 local cinematicsCache = { }
 local cinematicsValuesCache = { }
 local cinematicsRemoved = false
@@ -72,6 +70,10 @@ local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/marine/spawn_item.cinematic",
 							"cinematics/common/resnode.cinematic",
 							"cinematics/marine/minigun/muzzle_flash.cinematic",
+							"cinematics/marine/structures/hurt_severe.cinematic",
+							"cinematics/marine/structures/hurt_small_severe.cinematic",
+							"cinematics/marine/structures/hurt.cinematic",
+							"cinematics/marine/structures/hurt_small.cinematic",
 						}
 
 mapCinematicNames = {	"cinematics/environment/biodome/flying_papers.cinematic",

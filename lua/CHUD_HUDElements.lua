@@ -1,5 +1,3 @@
-Script.Load("lua/Class.lua")
-
 Script.Load("lua/Hud/Marine/GUIMarineStatus.lua")
 local originalMarineStatusInit
 originalMarineStatusInit = Class_ReplaceMethod( "GUIMarineStatus", "Initialize",

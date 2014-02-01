@@ -1,5 +1,3 @@
-Script.Load("lua/Class.lua")
-
 MarineHUDOverride = false
 MarineBuyMenuOverride = false
 AlienHUDOverride = false

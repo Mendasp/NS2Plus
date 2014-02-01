@@ -8,12 +8,14 @@ If the server allows mods that use the entry system, you can use it as it's 100%
 You can type "chud" in console to see all available options or set them directly in your options menu.
 
 Latest changes - Build 263 (unreleased):
+========================================
 - No more file overwrites, the mod works only with the entry system
+- Phase Gates now show destination in Minimal Nameplates settings (chud_minnps)
 - You can now switch the official low lights setting with the NSL lights, also disables holograms (chud_lowlights)
 - New option to disable ambient sounds (chud_ambient), and added console command to remove them at any point in the game (stopsound)
 - Minimal particles (chud_particles) now also removes map cinematics, like in NSL maps
-- Removed "Objective completed" sound that still played if you had Waypoints disabled
-- Removed "Upgrade complete" sound that still played even with Unlock alerts disabled
+- Removed "Objective completed" sound that still played if you had Waypoints disabled (chud_wps)
+- Removed "Upgrade complete" sound that still played even with Unlock alerts disabled (chud_unlocks)
 - Minimal particles additions:
 	- Removed Exo jump/land/overheat/bullet particles
 	- Removed first person low health warning for the Exo
@@ -22,6 +24,7 @@ Latest changes - Build 263 (unreleased):
 	- Removed most flamethrower effects (really big FPS drain)
 	- Replaced res node effect with older one (less vision obscuring, more like in NS1)
 	- Removed shadowstep trail
+	- Damaged extractor only shows fire (no smoke)
 
 Custom HUD Commands
 ===================

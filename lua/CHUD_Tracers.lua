@@ -1,7 +1,5 @@
 // MODIFIED FROM BETTER NS2 BY LWF
 
-Script.Load("lua/Class.lua")
-
 Script.Load("lua/Weapons/Marine/ClipWeapon.lua")
 local OriginalClipFreq
 OriginalClipFreq = Class_ReplaceMethod( "ClipWeapon", "GetTracerEffectFrequency", 

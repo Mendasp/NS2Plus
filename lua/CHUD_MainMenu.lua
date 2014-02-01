@@ -1,4 +1,3 @@
-Script.Load("lua/Class.lua")
 local mainMenu
 
 local function CHUDSaveMenuSettings()
