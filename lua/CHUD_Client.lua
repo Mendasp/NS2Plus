@@ -1,6 +1,7 @@
 Script.Load("lua/Client.lua")
 
 Script.Load("lua/CHUD_Utility.lua")
+Script.Load("lua/CHUD_MainMenu.lua")
 Script.Load("lua/CHUD_Lights.lua")
 Script.Load("lua/CHUD_UnitStatus.lua")
 Script.Load("lua/CHUD_HUDElements.lua")

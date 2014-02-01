@@ -64,7 +64,8 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							self.resourceDisplay.pResDescription:SetText(Locale.ResolveString("RESOURCES"))
 						end
 						
-						if not fullMode and (CHUDSettings["minimap"] or (CHUDSettings["showcomm"] and not CHUDSettings["minimap"])) then
+						self.commanderName:SetIsVisible(false)
+						if (CHUDSettings["minimap"] or (CHUDSettings["showcomm"] and not CHUDSettings["minimap"])) then
 							// Update commander name
 							local commanderName = PlayerUI_GetCommanderName()
 						
