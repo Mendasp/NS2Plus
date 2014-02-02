@@ -291,6 +291,14 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						self.worldArrows[a].model:SetIsVisible(not (CHUDSettings["minwps"] or not CHUDSettings["wps"]))
 						self.worldArrows[a].light:SetIsVisible(not (CHUDSettings["minwps"] or not CHUDSettings["wps"]))
 					end
+					
+					if not finalWaypointData then
+						self.finalWaypoint:SetColor(Color(1, 1, 1, 0))
+						self.finalDistanceText:SetIsVisible(false)
+						self.finalNameText:SetIsVisible(false)
+						self.waypointDirection:SetIsVisible(false)
+					end
+					
 				end)
 		
 		elseif (scriptName == "GUIUnitStatus") and not UnitStatusOverride then
