@@ -11,9 +11,9 @@ Latest changes - Build 263 (unreleased):
 ========================================
 - No more file overwrites, the mod works only with the entry system
 - Phase Gates now show destination in Minimal Nameplates settings (chud_minnps)
-- You can now switch the official low lights setting with the NSL lights, also disables holograms (chud_lowlights)
+- You can now switch the official low lights setting with the NSL lights (chud_lowlights)
 - New option to disable ambient sounds (chud_ambient), and added console command to remove them at any point in the game (stopsound)
-- Minimal particles (chud_particles) now also removes map cinematics, like in NSL maps
+- Minimal particles (chud_particles) now also removes map cinematics and holograms, like in NSL maps
 - Removed "Objective completed" sound that still played if you had Waypoints disabled (chud_wps)
 - Removed "Upgrade complete" sound that still played even with Unlock alerts disabled (chud_unlocks)
 - Minimal particles additions:
@@ -43,7 +43,7 @@ Custom HUD Commands
 - **chud_minimap:** Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions).
 - **chud_minnps:** Removes building names and health/armor bars and replaces them with a simple %.
 - **chud_minwps:** Removes all text/backgrounds and only leaves the waypoint icon.
-- **chud_particles:** Reduces particle clutter.
+- **chud_particles:** Reduces particle clutter and certain map props (holograms).
 - **chud_rtcount:** Removes RT count dots at the bottom and replaces them with a number.
 - **chud_score:** Disables score popup (+5).
 - **chud_showcomm:** Forces showing the commander and resources when disabling the minimap.

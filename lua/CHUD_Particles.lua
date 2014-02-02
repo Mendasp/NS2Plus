@@ -1,7 +1,39 @@
+local propsRemoved = false
+local PropCache = { }
+local PropValuesCache = { }
 local cinematicsCache = { }
 local cinematicsValuesCache = { }
 local cinematicsRemoved = false
 
+local BlockedProps = { 	"models/props/veil/veil_hologram_01.model", 
+						"models/props/veil/veil_holosign_01_nanogrid.model", 
+						"models/props/veil/veil_hologram_01_scanlines.model",
+						"models/props/biodome/biodome_bamboo_crown_01_01.model",
+						"models/props/biodome/biodome_bamboo_crown_01_02.model",
+						"models/props/biodome/biodome_bamboo_crown_01_03.model",																	
+						"models/props/biodome/biodome_bamboo_crown_01_04.model",
+						"models/props/biodome/biodome_bamboo_clump_01_01_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_02_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_03_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_04_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_05_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_01_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_02_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_03_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_04_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_05_low.model",
+						"models/props/biodome/biodome_waterfall_01.model",
+						"models/props/biodome/biodome_grass_01_01.model",
+						"models/props/biodome/biodome_grass_01_02.model",
+						"models/props/biodome/biodome_grass_01_03.model",
+						"models/props/biodome/biodome_grass_01_04.model",
+						"models/props/biodome/biodome_grass_02_tile.model",
+						"models/props/refinery/refinery_shipping_hologram_animated.model",
+						"models/props/descent/descent_hologram_planet_01.model",
+						"models/props/descent/descent_hologram_planet_02.model",
+						"models/props/descent/descent_hologram_planet_03.model",
+						"models/props/descent/descent_hologram_spacestation_01.model"
+					}
 local blockedCinematics = {	"cinematics/marine/structures/death_large.cinematic",
 							"cinematics/marine/structures/death_small.cinematic",
 							"cinematics/marine/sentry/death.cinematic",
@@ -204,11 +236,60 @@ function SetCHUDCinematics()
 			cinematicsCache = { }
 			cinematicsRemoved = true
 		end
+		if PropCache ~= nil then
+			for index, models in ipairs(PropCache) do
+				Client.DestroyRenderModel(models[1])
+				Shared.DestroyCollisionObject(models[2])
+			end
+			PropCache = { }
+			propsRemoved = true
+		end
 	elseif cinematicsRemoved then
 		for i, cinematic in pairs(cinematicsValuesCache) do
 			CreateCinematic(cinematic.className, cinematic.groupName, cinematic.values)
 		end
+	elseif propsRemoved then
+		for i, prop in pairs(PropValuesCache) do
+			LoadMapEntity(prop.className, prop.groupName, prop.values)
+		end
+	end
+end
+						
+local originalSetCommanderPropState = SetCommanderPropState
+function SetCommanderPropState(isComm)
+	originalSetCommanderPropState(isComm)
+	if PropCache ~= nil then
+		for index, propPair in ipairs(PropCache) do
+			local prop = propPair[1]
+			if prop.commAlpha < 1 then
+				prop:SetIsVisible(not isComm)
+			end
+		end
 	end
 end
 
+local originalLoadMapEntity = LoadMapEntity
+function LoadMapEntity(className, groupName, values)
+	local success = originalLoadMapEntity(className, groupName, values)
+	if success then
+		if className == "prop_static" and table.contains(BlockedProps, values.model) then
+			table.insert(PropCache, Client.propList[#Client.propList])
+			if not Client.fullyLoaded then
+				table.insert(PropValuesCache, {className = className, groupName = groupName, values = values})
+			end
+			table.remove(Client.propList, #Client.propList)
+		end
+	end
+	return success
+end
+
+function RemovePropDynamics()
+	for _, entity in ientitylist(Shared.GetEntitiesWithClassname("PropDynamic")) do
+		if table.contains (BlockedProps, entity:GetModelName()) and CHUDSettings["particles"] then
+			entity:SetModel(nil)
+		end
+	end
+end
+
+Event.Hook("UpdateClient", RemovePropDynamics)
 Event.Hook("MapLoadEntity", CacheCinematics)
