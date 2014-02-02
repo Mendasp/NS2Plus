@@ -1,6 +1,6 @@
-local propsRemoved = false
 local PropCache = { }
 local PropValuesCache = { }
+local propsRemoved = false
 local cinematicsCache = { }
 local cinematicsValuesCache = { }
 local cinematicsRemoved = false
@@ -226,35 +226,7 @@ function CreateCinematic(className, groupName, values)
 		end
 	end
 end
-		
-function SetCHUDCinematics()
-	if CHUDSettings["particles"] then
-		if cinematicsCache ~= nil then
-			for index, cinematic in ipairs(cinematicsCache) do
-				Client.DestroyCinematic(cinematic)
-			end
-			cinematicsCache = { }
-			cinematicsRemoved = true
-		end
-		if PropCache ~= nil then
-			for index, models in ipairs(PropCache) do
-				Client.DestroyRenderModel(models[1])
-				Shared.DestroyCollisionObject(models[2])
-			end
-			PropCache = { }
-			propsRemoved = true
-		end
-	elseif cinematicsRemoved then
-		for i, cinematic in pairs(cinematicsValuesCache) do
-			CreateCinematic(cinematic.className, cinematic.groupName, cinematic.values)
-		end
-	elseif propsRemoved then
-		for i, prop in pairs(PropValuesCache) do
-			LoadMapEntity(prop.className, prop.groupName, prop.values)
-		end
-	end
-end
-						
+
 local originalSetCommanderPropState = SetCommanderPropState
 function SetCommanderPropState(isComm)
 	originalSetCommanderPropState(isComm)
@@ -288,6 +260,37 @@ function RemovePropDynamics()
 		if table.contains (BlockedProps, entity:GetModelName()) and CHUDSettings["particles"] then
 			entity:SetModel(nil)
 		end
+	end
+end
+		
+function SetCHUDCinematics()
+	if CHUDSettings["particles"] then
+		if cinematicsCache ~= nil then
+			for index, cinematic in ipairs(cinematicsCache) do
+				Client.DestroyCinematic(cinematic)
+			end
+			cinematicsCache = { }
+			cinematicsRemoved = true
+		end
+		if PropCache ~= nil then
+			for index, models in ipairs(PropCache) do
+				Client.DestroyRenderModel(models[1])
+				Shared.DestroyCollisionObject(models[2])
+			end
+			PropCache = { }
+			propsRemoved = true
+		end
+	else
+		if cinematicsRemoved then
+			for i, cinematic in pairs(cinematicsValuesCache) do
+				CreateCinematic(cinematic.className, cinematic.groupName, cinematic.values)
+			end
+		end
+		if propsRemoved then
+			for i, prop in pairs(PropValuesCache) do
+				LoadMapEntity(prop.className, prop.groupName, prop.values)
+			end
+		end		
 	end
 end
 
