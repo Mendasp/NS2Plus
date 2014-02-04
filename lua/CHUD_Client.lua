@@ -449,11 +449,11 @@ end
 
 local function IntFromString(str)
 
-    local num = tonumber(str)
-    if num and num >1 then
-        num = num/255
-    end
-    return num
+	local num = tonumber(str)
+	if num and num >1 then
+		num = num/255
+	end
+	return num
 
 end
 
@@ -461,37 +461,37 @@ local function SetCHUDColor(chudsetkey, chudoptkey, r_or_ColorInt, g, b)
 	// chudsetkey: The key for the local array with all the current CHUD settings (ie. CHUDSettings["mingui"])
 	// chudoptkey: The name that is used in the options file (Client.SetOption...)
 	
-    if r_or_ColorInt ~= nil and g == nil then
-    
-        local ColorInt = tonumber(r_or_ColorInt)
-        local color = ColorIntToColor(ColorInt)
-        if color then
-            Client.SetOptionInteger(chudoptkey, tonumber(r_or_ColorInt))
-        end
-        
-    else
-    
-        local rInt = IntFromString(r_or_ColorInt) or 1
-        local gInt = IntFromString(g) or 1
-        local bInt = IntFromString(b) or 1
+	if r_or_ColorInt ~= nil and g == nil then
+	
+		local ColorInt = tonumber(r_or_ColorInt)
+		local color = ColorIntToColor(ColorInt)
+		if color then
+			Client.SetOptionInteger(chudoptkey, tonumber(r_or_ColorInt))
+		end
+		
+	else
+	
+		local rInt = IntFromString(r_or_ColorInt) or 1
+		local gInt = IntFromString(g) or 1
+		local bInt = IntFromString(b) or 1
 
 		// I hate myself a bit for doing this
-        Client.SetOptionInteger(chudoptkey, bit.lshift(rInt*255, 16) + bit.lshift(gInt*255, 8) + bInt*255)
-        
-    end
+		Client.SetOptionInteger(chudoptkey, bit.lshift(rInt*255, 16) + bit.lshift(gInt*255, 8) + bInt*255)
+		
+	end
 
 	CHUDSettings[chudsetkey] = Client.GetOptionInteger(chudoptkey, bit.lshift(77, 16) + bit.lshift(219, 8) + 255)
 end
 
 function OnCommandCHUDDMGColorM(r_or_ColorInt, g, b)
 
-    SetCHUDColor("dmgcolor_m", "CHUD_DMGColorM", r_or_ColorInt, g, b)
+	SetCHUDColor("dmgcolor_m", "CHUD_DMGColorM", r_or_ColorInt, g, b)
 	
 end
 
 function OnCommandCHUDDMGColorA(r_or_ColorInt, g, b)
 
-    SetCHUDColor("dmgcolor_a", "CHUD_DMGColorA", r_or_ColorInt, g, b)
+	SetCHUDColor("dmgcolor_a", "CHUD_DMGColorA", r_or_ColorInt, g, b)
 end
 
 function OnCommandCHUDDMGColorReset()
@@ -515,10 +515,10 @@ function OnCommandCHUDAlienBars()
 end
 
 function OnCommandCHUDStopSound()
-    for a = 1, #Client.ambientSoundList do
-        Client.ambientSoundList[a]:OnDestroy()
-    end
-    Client.ambientSoundList = { }
+	for a = 1, #Client.ambientSoundList do
+		Client.ambientSoundList[a]:OnDestroy()
+	end
+	Client.ambientSoundList = { }
 end
 
 function OnCommandCHUDAmbientSounds()

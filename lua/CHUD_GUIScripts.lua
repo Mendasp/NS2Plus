@@ -332,7 +332,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 								updateBlip.smokeyBackground:SetIsVisible(blipData.HealthFraction ~= 0 and not CHUDSettings["mingui"])
 							end
 						end
-						 
+						
 					end
 				end)
 		end

@@ -35,191 +35,191 @@ end
 
 local CHUDOptions = {
 			{
-                name    = "CHUDScore",
-                label   = "SCORE POPUP (+5)",
+				name    = "CHUDScore",
+				label   = "SCORE POPUP (+5)",
 				tooltip = "Disables or enables score popup (+5)",
-                type    = "select",
-                values  = { "OFF", "ON" },
+				type    = "select",
+				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-            }, 
-			
-            {
-                name    = "CHUDWaypoints",
-                label   = "WAYPOINTS",
-				tooltip = "Disables or enables all waypoints except Attack orders (waypoints can still be seen on minimap)",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            },   
-			
-            {
-                name    = "CHUDMinWaypoints",
-                label   = "MINIMAL WAYPOINTS",
-				tooltip = "Removes all text/backgrounds and only leaves the waypoint icon",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            },  
-			
-            {
-                name    = "CHUDBlur",
-                label   = "BLUR",
-				tooltip = "Removes the background blur from menus/minimap",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            },  
-			
-            {
-                name    = "CHUDBanners",
-                label   = "OBJECTIVE BANNERS",
-				tooltip = "Removes the banners in the center of the screen (\"Commander needed\", \"Power node under attack\", \"Evolution lost\", etc.)",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            },  
-			
-            {
-                name    = "CHUDRTcount",
-                label   = "RT COUNT DOTS",
-				tooltip = "Removes RT count dots at the bottom and replaces them with a number",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            },  
-			
-            {
-                name    = "CHUDMinGUI",
-                label   = "MINIMAL GUI",
-				tooltip = "Removes backgrounds/scanlines from all UI elements",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            },  
-			
-            {
-                name    = "CHUDMinimap",
-                label   = "MARINE MINIMAP",
-				tooltip = "Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions)",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            }, 
-			 
-            {
-                name    = "CHUDShowComm",
-                label   = "MARINE COMM NAME",
-				tooltip = "Forces showing the commander and resources when disabling the minimap",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            }, 
-			
-            {
-                name    = "CHUDUnlocks",
-                label   = "RESEARCH NOTIFICATIONS",
-				tooltip = "Removes the research completed notifications on the right side of the screen",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            }, 
- 
-			
-            {
-                name    = "CHUDHPBar",
-                label   = "MARINE HP BARS",
-				tooltip = "Removes the health bars from the marine HUD",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            }, 
-				
-            {
-                name    = "CHUDMinNameplates",
-                label   = "MINIMAL NAMEPLATES",
-				tooltip = "Removes building names and health/armor bars and replaces them with a simple %",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            }, 	
-			
-            {
-                name    = "CHUDSmallNameplates",
-                label   = "SMALL NAMEPLATES",
-				tooltip = "Makes fonts in the nameplates smaller",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            }, 
-			
-            {
-                name    = "CHUDTracers",
-                label   = "WEAPON TRACERS",
-				tooltip = "Disables weapon tracers",
-                type    = "select",
-                values  = { "OFF", "ON" },
-				callback = CHUDSaveMenuSettings
-            }, 
+			}, 
 			
 			{
-                name    = "CHUDKDA",
-                label   = "KDA/KAD",
+				name    = "CHUDWaypoints",
+				label   = "WAYPOINTS",
+				tooltip = "Disables or enables all waypoints except Attack orders (waypoints can still be seen on minimap)",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			},   
+			
+			{
+				name    = "CHUDMinWaypoints",
+				label   = "MINIMAL WAYPOINTS",
+				tooltip = "Removes all text/backgrounds and only leaves the waypoint icon",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			},  
+			
+			{
+				name    = "CHUDBlur",
+				label   = "BLUR",
+				tooltip = "Removes the background blur from menus/minimap",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			},  
+			
+			{
+				name    = "CHUDBanners",
+				label   = "OBJECTIVE BANNERS",
+				tooltip = "Removes the banners in the center of the screen (\"Commander needed\", \"Power node under attack\", \"Evolution lost\", etc.)",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			},  
+			
+			{
+				name    = "CHUDRTcount",
+				label   = "RT COUNT DOTS",
+				tooltip = "Removes RT count dots at the bottom and replaces them with a number",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			},  
+			
+			{
+				name    = "CHUDMinGUI",
+				label   = "MINIMAL GUI",
+				tooltip = "Removes backgrounds/scanlines from all UI elements",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			},  
+			
+			{
+				name    = "CHUDMinimap",
+				label   = "MARINE MINIMAP",
+				tooltip = "Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions)",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
+			
+			{
+				name    = "CHUDShowComm",
+				label   = "MARINE COMM NAME",
+				tooltip = "Forces showing the commander and resources when disabling the minimap",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
+			
+			{
+				name    = "CHUDUnlocks",
+				label   = "RESEARCH NOTIFICATIONS",
+				tooltip = "Removes the research completed notifications on the right side of the screen",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
+
+			
+			{
+				name    = "CHUDHPBar",
+				label   = "MARINE HP BARS",
+				tooltip = "Removes the health bars from the marine HUD",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
+				
+			{
+				name    = "CHUDMinNameplates",
+				label   = "MINIMAL NAMEPLATES",
+				tooltip = "Removes building names and health/armor bars and replaces them with a simple %",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 	
+			
+			{
+				name    = "CHUDSmallNameplates",
+				label   = "SMALL NAMEPLATES",
+				tooltip = "Makes fonts in the nameplates smaller",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
+			
+			{
+				name    = "CHUDTracers",
+				label   = "WEAPON TRACERS",
+				tooltip = "Disables weapon tracers",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
+			
+			{
+				name    = "CHUDKDA",
+				label   = "KDA/KAD",
 				tooltip = "Switches the scoreboard from KAD to KDA",
-                type    = "select",
-                values  = { "KAD", "KDA" },
+				type    = "select",
+				values  = { "KAD", "KDA" },
 				callback = CHUDSaveMenuSettings
-            }, 
+			}, 
 			
-            {
-                name    = "CHUDSmallDMG",
-                label   = "SMALL DAMAGE NUMBERS",
+			{
+				name    = "CHUDSmallDMG",
+				label   = "SMALL DAMAGE NUMBERS",
 				tooltip = "Makes the damage numbers smaller",
-                type    = "select",
-                values  = { "OFF", "ON" },
+				type    = "select",
+				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-            }, 
-            {
-                name    = "CHUDParticles",
-                label   = "MINIMAL PARTICLES",
+			}, 
+			{
+				name    = "CHUDParticles",
+				label   = "MINIMAL PARTICLES",
 				tooltip = "Reduces particle clutter",
-                type    = "select",
-                values  = { "OFF", "ON" },
+				type    = "select",
+				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-            }, 
-            {
-                name    = "CHUDGametime",
-                label   = "GAME TIME",
+			}, 
+			{
+				name    = "CHUDGametime",
+				label   = "GAME TIME",
 				tooltip = "Adds or removes the game time on the top left (requires having the commander name as marines)",
-                type    = "select",
-                values  = { "OFF", "ON" },
+				type    = "select",
+				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-            }, 
-            {
-                name    = "CHUDAssists",
-                label   = "ASSIST SCORE POPUP",
+			}, 
+			{
+				name    = "CHUDAssists",
+				label   = "ASSIST SCORE POPUP",
 				tooltip = "Removes assist score popup",
-                type    = "select",
-                values  = { "OFF", "ON" },
+				type    = "select",
+				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-            }, 
-            {
-                name    = "CHUDAmbient",
-                label   = "AMBIENT SOUNDS",
+			}, 
+			{
+				name    = "CHUDAmbient",
+				label   = "AMBIENT SOUNDS",
 				tooltip = "Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing \"stopsound\" in console.",
-                type    = "select",
-                values  = { "OFF", "ON" },
+				type    = "select",
+				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-            }, 
-            {
-                name    = "CHUDNSLLights",
-                label   = "NSL LOW LIGHTS",
+			}, 
+			{
+				name    = "CHUDNSLLights",
+				label   = "NSL LOW LIGHTS",
 				tooltip = "Replaces the low quality option lights with the NSL lights.",
-                type    = "select",
-                values  = { "OFF", "ON" },
+				type    = "select",
+				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-            }, 
+			}, 
 			
-        }
+		}
 
 local function BoolToIndex(value)
 	if value then

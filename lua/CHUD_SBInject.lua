@@ -2,14 +2,14 @@
 // Thanks to bawNg for creating this awesome injection code!
 InjectIntoScope(GUIScoreboard.Initialize, function()
 
-    local iconOffset
+	local iconOffset
 	local iconSize
 	local localGetTeamItemWidth
-    InjectIntoScope(CreateTeamBackground, function()
-        iconOffset = kIconOffset
+	InjectIntoScope(CreateTeamBackground, function()
+		iconOffset = kIconOffset
 		iconSize = kIconSize
 		localGetTeamItemWidth = GetTeamItemWidth()
-    end)
+	end)
 	
 	function CreateTeamBackground(self, teamNumber)
 

@@ -198,26 +198,26 @@ function CacheCinematics(className, groupName, values)
 end
 
 function CreateCinematic(className, groupName, values)
-    if className == "cinematic" then
-    
-        local cinematic = Client.CreateCinematic(RenderScene.Zone_Default)
-        
-        cinematic:SetCinematic(values.cinematicName)
-        cinematic:SetCoords(values.angles:GetCoords(values.origin))
-        
-        local repeatStyle = Cinematic.Repeat_None
-        
-        if values.repeatStyle == 0 then
-            repeatStyle = Cinematic.Repeat_Loop
-        elseif values.repeatStyle == 1 then
-            repeatStyle = Cinematic.Repeat_Loop
-        elseif values.repeatStyle == 2 then
-            repeatStyle = Cinematic.Repeat_Endless
-        end
-                
-        cinematic:SetRepeatStyle(repeatStyle)
-        
-        cinematic.commanderInvisible = values.commanderInvisible
+	if className == "cinematic" then
+	
+		local cinematic = Client.CreateCinematic(RenderScene.Zone_Default)
+		
+		cinematic:SetCinematic(values.cinematicName)
+		cinematic:SetCoords(values.angles:GetCoords(values.origin))
+		
+		local repeatStyle = Cinematic.Repeat_None
+		
+		if values.repeatStyle == 0 then
+			repeatStyle = Cinematic.Repeat_Loop
+		elseif values.repeatStyle == 1 then
+			repeatStyle = Cinematic.Repeat_Loop
+		elseif values.repeatStyle == 2 then
+			repeatStyle = Cinematic.Repeat_Endless
+		end
+				
+		cinematic:SetRepeatStyle(repeatStyle)
+		
+		cinematic.commanderInvisible = values.commanderInvisible
 		cinematic.className = className
 		cinematic.coords = coords
 		

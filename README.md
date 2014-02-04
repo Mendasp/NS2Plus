@@ -10,7 +10,7 @@ You can type "chud" in console to see all available options or set them directly
 Latest changes - Build 263 (unreleased):
 ========================================
 - No more file overwrites, the mod works only with the entry system
-- Phase Gates now show destination in Minimal Nameplates settings (chud_minnps)
+- Phase Gates and Gorge Tunnels now show destination in Minimal Nameplates settings (chud_minnps)
 - You can now switch the official low lights setting with the NSL lights (chud_lowlights)
 - New option to disable ambient sounds (chud_ambient), and added console command to remove them at any point in the game (stopsound)
 - Minimal particles (chud_particles) now also removes map cinematics and holograms, like in NSL maps
@@ -39,6 +39,7 @@ Custom HUD Commands
 - **chud_gametime:** Adds or removes the game time on the top left (requires having the commander name as marines).
 - **chud_hpbar:** Removes the health bars from the marine HUD.
 - **chud_kda:** Switches the scoreboard from KAD to KDA.
+- **chud_lowlights:** Changes between the default map low quality lights and the NSL lights.
 - **chud_mingui:** Removes backgrounds/scanlines from all UI elements.
 - **chud_minimap:** Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions).
 - **chud_minnps:** Removes building names and health/armor bars and replaces them with a simple %.
