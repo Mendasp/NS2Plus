@@ -1,17 +1,17 @@
 Script.Load("lua/PhaseGate.lua")
 
-local function GetDestinationLocationName(self)
-
-    local locationEndId = self:GetDestLocationId()
-    local location = Shared.GetEntity(locationEndId)
-    
-    if location then
-        return location:GetName()
-    end
-
-end
-
 function PhaseGate:GetUnitNameOverride(viewer)
+
+	local function GetDestinationLocationName(self)
+
+		local locationEndId = self:GetDestLocationId()
+		local location = Shared.GetEntity(locationEndId)
+		
+		if location then
+			return location:GetName()
+		end
+
+	end
 
     local unitName = GetDisplayName(self)
 
@@ -23,6 +23,41 @@ function PhaseGate:GetUnitNameOverride(viewer)
 			if CHUDSettings["minnps"] then
 				unitName = destinationName
 			end
+		elseif CHUDSettings["minnps"] and not viewer:isa("Commander") then
+			unitName = nil
+        end
+
+    end
+
+    return unitName
+
+end
+
+Script.Load("lua/TunnelEntrance.lua")
+function TunnelEntrance:GetUnitNameOverride(viewer)
+
+	local function GetDestinationLocationName(self)
+
+		local location = Shared.GetEntity(self.destLocationId)
+		
+		if location then
+			return location:GetName()
+		end
+
+	end
+
+    local unitName = GetDisplayName(self)
+
+    if not GetAreEnemies(self, viewer) then
+    
+        local destinationName = GetDestinationLocationName(self)        
+        if destinationName then
+            unitName = unitName .. " to " .. destinationName
+			if CHUDSettings["minnps"] then
+				unitName = destinationName
+			end
+		elseif CHUDSettings["minnps"] and not viewer:isa("Commander") then
+			unitName = nil
         end
 
     end
@@ -158,7 +193,7 @@ function PlayerUI_GetUnitStatusInfo()
                     
 					if (unit:GetMapName() ~= TechPoint.kMapName and unit:GetMapName() ~= ResourcePoint.kPointMapName) and not player:isa("Commander") then
 						if CHUDSettings["minnps"] and not (unit:isa("Player") and not unit:isa("Embryo")) then
-							if unit:GetMapName() == PhaseGate.kMapName then
+							if (unit:GetMapName() == PhaseGate.kMapName or unit:GetMapName() == TunnelEntrance.kMapName) and description ~= nil then
 								description = string.format("%s (%d%%)",description, math.ceil(unit:GetHealthScalar()*100))
 							else
 								description = string.format("%d%%",math.ceil(unit:GetHealthScalar()*100))
