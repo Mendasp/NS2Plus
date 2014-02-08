@@ -1,3 +1,4 @@
+lastteamnr = 0
 CHUD_pdmg_round = 0
 CHUD_sdmg_round = 0
 CHUD_pdmg = 0
@@ -47,49 +48,79 @@ function ShowClientStats(text, pdmg, sdmg)
 	local misssum = 0
 	local onoshitsum = 0
 	
-	Shared.Message("-----------------------")
-	Shared.Message("Stats for this " .. text)
-	Shared.Message("-----------------------")
-	Shared.Message("Player damage: " .. math.ceil(pdmg) .. " - Structure damage: " .. math.ceil(sdmg))
-	Shared.Message("-----------------------")
-	if text == "round" then
-		for k, v in pairs(totalhits) do
-			if onoshits[k] > 0 then
-				Shared.Message(string.format("%s accuracy: %.2f%% / Without Onos hits: %.2f%%", k:gsub("^%l", string.upper), (v/(v+totalmiss[k])*100), ((v-onoshits[k])/((v-onoshits[k])+totalmiss[k])*100)))
-			else
-				Shared.Message(string.format("%s accuracy: %.2f%%", k:gsub("^%l", string.upper), (v/(v+totalmiss[k])*100)))
+	if pdmg > 0 or sdmg > 0 then
+		
+		Shared.Message("-----------------------")
+		Shared.Message("Stats for this " .. text)
+		Shared.Message("-----------------------")
+		Shared.Message("Player damage: " .. math.ceil(pdmg) .. " - Structure damage: " .. math.ceil(sdmg))
+		Shared.Message("-----------------------")
+		// Round end text
+		if text == "round" then
+			for k, v in pairs(totalhits) do
+				if onoshits[k] > 0 then
+					Shared.Message(string.format("%s accuracy: %.2f%% / Without Onos hits: %.2f%%", k:gsub("^%l", string.upper), (v/(v+totalmiss[k])*100), ((v-onoshits[k])/((v-onoshits[k])+totalmiss[k])*100)))
+				else
+					Shared.Message(string.format("%s accuracy: %.2f%%", k:gsub("^%l", string.upper), (v/(v+totalmiss[k])*100)))
+				end
+				hitsum = hitsum + v
+				misssum = misssum + totalmiss[k]
+				onoshitsum = onoshitsum + onoshits[k]
 			end
-			hitsum = hitsum + v
-			misssum = misssum + totalmiss[k]
-			onoshitsum = onoshitsum + onoshits[k]
+			Shared.Message("-----------------------")
+			Shared.Message(string.format("Overall accuracy: %.2f%%", (hitsum/(hitsum+misssum))*100))
+			if onoshitsum > 0 then
+				Shared.Message(string.format("Without Onos hits: %.2f%%", ((hitsum-onoshitsum)/((hitsum-onoshitsum)+misssum))*100))
+			end
+			Shared.Message("-----------------------")
+		else
+			for k, v in pairs(totalhits) do
+				hitsum = hitsum + v
+				misssum = misssum + totalmiss[k]
+				onoshitsum = onoshitsum + onoshits[k]
+			end
+			Shared.Message(string.format("Current overall accuracy: %.2f%%", (hitsum/(hitsum+misssum))*100))
+			if onoshitsum > 0 then
+				Shared.Message(string.format("Without Onos hits: %.2f%%", ((hitsum-onoshitsum)/((hitsum-onoshitsum)+misssum))*100))
+			end
+			Shared.Message("-----------------------")
 		end
-		Shared.Message("-----------------------")
-		Shared.Message(string.format("Overall accuracy: %.2f%%", (hitsum/(hitsum+misssum))*100))
-		if onoshitsum > 0 then
-			Shared.Message(string.format("Without Onos hits: %.2f%%", ((hitsum-onoshitsum)/((hitsum-onoshitsum)+misssum))*100))
-		end
-		Shared.Message("-----------------------")
-	else
-		for k, v in pairs(totalhits) do
-			hitsum = hitsum + v
-			misssum = misssum + totalmiss[k]
-			onoshitsum = onoshitsum + onoshits[k]
-		end
-		Shared.Message(string.format("Current overall accuracy: %.2f%%", (hitsum/(hitsum+misssum))*100))
-		if onoshitsum > 0 then
-			Shared.Message(string.format("Without Onos hits: %.2f%%", ((hitsum-onoshitsum)/((hitsum-onoshitsum)+misssum))*100))
-		end
-		Shared.Message("-----------------------")
+		
 	end
 end
 
 originaldeath = DeathMsgUI_GetMessages
 function DeathMsgUI_GetMessages()
 	local deatharray = originaldeath()
-	// The 6th element is if the "victim" was the player, if it is, show the stats
-	if deatharray[6] == true then
+	// We compare the 4th element (victim name) with the player name to see if it died
+	// The problem with this is players can call themselves "Egg" and it will trigger this frequently
+	// Oh well
+	if deatharray[4] == Client.GetLocalPlayer():GetName() then
 		ShowClientStats("life", CHUD_pdmg, CHUD_sdmg)
 		CHUD_pdmg = 0
 		CHUD_sdmg = 0
 	end
+	return deatharray
 end
+
+function CheckPlayerTeam()
+	local player = Client.GetLocalPlayer()
+	local teamnr = player:GetTeamNumber()
+
+	if teamnr ~= lastteamnr then
+		lastteamnr = teamnr
+		// If we moved to the RR, show stats & reset values
+		if teamnr == 0 then
+			ShowClientStats("round", CHUD_pdmg_round, CHUD_sdmg_round)
+			CHUD_pdmg_round = 0
+			CHUD_sdmg_round = 0
+			CHUD_pdmg = 0
+			CHUD_sdmg = 0
+			totalhits = { }
+			totalmiss = { }
+			onoshits = { }
+		end
+	end
+end
+
+Event.Hook("LocalPlayerChanged", CheckPlayerTeam)

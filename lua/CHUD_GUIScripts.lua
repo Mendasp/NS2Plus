@@ -337,20 +337,6 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 					end
 				end)
 		
-		elseif (scriptName == "GUIGameEnd") and not GameEndOverride then
-			GameEndOverride = true
-			originalSetGameEnded = Class_ReplaceMethod("GUIGameEnd", "SetGameEnded",
-			function (self, playerWon, playerIsMarine)
-				originalSetGameEnded(self, playerWon, playerIsMarine)
-				ShowClientStats("round", CHUD_pdmg_round, CHUD_sdmg_round)
-				CHUD_pdmg_round = 0
-				CHUD_sdmg_round = 0
-				CHUD_pdmg = 0
-				CHUD_sdmg = 0
-				totalhits = { }
-				totalmiss = { }
-				onoshits = { }
-			end)
 		end
 				
 	return script
