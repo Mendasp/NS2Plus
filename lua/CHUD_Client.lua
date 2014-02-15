@@ -184,7 +184,6 @@ function ApplyCHUD(script, scriptName)
 end
 
 function OnCommandCHUDHelp()
-	Shared.Message("Custom HUD Version: 140208-R1")
 	Shared.Message("-------------------------------------")
 	Shared.Message("Custom HUD Commands")
 	Shared.Message("-------------------------------------")

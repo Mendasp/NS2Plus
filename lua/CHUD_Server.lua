@@ -50,7 +50,7 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		end
 		
 		// Secondary attack on alien weapons (lerk spikes, gorge healspray)
-		if self.secondaryAttacking or self.shootingSpikes then
+		if (self.secondaryAttacking or self.shootingSpikes) and self:isa("Alien") then
 			weapon = attacker:GetActiveWeapon():GetSecondaryTechId()
 		end
 		
