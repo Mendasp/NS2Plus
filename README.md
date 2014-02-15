@@ -7,8 +7,9 @@ If the server allows mods that use the entry system, you can use it as it's 100%
 
 You can type "chud" in console to see all available options or set them directly in your options menu.
 
-Latest changes - Build 263 (unreleased):
+Latest changes - Build 263:
 ========================================
+- Added stat tracking. You'll get info in console when you die (the player and structure damage you did while alive) and a more complete overview when the round ends or you go to the ReadyRoom.
 - No more file overwrites, the mod works only with the entry system
 - Phase Gates and Gorge Tunnels now show destination in Minimal Nameplates settings (chud_minnps)
 - You can now switch the official low lights setting with the NSL lights (chud_lowlights)
@@ -54,8 +55,11 @@ Custom HUD Commands
 - **chud_unlocks:** Removes the research completed notifications on the right side of the screen.
 - **chud_wps:** Disables all waypoints except Attack orders (waypoints can still be seen on minimap).
 
-Credits
-=======
+Credits/Thanks to
+=================
 - **Unknown Worlds Entertainment** for creating Natural Selection 2. This is a classic in mod credits.
 - **Dragon** for rewriting my horrible light switching code (which I've stolen back from the NSL mod) and answering my stupid questions.
 - **bawNg** for his awesome injection code (from SparkMod: https://github.com/SparkMod/SparkMod). Tip: Never mention CS:GO to him.
+-- **lwf** for the tracer code from Better NS2 (http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
+-- **Ghoul**
+-- **Sewlek** 
