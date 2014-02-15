@@ -44,7 +44,10 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 			end
 			//Print(weapon .. " " .. self:GetMapName())
 			
-		else return end
+		else 
+			// Don't be silly, if we return here something won't do damage (apparently ARCs :D)
+			return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
+		end
 		
 		// Secondary attack on alien weapons (lerk spikes, gorge healspray)
 		if self.secondaryAttacking or self.shootingSpikes then
