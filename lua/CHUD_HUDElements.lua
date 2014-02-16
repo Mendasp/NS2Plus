@@ -112,10 +112,10 @@ local blockedEffects = {	"complete_order",
 originalTriggerEffects = Class_ReplaceMethod( "EffectManager", "TriggerEffects",
 	function(self, effectTable, tableParams, triggeringEntity)
 		if not table.contains(blockedEffects, effectName) then
-			originalTriggerEffects(self, effectTable, tableParams, triggeringEntity)
+			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
 		elseif	(effectName == "complete_order" and CHUDSettings["wps"]) or
 				(effectName == "upgrade_complete" and CHUDSettings["unlocks"]) then
-			originalTriggerEffects(self, effectTable, tableParams, triggeringEntity)
+			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
 		end
 	end
 )
