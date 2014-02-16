@@ -110,7 +110,7 @@ Script.Load("lua/EffectManager.lua")
 local blockedEffects = {	"complete_order",
 							"upgrade_complete" }
 originalTriggerEffects = Class_ReplaceMethod( "EffectManager", "TriggerEffects",
-	function(self, effectTable, tableParams, triggeringEntity)
+	function(self, effectName, tableParams, triggeringEntity)
 		if not table.contains(blockedEffects, effectName) then
 			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
 		elseif	(effectName == "complete_order" and CHUDSettings["wps"]) or
