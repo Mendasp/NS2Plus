@@ -43,9 +43,9 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							
 							local minutes = math.floor(gameTime / 60)
 							local seconds = gameTime - minutes * 60
-							local gameTimeText = string.format(" - %d:%02d", minutes, seconds)
+							local gameTimeText = string.format(" - %d:%02d", minutes, math.floor(seconds))
 							
-							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, seconds))
+							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, math.floor(seconds)))
 						end
 						
 						local s_rts
@@ -170,9 +170,9 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							
 							local minutes = math.floor(gameTime / 60)
 							local seconds = gameTime - minutes * 60
-							local gameTimeText = string.format(" - %d:%02d", minutes, seconds)
+							local gameTimeText = string.format(" - %d:%02d", minutes, math.floor(seconds))
 							
-							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, seconds))
+							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, math.floor(seconds)))
 						end
 						
 						self.resourceDisplay.teamText:SetIsVisible(CHUDSettings["showcomm"] or CHUDSettings["minimap"])

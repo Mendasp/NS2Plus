@@ -110,13 +110,12 @@ Script.Load("lua/EffectManager.lua")
 local blockedEffects = {	"complete_order",
 							"upgrade_complete" }
 originalTriggerEffects = Class_ReplaceMethod( "EffectManager", "TriggerEffects",
-	function(self, effectName, tableParams, triggeringEntity)
-		//Print(effectName)
+	function(self, effectTable, tableParams, triggeringEntity)
 		if not table.contains(blockedEffects, effectName) then
-			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
+			originalTriggerEffects(self, effectTable, tableParams, triggeringEntity)
 		elseif	(effectName == "complete_order" and CHUDSettings["wps"]) or
 				(effectName == "upgrade_complete" and CHUDSettings["unlocks"]) then
-			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
+			originalTriggerEffects(self, effectTable, tableParams, triggeringEntity)
 		end
 	end
 )
@@ -144,8 +143,17 @@ Script.Load("lua/SoundEffect.lua")
 local blockedVO = {	"sound/NS2.fev/marine/voiceovers/commander/build",
 					"sound/NS2.fev/marine/voiceovers/commander/defend",
 					"sound/NS2.fev/marine/voiceovers/move" }
+					
+local skulkJumpSounds = {
+	"sound/NS2.fev/alien/skulk/jump_good",
+	"sound/NS2.fev/alien/skulk/jump_best",
+	"sound/NS2.fev/alien/skulk/jump"
+}
 function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
-	//Print(soundEffectName)
+	if table.contains(skulkJumpSounds, soundEffectName) then
+		volume = volume * 0.5
+	end
+	
 	if not table.contains(blockedVO, soundEffectName) or CHUDSettings["wps"] then
 		Shared.PlaySound(onEntity, soundEffectName, volume or 1)
 	end

@@ -26,7 +26,11 @@ function PhaseGate:GetUnitNameOverride(viewer)
 		elseif CHUDSettings["minnps"] and not viewer:isa("Commander") then
 			unitName = nil
 		end
-
+	
+	else
+		if CHUDSettings["minnps"] and not viewer:isa("Commander") then
+			unitName = nil
+		end
 	end
 
 	return unitName
@@ -59,7 +63,11 @@ function TunnelEntrance:GetUnitNameOverride(viewer)
 		elseif CHUDSettings["minnps"] and not viewer:isa("Commander") then
 			unitName = nil
 		end
-
+	
+	else
+		if CHUDSettings["minnps"] and not viewer:isa("Commander") then
+			unitName = nil
+		end
 	end
 
 	return unitName

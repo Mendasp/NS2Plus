@@ -50,7 +50,7 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		end
 		
 		// Secondary attack on alien weapons (lerk spikes, gorge healspray)
-		if (self.secondaryAttacking or self.shootingSpikes) and self:isa("Alien") then
+		if (self.secondaryAttacking or self.shootingSpikes) and attacker:isa("Alien") then
 			weapon = attacker:GetActiveWeapon():GetSecondaryTechId()
 		end
 		
@@ -82,4 +82,25 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 	end
 	// Now we send the actual damage message
 	return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
+end
+
+local skulkJumpSounds = {
+	"sound/NS2.fev/alien/skulk/jump_good",
+	"sound/NS2.fev/alien/skulk/jump_best",
+	"sound/NS2.fev/alien/skulk/jump"
+}
+
+function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
+	if table.contains(skulkJumpSounds, soundEffectName) then
+		volume = volume * 0.5
+	end
+	local soundEffectEntity = Server.CreateEntity(SoundEffect.kMapName)
+	soundEffectEntity:SetParent(onEntity)
+	soundEffectEntity:SetAsset(soundEffectName)
+	soundEffectEntity:SetVolume(volume)
+	soundEffectEntity:SetPredictor(predictor)
+	soundEffectEntity:Start()
+	
+	return soundEffectEntity
+	
 end

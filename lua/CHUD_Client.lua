@@ -175,6 +175,9 @@ function ApplyCHUD(script, scriptName)
 				script.smokeyBackground:SetIsVisible(true)
 				script.background:SetTexture("ui/biomass_bar.dds")
 			end
+		
+		elseif scriptName == "GUIFeedback" then
+			script.buildText:SetIsVisible(not CHUDSettings["mingui"])
 		end
 		
 		if not CHUDSettings["ambient"] then

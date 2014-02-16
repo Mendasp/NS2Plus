@@ -7,25 +7,30 @@ If the server allows mods that use the entry system, you can use it as it's 100%
 
 You can type "chud" in console to see all available options or set them directly in your options menu.
 
-Latest changes - Build 263:
-========================================
-- Added stat tracking. You'll get info in console when you die (the player and structure damage you did while alive) and a more complete overview when the round ends or you go to the ReadyRoom.
-- No more file overwrites, the mod works only with the entry system
-- Phase Gates and Gorge Tunnels now show destination in Minimal Nameplates settings (chud_minnps)
-- You can now switch the official low lights setting with the NSL lights (chud_lowlights)
-- New option to disable ambient sounds (chud_ambient), and added console command to remove them at any point in the game (stopsound)
-- Minimal particles (chud_particles) now also removes map cinematics and holograms, like in NSL maps
-- Removed "Objective completed" sound that still played if you had Waypoints disabled (chud_wps)
-- Removed "Upgrade complete" sound that still played even with Unlock alerts disabled (chud_unlocks)
-- Minimal particles additions:
-	- Removed Exo jump/land/overheat/bullet particles
-	- Removed first person low health warning for the Exo
-	- Changed Minigun shooting/impact with rifle effects, looks a bit silly, but less vision obscuring
-	- Removed the jetpack trail effect
-	- Removed most flamethrower effects (really big FPS drain)
-	- Replaced res node effect with older one (less vision obscuring, more like in NS1)
-	- Removed shadowstep trail
-	- Damaged extractor only shows fire (no smoke)
+Latest changes
+==============
+- Build 263 (16/02/2014):
+	- Reduced skulk jump sound volume to 50%
+	- Removed build number in Minimal GUI (chud_mingui)
+
+- Build 263 (14/02/2014):
+	- Added stat tracking. You'll get info in console when you die (the player and structure damage you did while alive) and a more complete overview when the round ends or you go to the ReadyRoom.
+	- No more file overwrites, the mod works only with the entry system
+	- Phase Gates and Gorge Tunnels now show destination in Minimal Nameplates settings (chud_minnps)
+	- You can now switch the official low lights setting with the NSL lights (chud_lowlights)
+	- New option to disable ambient sounds (chud_ambient), and added console command to remove them at any point in the game (stopsound)
+	- Minimal particles (chud_particles) now also removes map cinematics and holograms, like in NSL maps
+	- Removed "Objective completed" sound that still played if you had Waypoints disabled (chud_wps)
+	- Removed "Upgrade complete" sound that still played even with Unlock alerts disabled (chud_unlocks)
+	- Minimal particles additions:
+		- Removed Exo jump/land/overheat/bullet particles
+		- Removed first person low health warning for the Exo
+		- Changed Minigun shooting/impact with rifle effects, looks a bit silly, but less vision obscuring
+		- Removed the jetpack trail effect
+		- Removed most flamethrower effects (really big FPS drain)
+		- Replaced res node effect with older one (less vision obscuring, more like in NS1)
+		- Removed shadowstep trail
+		- Damaged extractor only shows fire (no smoke)
 
 Custom HUD Commands
 ===================
