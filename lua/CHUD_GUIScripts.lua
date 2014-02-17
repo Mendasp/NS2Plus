@@ -320,18 +320,46 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 								updateBlip.HintText:SetText(blipData.Hint)
 							end
 						end
+											
 						if blipData ~= nil then
+						
+							local alpha = 0
+							
+							if blipData.IsCrossHairTarget then        
+								alpha = 1
+							else
+								alpha = 0
+							end
+						
+							local textColor = Color(kNameTagFontColors[blipData.TeamType])
+							if blipData.isEnemy then
+								textColor = GUIUnitStatus.kEnemyColor
+							elseif blipData.IsParasited and blipData.IsFriend then
+								textColor = Color(kCommanderColorFloat)
+							elseif blipData.IsSteamFriend then
+								textColor = Color(kSteamFriendColor)
+							end
+						
+							if not blipData.ForceName then
+								textColor.a = alpha
+							end
+							
+							updateBlip.NameText:SetColor(textColor)
+							updateBlip.ActionText:SetColor(textColor)
+							if updateBlip.HintText then
+								updateBlip.HintText:SetColor(textColor)
+							end
+						
 							updateBlip.NameText:SetIsVisible(self.fullHUD or blipData.IsPlayer or CHUDSettings["minnps"])
+
+							if updateBlip.smokeyBackground then
+								updateBlip.smokeyBackground:SetIsVisible(blipData.HealthFraction ~= 0 and not CHUDSettings["mingui"])
+							end
+							
 						end
 										
 						if CHUDSettings["mingui"] and self.fullHUD then
 							updateBlip.Border:SetSize(Vector(0,0,0))
-						end
-						
-						if updateBlip.smokeyBackground then
-							if blipData ~= nil then
-								updateBlip.smokeyBackground:SetIsVisible(blipData.HealthFraction ~= 0 and not CHUDSettings["mingui"])
-							end
 						end
 						
 					end

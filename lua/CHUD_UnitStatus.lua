@@ -83,6 +83,8 @@ local kUnitStatusDisplayRange = 13
 local kUnitStatusCommanderDisplayRange = 50
 local kDefaultHealthOffset = 1.2
 
+// I hate doing this, try to find a way to do this properly at some point (if possible)
+
 function PlayerUI_GetUnitStatusInfo()
 
 	local unitStates = { }
@@ -185,6 +187,9 @@ function PlayerUI_GetUnitStatusInfo()
 							health = 0
 							armor = 0
 							hint = string.format("%d/%d",math.ceil(unit:GetHealth()),math.ceil(unit:GetArmor()))
+							if unit:isa("Exo") then
+								hint = string.format("%d",math.ceil(unit:GetArmor()))
+							end
 						end
 						
 					end
@@ -241,7 +246,9 @@ function PlayerUI_GetUnitStatusInfo()
 						HasWelder = hasWelder,
 						IsPlayer = unit:isa("Player"),
 						IsSteamFriend = unit:isa("Player") and unit:GetIsSteamFriend() or false,
-						AbilityFraction = abilityFraction
+						AbilityFraction = abilityFraction,
+						// (CHUD) Added parasite indicator
+						IsParasited = HasMixin(unit, "ParasiteAble") and unit:GetIsParasited()
 					
 					}
 					
@@ -251,6 +258,10 @@ function PlayerUI_GetUnitStatusInfo()
 					
 					if unit.GetTeamType then
 						unitState.TeamType = unit:GetTeamType()
+					end
+					
+					if not CHUDSettings["friends"] then
+						unitState.IsSteamFriend = false
 					end
 					
 					table.insert(unitStates, unitState)
@@ -265,4 +276,237 @@ function PlayerUI_GetUnitStatusInfo()
 	
 	return unitStates
 
+end
+
+// Gotta do it with this new stuff too!
+local kMinimapBlipTeamAlien = kMinimapBlipTeam.Alien
+local kMinimapBlipTeamMarine = kMinimapBlipTeam.Marine
+local kMinimapBlipTeamFriendAlien = kMinimapBlipTeam.FriendAlien
+local kMinimapBlipTeamFriendMarine = kMinimapBlipTeam.FriendMarine
+local kMinimapBlipTeamInactiveAlien = kMinimapBlipTeam.InactiveAlien
+local kMinimapBlipTeamInactiveMarine = kMinimapBlipTeam.InactiveMarine
+local kMinimapBlipTeamFriendly = kMinimapBlipTeam.Friendly
+local kMinimapBlipTeamEnemy = kMinimapBlipTeam.Enemy
+local kMinimapBlipTeamNeutral = kMinimapBlipTeam.Neutral
+function PlayerUI_GetStaticMapBlips()
+
+    PROFILE("PlayerUI_GetStaticMapBlips")
+    
+    local player = Client.GetLocalPlayer()
+    local blipsData = { }
+    local numBlips = 0
+    
+    if player then
+    
+        local playerTeam = player:GetTeamNumber()
+        local playerNoTeam = playerTeam == kRandomTeamType or playerTeam == kNeutralTeamType
+        local playerEnemyTeam = GetEnemyTeamNumber(playerTeam)
+        local playerId = player:GetId()
+        
+        local mapBlipList = Shared.GetEntitiesWithClassname("MapBlip")
+        local GetEntityAtIndex = mapBlipList.GetEntityAtIndex
+        local GetMapBlipTeamNumber = MapBlip.GetTeamNumber
+        local GetMapBlipOrigin = MapBlip.GetOrigin
+        local GetMapBlipRotation = MapBlip.GetRotation
+        local GetMapBlipType = MapBlip.GetType
+        local GetMapBlipIsInCombat = MapBlip.GetIsInCombat
+        local GetIsSteamFriend = Client.GetIsSteamFriend
+        local ClientIndexToSteamId = GetSteamIdForClientIndex
+        local GetIsMapBlipActive = MapBlip.GetIsActive
+        
+        for index = 0, mapBlipList:GetSize() - 1 do
+        
+            local blip = GetEntityAtIndex(mapBlipList, index)
+            if blip ~= nil and blip.ownerEntityId ~= playerId then
+      
+                local blipTeam = kMinimapBlipTeamNeutral
+                local blipTeamNumber = GetMapBlipTeamNumber(blip)
+                local isSteamFriend = false
+                
+                if blip.clientIndex and blip.clientIndex > 0 and blipTeamNumber ~= GetEnemyTeamNumber(playerTeam) then
+
+                    local steamId = ClientIndexToSteamId(blip.clientIndex)
+                    if steamId and CHUDSettings["friends"] then
+                        isSteamFriend = GetIsSteamFriend(steamId)
+                    end
+                    
+                end
+                
+                if not GetIsMapBlipActive(blip) then
+
+                    if blipTeamNumber == kMarineTeamType then
+                        blipTeam = kMinimapBlipTeamInactiveMarine
+                    elseif blipTeamNumber== kAlienTeamType then
+                        blipTeam = kMinimapBlipTeamInactiveAlien
+                    end
+
+                elseif isSteamFriend then
+                
+                    if blipTeamNumber == kMarineTeamType then
+                        blipTeam = kMinimapBlipTeamFriendMarine
+                    elseif blipTeamNumber== kAlienTeamType then
+                        blipTeam = kMinimapBlipTeamFriendAlien
+                    end
+                
+                else
+
+                    if blipTeamNumber == kMarineTeamType then
+                        blipTeam = kMinimapBlipTeamMarine
+                    elseif blipTeamNumber== kAlienTeamType then
+                        blipTeam = kMinimapBlipTeamAlien
+                    end
+                    
+                end  
+                
+                local i = numBlips * 10
+                local blipOrig = GetMapBlipOrigin(blip)
+                blipsData[i + 1] = blipOrig.x
+                blipsData[i + 2] = blipOrig.z
+                blipsData[i + 3] = GetMapBlipRotation(blip)
+                blipsData[i + 4] = 0
+                blipsData[i + 5] = 0
+                blipsData[i + 6] = GetMapBlipType(blip)
+                blipsData[i + 7] = blipTeam
+                blipsData[i + 8] = GetMapBlipIsInCombat(blip)
+                blipsData[i + 9] = isSteamFriend
+                blipsData[i + 10] = blip.isHallucination == true
+                
+                numBlips = numBlips + 1
+                
+            end
+            
+        end
+        
+        for index, blip in ientitylist(Shared.GetEntitiesWithClassname("SensorBlip")) do
+        
+            local blipOrigin = blip:GetOrigin()
+            
+            local i = numBlips * 10
+            
+            blipsData[i + 1] = blipOrigin.x
+            blipsData[i + 2] = blipOrigin.z
+            blipsData[i + 3] = 0
+            blipsData[i + 4] = 0
+            blipsData[i + 5] = 0
+            blipsData[i + 6] = kMinimapBlipType.SensorBlip
+            blipsData[i + 7] = kMinimapBlipTeamEnemy
+            blipsData[i + 8] = false
+            blipsData[i + 9] = false
+            blipsData[i + 10] = false
+            
+            numBlips = numBlips + 1
+            
+        end
+        
+        local orders = GetRelevantOrdersForPlayer(player)
+        for o = 1, #orders do
+        
+            local order = orders[o]
+            local blipOrigin = order:GetLocation()
+            
+            local blipType = kMinimapBlipType.MoveOrder
+            local orderType = order:GetType()
+            if orderType == kTechId.Construct or orderType == kTechId.AutoConstruct then
+                blipType = kMinimapBlipType.BuildOrder
+            elseif orderType == kTechId.Attack then
+                blipType = kMinimapBlipType.AttackOrder
+            end
+            
+            local i = numBlips * 10
+            
+            blipsData[i + 1] = blipOrigin.x
+            blipsData[i + 2] = blipOrigin.z
+            blipsData[i + 3] = 0
+            blipsData[i + 4] = 0
+            blipsData[i + 5] = 0
+            blipsData[i + 6] = blipType
+            blipsData[i + 7] = kMinimapBlipTeamFriendly
+            blipsData[i + 8] = false
+            blipsData[i + 9] = false
+            blipsData[i + 10] = false
+            
+            numBlips = numBlips + 1
+            
+        end
+        
+        if GetPlayerIsSpawning() then
+        
+            local spawnPosition = GetDesiredSpawnPosition()
+            
+            if spawnPosition then
+            
+                local i = numBlips * 10
+            
+                blipsData[i + 1] = spawnPosition.x
+                blipsData[i + 2] = spawnPosition.z
+                blipsData[i + 3] = 0
+                blipsData[i + 4] = 0
+                blipsData[i + 5] = 0
+                blipsData[i + 6] = kMinimapBlipType.MoveOrder
+                blipsData[i + 7] = kMinimapBlipTeamFriendly
+                blipsData[i + 8] = false
+                blipsData[i + 9] = false
+                blipsData[i + 10] = false
+                
+                numBlips = numBlips + 1
+            
+            end
+        
+        end
+        
+        if player:isa("Fade") then
+        
+            local vortexAbility = player:GetWeapon(Vortex.kMapName)
+            if vortexAbility then
+            
+                local gate = vortexAbility:GetEtherealGate()
+                if gate then
+                
+                    local i = numBlips * 10
+                
+                    local blipOrig = gate:GetOrigin()
+                
+                    blipsData[i + 1] = blipOrig.x
+                    blipsData[i + 2] = blipOrig.z
+                    blipsData[i + 3] = 0
+                    blipsData[i + 4] = 0
+                    blipsData[i + 5] = 0
+                    blipsData[i + 6] = kMinimapBlipType.EtherealGate
+                    blipsData[i + 7] = kMinimapBlipTeam.Friendly
+                    blipsData[i + 8] = false
+                    blipsData[i + 9] = false
+                    blipsData[i + 10] = false
+                    
+                    numBlips = numBlips + 1
+                    
+                end
+            
+            end
+        
+        end
+        
+        local highlightPos = GetHighlightPosition()
+        if highlightPos then
+
+                local i = numBlips * 10
+
+                blipsData[i + 1] = highlightPos.x
+                blipsData[i + 2] = highlightPos.z
+                blipsData[i + 3] = 0
+                blipsData[i + 4] = 0
+                blipsData[i + 5] = 0
+                blipsData[i + 6] = kMinimapBlipType.HighlightWorld
+                blipsData[i + 7] = kMinimapBlipTeam.Friendly
+                blipsData[i + 8] = false
+                blipsData[i + 9] = false
+                blipsData[i + 10] = false
+                
+                numBlips = numBlips + 1
+            
+        end
+        
+    end
+
+    return blipsData
+    
 end

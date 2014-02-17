@@ -118,7 +118,7 @@ function DeathMsgUI_GetMessages()
 	// We compare the 4th element (victim name) with the player name to see if it died
 	// The problem with this is players can call themselves "Egg" and it will trigger this frequently
 	// Oh well
-	if deatharray[4] == Client.GetLocalPlayer():GetName() then
+	if deatharray[4] == Client.GetLocalPlayer():GetName() and Client.GetIsControllingPlayer() then
 		ShowClientStats(false)
 		CHUD_pdmg = 0
 		CHUD_sdmg = 0
@@ -259,7 +259,7 @@ Event.Hook("Console_chud_debugstats", CHUD_DebugStats)
 // ClipWeapon covers FT, GL, pistol, rifle and SG
 originalClipWeaponShoot = Class_ReplaceMethod( "ClipWeapon", "OnTag",
 	function(self, tagName)
-		if tagName == "shoot" and self.clip > 0 then
+		if tagName == "shoot" and self.clip > 0 and Client.GetIsControllingPlayer() then
 			for i=1,self:GetBulletsPerShot() do
 				AddAttackStat(self:GetTechId(), false)
 			end
@@ -269,13 +269,15 @@ originalClipWeaponShoot = Class_ReplaceMethod( "ClipWeapon", "OnTag",
 	
 originalRiflebuttAttack = Class_ReplaceMethod( "Rifle", "PerformMeleeAttack",
 	function(self, player)
-		AddAttackStat(self:GetTechId(), false)
+		if Client.GetIsControllingPlayer() then
+			AddAttackStat(self:GetTechId(), false)
+		end
 		originalRiflebuttAttack(self, player)
 	end)
 	
 originalAxeAttack = Class_ReplaceMethod( "Axe", "OnTag",
 	function(self, tagName)
-		if tagName == "swipe_sound" then
+		if tagName == "swipe_sound" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalAxeAttack(self, tagName)
@@ -283,7 +285,7 @@ originalAxeAttack = Class_ReplaceMethod( "Axe", "OnTag",
 
 originalClawAttack = Class_ReplaceMethod( "Claw", "OnTag",
 	function(self, tagName)
-		if tagName == "claw_attack_start" then
+		if tagName == "claw_attack_start" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalClawAttack(self, tagName)
@@ -291,7 +293,7 @@ originalClawAttack = Class_ReplaceMethod( "Claw", "OnTag",
 	
 originalMinigunAttack = Class_ReplaceMethod( "Minigun", "OnTag",
 	function(self, tagName)
-		if tagName == "l_shoot" or tagName == "r_shoot" then
+		if (tagName == "l_shoot" or tagName == "r_shoot") and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalMinigunAttack(self, tagName)
@@ -299,7 +301,7 @@ originalMinigunAttack = Class_ReplaceMethod( "Minigun", "OnTag",
 	
 originalRailgunAttack = Class_ReplaceMethod( "Railgun", "OnTag",
 	function(self, tagName)
-		if (tagName == "l_shoot" and self:GetIsLeftSlot()) or (tagName == "r_shoot" and not self:GetIsLeftSlot()) then
+		if ((tagName == "l_shoot" and self:GetIsLeftSlot()) or (tagName == "r_shoot" and not self:GetIsLeftSlot())) and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalRailgunAttack(self, tagName)
@@ -307,7 +309,7 @@ originalRailgunAttack = Class_ReplaceMethod( "Railgun", "OnTag",
 
 originalBiteAttack = Class_ReplaceMethod( "BiteLeap", "OnTag",
 	function(self, tagName)
-		if tagName == "hit" then
+		if tagName == "hit" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalBiteAttack(self, tagName)
@@ -315,7 +317,7 @@ originalBiteAttack = Class_ReplaceMethod( "BiteLeap", "OnTag",
 	
 originalGoreAttack = Class_ReplaceMethod( "Gore", "OnTag",
 	function(self, tagName)
-		if tagName == "hit" then
+		if tagName == "hit" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalGoreAttack(self, tagName)
@@ -323,7 +325,7 @@ originalGoreAttack = Class_ReplaceMethod( "Gore", "OnTag",
 	
 originalLerkBiteAttack = Class_ReplaceMethod( "LerkBite", "OnTag",
 	function(self, tagName)
-		if tagName == "hit" then
+		if tagName == "hit" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalLerkBiteAttack(self, tagName)
@@ -331,7 +333,7 @@ originalLerkBiteAttack = Class_ReplaceMethod( "LerkBite", "OnTag",
 	
 originalParasiteAttack = Class_ReplaceMethod( "Parasite", "OnTag",
 	function(self, tagName)
-		if tagName == "hit" then
+		if tagName == "hit" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalParasiteAttack(self, tagName)
@@ -339,7 +341,7 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "OnTag",
 	
 originalSpikesAttack = SpikesMixin.OnTag
 function SpikesMixin:OnTag(tagName)
-	if tagName == "shoot" then
+	if tagName == "shoot" and Client.GetIsControllingPlayer() then
 		AddAttackStat(Client.GetLocalPlayer():GetActiveWeapon():GetSecondaryTechId(), false)
 	end
 	originalSpikesAttack(self, tagName)
@@ -347,7 +349,7 @@ end
 
 originalSpitAttack = Class_ReplaceMethod( "SpitSpray", "OnTag",
 	function(self, tagName)
-		if self.primaryAttacking and tagName == "shoot" then
+		if self.primaryAttacking and tagName == "shoot" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalSpitAttack(self, tagName)
@@ -355,7 +357,7 @@ originalSpitAttack = Class_ReplaceMethod( "SpitSpray", "OnTag",
 	
 originalStabAttack = Class_ReplaceMethod( "StabBlink", "OnTag",
 	function(self, tagName)
-		if tagName == "hit" and self.stabbing then
+		if tagName == "hit" and self.stabbing and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalStabAttack(self, tagName)
@@ -363,7 +365,7 @@ originalStabAttack = Class_ReplaceMethod( "StabBlink", "OnTag",
 	
 originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "OnTag",
 	function(self, tagName)
-		if tagName == "hit" then
+		if tagName == "hit" and Client.GetIsControllingPlayer() then
 			AddAttackStat(self:GetTechId(), false)
 		end
 		originalSwipeAttack(self, tagName)

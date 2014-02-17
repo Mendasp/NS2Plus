@@ -9,11 +9,16 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
-- Build 263 (16/02/2014):
+- 17/02/2014 (Build 263):
+	- Exos show only armor value in Minimal Nameplates (chud_minnps)
+	- Parasited friendlies (players or structures) will use a different font color in nameplates (yellow)
+	- Added new option to disable friends highlighting in the minimap/nameplates (chud_friends)
+
+- 16/02/2014 (Build 263):
 	- Reduced skulk jump sound volume to 50%
 	- Removed build number in Minimal GUI (chud_mingui)
 
-- Build 263 (14/02/2014):
+- 14/02/2014 (Build 263):
 	- Added stat tracking. You'll get info in console when you die (the player and structure damage you did while alive) and a more complete overview when the round ends or you go to the ReadyRoom.
 	- No more file overwrites, the mod works only with the entry system
 	- Phase Gates and Gorge Tunnels now show destination in Minimal Nameplates settings (chud_minnps)
@@ -42,6 +47,7 @@ Custom HUD Commands
 - **chud_dmgcolor_a:** Alien damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.
 - **chud_dmgcolor_m:** Marine damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.
 - **chud_dmgcolor_reset:** Reset damage numbers colors to the default on both aliens and marines.
+- **chud_friends:** Toggle the friend highlighting in the minimap/nameplates.
 - **chud_gametime:** Adds or removes the game time on the top left (requires having the commander name as marines).
 - **chud_hpbar:** Removes the health bars from the marine HUD.
 - **chud_kda:** Switches the scoreboard from KAD to KDA.

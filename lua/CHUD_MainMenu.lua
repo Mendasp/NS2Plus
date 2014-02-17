@@ -23,6 +23,7 @@ local function CHUDSaveMenuSettings()
 		Client.SetOptionBoolean("CHUD_Assists", mainMenu.optionElements.CHUDAssists:GetActiveOptionIndex() > 1)
 		Client.SetOptionBoolean("CHUD_Ambient", mainMenu.optionElements.CHUDAmbient:GetActiveOptionIndex() > 1)
 		Client.SetOptionBoolean("lowLights", mainMenu.optionElements.CHUDNSLLights:GetActiveOptionIndex() > 1)
+		Client.SetOptionBoolean("CHUD_Friends", mainMenu.optionElements.CHUDFriends:GetActiveOptionIndex() > 1)
 		
 		GetCHUDSettings()
 		ApplyCHUDSettings()
@@ -218,6 +219,14 @@ local CHUDOptions = {
 				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
 			}, 
+			{
+				name    = "CHUDFriends",
+				label   = "FRIENDS HIGHLIGHTING",
+				tooltip = "Enables or disables the friend highlighting in the scoreboard/nameplates.",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
 			
 		}
 
@@ -268,6 +277,7 @@ originalCreateOptionWindow = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionWi
 		self.optionElements.CHUDAssists:SetOptionActive( BoolToIndex(CHUDSettings["assists"]) )
 		self.optionElements.CHUDAmbient:SetOptionActive( BoolToIndex(CHUDSettings["ambient"]) )
 		self.optionElements.CHUDNSLLights:SetOptionActive( BoolToIndex(CHUDSettings["nsllights"]) )
+		self.optionElements.CHUDFriends:SetOptionActive( BoolToIndex(CHUDSettings["friends"]) )
 		
 		mainMenu = self
 	end)

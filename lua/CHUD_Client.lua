@@ -41,7 +41,8 @@ function GetCHUDSettings()
 		dmgcolor_a = Client.GetOptionInteger("CHUD_DMGColorA", bit.lshift(255, 16) + bit.lshift(202, 8) + 58),
 		alienbars = Client.GetOptionBoolean("CHUD_AlienBars", false),
 		ambient = Client.GetOptionBoolean("CHUD_Ambient", true),
-		nsllights = Client.GetOptionBoolean("lowLights", false)
+		nsllights = Client.GetOptionBoolean("lowLights", false),
+		friends = Client.GetOptionBoolean("CHUD_Friends", true),
 	}
 end
 
@@ -198,6 +199,7 @@ function OnCommandCHUDHelp()
 	Shared.Message("chud_dmgcolor_a: Alien damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.")
 	Shared.Message("chud_dmgcolor_m: Marine damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.")
 	Shared.Message("chud_dmgcolor_reset: Reset damage numbers colors to the default on both aliens and marines.")
+	Shared.Message("chud_friends: Toggle the friend highlighting in the minimap/nameplates.")
 	Shared.Message("chud_gametime: Adds or removes the game time on the top left (requires having the commander name as marines)")
 	Shared.Message("chud_hpbar: Removes the health bars from the marine HUD")
 	Shared.Message("chud_kda: Switches the scoreboard from KAD to KDA")
@@ -552,6 +554,17 @@ function OnCommandCHUDNSLLights()
 	CHUDLoadLights()
 end
 
+function OnCommandCHUDFriends()
+	if Client.GetOptionBoolean("CHUD_Friends", true) then
+		Client.SetOptionBoolean("CHUD_Friends", false)	
+		Shared.Message("Friend highlighting disabled.")
+	else
+		Client.SetOptionBoolean("CHUD_Friends", true)
+		Shared.Message("Friend highlighting enabled.")
+	end
+	CHUDSettings["friends"] = Client.GetOptionBoolean("CHUD_Friends", true)
+end
+
 Event.Hook("LoadComplete", AnnounceCHUD)
 Event.Hook("Console_chud", OnCommandCHUDHelp)
 Event.Hook("Console_chud_assists", OnCommandCHUDAssists)
@@ -559,6 +572,7 @@ Event.Hook("Console_chud_assists", OnCommandCHUDAssists)
 Event.Hook("Console_chud_banners", OnCommandCHUDBanners)
 Event.Hook("Console_chud_blur", OnCommandCHUDBlur)
 Event.Hook("Console_chud_gametime", OnCommandCHUDGametime)
+Event.Hook("Console_chud_friends", OnCommandCHUDFriends)
 Event.Hook("Console_chud_hpbar", OnCommandCHUDHPBar)
 Event.Hook("Console_chud_kda", OnCommandCHUDKDA)
 Event.Hook("Console_chud_mingui", OnCommandCHUDMinGUI)
