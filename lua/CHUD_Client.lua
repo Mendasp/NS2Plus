@@ -176,6 +176,15 @@ function ApplyCHUD(script, scriptName)
 				script.smokeyBackground:SetIsVisible(true)
 				script.background:SetTexture("ui/biomass_bar.dds")
 			end
+			
+			if not Client.GetLocalPlayer():isa("Commander") then
+				// Move this down a bit, since we moved the team res stuff up
+				script.background:SetPosition(GUIScale(Vector(20, 100, 0)))
+				script.smokeyBackground:SetPosition(GUIScale(Vector(-100, 10, 0)))
+			else
+				script.background:SetPosition(GUIScale(Vector(20, 70, 0)))
+				script.smokeyBackground:SetPosition(GUIScale(Vector(-100, -20, 0)))
+			end
 		
 		elseif scriptName == "GUIFeedback" then
 			script.buildText:SetIsVisible(not CHUDSettings["mingui"])

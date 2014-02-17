@@ -10,9 +10,10 @@ You can type "chud" in console to see all available options or set them directly
 Latest changes
 ==============
 - 17/02/2014 (Build 263):
-	- Exos show only armor value in Minimal Nameplates (chud_minnps)
+	- Exos show only armor value in Minimal Nameplates/Exo HUD (since they don't have health)
 	- Parasited friendlies (players or structures) will use a different font color in nameplates (yellow)
 	- Added new option to disable friends highlighting in the minimap/nameplates (chud_friends)
+	- Moved biomass display to avoid overlap with game timer
 
 - 16/02/2014 (Build 263):
 	- Reduced skulk jump sound volume to 50%
