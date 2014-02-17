@@ -105,13 +105,13 @@ function ApplyCHUD(script, scriptName)
 				CHUDSmokeSize = 128
 			end
 			ReplaceLocals(GUIAlienHUD.CreateHealthBall, {kHealthBackgroundTextureX2 = CHUDSmokeSize, kHealthBackgroundTextureY2 = CHUDSmokeSize, kTextureName = kTextureNameCHUD})
-			ReplaceLocals(GUIAlienHUD.CreateEnergyBall, {kHealthBackgroundTextureX2 = CHUDSmokeSize, kHealthBackgroundTextureY2 = CHUDSmokeSize, kTextureName = kTextureNameCHUD, kEnergyBackgroundOffset = Vector(-160-94, -62, 0),
+			ReplaceLocals(GUIAlienHUD.CreateEnergyBall, {kHealthBackgroundTextureX2 = CHUDSmokeSize, kHealthBackgroundTextureY2 = CHUDSmokeSize, kTextureName = kTextureNameCHUD,
 				energyBallSettings = {
 					BackgroundWidth = GUIScale(160),
 					BackgroundHeight = GUIScale(160),
 					BackgroundAnchorX = GUIItem.Right,
 					BackgroundAnchorY = GUIItem.Bottom,
-					BackgroundOffset = Vector(-160 - 45, -50, 0),
+					BackgroundOffset = Vector(-160 - 45, -50, 0) * GUIScale(1),
 					BackgroundTextureName = kTextureNameCHUD,
 					BackgroundTextureX1 = 0,
 					BackgroundTextureY1 = 0,
