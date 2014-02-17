@@ -71,6 +71,6 @@ Credits/Thanks to
 - **Unknown Worlds Entertainment** for creating Natural Selection 2. This is a classic in mod credits.
 - **Dragon** for rewriting my horrible light switching code (which I've stolen back from the NSL mod) and answering my stupid questions.
 - **bawNg** for his awesome injection code (from SparkMod: https://github.com/SparkMod/SparkMod). Tip: Never mention CS:GO to him.
--- **lwf** for the tracer code from Better NS2 (http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
--- **Ghoul**
--- **Sewlek** 
+- **lwf** for the tracer code from Better NS2 (http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
+- **Ghoul** (https://github.com/BrightPaul)
+- **Sewlek** 

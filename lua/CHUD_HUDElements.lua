@@ -18,7 +18,7 @@ originalMarineStatusUpdate = Class_ReplaceMethod( "GUIMarineStatus", "Update",
 			self.healthBorderMask:SetColor(Color(1,1,1,0))
 			self.armorBorderMask:SetColor(Color(1,1,1,0))
 		end
-		if not CHUDSettings["hpbar"] then
+		if not CHUDSettings["hpbar"] or Client.GetLocalPlayer():isa("Exo") then
 			self.statusbackground:SetTexturePixelCoordinates(unpack({ 0, 0, 0, 0 }))
 			self.scanLinesForeground:SetAnchor(GUIItem.Left, GUIItem.Top)
 			self.parasiteState:SetAnchor(GUIItem.Left, GUIItem.Center)
@@ -26,6 +26,12 @@ originalMarineStatusUpdate = Class_ReplaceMethod( "GUIMarineStatus", "Update",
 			self.armorText:SetPosition(Vector(-300, 96, 0))
 			self.healthBar:SetIsVisible(false)
 			self.armorBar:SetIsVisible(false)
+			if Client.GetLocalPlayer():isa("Exo") then
+				self.healthText:SetIsVisible(false)
+				self.healthBar:SetIsVisible(false)
+				self.healthBorderMask:SetColor(Color(1,1,1,0))
+				self.armorBorderMask:SetColor(Color(1,1,1,0))
+			end
 		end
 	end
 )
