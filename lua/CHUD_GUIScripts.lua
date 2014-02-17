@@ -331,8 +331,15 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 								alpha = 0
 							end
 						
+							local playerTeamType = PlayerUI_GetTeamType()
+							local isEnemy = false
+							
+							if playerTeamType ~= kNeutralTeamType then
+								isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
+							end
+							
 							local textColor = Color(kNameTagFontColors[blipData.TeamType])
-							if blipData.isEnemy then
+							if isEnemy then
 								textColor = GUIUnitStatus.kEnemyColor
 							elseif blipData.IsParasited and blipData.IsFriend then
 								textColor = Color(kCommanderColorFloat)
