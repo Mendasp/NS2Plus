@@ -166,7 +166,7 @@ function ApplyCHUD(script, scriptName)
 		elseif scriptName == "GUIScoreboard" then
 			Script.Load("lua/CHUD_SBInject.lua")
 			script:Uninitialize()
-			script:Initialize()			
+			script:Initialize()
 			
 		elseif scriptName == "GUIBioMassDisplay" then
 			if CHUDSettings["mingui"] then
@@ -185,9 +185,10 @@ function ApplyCHUD(script, scriptName)
 				script.background:SetPosition(GUIScale(Vector(20, 70, 0)))
 				script.smokeyBackground:SetPosition(GUIScale(Vector(-100, -20, 0)))
 			end
-		
-		elseif scriptName == "GUIFeedback" then
-			script.buildText:SetIsVisible(not CHUDSettings["mingui"])
+
+		// Touching this script releases demons and black magic for reasons unknown to science
+		/*elseif scriptName == "GUIFeedback" then
+			script.buildText:SetIsVisible(not CHUDSettings["mingui"])*/
 		end
 		
 		if not CHUDSettings["ambient"] then

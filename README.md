@@ -9,6 +9,9 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 19/02/2014 (Build 263):
+	- Disabled the toggling of the build number as it caused weird issues for reasons I fail to understand
+
 - 17/02/2014 (Build 263):
 	- Exos show only armor value in Minimal Nameplates/Exo HUD (since they don't have health)
 	- Parasited friendlies (players or structures) will use a different font color in nameplates (yellow)
