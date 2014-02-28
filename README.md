@@ -9,6 +9,12 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 28/02/2014 (Build 263):
+	- Fixed lifeform stat tracking (accuracy without Onos hits)
+	- Enabled Alien Vision switcher (chud_av). Switches between default and [Huze's Old Alien Vision](http://steamcommunity.com/sharedfiles/filedetails/?id=201163952).
+	- Added marine upgrade level toggle (chud_uplvl). This enables or disables the weapon/armor level icons on the side of the marine HUD.
+	- Added classic ammo counter toggle (chud_classicammo). Adds an ammo counter on the lower right, like in classic FPS games. Based on Dragon's NS2c ammo display code.
+
 - 19/02/2014 (Build 263):
 	- Disabled the toggling of the build number as it caused weird issues for reasons I fail to understand
 
@@ -46,7 +52,9 @@ Custom HUD Commands
 - **chud_alienbars:** Switches between default health/energy circles or thicker with gradients made by Oma.
 - **chud_ambient:** Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing "stopsound" in console.
 - **chud_assists:** Removes assist score popup.
+- **chud_av:** Switches between default alien vision or Huze's old alien vision
 - **chud_banners:** Removes the banners in the center of the screen ("Commander needed", "Power node under attack", "Evolution lost", etc).
+- **chud_classicammo:** Adds an ammo counter on the lower right, like in classic FPS games.
 - **chud_blur:** Removes the background blur from menus/minimap.
 - **chud_dmgcolor_a:** Alien damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.
 - **chud_dmgcolor_m:** Marine damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.
@@ -68,6 +76,7 @@ Custom HUD Commands
 - **chud_smallnps:** Makes fonts in the nameplates smaller.
 - **chud_tracers:** Disables weapon tracers.
 - **chud_unlocks:** Removes the research completed notifications on the right side of the screen.
+- **chud_uplvl:** Removes the weapon/armor level indicator on the right side of the marine HUD
 - **chud_wps:** Disables all waypoints except Attack orders (waypoints can still be seen on minimap).
 
 Credits/Thanks to

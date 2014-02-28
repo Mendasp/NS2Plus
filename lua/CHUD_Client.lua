@@ -43,6 +43,8 @@ function GetCHUDSettings()
 		ambient = Client.GetOptionBoolean("CHUD_Ambient", true),
 		nsllights = Client.GetOptionBoolean("lowLights", false),
 		friends = Client.GetOptionBoolean("CHUD_Friends", true),
+		uplvl = Client.GetOptionBoolean("CHUD_UpLVL", true),
+		classicammo = Client.GetOptionBoolean("CHUD_ClassicAmmo", false),
 	}
 end
 
@@ -140,13 +142,13 @@ function ApplyCHUD(script, scriptName)
 				script.resourceDisplay.background:SetColor(Color(1,1,1,1))
 			end
 					
-/*			if not CHUDSettings["av"] then
+			if not CHUDSettings["av"] then
 				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
 				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/DarkVision.screenfx")
 			else
 				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
 				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/HuzeOldAV.screenfx")
-			end*/
+			end
 			
 		elseif scriptName == "GUIUnitStatus" then
 			if CHUDSettings["smallnps"] then
@@ -204,8 +206,10 @@ function OnCommandCHUDHelp()
 	Shared.Message("chud_alienbars: Switches between default health/energy circles or thicker with gradients made by Oma")
 	Shared.Message("chud_ambient: Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing \"stopsound\" in console.")
 	Shared.Message("chud_assists: Removes assist score popup")
+	Shared.Message("chud_av: Switches between default alien vision or Huze's old alien vision")
 	Shared.Message("chud_banners: Removes the banners in the center of the screen (\"Commander needed\", \"Power node under attack\", \"Evolution lost\", etc.)")
 	Shared.Message("chud_blur: Removes the background blur from menus/minimap")
+	Shared.Message("chud_classicammo: Adds an ammo counter on the lower right, like in classic FPS games")
 	Shared.Message("chud_dmgcolor_a: Alien damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.")
 	Shared.Message("chud_dmgcolor_m: Marine damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.")
 	Shared.Message("chud_dmgcolor_reset: Reset damage numbers colors to the default on both aliens and marines.")
@@ -226,6 +230,7 @@ function OnCommandCHUDHelp()
 	Shared.Message("chud_smallnps: Makes fonts in the nameplates smaller")
 	Shared.Message("chud_tracers: Disables weapon tracers")
 	Shared.Message("chud_unlocks: Removes the research completed notifications on the right side of the screen")
+	Shared.Message("chud_uplvl: Removes the weapon/armor level indicator on the right side of the marine HUD")
 	Shared.Message("chud_wps: Disables all waypoints except Attack orders (waypoints can still be seen on minimap)")
 	Shared.Message("-------------------------------------")
 end
@@ -575,10 +580,32 @@ function OnCommandCHUDFriends()
 	CHUDSettings["friends"] = Client.GetOptionBoolean("CHUD_Friends", true)
 end
 
+function OnCommandCHUDUpLVL()
+	if Client.GetOptionBoolean("CHUD_UpLVL", true) then
+		Client.SetOptionBoolean("CHUD_UpLVL", false)	
+		Shared.Message("Marine upgrade level indicator disabled.")
+	else
+		Client.SetOptionBoolean("CHUD_UpLVL", true)
+		Shared.Message("Marine upgrade level indicator enabled.")
+	end
+	CHUDSettings["uplvl"] = Client.GetOptionBoolean("CHUD_UpLVL", true)
+end
+
+function OnCommandCHUDClassicAmmo()
+	if Client.GetOptionBoolean("CHUD_ClassicAmmo", false) then
+		Client.SetOptionBoolean("CHUD_ClassicAmmo", false)	
+		Shared.Message("Classic ammo counter disabled.")
+	else
+		Client.SetOptionBoolean("CHUD_ClassicAmmo", true)
+		Shared.Message("Classic ammo counter enabled.")
+	end
+	CHUDSettings["classicammo"] = Client.GetOptionBoolean("CHUD_ClassicAmmo", false)
+end
+
 Event.Hook("LoadComplete", AnnounceCHUD)
 Event.Hook("Console_chud", OnCommandCHUDHelp)
 Event.Hook("Console_chud_assists", OnCommandCHUDAssists)
-//Event.Hook("Console_chud_av", OnCommandCHUDAV)
+Event.Hook("Console_chud_av", OnCommandCHUDAV)
 Event.Hook("Console_chud_banners", OnCommandCHUDBanners)
 Event.Hook("Console_chud_blur", OnCommandCHUDBlur)
 Event.Hook("Console_chud_gametime", OnCommandCHUDGametime)
@@ -605,6 +632,8 @@ Event.Hook("Console_chud_alienbars", OnCommandCHUDAlienBars)
 Event.Hook("Console_chud_ambient", OnCommandCHUDAmbientSounds)
 Event.Hook("Console_stopsound", OnCommandCHUDStopSound)
 Event.Hook("Console_chud_lowlights", OnCommandCHUDNSLLights)
+Event.Hook("Console_chud_uplvl", OnCommandCHUDUpLVL)
+Event.Hook("Console_chud_classicammo", OnCommandCHUDClassicAmmo)
 Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 Event.Hook("LocalPlayerChanged", ApplyCHUDSettings)
 Event.Hook("LoadComplete", SetCHUDCinematics)

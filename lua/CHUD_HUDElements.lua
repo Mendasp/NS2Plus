@@ -7,6 +7,33 @@ originalMarineStatusInit = Class_ReplaceMethod( "GUIMarineStatus", "Initialize",
 			self.statusbackground:SetColor(Color(1,1,1,0))
 			self.scanLinesForeground:SetColor(Color(1,1,1,0))
 		end
+		
+		self.ammoText = self.script:CreateAnimatedTextItem()
+		self.ammoText:SetFontName(GUIMarineStatus.kFontName)
+		self.ammoText:SetAnchor(GUIItem.Right, GUIItem.Bottom)    
+		self.ammoText:SetTextAlignmentX(GUIItem.Align_Min)    
+		self.ammoText:SetTextAlignmentY(GUIItem.Align_Center)    
+		self.ammoText:SetColor(GUIMarineStatus.kHealthBarColor)
+	end
+)
+
+local originalMarineStatusReset
+originalMarineStatusReset = Class_ReplaceMethod( "GUIMarineStatus", "Reset",
+	function (self, scale)
+		originalMarineStatusReset(self, scale)
+	
+		self.ammoText:SetUniformScale(scale)
+		self.ammoText:SetScale(GetScaledVector())
+		self.ammoText:SetPosition(Vector(-210, -105, 0))
+	end
+)
+
+local originalMarineStatusDestroy
+originalMarineStatusDestroy = Class_ReplaceMethod( "GUIMarineStatus", "Destroy",
+	function (self)
+		originalMarineStatusDestroy(self)
+	
+		self.ammoText:Destroy()
 	end
 )
 
@@ -32,6 +59,23 @@ originalMarineStatusUpdate = Class_ReplaceMethod( "GUIMarineStatus", "Update",
 				self.healthBorderMask:SetColor(Color(1,1,1,0))
 				self.armorBorderMask:SetColor(Color(1,1,1,0))
 			end
+		end
+		
+		local player = Client.GetLocalPlayer()
+		if player:GetActiveWeapon() and player:GetActiveWeapon():isa("ClipWeapon") and not player:isa("Exo") and CHUDSettings["classicammo"] then
+			local clipammo = ToString(PlayerUI_GetWeaponClip())
+			local ammo = ToString(PlayerUI_GetWeaponAmmo())
+			if clipammo == nil then clipammo = "--" end
+			if ammo == "0" then ammo = "--" end
+			self.ammoText:SetText(clipammo .. " / " .. ammo)
+			self.ammoText:SetIsVisible(true)
+			if PlayerUI_GetWeaponClip() < PlayerUI_GetWeapon():GetClipSize() * 0.25 then
+				self.ammoText:SetColor(Color(1, 0, 0, 1)) 
+			else
+				self.ammoText:SetColor(GUIMarineStatus.kHealthBarColor) 
+			end
+		else
+			self.ammoText:SetIsVisible(false)
 		end
 	end
 )

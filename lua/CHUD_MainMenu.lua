@@ -24,6 +24,9 @@ local function CHUDSaveMenuSettings()
 		Client.SetOptionBoolean("CHUD_Ambient", mainMenu.optionElements.CHUDAmbient:GetActiveOptionIndex() > 1)
 		Client.SetOptionBoolean("lowLights", mainMenu.optionElements.CHUDNSLLights:GetActiveOptionIndex() > 1)
 		Client.SetOptionBoolean("CHUD_Friends", mainMenu.optionElements.CHUDFriends:GetActiveOptionIndex() > 1)
+		Client.SetOptionBoolean("CHUD_AV", mainMenu.optionElements.CHUDAV:GetActiveOptionIndex() > 1)
+		Client.SetOptionBoolean("CHUD_UpLVL", mainMenu.optionElements.CHUDUpLVL:GetActiveOptionIndex() > 1)
+		Client.SetOptionBoolean("CHUD_ClassicAmmo", mainMenu.optionElements.CHUDClassicAmmo:GetActiveOptionIndex() > 1)
 		
 		GetCHUDSettings()
 		ApplyCHUDSettings()
@@ -227,6 +230,30 @@ local CHUDOptions = {
 				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
 			}, 
+			{
+				name    = "CHUDAV",
+				label   = "ALIEN VISION",
+				tooltip = "Switches between vanilla Alien Vision and Huze's Old Alien Vision.",
+				type    = "select",
+				values  = { "DEFAULT", "HUZE'S OLD AV" },
+				callback = CHUDSaveMenuSettings
+			}, 
+			{
+				name    = "CHUDUpLVL",
+				label   = "UPGRADE INDICATOR",
+				tooltip = "Toggles the weapon/armor level indicator on the right side of the marine HUD.",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
+			{
+				name    = "CHUDClassicAmmo",
+				label   = "CLASSIC AMMO COUNTER",
+				tooltip = "Toggles a classic ammo counter on the bottom right of the HUD.",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+			}, 
 			
 		}
 
@@ -278,6 +305,9 @@ originalCreateOptionWindow = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionWi
 		self.optionElements.CHUDAmbient:SetOptionActive( BoolToIndex(CHUDSettings["ambient"]) )
 		self.optionElements.CHUDNSLLights:SetOptionActive( BoolToIndex(CHUDSettings["nsllights"]) )
 		self.optionElements.CHUDFriends:SetOptionActive( BoolToIndex(CHUDSettings["friends"]) )
+		self.optionElements.CHUDAV:SetOptionActive( BoolToIndex(CHUDSettings["av"]) )
+		self.optionElements.CHUDUpLVL:SetOptionActive( BoolToIndex(CHUDSettings["uplvl"]) )
+		self.optionElements.CHUDClassicAmmo:SetOptionActive( BoolToIndex(CHUDSettings["classicammo"]) )
 		
 		mainMenu = self
 	end)

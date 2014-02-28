@@ -73,7 +73,7 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 			// posx has to be either 1.0 or 0.0 and posz will always be kHitEffectMaxPosition-1 so we can detect it
 			local msg = { }
 			msg.amount = healthUsed+(armorUsed)*2
-			msg.target = (target and target:GetId()) or Entity.invalidId
+			msg.targetId = (target and target:GetId()) or Entity.invalidId
 			msg.posx = ConditionalValue(target:isa("Player"), 1, 0)
 			msg.posy = weapon
 			msg.posz = kHitEffectMaxPosition-1

@@ -63,6 +63,16 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							self.resourceDisplay.pResDescription:SetText(Locale.ResolveString("RESOURCES"))
 						end
 						
+						// Upgrade toggle, easy peasy lemon squeezy
+						
+						if self.armorLevel:GetIsVisible() then
+							self.armorLevel:SetIsVisible(CHUDSettings["uplvl"])
+						end
+						
+						if self.weaponLevel:GetIsVisible() then
+							self.weaponLevel:SetIsVisible(CHUDSettings["uplvl"])
+						end
+						
 						self.commanderName:SetIsVisible(false)
 						if (CHUDSettings["minimap"] or (CHUDSettings["showcomm"] and not CHUDSettings["minimap"])) then
 							// Update commander name
