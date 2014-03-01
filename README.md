@@ -9,6 +9,9 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 29/02/2014 (Build 263):
+	- Fixed friendly evolving players not showing player name
+
 - 28/02/2014 (Build 263):
 	- Fixed lifeform stat tracking (accuracy without Onos hits)
 	- Enabled Alien Vision switcher (chud_av). Switches between default and [Huze's Old Alien Vision](http://steamcommunity.com/sharedfiles/filedetails/?id=201163952).

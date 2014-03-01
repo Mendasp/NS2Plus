@@ -205,7 +205,7 @@ function PlayerUI_GetUnitStatusInfo()
 					end
 					
 					if (unit:GetMapName() ~= TechPoint.kMapName and unit:GetMapName() ~= ResourcePoint.kPointMapName) and not player:isa("Commander") then
-						if CHUDSettings["minnps"] and not (unit:isa("Player") and not unit:isa("Embryo")) then
+						if CHUDSettings["minnps"] and not unit:isa("Player") or (unit:isa("Embryo") and GetAreEnemies(player, unit)) then
 							if (unit:GetMapName() == PhaseGate.kMapName or unit:GetMapName() == TunnelEntrance.kMapName) and description ~= nil then
 								description = string.format("%s (%d%%)",description, math.ceil(unit:GetHealthScalar()*100))
 							else
