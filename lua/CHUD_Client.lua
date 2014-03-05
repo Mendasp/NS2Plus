@@ -191,6 +191,63 @@ function ApplyCHUD(script, scriptName)
 		// Touching this script releases demons and black magic for reasons unknown to science
 		/*elseif scriptName == "GUIFeedback" then
 			script.buildText:SetIsVisible(not CHUDSettings["mingui"])*/
+			
+		elseif scriptName == "GUIMinimapFrame" then
+			if script.buttonsScript then
+				local selectionPanelScript = GetGUIManager():GetGUIScriptSingle("GUISelectionPanel")
+				local minimapButtons = GetGUIManager():GetGUIScriptSingle("GUIMinimapButtons")
+				local resourceDisplay = GetGUIManager():GetGUIScriptSingle("GUIResourceDisplay")
+				local logoutScript = GetGUIManager():GetGUIScriptSingle("GUICommanderLogout")
+				local commanderTooltip = GetGUIManager():GetGUIScriptSingle("GUICommanderTooltip")
+								
+				if CHUDSettings["mingui"] then
+					if minimapButtons then
+						minimapButtons.background:SetIsVisible(false)
+						// Move them off-screen so we can click through
+						minimapButtons.pingButton:SetPosition(Vector(-9999,0,0))
+						minimapButtons.techMapButton:SetPosition(Vector(-9999,0,0))
+					end
+					if Client.GetLocalPlayer():isa("MarineCommander") then
+						script.buttonsScript.background:SetTexture("ui/blank.dds")
+						selectionPanelScript.background:SetTexture("ui/blank.dds")
+						script.minimapFrame:SetTexture("ui/blank.dds")
+						logoutScript.background:SetTexture("ui/blank.dds")
+						commanderTooltip.backgroundTop:SetTexture("ui/blank.dds")
+						commanderTooltip.backgroundCenter:SetTexture("ui/blank.dds")
+						commanderTooltip.backgroundBottom:SetTexture("ui/blank.dds")
+					elseif Client.GetLocalPlayer():isa("AlienCommander") then
+						script.buttonsScript.smokeyBackground:SetTexture("ui/blank.dds")
+						selectionPanelScript.smokeyBackground:SetTexture("ui/blank.dds")
+						script.smokeyBackground:SetTexture("ui/blank.dds")
+						resourceDisplay.smokeyBackground:SetTexture("ui/blank.dds")
+						logoutScript.smokeyBackground:SetTexture("ui/blank.dds")
+						commanderTooltip.smokeyBackground:SetTexture("ui/blank.dds")
+					end
+				else
+					if minimapButtons then
+						minimapButtons.background:SetIsVisible(true)
+						minimapButtons.pingButton:SetPosition(Vector(0,0,0))
+						minimapButtons.techMapButton:SetPosition(Vector(0,0,0))
+					end
+					if Client.GetLocalPlayer():isa("MarineCommander") then
+						script.buttonsScript.background:SetTexture(GUICommanderButtonsMarines:GetBackgroundTextureName())
+						selectionPanelScript.background:SetTexture(GUISelectionPanel.kSelectionTextureMarines)
+						script.minimapFrame:SetTexture("ui/marine_commander_textures.dds")
+						logoutScript.background:SetTexture(GUICommanderLogout.kLogoutMarineTextureName)
+						commanderTooltip.backgroundTop:SetTexture(GUICommanderTooltip.kMarineBackgroundTexture)
+						commanderTooltip.backgroundCenter:SetTexture(GUICommanderTooltip.kMarineBackgroundTexture)
+						commanderTooltip.backgroundBottom:SetTexture(GUICommanderTooltip.kMarineBackgroundTexture)
+					elseif Client.GetLocalPlayer():isa("AlienCommander") then
+						script.buttonsScript.smokeyBackground:SetTexture("ui/alien_commander_smkmask.dds")
+						selectionPanelScript.smokeyBackground:SetTexture("ui/alien_logout_smkmask.dds")
+						script.smokeyBackground:SetTexture("ui/alien_minimap_smkmask.dds")
+						resourceDisplay.smokeyBackground:SetTexture("ui/alien_ressources_smkmask.dds")
+						logoutScript.smokeyBackground:SetTexture("ui/alien_logout_smkmask.dds")
+						commanderTooltip.smokeyBackground:SetTexture("ui/alien_logout_smkmask.dds")
+					end
+				end					
+			end
+		
 		end
 		
 		if not CHUDSettings["ambient"] then
