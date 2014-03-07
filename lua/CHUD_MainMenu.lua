@@ -1,5 +1,14 @@
 local mainMenu
 
+local function CHUDHitIndicatorSlider()
+	if mainMenu ~= nil and mainMenu.optionElements ~= nil then
+		local value = mainMenu.optionElements.CHUDHitIndicator:GetValue()
+		Client.SetOptionFloat("CHUD_HitIndicator", value)
+		CHUDSettings["hitindicator"] = value
+		Player.kShowGiveDamageTime = value
+	end
+end
+
 local function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.optionElements ~= nil then
 		Client.SetOptionBoolean("CHUD_ScorePopup", mainMenu.optionElements.CHUDScore:GetActiveOptionIndex() > 1)
@@ -24,9 +33,11 @@ local function CHUDSaveMenuSettings()
 		Client.SetOptionBoolean("CHUD_Ambient", mainMenu.optionElements.CHUDAmbient:GetActiveOptionIndex() > 1)
 		Client.SetOptionBoolean("lowLights", mainMenu.optionElements.CHUDNSLLights:GetActiveOptionIndex() > 1)
 		Client.SetOptionBoolean("CHUD_Friends", mainMenu.optionElements.CHUDFriends:GetActiveOptionIndex() > 1)
-		Client.SetOptionBoolean("CHUD_AV", mainMenu.optionElements.CHUDAV:GetActiveOptionIndex() > 1)
+		Client.SetOptionInteger("CHUD_AV", mainMenu.optionElements.CHUDAV:GetActiveOptionIndex()-1)
 		Client.SetOptionBoolean("CHUD_UpLVL", mainMenu.optionElements.CHUDUpLVL:GetActiveOptionIndex() > 1)
 		Client.SetOptionBoolean("CHUD_ClassicAmmo", mainMenu.optionElements.CHUDClassicAmmo:GetActiveOptionIndex() > 1)
+		Client.SetOptionFloat("CHUD_HitIndicator", mainMenu.optionElements.CHUDHitIndicator:GetValue())
+		Client.SetOptionBoolean("CHUD_AutoWPs", mainMenu.optionElements.CHUDAutoWPs:GetActiveOptionIndex() > 1)
 		
 		GetCHUDSettings()
 		ApplyCHUDSettings()
@@ -233,9 +244,9 @@ local CHUDOptions = {
 			{
 				name    = "CHUDAV",
 				label   = "ALIEN VISION",
-				tooltip = "Switches between vanilla Alien Vision and Huze's Old Alien Vision.",
+				tooltip = "Lets you choose between different Alien Vision types",
 				type    = "select",
-				values  = { "DEFAULT", "HUZE'S OLD AV" },
+				values  = { "DEFAULT", "HUZE'S OLD AV", "HUZE'S MINIMAL AV" },
 				callback = CHUDSaveMenuSettings
 			}, 
 			{
@@ -253,10 +264,25 @@ local CHUDOptions = {
 				type    = "select",
 				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
-			}, 
+			},
+            { 
+                name    = "CHUDHitIndicator",
+                label   = "HIT INDICATOR FADE TIME",
+				tooltip = "Controls the speed of the crosshair hit indicator.",
+                type    = "slider",
+				sliderCallback = CHUDHitIndicatorSlider,
+            },
+            { 
+                name    = "CHUDAutoWPs",
+                label   = "AUTOMATIC WAYPOINTS",
+				tooltip = "Enables or disables automatic waypoints (not given by the commander).",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+            },
 			
 		}
-
+		
 local function BoolToIndex(value)
 	if value then
 		return 2
@@ -305,9 +331,11 @@ originalCreateOptionWindow = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionWi
 		self.optionElements.CHUDAmbient:SetOptionActive( BoolToIndex(CHUDSettings["ambient"]) )
 		self.optionElements.CHUDNSLLights:SetOptionActive( BoolToIndex(CHUDSettings["nsllights"]) )
 		self.optionElements.CHUDFriends:SetOptionActive( BoolToIndex(CHUDSettings["friends"]) )
-		self.optionElements.CHUDAV:SetOptionActive( BoolToIndex(CHUDSettings["av"]) )
+		self.optionElements.CHUDAV:SetOptionActive( CHUDSettings["av"]+1 )
 		self.optionElements.CHUDUpLVL:SetOptionActive( BoolToIndex(CHUDSettings["uplvl"]) )
 		self.optionElements.CHUDClassicAmmo:SetOptionActive( BoolToIndex(CHUDSettings["classicammo"]) )
+		self.optionElements.CHUDHitIndicator:SetValue( CHUDSettings["hitindicator"] )
+		self.optionElements.CHUDAutoWPs:SetOptionActive( BoolToIndex(CHUDSettings["autowps"]) )
 		
 		mainMenu = self
 	end)

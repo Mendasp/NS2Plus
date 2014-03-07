@@ -18,7 +18,7 @@ end
 function GetCHUDSettings()
 	CHUDSettings = {
 		assists = Client.GetOptionBoolean("CHUD_Assists", true),
-		av = Client.GetOptionBoolean("CHUD_AV", false),
+		av = Client.GetOptionInteger("CHUD_AV", 0),
 		banners = Client.GetOptionBoolean("CHUD_Banners", true),
 		blur = Client.GetOptionBoolean("CHUD_Blur", true),
 		gametime = Client.GetOptionBoolean("CHUD_Gametime", false),
@@ -45,6 +45,8 @@ function GetCHUDSettings()
 		friends = Client.GetOptionBoolean("CHUD_Friends", true),
 		uplvl = Client.GetOptionBoolean("CHUD_UpLVL", true),
 		classicammo = Client.GetOptionBoolean("CHUD_ClassicAmmo", false),
+		hitindicator = Client.GetOptionFloat("CHUD_HitIndicator", 1),
+		autowps = Client.GetOptionBoolean("CHUD_AutoWPs", true),
 	}
 end
 
@@ -142,12 +144,21 @@ function ApplyCHUD(script, scriptName)
 				script.resourceDisplay.background:SetColor(Color(1,1,1,1))
 			end
 					
-			if not CHUDSettings["av"] then
+			if CHUDSettings["av"] == 1 then
 				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
-				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/DarkVision.screenfx")
+				Client.DestroyScreenEffect(HiveVision_screenEffect)
+				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
+				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/HuzeOldAV.screenfx")
+			elseif CHUDSettings["av"] == 2 then
+				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
+				Client.DestroyScreenEffect(HiveVision_screenEffect)
+				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
+				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/HuzeMinAV.screenfx")
 			else
 				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
-				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/HuzeOldAV.screenfx")
+				Client.DestroyScreenEffect(HiveVision_screenEffect)
+				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
+				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/DarkVision.screenfx")
 			end
 			
 		elseif scriptName == "GUIUnitStatus" then
@@ -263,7 +274,8 @@ function OnCommandCHUDHelp()
 	Shared.Message("chud_alienbars: Switches between default health/energy circles or thicker with gradients made by Oma")
 	Shared.Message("chud_ambient: Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing \"stopsound\" in console.")
 	Shared.Message("chud_assists: Removes assist score popup")
-	Shared.Message("chud_av: Switches between default alien vision or Huze's old alien vision")
+	Shared.Message("chud_autowps: Enables or disables the automatic waypoints (you still get Commander waypoints)")
+	Shared.Message("chud_av: Switches between default alien vision, Huze's old alien vision or Huze's minimal alien vision")
 	Shared.Message("chud_banners: Removes the banners in the center of the screen (\"Commander needed\", \"Power node under attack\", \"Evolution lost\", etc.)")
 	Shared.Message("chud_blur: Removes the background blur from menus/minimap")
 	Shared.Message("chud_classicammo: Adds an ammo counter on the lower right, like in classic FPS games")
@@ -273,6 +285,7 @@ function OnCommandCHUDHelp()
 	Shared.Message("chud_friends: Toggle the friend highlighting in the minimap/nameplates.")
 	Shared.Message("chud_gametime: Adds or removes the game time on the top left (requires having the commander name as marines)")
 	Shared.Message("chud_hpbar: Removes the health bars from the marine HUD")
+	Shared.Message("chud_hitindicator: Controls the speed of the crosshair hit indicator")
 	Shared.Message("chud_kda: Switches the scoreboard from KAD to KDA")
 	Shared.Message("chud_lowlights: Changes between the default map low quality lights and the NSL lights")
 	Shared.Message("chud_mingui: Removes backgrounds/scanlines from all UI elements")
@@ -513,15 +526,22 @@ function OnCommandCHUDAssists()
 	CHUDSettings["assists"] = Client.GetOptionBoolean("CHUD_Assists", true)
 end
 
-function OnCommandCHUDAV()
-	if Client.GetOptionBoolean("CHUD_AV", false) then
-		Client.SetOptionBoolean("CHUD_AV", false)	
-		Shared.Message("Default Alien Vision enabled.")
+CHUDAVModes = enum({ "Default", "Huze's Old AV", "Huze's Minimal AV" })
+function OnCommandCHUDAV(mode)
+
+	local avMode = tonumber(mode)
+	
+	if avMode == 0 or avMode == 1 or avMode == 2 then
+		Client.SetOptionInteger("CHUD_AV", avMode)
+		Shared.Message("Alien vision set to: " .. CHUDAVModes[avMode+1])
 	else
-		Client.SetOptionBoolean("CHUD_AV", true)
-		Shared.Message("Huze's Old Alien Vision enabled.")
+		Shared.Message("Usage: chud_av <number> - Example: chud_av 0")
+		Shared.Message("chud_av 0 - Default Alien Vision")
+		Shared.Message("chud_av 1 - Huze's Old Alien Vision")
+		Shared.Message("chud_av 2 - Huze's Minimal Alien Vision")
+		Shared.Message("Current value: " .. Client.GetOptionInteger("CHUD_AV", 0))
 	end
-	CHUDSettings["av"] = Client.GetOptionBoolean("CHUD_AV", false)
+	CHUDSettings["av"] = Client.GetOptionInteger("CHUD_AV", 0)
 	ApplyCHUDSettings()
 end
 
@@ -659,6 +679,32 @@ function OnCommandCHUDClassicAmmo()
 	CHUDSettings["classicammo"] = Client.GetOptionBoolean("CHUD_ClassicAmmo", false)
 end
 
+function OnCommandCHUDHitIndicator(speed)
+
+	local chosenSpeed = tonumber(speed)
+	
+	if chosenSpeed and chosenSpeed >= 0 and chosenSpeed <= 1 then
+		Client.SetOptionFloat("CHUD_HitIndicator", chosenSpeed)
+	else
+		Shared.Message("Usage: chud_hitindicator <number> - Example: chud_hitindicator 1")
+		Shared.Message("Accepts values between 0 and 1. Default: 1. Setting it to 0 will disable the hit indicator.")
+		Shared.Message("Current value: " .. Client.GetOptionFloat("CHUD_HitIndicator", 1))
+	end
+	CHUDSettings["hitindicator"] = Client.GetOptionFloat("CHUD_HitIndicator", 1)
+	Player.kShowGiveDamageTime = CHUDSettings["hitindicator"]
+end
+
+function OnCommandCHUDAutoWPs()
+	if Client.GetOptionBoolean("CHUD_AutoWPs", true) then
+		Client.SetOptionBoolean("CHUD_AutoWPs", false)	
+		Shared.Message("Automatic waypoints disabled.")
+	else
+		Client.SetOptionBoolean("CHUD_AutoWPs", true)
+		Shared.Message("Automatic waypoints enabled.")
+	end
+	CHUDSettings["autowps"] = Client.GetOptionBoolean("CHUD_AutoWPs", true)
+end
+
 Event.Hook("LoadComplete", AnnounceCHUD)
 Event.Hook("Console_chud", OnCommandCHUDHelp)
 Event.Hook("Console_chud_assists", OnCommandCHUDAssists)
@@ -691,6 +737,8 @@ Event.Hook("Console_stopsound", OnCommandCHUDStopSound)
 Event.Hook("Console_chud_lowlights", OnCommandCHUDNSLLights)
 Event.Hook("Console_chud_uplvl", OnCommandCHUDUpLVL)
 Event.Hook("Console_chud_classicammo", OnCommandCHUDClassicAmmo)
+Event.Hook("Console_chud_hitindicator", OnCommandCHUDHitIndicator)
+Event.Hook("Console_chud_autowps", OnCommandCHUDAutoWPs)
 Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 Event.Hook("LocalPlayerChanged", ApplyCHUDSettings)
 Event.Hook("LoadComplete", SetCHUDCinematics)

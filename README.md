@@ -9,6 +9,12 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 07/03/2014 (Build 263):
+	- Added server tag "CHUD" (in the future this could allow searching for servers that run the mod).
+	- Added third option to the Alien Vision switcher: [Huze's Minimal AV](http://steamcommunity.com/sharedfiles/filedetails/?id=98879398).
+	- Added hit indicator fade time (chud_hitindicator). Controls the time it takes for the crosshair hit indicator to fade out (between 0 and 1 - Default value: 1).
+	- Added new command to disable automatic waypoints (chud_autowps). Disables the waypoints not given by the commander.
+
 - 05/03/2014 (Build 263):
 	- Minimal GUI now affects the Commander interface as expected
 
@@ -58,6 +64,7 @@ Custom HUD Commands
 - **chud_alienbars:** Switches between default health/energy circles or thicker with gradients made by Oma.
 - **chud_ambient:** Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing "stopsound" in console.
 - **chud_assists:** Removes assist score popup.
+- **chud_autowps:** Enables or disables the automatic waypoints (you still get Commander waypoints).
 - **chud_av:** Switches between default alien vision or Huze's old alien vision
 - **chud_banners:** Removes the banners in the center of the screen ("Commander needed", "Power node under attack", "Evolution lost", etc).
 - **chud_classicammo:** Adds an ammo counter on the lower right, like in classic FPS games.
@@ -67,6 +74,7 @@ Custom HUD Commands
 - **chud_dmgcolor_reset:** Reset damage numbers colors to the default on both aliens and marines.
 - **chud_friends:** Toggle the friend highlighting in the minimap/nameplates.
 - **chud_gametime:** Adds or removes the game time on the top left (requires having the commander name as marines).
+- **chud_hitindicator:** Controls the speed of the crosshair hit indicator.
 - **chud_hpbar:** Removes the health bars from the marine HUD.
 - **chud_kda:** Switches the scoreboard from KAD to KDA.
 - **chud_lowlights:** Changes between the default map low quality lights and the NSL lights.

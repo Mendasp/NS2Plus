@@ -297,6 +297,13 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						self.finalWaypoint:SetIsVisible(finalWaypointData.type == kTechId.Attack)
 					end
 					
+					// Disabled auto waypoints only
+					if finalWaypointData and not CHUDSettings["autowps"] and CHUDSettings["wps"] then
+						if finalWaypointData.type == kTechId.AutoConstruct or finalWaypointData.type == kTechId.AutoWeld then
+							self.finalWaypoint:SetIsVisible(false)
+						end
+					end
+					
 					// Hide the arrows in any of the modes
 					for a = 1, #self.worldArrows do
 						self.worldArrows[a].model:SetIsVisible(not (CHUDSettings["minwps"] or not CHUDSettings["wps"]))

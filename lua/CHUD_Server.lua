@@ -1,3 +1,5 @@
+Server.AddTag("CHUD")
+
 local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 	if Server and GetGamerules():GetGameStarted() then
