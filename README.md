@@ -9,6 +9,9 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 09/03/2014 (Build 263):
+	- Server browser is now able to filter servers running CHUD, but can only do so ingame. To be able to search outside of a game use [CHUD Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163).
+
 - 07/03/2014 (Build 263):
 	- Added server tag "CHUD" (in the future this could allow searching for servers that run the mod).
 	- Added third option to the Alien Vision switcher: [Huze's Minimal AV](http://steamcommunity.com/sharedfiles/filedetails/?id=98879398).

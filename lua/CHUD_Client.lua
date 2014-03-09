@@ -8,6 +8,7 @@ Script.Load("lua/CHUD_Tracers.lua")
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_ScoreDisplay.lua")
 Script.Load("lua/CHUD_Stats.lua")
+Script.Load("lua/CHUD_ServerBrowser.lua")
 
 function ApplyCHUDSettings()
 	for name, script in pairs(GetGUIManager().scripts) do
