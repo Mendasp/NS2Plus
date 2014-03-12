@@ -48,6 +48,9 @@ function GetCHUDSettings()
 		classicammo = Client.GetOptionBoolean("CHUD_ClassicAmmo", false),
 		hitindicator = Client.GetOptionFloat("CHUD_HitIndicator", 1),
 		autowps = Client.GetOptionBoolean("CHUD_AutoWPs", true),
+		avstate = Client.GetOptionBoolean("CHUD_AVState", false),
+		locationalpha = Client.GetOptionFloat("CHUD_LocationAlpha", 0.65),
+		minimapalpha = Client.GetOptionFloat("CHUD_MinimapAlpha", 0.85),
 	}
 end
 
@@ -162,6 +165,10 @@ function ApplyCHUD(script, scriptName)
 				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/DarkVision.screenfx")
 			end
 			
+			if Client.GetIsControllingPlayer() then
+				Client.GetLocalPlayer():SetDarkVision(CHUDSettings["avstate"])
+			end
+			
 		elseif scriptName == "GUIUnitStatus" then
 			if CHUDSettings["smallnps"] then
 				GUIUnitStatus.kFontScale = GUIScale( Vector(1,1,1) ) * 0.8
@@ -205,13 +212,18 @@ function ApplyCHUD(script, scriptName)
 			script.buildText:SetIsVisible(not CHUDSettings["mingui"])*/
 			
 		elseif scriptName == "GUIMinimapFrame" then
+			
+			script:GetMinimapItem():SetColor(Color(1,1,1,CHUDSettings["minimapalpha"]))
+			
+			OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDSettings["locationalpha"])*255))
+			
 			if script.buttonsScript then
 				local selectionPanelScript = GetGUIManager():GetGUIScriptSingle("GUISelectionPanel")
 				local minimapButtons = GetGUIManager():GetGUIScriptSingle("GUIMinimapButtons")
 				local resourceDisplay = GetGUIManager():GetGUIScriptSingle("GUIResourceDisplay")
 				local logoutScript = GetGUIManager():GetGUIScriptSingle("GUICommanderLogout")
 				local commanderTooltip = GetGUIManager():GetGUIScriptSingle("GUICommanderTooltip")
-								
+				
 				if CHUDSettings["mingui"] then
 					if minimapButtons then
 						minimapButtons.background:SetIsVisible(false)
@@ -277,6 +289,7 @@ function OnCommandCHUDHelp()
 	Shared.Message("chud_assists: Removes assist score popup")
 	Shared.Message("chud_autowps: Enables or disables the automatic waypoints (you still get Commander waypoints)")
 	Shared.Message("chud_av: Switches between default alien vision, Huze's old alien vision or Huze's minimal alien vision")
+	Shared.Message("chud_avstate: Sets the default state of the alien vision on respawn")
 	Shared.Message("chud_banners: Removes the banners in the center of the screen (\"Commander needed\", \"Power node under attack\", \"Evolution lost\", etc.)")
 	Shared.Message("chud_blur: Removes the background blur from menus/minimap")
 	Shared.Message("chud_classicammo: Adds an ammo counter on the lower right, like in classic FPS games")
@@ -288,9 +301,11 @@ function OnCommandCHUDHelp()
 	Shared.Message("chud_hpbar: Removes the health bars from the marine HUD")
 	Shared.Message("chud_hitindicator: Controls the speed of the crosshair hit indicator")
 	Shared.Message("chud_kda: Switches the scoreboard from KAD to KDA")
+	Shared.Message("chud_locationalpha: Sets the trasparency of the location text on the minimap")
 	Shared.Message("chud_lowlights: Changes between the default map low quality lights and the NSL lights")
 	Shared.Message("chud_mingui: Removes backgrounds/scanlines from all UI elements")
 	Shared.Message("chud_minimap: Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions)")
+	Shared.Message("chud_minimapalpha: Sets the trasparency of the map overview")
 	Shared.Message("chud_minnps: Removes building names and health/armor bars and replaces them with a simple %")
 	Shared.Message("chud_minwps: Removes all text/backgrounds and only leaves the waypoint icon")
 	Shared.Message("chud_particles: Reduces particle clutter")
@@ -706,6 +721,48 @@ function OnCommandCHUDAutoWPs()
 	CHUDSettings["autowps"] = Client.GetOptionBoolean("CHUD_AutoWPs", true)
 end
 
+function OnCommandCHUDAVState()
+	if Client.GetOptionBoolean("CHUD_AVState", false) then
+		Client.SetOptionBoolean("CHUD_AVState", false)	
+		Shared.Message("Alien vision will start off by default.")
+	else
+		Client.SetOptionBoolean("CHUD_AVState", true)
+		Shared.Message("Alien vision will start on by default.")
+	end
+	CHUDSettings["avstate"] = Client.GetOptionBoolean("CHUD_AVState", false)
+end
+
+function OnCommandCHUDLocationAlpha(alpha)
+
+	local chosenAlpha = tonumber(alpha)
+	
+	if chosenAlpha and chosenAlpha >= 0 and chosenAlpha <= 1 then
+		Client.SetOptionFloat("CHUD_LocationAlpha", chosenAlpha)
+	else
+		Shared.Message("Usage: chud_locationalpha <number> - Example: chud_locationalpha 0.25")
+		Shared.Message("Accepts values between 0 and 1. Default: 0.65. Setting it to 0 will make locations invisible.")
+		Shared.Message("Current value: " .. Client.GetOptionFloat("CHUD_LocationAlpha", 0.65))
+	end
+	CHUDSettings["locationalpha"] = Client.GetOptionFloat("CHUD_LocationAlpha", 0.65)
+	OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDSettings["locationalpha"])*255))
+end
+
+function OnCommandCHUDMinimapAlpha(alpha)
+
+	local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
+	local chosenAlpha = tonumber(alpha)
+	
+	if chosenAlpha and chosenAlpha >= 0 and chosenAlpha <= 1 then
+		Client.SetOptionFloat("CHUD_MinimapAlpha", chosenAlpha)
+	else
+		Shared.Message("Usage: chud_minimapalpha <number> - Example: chud_minimapalpha 0.25")
+		Shared.Message("Accepts values between 0 and 1. Default: 0.85. Setting it to 0 will make locations invisible.")
+		Shared.Message("Current value: " .. Client.GetOptionFloat("CHUD_MinimapAlpha", 0.85))
+	end
+	CHUDSettings["minimapalpha"] = Client.GetOptionFloat("CHUD_MinimapAlpha", 0.85)
+	minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDSettings["minimapalpha"]))
+end
+
 Event.Hook("LoadComplete", AnnounceCHUD)
 Event.Hook("Console_chud", OnCommandCHUDHelp)
 Event.Hook("Console_chud_assists", OnCommandCHUDAssists)
@@ -740,6 +797,9 @@ Event.Hook("Console_chud_uplvl", OnCommandCHUDUpLVL)
 Event.Hook("Console_chud_classicammo", OnCommandCHUDClassicAmmo)
 Event.Hook("Console_chud_hitindicator", OnCommandCHUDHitIndicator)
 Event.Hook("Console_chud_autowps", OnCommandCHUDAutoWPs)
+Event.Hook("Console_chud_avstate", OnCommandCHUDAVState)
+Event.Hook("Console_chud_locationalpha", OnCommandCHUDLocationAlpha)
+Event.Hook("Console_chud_minimapalpha", OnCommandCHUDMinimapAlpha)
 Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 Event.Hook("LocalPlayerChanged", ApplyCHUDSettings)
 Event.Hook("LoadComplete", SetCHUDCinematics)

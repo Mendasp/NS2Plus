@@ -9,6 +9,25 @@ local function CHUDHitIndicatorSlider()
 	end
 end
 
+local function CHUDLocationSlider()
+	if mainMenu ~= nil and mainMenu.optionElements ~= nil then
+		local value = mainMenu.optionElements.CHUDLocationAlpha:GetValue()
+		Client.SetOptionFloat("CHUD_LocationAlpha", value)
+		CHUDSettings["locationalpha"] = value
+		OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDSettings["locationalpha"])*255))
+	end
+end
+
+local function CHUDMinimapSlider()
+	if mainMenu ~= nil and mainMenu.optionElements ~= nil then
+		local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
+		local value = mainMenu.optionElements.CHUDMinimapAlpha:GetValue()
+		Client.SetOptionFloat("CHUD_MinimapAlpha", value)
+		CHUDSettings["minimapalpha"] = value
+		minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDSettings["minimapalpha"]))
+	end
+end
+
 local function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.optionElements ~= nil then
 		Client.SetOptionBoolean("CHUD_ScorePopup", mainMenu.optionElements.CHUDScore:GetActiveOptionIndex() > 1)
@@ -38,6 +57,9 @@ local function CHUDSaveMenuSettings()
 		Client.SetOptionBoolean("CHUD_ClassicAmmo", mainMenu.optionElements.CHUDClassicAmmo:GetActiveOptionIndex() > 1)
 		Client.SetOptionFloat("CHUD_HitIndicator", mainMenu.optionElements.CHUDHitIndicator:GetValue())
 		Client.SetOptionBoolean("CHUD_AutoWPs", mainMenu.optionElements.CHUDAutoWPs:GetActiveOptionIndex() > 1)
+		Client.SetOptionBoolean("CHUD_AVState", mainMenu.optionElements.CHUDAVState:GetActiveOptionIndex() > 1)
+		Client.SetOptionFloat("CHUD_LocationAlpha", mainMenu.optionElements.CHUDLocationAlpha:GetValue())
+		Client.SetOptionFloat("CHUD_MinimapAlpha", mainMenu.optionElements.CHUDMinimapAlpha:GetValue())
 		
 		GetCHUDSettings()
 		ApplyCHUDSettings()
@@ -280,6 +302,28 @@ local CHUDOptions = {
 				values  = { "OFF", "ON" },
 				callback = CHUDSaveMenuSettings
             },
+            { 
+                name    = "CHUDAVState",
+                label   = "AV DEFAULT STATE",
+				tooltip = "Sets the state the alien vision will be in when you respawn",
+				type    = "select",
+				values  = { "OFF", "ON" },
+				callback = CHUDSaveMenuSettings
+            },
+            { 
+                name    = "CHUDLocationAlpha",
+                label   = "LOCATION TRANSPARENCY",
+				tooltip = "Sets the trasparency of the location text on the minimap",
+				type    = "slider",
+				sliderCallback = CHUDLocationSlider,
+            },
+            { 
+                name    = "CHUDMinimapAlpha",
+                label   = "OVERVIEW TRANSPARENCY",
+				tooltip = "Sets the trasparency of the map overview",
+				type    = "slider",
+				sliderCallback = CHUDMinimapSlider,
+            },
 			
 		}
 		
@@ -336,6 +380,9 @@ originalCreateOptionWindow = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionWi
 		self.optionElements.CHUDClassicAmmo:SetOptionActive( BoolToIndex(CHUDSettings["classicammo"]) )
 		self.optionElements.CHUDHitIndicator:SetValue( CHUDSettings["hitindicator"] )
 		self.optionElements.CHUDAutoWPs:SetOptionActive( BoolToIndex(CHUDSettings["autowps"]) )
+		self.optionElements.CHUDAVState:SetOptionActive( BoolToIndex(CHUDSettings["avstate"]) )
+		self.optionElements.CHUDLocationAlpha:SetValue( CHUDSettings["locationalpha"] )
+		self.optionElements.CHUDMinimapAlpha:SetValue( CHUDSettings["minimapalpha"] )
 		
 		mainMenu = self
 	end)

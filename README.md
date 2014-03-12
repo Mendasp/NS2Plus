@@ -9,6 +9,11 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 12/03/2014 (Build 263):
+	- Added Alien Vision State option (chud_avstate) to set if you want to automatically turn on the AV on respawn.
+	- Added location name transparency (chud_locationalpha) to set the transparency of the location name text on the minimap.
+	- Added minimap transparency (chud_minimapalpha) to set the transparency of the minimap.
+
 - 09/03/2014 (Build 263):
 	- Server browser is now able to filter servers running CHUD, but can only do so ingame. To be able to search outside of a game use [CHUD Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163).
 
@@ -80,9 +85,11 @@ Custom HUD Commands
 - **chud_hitindicator:** Controls the speed of the crosshair hit indicator.
 - **chud_hpbar:** Removes the health bars from the marine HUD.
 - **chud_kda:** Switches the scoreboard from KAD to KDA.
+- **chud_locationalpha:** Sets the trasparency of the location text on the minimap.
 - **chud_lowlights:** Changes between the default map low quality lights and the NSL lights.
 - **chud_mingui:** Removes backgrounds/scanlines from all UI elements.
 - **chud_minimap:** Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions).
+- **chud_minimapalpha:** Sets the trasparency of the map overview.
 - **chud_minnps:** Removes building names and health/armor bars and replaces them with a simple %.
 - **chud_minwps:** Removes all text/backgrounds and only leaves the waypoint icon.
 - **chud_particles:** Reduces particle clutter and certain map props (holograms).
