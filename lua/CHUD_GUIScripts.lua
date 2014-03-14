@@ -6,6 +6,7 @@ ExoHUDOverride = false
 WPOverride = false
 UnitStatusOverride = false
 GameEndOverride = false
+MinimapLocationInitOverride = false
 
 originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 	function(self, scriptName)
@@ -386,6 +387,19 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							updateBlip.Border:SetSize(Vector(0,0,0))
 						end
 						
+					end
+				end)
+				
+		elseif (scriptName == "GUIMinimapFrame") and not MinimapLocationInitOverride then
+			MinimapLocationInitOverride = true
+			originalLocationNameInit = Class_ReplaceMethod( "GUIMinimap", "InitializeLocationNames",
+				function(self)
+					originalLocationNameInit(self)
+					if script.locationItems ~= nil then
+						for _, locationItem in ipairs(script.locationItems) do
+							locationItem.text:SetColor( Color(1, 1, 1, CHUDSettings["locationalpha"]) )
+						end
+
 					end
 				end)
 		

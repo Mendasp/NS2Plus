@@ -9,6 +9,9 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 14/03/2014 (Build 263):
+	- Fixed bug where Minimap locations wouldn't apply transparency on init
+
 - 12/03/2014 (Build 263):
 	- Added Alien Vision State option (chud_avstate) to set if you want to automatically turn on the AV on respawn.
 	- Added location name transparency (chud_locationalpha) to set the transparency of the location name text on the minimap.

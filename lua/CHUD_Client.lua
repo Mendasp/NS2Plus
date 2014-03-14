@@ -214,8 +214,14 @@ function ApplyCHUD(script, scriptName)
 		elseif scriptName == "GUIMinimapFrame" then
 			
 			script:GetMinimapItem():SetColor(Color(1,1,1,CHUDSettings["minimapalpha"]))
-			
-			OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDSettings["locationalpha"])*255))
+						
+			if Client.GetLocalPlayer():isa("Marine") then
+				if CHUDSettings["mingui"] then
+					script.minimapFrame:SetTexture("ui/blank.dds")
+				else
+					script.minimapFrame:SetTexture("ui/marine_commander_textures.dds")
+				end
+			end
 			
 			if script.buttonsScript then
 				local selectionPanelScript = GetGUIManager():GetGUIScriptSingle("GUISelectionPanel")
@@ -232,9 +238,9 @@ function ApplyCHUD(script, scriptName)
 						minimapButtons.techMapButton:SetPosition(Vector(-9999,0,0))
 					end
 					if Client.GetLocalPlayer():isa("MarineCommander") then
+						script.minimapFrame:SetTexture("ui/blank.dds")
 						script.buttonsScript.background:SetTexture("ui/blank.dds")
 						selectionPanelScript.background:SetTexture("ui/blank.dds")
-						script.minimapFrame:SetTexture("ui/blank.dds")
 						logoutScript.background:SetTexture("ui/blank.dds")
 						commanderTooltip.backgroundTop:SetTexture("ui/blank.dds")
 						commanderTooltip.backgroundCenter:SetTexture("ui/blank.dds")
@@ -254,9 +260,9 @@ function ApplyCHUD(script, scriptName)
 						minimapButtons.techMapButton:SetPosition(Vector(0,0,0))
 					end
 					if Client.GetLocalPlayer():isa("MarineCommander") then
+						script.minimapFrame:SetTexture("ui/marine_commander_textures.dds")
 						script.buttonsScript.background:SetTexture(GUICommanderButtonsMarines:GetBackgroundTextureName())
 						selectionPanelScript.background:SetTexture(GUISelectionPanel.kSelectionTextureMarines)
-						script.minimapFrame:SetTexture("ui/marine_commander_textures.dds")
 						logoutScript.background:SetTexture(GUICommanderLogout.kLogoutMarineTextureName)
 						commanderTooltip.backgroundTop:SetTexture(GUICommanderTooltip.kMarineBackgroundTexture)
 						commanderTooltip.backgroundCenter:SetTexture(GUICommanderTooltip.kMarineBackgroundTexture)
