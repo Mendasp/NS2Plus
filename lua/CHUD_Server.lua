@@ -106,3 +106,33 @@ function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
 	return soundEffectEntity
 	
 end
+
+// Thanks Shine!
+local Gamemode
+function ShineGetGamemode()
+	if Gamemode then return Gamemode end
+
+	local GameSetup = io.open( "game_setup.xml", "r" )
+
+	if not GameSetup then
+		Gamemode = "ns2"
+
+		return "ns2"
+	end
+
+	local Data = GameSetup:read( "*all" )
+
+	GameSetup:close()
+
+	local Match = Data:match( "<name>(.+)</name>" )
+
+	Gamemode = Match or "ns2"
+
+	return Gamemode
+end
+
+// Reenable Hive stats
+Class_ReplaceMethod("PlayerRanking", "GetTrackServer",
+	function(self)
+		return not GetServerContainsBots() and not Shared.GetCheatsEnabled() and ShineGetGamemode() == "ns2"
+	end)

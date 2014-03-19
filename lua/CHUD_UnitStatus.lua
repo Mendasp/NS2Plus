@@ -20,15 +20,15 @@ function PhaseGate:GetUnitNameOverride(viewer)
 		local destinationName = GetDestinationLocationName(self)        
 		if destinationName then
 			unitName = unitName .. " to " .. destinationName
-			if CHUDSettings["minnps"] then
+			if CHUDGetOption("minnps") then
 				unitName = destinationName
 			end
-		elseif CHUDSettings["minnps"] and not viewer:isa("Commander") then
+		elseif CHUDGetOption("minnps") and not viewer:isa("Commander") then
 			unitName = nil
 		end
 	
 	else
-		if CHUDSettings["minnps"] and not viewer:isa("Commander") then
+		if CHUDGetOption("minnps") and not viewer:isa("Commander") then
 			unitName = nil
 		end
 	end
@@ -57,15 +57,15 @@ function TunnelEntrance:GetUnitNameOverride(viewer)
 		local destinationName = GetDestinationLocationName(self)        
 		if destinationName then
 			unitName = unitName .. " to " .. destinationName
-			if CHUDSettings["minnps"] then
+			if CHUDGetOption("minnps") then
 				unitName = destinationName
 			end
-		elseif CHUDSettings["minnps"] and not viewer:isa("Commander") then
+		elseif CHUDGetOption("minnps") and not viewer:isa("Commander") then
 			unitName = nil
 		end
 	
 	else
-		if CHUDSettings["minnps"] and not viewer:isa("Commander") then
+		if CHUDGetOption("minnps") and not viewer:isa("Commander") then
 			unitName = nil
 		end
 	end
@@ -133,7 +133,7 @@ function PlayerUI_GetUnitStatusInfo()
 					local hint = unit:GetUnitHint(player)
 					local distance = (origin - eyePos):GetLength()
 					
-					if CHUDSettings["minnps"] then
+					if CHUDGetOption("minnps") then
 						hint = ""
 					end
 					
@@ -183,7 +183,7 @@ function PlayerUI_GetUnitStatusInfo()
 							armor = unit:GetArmorScalar()
 						end
 
-						if CHUDSettings["minnps"] and not player:isa("Commander") then				
+						if CHUDGetOption("minnps") and not player:isa("Commander") then				
 							health = 0
 							armor = 0
 							hint = string.format("%d/%d",math.ceil(unit:GetHealth()),math.ceil(unit:GetArmor()))
@@ -205,7 +205,7 @@ function PlayerUI_GetUnitStatusInfo()
 					end
 					
 					if (unit:GetMapName() ~= TechPoint.kMapName and unit:GetMapName() ~= ResourcePoint.kPointMapName) and not player:isa("Commander") then
-						if CHUDSettings["minnps"] and not unit:isa("Player") or (unit:isa("Embryo") and GetAreEnemies(player, unit)) then
+						if CHUDGetOption("minnps") and not unit:isa("Player") or (unit:isa("Embryo") and GetAreEnemies(player, unit)) then
 							if (unit:GetMapName() == PhaseGate.kMapName or unit:GetMapName() == TunnelEntrance.kMapName) and description ~= nil then
 								description = string.format("%s (%d%%)",description, math.ceil(unit:GetHealthScalar()*100))
 							else
@@ -260,7 +260,7 @@ function PlayerUI_GetUnitStatusInfo()
 						unitState.TeamType = unit:GetTeamType()
 					end
 					
-					if not CHUDSettings["friends"] then
+					if not CHUDGetOption("friends") then
 						unitState.IsSteamFriend = false
 					end
 					
@@ -326,7 +326,7 @@ function PlayerUI_GetStaticMapBlips()
                 if blip.clientIndex and blip.clientIndex > 0 and blipTeamNumber ~= GetEnemyTeamNumber(playerTeam) then
 
                     local steamId = ClientIndexToSteamId(blip.clientIndex)
-                    if steamId and CHUDSettings["friends"] then
+                    if steamId and CHUDGetOption("friends") then
                         isSteamFriend = GetIsSteamFriend(steamId)
                     end
                     

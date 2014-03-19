@@ -112,7 +112,7 @@ InjectIntoScope(GUIScoreboard.Initialize, function()
 		assistsItem:SetTextAlignmentY(GUIItem.Align_Min)
 		assistsItem:SetPosition(Vector(currentColumnX, playerDataRowY, 0))
 		assistsItem:SetColor(color)
-		if CHUDSettings["kda"] then
+		if CHUDGetOption("kda") then
 			assistsItem:SetText("D")
 		else
 			assistsItem:SetText("A")
@@ -129,7 +129,7 @@ InjectIntoScope(GUIScoreboard.Initialize, function()
 		deathsItem:SetTextAlignmentY(GUIItem.Align_Min)
 		deathsItem:SetPosition(Vector(currentColumnX, playerDataRowY, 0))
 		deathsItem:SetColor(color)
-		if CHUDSettings["kda"] then
+		if CHUDGetOption("kda") then
 			deathsItem:SetText("A")
 		else
 			deathsItem:SetText("D")

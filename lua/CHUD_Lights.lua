@@ -52,10 +52,33 @@ local function LoadLightData(filename)
 	return LoadData
 end
 
+// Save the low lights group to a json file
+local function OnCommandSaveLights()
+	if Client and Shared.GetCheatsEnabled() and #Client.lowLightList > 0 then
+		local filename = Shared.GetMapName()
+        local lightsFile = io.open("config://" .. filename .. ".json", "w+")
+		lightsFile:write("[")
+		for i, object in ipairs(Client.lowLightList) do
+			object.values = UpdateValuesForObject(object.values, false)
+			// Disable casting shadows for all lights (can't really do this efficiently in the editor)
+			if object.values.casts_shadows then
+				object.values.casts_shadows = false
+			end
+			lightsFile:write(json.encode(object))
+			if i < #Client.lowLightList then
+				lightsFile:write(",\n")
+			end
+		end
+		lightsFile:write("]")
+		io.close(lightsFile)
+		Shared.Message("Saved lights to " .. filename .. ".json")
+	end
+end
+
 function CHUDLoadLights()
 	if not lowLightsSwitched then
 	
-		if CHUDSettings["nsllights"] or #Client.lowLightList == 0 then
+		if CHUDGetOption("nsllights") or #Client.lowLightList == 0 then
 			if #cachedNSLLights == 0 then
 				LoadData = LoadLightData(Shared.GetMapName())
 			
@@ -95,3 +118,5 @@ function CHUDLoadLights()
 		
 	end
 end
+
+Event.Hook("Console_savelights", OnCommandSaveLights)

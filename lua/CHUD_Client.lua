@@ -1,63 +1,45 @@
-Script.Load("lua/CHUD_Utility.lua")
-Script.Load("lua/CHUD_MainMenu.lua")
-Script.Load("lua/CHUD_Lights.lua")
-Script.Load("lua/CHUD_UnitStatus.lua")
-Script.Load("lua/CHUD_HUDElements.lua")
-Script.Load("lua/CHUD_GUIScripts.lua")
-Script.Load("lua/CHUD_Tracers.lua")
-Script.Load("lua/CHUD_Particles.lua")
-Script.Load("lua/CHUD_ScoreDisplay.lua")
-Script.Load("lua/CHUD_Stats.lua")
-Script.Load("lua/CHUD_ServerBrowser.lua")
-
 function ApplyCHUDSettings()
 	for name, script in pairs(GetGUIManager().scripts) do
 		ApplyCHUD(script, script._scriptName)
 	end
 end
 
-function GetCHUDSettings()
-	CHUDSettings = {
-		assists = Client.GetOptionBoolean("CHUD_Assists", true),
-		av = Client.GetOptionInteger("CHUD_AV", 0),
-		banners = Client.GetOptionBoolean("CHUD_Banners", true),
-		blur = Client.GetOptionBoolean("CHUD_Blur", true),
-		gametime = Client.GetOptionBoolean("CHUD_Gametime", false),
-		hpbar = Client.GetOptionBoolean("CHUD_HPBar", true),
-		kda = Client.GetOptionBoolean("CHUD_KDA", false),
-		mingui = Client.GetOptionBoolean("CHUD_MinGUI", false),
-		minimap = Client.GetOptionBoolean("CHUD_Minimap", true),
-		minnps = Client.GetOptionBoolean("CHUD_MinNameplates", false),
-		minwps = Client.GetOptionBoolean("CHUD_MinWaypoints", false),
-		particles = Client.GetOptionBoolean("CHUD_Particles", false),
-		rtcount = Client.GetOptionBoolean("CHUD_RTcount", true),
-		score = Client.GetOptionBoolean("CHUD_ScorePopup", true),
-		showcomm = Client.GetOptionBoolean("CHUD_ShowComm", false),
-		smalldmg = Client.GetOptionBoolean("CHUD_SmallDMG", false),
-		smallnps = Client.GetOptionBoolean("CHUD_SmallNameplates", false),
-		tracers = Client.GetOptionBoolean("CHUD_Tracers", true),
-		unlocks = Client.GetOptionBoolean("CHUD_Unlocks", true),
-		wps = Client.GetOptionBoolean("CHUD_Waypoints", true),
-		dmgcolor_m = Client.GetOptionInteger("CHUD_DMGColorM", bit.lshift(77, 16) + bit.lshift(219, 8) + 255),
-		dmgcolor_a = Client.GetOptionInteger("CHUD_DMGColorA", bit.lshift(255, 16) + bit.lshift(202, 8) + 58),
-		alienbars = Client.GetOptionBoolean("CHUD_AlienBars", false),
-		ambient = Client.GetOptionBoolean("CHUD_Ambient", true),
-		nsllights = Client.GetOptionBoolean("lowLights", false),
-		friends = Client.GetOptionBoolean("CHUD_Friends", true),
-		uplvl = Client.GetOptionBoolean("CHUD_UpLVL", true),
-		classicammo = Client.GetOptionBoolean("CHUD_ClassicAmmo", false),
-		hitindicator = Client.GetOptionFloat("CHUD_HitIndicator", 1),
-		autowps = Client.GetOptionBoolean("CHUD_AutoWPs", true),
-		avstate = Client.GetOptionBoolean("CHUD_AVState", false),
-		locationalpha = Client.GetOptionFloat("CHUD_LocationAlpha", 0.65),
-		minimapalpha = Client.GetOptionFloat("CHUD_MinimapAlpha", 0.85),
-	}
+function OnCommandCHUDNSLLights()
+	lowLightsSwitched = false
+	CHUDLoadLights()
 end
+
+function OnCommandCHUDHitIndicator()
+	Player.kShowGiveDamageTime = CHUDGetOption("hitindicator")
+end
+
+function OnCommandCHUDLocationAlpha()
+	OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDGetOption("locationalpha"))*255))
+end
+
+function OnCommandCHUDMinimapAlpha()
+	local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
+	minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
+end
+
+Script.Load("lua/CHUD_Utility.lua")
+Script.Load("lua/CHUD_Particles.lua")
+Script.Load("lua/CHUD_MainMenu.lua")
+Script.Load("lua/CHUD_Settings.lua")
+Script.Load("lua/CHUD_Options.lua")
+Script.Load("lua/CHUD_Lights.lua")
+Script.Load("lua/CHUD_UnitStatus.lua")
+Script.Load("lua/CHUD_HUDElements.lua")
+Script.Load("lua/CHUD_GUIScripts.lua")
+Script.Load("lua/CHUD_Tracers.lua")
+Script.Load("lua/CHUD_ScoreDisplay.lua")
+Script.Load("lua/CHUD_Stats.lua")
+Script.Load("lua/CHUD_ServerBrowser.lua")
 
 function ApplyCHUD(script, scriptName)
 	
 		if scriptName == "GUIMarineHUD" then
-			if CHUDSettings["showcomm"] and not CHUDSettings["minimap"] then
+			if CHUDGetOption("showcomm") and not CHUDGetOption("minimap") then
 				GUIPlayerResource.kTeamTextPos = Vector(20, 76, 0)
 			else
 				GUIPlayerResource.kTeamTextPos = Vector(20, 360, 0)
@@ -66,8 +48,8 @@ function ApplyCHUD(script, scriptName)
 			script:Uninitialize()
 			script:Initialize()
 				
-			if CHUDSettings["mingui"] then
-				if CHUDSettings["minimap"] then
+			if CHUDGetOption("mingui") then
+				if CHUDGetOption("minimap") then
 					script.minimapBackground:SetColor(Color(1,1,1,0))
 					script.minimapScanLines:SetColor(Color(1,1,1,0))
 				end
@@ -79,10 +61,10 @@ function ApplyCHUD(script, scriptName)
 				script.resourceDisplay.background:SetColor(Color(1,1,1,0))
 			end
 
-			script:SetHUDMapEnabled(CHUDSettings["minimap"])
-			script.locationText:SetIsVisible(CHUDSettings["minimap"])
+			script:SetHUDMapEnabled(CHUDGetOption("minimap"))
+			script.locationText:SetIsVisible(CHUDGetOption("minimap"))
 
-			if CHUDSettings["showcomm"] and not CHUDSettings["minimap"] then
+			if CHUDGetOption("showcomm") and not CHUDGetOption("minimap") then
 				script.commanderName:SetIsVisible(true)
 				script.commanderName:SetPosition(Vector(20, 46, 0))
 			end
@@ -99,7 +81,7 @@ function ApplyCHUD(script, scriptName)
 			local OMATextureName = PrecacheAsset("ui/oma_alien_hud_health.dds")
 			local kTextureNameOrig = PrecacheAsset("ui/alien_hud_health.dds")
 			
-			if CHUDSettings["alienbars"] then
+			if CHUDGetOption("alienbars") then
 				kTextureNameCHUD = OMATextureName
 			else
 				kTextureNameCHUD = kTextureNameOrig
@@ -107,7 +89,7 @@ function ApplyCHUD(script, scriptName)
 			
 			// Backgrounds of health/energy
 			local CHUDSmokeSize
-			if CHUDSettings["mingui"] then
+			if CHUDGetOption("mingui") then
 				CHUDSmokeSize = 0
 			else
 				CHUDSmokeSize = 128
@@ -142,18 +124,18 @@ function ApplyCHUD(script, scriptName)
 			)
 			script:Uninitialize()
 			script:Initialize()
-			if CHUDSettings["mingui"] then
+			if CHUDGetOption("mingui") then
 				script.resourceDisplay.background:SetColor(Color(1,1,1,0))
 			else
 				script.resourceDisplay.background:SetColor(Color(1,1,1,1))
 			end
 					
-			if CHUDSettings["av"] == 1 then
+			if CHUDGetOption("av") == 1 then
 				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
 				Client.DestroyScreenEffect(HiveVision_screenEffect)
 				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
 				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/HuzeOldAV.screenfx")
-			elseif CHUDSettings["av"] == 2 then
+			elseif CHUDGetOption("av") == 2 then
 				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
 				Client.DestroyScreenEffect(HiveVision_screenEffect)
 				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
@@ -166,11 +148,11 @@ function ApplyCHUD(script, scriptName)
 			end
 			
 			if Client.GetIsControllingPlayer() then
-				Client.GetLocalPlayer():SetDarkVision(CHUDSettings["avstate"])
+				Client.GetLocalPlayer():SetDarkVision(CHUDGetOption("avstate"))
 			end
 			
 		elseif scriptName == "GUIUnitStatus" then
-			if CHUDSettings["smallnps"] then
+			if CHUDGetOption("smallnps") then
 				GUIUnitStatus.kFontScale = GUIScale( Vector(1,1,1) ) * 0.8
 				GUIUnitStatus.kActionFontScale = GUIScale( Vector(1,1,1) ) * 0.7
 				GUIUnitStatus.kFontScaleProgress = GUIScale( Vector(1,1,1) ) * 0.6
@@ -190,7 +172,7 @@ function ApplyCHUD(script, scriptName)
 			script:Initialize()
 			
 		elseif scriptName == "GUIBioMassDisplay" then
-			if CHUDSettings["mingui"] then
+			if CHUDGetOption("mingui") then
 				script.smokeyBackground:SetIsVisible(false)
 				script.background:SetTexture("ui/blank.dds")
 			else
@@ -209,14 +191,14 @@ function ApplyCHUD(script, scriptName)
 
 		// Touching this script releases demons and black magic for reasons unknown to science
 		/*elseif scriptName == "GUIFeedback" then
-			script.buildText:SetIsVisible(not CHUDSettings["mingui"])*/
+			script.buildText:SetIsVisible(not CHUDGetOption("mingui"))*/
 			
 		elseif scriptName == "GUIMinimapFrame" then
 			
-			script:GetMinimapItem():SetColor(Color(1,1,1,CHUDSettings["minimapalpha"]))
+			script:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
 						
 			if Client.GetLocalPlayer():isa("Marine") then
-				if CHUDSettings["mingui"] then
+				if CHUDGetOption("mingui") then
 					script.minimapFrame:SetTexture("ui/blank.dds")
 				else
 					script.minimapFrame:SetTexture("ui/marine_commander_textures.dds")
@@ -230,7 +212,7 @@ function ApplyCHUD(script, scriptName)
 				local logoutScript = GetGUIManager():GetGUIScriptSingle("GUICommanderLogout")
 				local commanderTooltip = GetGUIManager():GetGUIScriptSingle("GUICommanderTooltip")
 				
-				if CHUDSettings["mingui"] then
+				if CHUDGetOption("mingui") then
 					if minimapButtons then
 						minimapButtons.background:SetIsVisible(false)
 						// Move them off-screen so we can click through
@@ -280,358 +262,15 @@ function ApplyCHUD(script, scriptName)
 		
 		end
 		
-		if not CHUDSettings["ambient"] then
+		if not CHUDGetOption("ambient") then
 			OnCommandCHUDStopSound()
 		end
 			
 end
 
-function OnCommandCHUDHelp()
-	Shared.Message("-------------------------------------")
-	Shared.Message("Custom HUD Commands")
-	Shared.Message("-------------------------------------")
-	Shared.Message("chud_alienbars: Switches between default health/energy circles or thicker with gradients made by Oma")
-	Shared.Message("chud_ambient: Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing \"stopsound\" in console.")
-	Shared.Message("chud_assists: Removes assist score popup")
-	Shared.Message("chud_autowps: Enables or disables the automatic waypoints (you still get Commander waypoints)")
-	Shared.Message("chud_av: Switches between default alien vision, Huze's old alien vision or Huze's minimal alien vision")
-	Shared.Message("chud_avstate: Sets the default state of the alien vision on respawn")
-	Shared.Message("chud_banners: Removes the banners in the center of the screen (\"Commander needed\", \"Power node under attack\", \"Evolution lost\", etc.)")
-	Shared.Message("chud_blur: Removes the background blur from menus/minimap")
-	Shared.Message("chud_classicammo: Adds an ammo counter on the lower right, like in classic FPS games")
-	Shared.Message("chud_dmgcolor_a: Alien damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.")
-	Shared.Message("chud_dmgcolor_m: Marine damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.")
-	Shared.Message("chud_dmgcolor_reset: Reset damage numbers colors to the default on both aliens and marines.")
-	Shared.Message("chud_friends: Toggle the friend highlighting in the minimap/nameplates.")
-	Shared.Message("chud_gametime: Adds or removes the game time on the top left (requires having the commander name as marines)")
-	Shared.Message("chud_hpbar: Removes the health bars from the marine HUD")
-	Shared.Message("chud_hitindicator: Controls the speed of the crosshair hit indicator")
-	Shared.Message("chud_kda: Switches the scoreboard from KAD to KDA")
-	Shared.Message("chud_locationalpha: Sets the trasparency of the location text on the minimap")
-	Shared.Message("chud_lowlights: Changes between the default map low quality lights and the NSL lights")
-	Shared.Message("chud_mingui: Removes backgrounds/scanlines from all UI elements")
-	Shared.Message("chud_minimap: Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions)")
-	Shared.Message("chud_minimapalpha: Sets the trasparency of the map overview")
-	Shared.Message("chud_minnps: Removes building names and health/armor bars and replaces them with a simple %")
-	Shared.Message("chud_minwps: Removes all text/backgrounds and only leaves the waypoint icon")
-	Shared.Message("chud_particles: Reduces particle clutter")
-	Shared.Message("chud_rtcount: Removes RT count dots at the bottom and replaces them with a number")
-	Shared.Message("chud_score: Disables score popup (+5)")
-	Shared.Message("chud_showcomm: Forces showing the commander and resources when disabling the minimap")
-	Shared.Message("chud_smalldmg: Makes the damage numbers smaller")
-	Shared.Message("chud_smallnps: Makes fonts in the nameplates smaller")
-	Shared.Message("chud_tracers: Disables weapon tracers")
-	Shared.Message("chud_unlocks: Removes the research completed notifications on the right side of the screen")
-	Shared.Message("chud_uplvl: Removes the weapon/armor level indicator on the right side of the marine HUD")
-	Shared.Message("chud_wps: Disables all waypoints except Attack orders (waypoints can still be seen on minimap)")
-	Shared.Message("-------------------------------------")
-end
-
 function AnnounceCHUD()
 	Shared.Message("Custom HUD mod loaded. Type \"chud\" in console for available commands. You can also customize your HUD from your options menu.")
 	GetCHUDSettings()
-end
-
-function OnCommandCHUDRTcount()
-	if Client.GetOptionBoolean("CHUD_RTcount", true) then
-		Client.SetOptionBoolean("CHUD_RTcount", false)
-		Shared.Message("RT count disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_RTcount", true)
-		Shared.Message("RT count enabled.")
-	end
-	CHUDSettings["rtcount"] = Client.GetOptionBoolean("CHUD_RTcount", true)
-end
-
-function OnCommandCHUDMinGUI()
-	if Client.GetOptionBoolean("CHUD_MinGUI", false) then
-		Client.SetOptionBoolean("CHUD_MinGUI", false)
-		Shared.Message("Minimal GUI disabled.")
-	else
-		Client.SetOptionBoolean("CHUD_MinGUI", true)
-		Shared.Message("Minimal GUI enabled.")
-	end
-	CHUDSettings["mingui"] = Client.GetOptionBoolean("CHUD_MinGUI", false)
-	ApplyCHUDSettings()
-end
-
-function OnCommandCHUDMinimap()
-	if Client.GetOptionBoolean("CHUD_Minimap", true) then
-		Client.SetOptionBoolean("CHUD_Minimap", false)	
-		Shared.Message("Minimap disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_Minimap", true)
-		Shared.Message("Minimap enabled.")
-	end
-	CHUDSettings["minimap"] = Client.GetOptionBoolean("CHUD_Minimap", true)
-	ApplyCHUDSettings()
-end
-
-function OnCommandCHUDShowComm()
-	if Client.GetOptionBoolean("CHUD_ShowComm", false) then
-		Client.SetOptionBoolean("CHUD_ShowComm", false)	
-		Shared.Message("Commander name disabled.")
-	else
-		Client.SetOptionBoolean("CHUD_ShowComm", true)
-		Shared.Message("Commander name enabled.")
-	end
-	CHUDSettings["showcomm"] = Client.GetOptionBoolean("CHUD_ShowComm", false)
-	ApplyCHUDSettings()
-end
-
-function OnCommandCHUDUnlocks()
-	if Client.GetOptionBoolean("CHUD_Unlocks", true) then
-		Client.SetOptionBoolean("CHUD_Unlocks", false)	
-		Shared.Message("Research notifications disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_Unlocks", true)
-		Shared.Message("Research notifications enabled.")
-	end
-	CHUDSettings["unlocks"] = Client.GetOptionBoolean("CHUD_Unlocks", true)
-end
-
-function OnCommandCHUDHPBar()
-	if Client.GetOptionBoolean("CHUD_HPBar", true) then
-		Client.SetOptionBoolean("CHUD_HPBar", false)	
-		Shared.Message("Health bars disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_HPBar", true)
-		Shared.Message("Health bars enabled.")
-	end
-	CHUDSettings["hpbar"] = Client.GetOptionBoolean("CHUD_HPBar", true)
-	ApplyCHUDSettings()
-end
-
-function OnCommandCHUDMinNPs()
-	if Client.GetOptionBoolean("CHUD_MinNameplates", false) then
-		Client.SetOptionBoolean("CHUD_MinNameplates", false)	
-		Shared.Message("Minimal nameplates disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_MinNameplates", true)
-		Shared.Message("Minimal nameplates enabled.")
-	end
-	CHUDSettings["minnps"] = Client.GetOptionBoolean("CHUD_MinNameplates", false)
-end
-
-function OnCommandCHUDSmallNPs()
-	if Client.GetOptionBoolean("CHUD_SmallNameplates", false) then
-		Client.SetOptionBoolean("CHUD_SmallNameplates", false)	
-		Shared.Message("Smaller font nameplates disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_SmallNameplates", true)
-		Shared.Message("Smaller font nameplates enabled.")
-	end
-	CHUDSettings["smallnps"] = Client.GetOptionBoolean("CHUD_SmallNameplates", false)
-	ApplyCHUDSettings()
-end
-
-function OnCommandCHUDScore()
-	if Client.GetOptionBoolean("CHUD_ScorePopup", true) then
-		Client.SetOptionBoolean("CHUD_ScorePopup", false)	
-		Shared.Message("Score popup disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_ScorePopup", true)
-		Shared.Message("Score popup enabled.")
-	end
-	CHUDSettings["score"] = Client.GetOptionBoolean("CHUD_ScorePopup", true)
-end
-
-function OnCommandCHUDWPs()
-	if Client.GetOptionBoolean("CHUD_Waypoints", true) then
-		Client.SetOptionBoolean("CHUD_Waypoints", false)	
-		Shared.Message("Waypoints disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_Waypoints", true)
-		Shared.Message("Waypoints enabled.")
-	end
-	CHUDSettings["wps"] = Client.GetOptionBoolean("CHUD_Waypoints", true)
-end
-
-function OnCommandCHUDMinWPs()
-	if Client.GetOptionBoolean("CHUD_MinWaypoints", false) then
-		Client.SetOptionBoolean("CHUD_MinWaypoints", false)	
-		Shared.Message("Minimal waypoints disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_MinWaypoints", true)
-		Shared.Message("Minimal waypoints enabled.")
-	end
-	CHUDSettings["minwps"] = Client.GetOptionBoolean("CHUD_MinWaypoints", false)
-end
-
-function OnCommandCHUDBanners()
-	if Client.GetOptionBoolean("CHUD_Banners", true) then
-		Client.SetOptionBoolean("CHUD_Banners", false)	
-		Shared.Message("Banners disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_Banners", true)
-		Shared.Message("Banners enabled.")
-	end
-	CHUDSettings["banners"] = Client.GetOptionBoolean("CHUD_Banners", true)
-end
-
-function OnCommandCHUDBlur()
-	if Client.GetOptionBoolean("CHUD_Blur", true) then
-		Client.SetOptionBoolean("CHUD_Blur", false)	
-		Shared.Message("Blur disabled.")		
-	else
-		Client.SetOptionBoolean("CHUD_Blur", true)
-		Shared.Message("Blur enabled.")
-	end
-	CHUDSettings["blur"] = Client.GetOptionBoolean("CHUD_Blur", true)
-end
-
-function OnCommandCHUDKDA()
-	if Client.GetOptionBoolean("CHUD_KDA", false) then
-		Client.SetOptionBoolean("CHUD_KDA", false)	
-		Shared.Message("Scoreboard is now Kills/Assists/Deaths (NS2 Default).")
-	else
-		Client.SetOptionBoolean("CHUD_KDA", true)
-		Shared.Message("Scoreboard is now Kills/Deaths/Assists.")
-	end
-	CHUDSettings["kda"] = Client.GetOptionBoolean("CHUD_KDA", false)
-	ApplyCHUDSettings()
-end
-
-function OnCommandCHUDTracers()
-	if Client.GetOptionBoolean("CHUD_Tracers", true) then
-		Client.SetOptionBoolean("CHUD_Tracers", false)	
-		Shared.Message("Weapon tracers disabled.")
-	else
-		Client.SetOptionBoolean("CHUD_Tracers", true)
-		Shared.Message("Weapon tracers enabled.")
-	end
-	CHUDSettings["tracers"] = Client.GetOptionBoolean("CHUD_Tracers", true)
-end
-
-function OnCommandCHUDSmallDMG()
-	if Client.GetOptionBoolean("CHUD_SmallDMG", false) then
-		Client.SetOptionBoolean("CHUD_SmallDMG", false)	
-		Shared.Message("Damage numbers are now default size.")
-	else
-		Client.SetOptionBoolean("CHUD_SmallDMG", true)
-		Shared.Message("Small damage numbers enabled.")
-	end
-	CHUDSettings["smalldmg"] = Client.GetOptionBoolean("CHUD_SmallDMG", false)
-end
-
-function OnCommandCHUDParticles()
-	if Client.GetOptionBoolean("CHUD_Particles", false) then
-		Client.SetOptionBoolean("CHUD_Particles", false)	
-		Shared.Message("Enabled default particles.")
-	else
-		Client.SetOptionBoolean("CHUD_Particles", true)
-		Shared.Message("Enabled minimal particles.")
-	end
-	CHUDSettings["particles"] = Client.GetOptionBoolean("CHUD_Particles", false)
-	SetCHUDCinematics()
-end
-
-function OnCommandCHUDGametime()
-	if Client.GetOptionBoolean("CHUD_Gametime", false) then
-		Client.SetOptionBoolean("CHUD_Gametime", false)	
-		Shared.Message("Removed gametime.")
-	else
-		Client.SetOptionBoolean("CHUD_Gametime", true)
-		Shared.Message("Added gametime.")
-	end
-	CHUDSettings["gametime"] = Client.GetOptionBoolean("CHUD_Gametime", false)
-end
-
-function OnCommandCHUDAssists()
-	if Client.GetOptionBoolean("CHUD_Assists", true) then
-		Client.SetOptionBoolean("CHUD_Assists", false)	
-		Shared.Message("Disabled assist popups.")
-	else
-		Client.SetOptionBoolean("CHUD_Assists", true)
-		Shared.Message("Enabled assist popups.")
-	end
-	CHUDSettings["assists"] = Client.GetOptionBoolean("CHUD_Assists", true)
-end
-
-CHUDAVModes = enum({ "Default", "Huze's Old AV", "Huze's Minimal AV" })
-function OnCommandCHUDAV(mode)
-
-	local avMode = tonumber(mode)
-	
-	if avMode == 0 or avMode == 1 or avMode == 2 then
-		Client.SetOptionInteger("CHUD_AV", avMode)
-		Shared.Message("Alien vision set to: " .. CHUDAVModes[avMode+1])
-	else
-		Shared.Message("Usage: chud_av <number> - Example: chud_av 0")
-		Shared.Message("chud_av 0 - Default Alien Vision")
-		Shared.Message("chud_av 1 - Huze's Old Alien Vision")
-		Shared.Message("chud_av 2 - Huze's Minimal Alien Vision")
-		Shared.Message("Current value: " .. Client.GetOptionInteger("CHUD_AV", 0))
-	end
-	CHUDSettings["av"] = Client.GetOptionInteger("CHUD_AV", 0)
-	ApplyCHUDSettings()
-end
-
-local function IntFromString(str)
-
-	local num = tonumber(str)
-	if num and num >1 then
-		num = num/255
-	end
-	return num
-
-end
-
-local function SetCHUDColor(chudsetkey, chudoptkey, r_or_ColorInt, g, b)
-	// chudsetkey: The key for the local array with all the current CHUD settings (ie. CHUDSettings["mingui"])
-	// chudoptkey: The name that is used in the options file (Client.SetOption...)
-	
-	if r_or_ColorInt ~= nil and g == nil then
-	
-		local ColorInt = tonumber(r_or_ColorInt)
-		local color = ColorIntToColor(ColorInt)
-		if color then
-			Client.SetOptionInteger(chudoptkey, tonumber(r_or_ColorInt))
-		end
-		
-	else
-	
-		local rInt = IntFromString(r_or_ColorInt) or 1
-		local gInt = IntFromString(g) or 1
-		local bInt = IntFromString(b) or 1
-
-		// I hate myself a bit for doing this
-		Client.SetOptionInteger(chudoptkey, bit.lshift(rInt*255, 16) + bit.lshift(gInt*255, 8) + bInt*255)
-		
-	end
-
-	CHUDSettings[chudsetkey] = Client.GetOptionInteger(chudoptkey, bit.lshift(77, 16) + bit.lshift(219, 8) + 255)
-end
-
-function OnCommandCHUDDMGColorM(r_or_ColorInt, g, b)
-
-	SetCHUDColor("dmgcolor_m", "CHUD_DMGColorM", r_or_ColorInt, g, b)
-	
-end
-
-function OnCommandCHUDDMGColorA(r_or_ColorInt, g, b)
-
-	SetCHUDColor("dmgcolor_a", "CHUD_DMGColorA", r_or_ColorInt, g, b)
-end
-
-function OnCommandCHUDDMGColorReset()
-	CHUDSettings["dmgcolor_m"] = bit.lshift(77, 16) + bit.lshift(219, 8) + 255
-	Client.SetOptionInteger("CHUD_DMGColorM", bit.lshift(77, 16) + bit.lshift(219, 8) + 255)
-
-	CHUDSettings["dmgcolor_a"] = bit.lshift(255, 16) + bit.lshift(202, 8) + 58
-	Client.SetOptionInteger("CHUD_DMGColorA", bit.lshift(255, 16) + bit.lshift(202, 8) + 58)
-end
-
-function OnCommandCHUDAlienBars()
-	if Client.GetOptionBoolean("CHUD_AlienBars", false) then
-		Client.SetOptionBoolean("CHUD_AlienBars", false)	
-		Shared.Message("Default Alien bars enabled.")
-	else
-		Client.SetOptionBoolean("CHUD_AlienBars", true)
-		Shared.Message("Oma's Alien bars enabled.")
-	end
-	CHUDSettings["alienbars"] = Client.GetOptionBoolean("CHUD_AlienBars", false)
-	ApplyCHUDSettings()
 end
 
 function OnCommandCHUDStopSound()
@@ -641,171 +280,8 @@ function OnCommandCHUDStopSound()
 	Client.ambientSoundList = { }
 end
 
-function OnCommandCHUDAmbientSounds()
-	if Client.GetOptionBoolean("CHUD_Ambient", true) then
-		Client.SetOptionBoolean("CHUD_Ambient", false)	
-		Shared.Message("Map ambient sounds disabled.")
-		OnCommandCHUDStopSound()
-	else
-		Client.SetOptionBoolean("CHUD_Ambient", true)
-		Shared.Message("Map ambient sounds enabled. You need to rejoin the server to reload the ambient sounds.")
-	end
-	CHUDSettings["ambient"] = Client.GetOptionBoolean("CHUD_Ambient", true)
-	ApplyCHUDSettings()
-end
-
-function OnCommandCHUDNSLLights()
-	if Client.GetOptionBoolean("lowLights", false) then
-		Client.SetOptionBoolean("lowLights", false)	
-		Shared.Message("Original low lighting quality.")
-		OnCommandCHUDStopSound()
-	else
-		Client.SetOptionBoolean("lowLights", true)
-		Shared.Message("Replaced low lighting quality with NSL lights.")
-	end
-	CHUDSettings["nsllights"] = Client.GetOptionBoolean("lowLights", false)
-	lowLightsSwitched = false
-	CHUDLoadLights()
-end
-
-function OnCommandCHUDFriends()
-	if Client.GetOptionBoolean("CHUD_Friends", true) then
-		Client.SetOptionBoolean("CHUD_Friends", false)	
-		Shared.Message("Friend highlighting disabled.")
-	else
-		Client.SetOptionBoolean("CHUD_Friends", true)
-		Shared.Message("Friend highlighting enabled.")
-	end
-	CHUDSettings["friends"] = Client.GetOptionBoolean("CHUD_Friends", true)
-end
-
-function OnCommandCHUDUpLVL()
-	if Client.GetOptionBoolean("CHUD_UpLVL", true) then
-		Client.SetOptionBoolean("CHUD_UpLVL", false)	
-		Shared.Message("Marine upgrade level indicator disabled.")
-	else
-		Client.SetOptionBoolean("CHUD_UpLVL", true)
-		Shared.Message("Marine upgrade level indicator enabled.")
-	end
-	CHUDSettings["uplvl"] = Client.GetOptionBoolean("CHUD_UpLVL", true)
-end
-
-function OnCommandCHUDClassicAmmo()
-	if Client.GetOptionBoolean("CHUD_ClassicAmmo", false) then
-		Client.SetOptionBoolean("CHUD_ClassicAmmo", false)	
-		Shared.Message("Classic ammo counter disabled.")
-	else
-		Client.SetOptionBoolean("CHUD_ClassicAmmo", true)
-		Shared.Message("Classic ammo counter enabled.")
-	end
-	CHUDSettings["classicammo"] = Client.GetOptionBoolean("CHUD_ClassicAmmo", false)
-end
-
-function OnCommandCHUDHitIndicator(speed)
-
-	local chosenSpeed = tonumber(speed)
-	
-	if chosenSpeed and chosenSpeed >= 0 and chosenSpeed <= 1 then
-		Client.SetOptionFloat("CHUD_HitIndicator", chosenSpeed)
-	else
-		Shared.Message("Usage: chud_hitindicator <number> - Example: chud_hitindicator 1")
-		Shared.Message("Accepts values between 0 and 1. Default: 1. Setting it to 0 will disable the hit indicator.")
-		Shared.Message("Current value: " .. Client.GetOptionFloat("CHUD_HitIndicator", 1))
-	end
-	CHUDSettings["hitindicator"] = Client.GetOptionFloat("CHUD_HitIndicator", 1)
-	Player.kShowGiveDamageTime = CHUDSettings["hitindicator"]
-end
-
-function OnCommandCHUDAutoWPs()
-	if Client.GetOptionBoolean("CHUD_AutoWPs", true) then
-		Client.SetOptionBoolean("CHUD_AutoWPs", false)	
-		Shared.Message("Automatic waypoints disabled.")
-	else
-		Client.SetOptionBoolean("CHUD_AutoWPs", true)
-		Shared.Message("Automatic waypoints enabled.")
-	end
-	CHUDSettings["autowps"] = Client.GetOptionBoolean("CHUD_AutoWPs", true)
-end
-
-function OnCommandCHUDAVState()
-	if Client.GetOptionBoolean("CHUD_AVState", false) then
-		Client.SetOptionBoolean("CHUD_AVState", false)	
-		Shared.Message("Alien vision will start off by default.")
-	else
-		Client.SetOptionBoolean("CHUD_AVState", true)
-		Shared.Message("Alien vision will start on by default.")
-	end
-	CHUDSettings["avstate"] = Client.GetOptionBoolean("CHUD_AVState", false)
-end
-
-function OnCommandCHUDLocationAlpha(alpha)
-
-	local chosenAlpha = tonumber(alpha)
-	
-	if chosenAlpha and chosenAlpha >= 0 and chosenAlpha <= 1 then
-		Client.SetOptionFloat("CHUD_LocationAlpha", chosenAlpha)
-	else
-		Shared.Message("Usage: chud_locationalpha <number> - Example: chud_locationalpha 0.25")
-		Shared.Message("Accepts values between 0 and 1. Default: 0.65. Setting it to 0 will make locations invisible.")
-		Shared.Message("Current value: " .. Client.GetOptionFloat("CHUD_LocationAlpha", 0.65))
-	end
-	CHUDSettings["locationalpha"] = Client.GetOptionFloat("CHUD_LocationAlpha", 0.65)
-	OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDSettings["locationalpha"])*255))
-end
-
-function OnCommandCHUDMinimapAlpha(alpha)
-
-	local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
-	local chosenAlpha = tonumber(alpha)
-	
-	if chosenAlpha and chosenAlpha >= 0 and chosenAlpha <= 1 then
-		Client.SetOptionFloat("CHUD_MinimapAlpha", chosenAlpha)
-	else
-		Shared.Message("Usage: chud_minimapalpha <number> - Example: chud_minimapalpha 0.25")
-		Shared.Message("Accepts values between 0 and 1. Default: 0.85. Setting it to 0 will make locations invisible.")
-		Shared.Message("Current value: " .. Client.GetOptionFloat("CHUD_MinimapAlpha", 0.85))
-	end
-	CHUDSettings["minimapalpha"] = Client.GetOptionFloat("CHUD_MinimapAlpha", 0.85)
-	minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDSettings["minimapalpha"]))
-end
-
 Event.Hook("LoadComplete", AnnounceCHUD)
-Event.Hook("Console_chud", OnCommandCHUDHelp)
-Event.Hook("Console_chud_assists", OnCommandCHUDAssists)
-Event.Hook("Console_chud_av", OnCommandCHUDAV)
-Event.Hook("Console_chud_banners", OnCommandCHUDBanners)
-Event.Hook("Console_chud_blur", OnCommandCHUDBlur)
-Event.Hook("Console_chud_gametime", OnCommandCHUDGametime)
-Event.Hook("Console_chud_friends", OnCommandCHUDFriends)
-Event.Hook("Console_chud_hpbar", OnCommandCHUDHPBar)
-Event.Hook("Console_chud_kda", OnCommandCHUDKDA)
-Event.Hook("Console_chud_mingui", OnCommandCHUDMinGUI)
-Event.Hook("Console_chud_minimap", OnCommandCHUDMinimap)
-Event.Hook("Console_chud_minnps", OnCommandCHUDMinNPs)
-Event.Hook("Console_chud_minwps", OnCommandCHUDMinWPs)
-Event.Hook("Console_chud_particles", OnCommandCHUDParticles)
-Event.Hook("Console_chud_rtcount", OnCommandCHUDRTcount)
-Event.Hook("Console_chud_score", OnCommandCHUDScore)
-Event.Hook("Console_chud_showcomm", OnCommandCHUDShowComm)
-Event.Hook("Console_chud_smalldmg", OnCommandCHUDSmallDMG)
-Event.Hook("Console_chud_smallnps", OnCommandCHUDSmallNPs)
-Event.Hook("Console_chud_tracers", OnCommandCHUDTracers)
-Event.Hook("Console_chud_unlocks", OnCommandCHUDUnlocks)
-Event.Hook("Console_chud_wps", OnCommandCHUDWPs)
-Event.Hook("Console_chud_dmgcolor_m", OnCommandCHUDDMGColorM)
-Event.Hook("Console_chud_dmgcolor_a", OnCommandCHUDDMGColorA)
-Event.Hook("Console_chud_dmgcolor_reset", OnCommandCHUDDMGColorReset)
-Event.Hook("Console_chud_alienbars", OnCommandCHUDAlienBars)
-Event.Hook("Console_chud_ambient", OnCommandCHUDAmbientSounds)
+Event.Hook("LoadComplete", SetCHUDCinematics)
 Event.Hook("Console_stopsound", OnCommandCHUDStopSound)
-Event.Hook("Console_chud_lowlights", OnCommandCHUDNSLLights)
-Event.Hook("Console_chud_uplvl", OnCommandCHUDUpLVL)
-Event.Hook("Console_chud_classicammo", OnCommandCHUDClassicAmmo)
-Event.Hook("Console_chud_hitindicator", OnCommandCHUDHitIndicator)
-Event.Hook("Console_chud_autowps", OnCommandCHUDAutoWPs)
-Event.Hook("Console_chud_avstate", OnCommandCHUDAVState)
-Event.Hook("Console_chud_locationalpha", OnCommandCHUDLocationAlpha)
-Event.Hook("Console_chud_minimapalpha", OnCommandCHUDMinimapAlpha)
 Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 Event.Hook("LocalPlayerChanged", ApplyCHUDSettings)
-Event.Hook("LoadComplete", SetCHUDCinematics)

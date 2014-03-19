@@ -3,7 +3,7 @@ local originalMarineStatusInit
 originalMarineStatusInit = Class_ReplaceMethod( "GUIMarineStatus", "Initialize",
 	function (self)
 		originalMarineStatusInit(self)
-		if CHUDSettings["mingui"] then
+		if CHUDGetOption("mingui") then
 			self.statusbackground:SetColor(Color(1,1,1,0))
 			self.scanLinesForeground:SetColor(Color(1,1,1,0))
 		end
@@ -41,11 +41,11 @@ local originalMarineStatusUpdate
 originalMarineStatusUpdate = Class_ReplaceMethod( "GUIMarineStatus", "Update",
 	function (self, deltaTime, parameters)
 		originalMarineStatusUpdate(self, deltaTime, parameters)
-		if CHUDSettings["mingui"] or not CHUDSettings["hpbar"] then
+		if CHUDGetOption("mingui") or not CHUDGetOption("hpbar") then
 			self.healthBorderMask:SetColor(Color(1,1,1,0))
 			self.armorBorderMask:SetColor(Color(1,1,1,0))
 		end
-		if not CHUDSettings["hpbar"] or Client.GetLocalPlayer():isa("Exo") then
+		if not CHUDGetOption("hpbar") or Client.GetLocalPlayer():isa("Exo") then
 			self.statusbackground:SetTexturePixelCoordinates(unpack({ 0, 0, 0, 0 }))
 			self.scanLinesForeground:SetAnchor(GUIItem.Left, GUIItem.Top)
 			self.parasiteState:SetAnchor(GUIItem.Left, GUIItem.Center)
@@ -62,7 +62,7 @@ originalMarineStatusUpdate = Class_ReplaceMethod( "GUIMarineStatus", "Update",
 		end
 		
 		local player = Client.GetLocalPlayer()
-		if player:GetActiveWeapon() and player:GetActiveWeapon():isa("ClipWeapon") and not player:isa("Exo") and CHUDSettings["classicammo"] then
+		if player:GetActiveWeapon() and player:GetActiveWeapon():isa("ClipWeapon") and not player:isa("Exo") and CHUDGetOption("classicammo") then
 			local clipammo = ToString(PlayerUI_GetWeaponClip())
 			local ammo = ToString(PlayerUI_GetWeaponAmmo())
 			if clipammo == nil then clipammo = "--" end
@@ -84,17 +84,17 @@ Script.Load("lua/Hud/GUIEvent.lua")
 local originalEventUpdate
 originalEventUpdate = Class_ReplaceMethod( "GUIEvent", "Update",
 	function (self, deltaTime, parameters)
-		if not CHUDSettings["minimap"] then
+		if not CHUDGetOption("minimap") then
 			parameters[1] = nil
 		end
 		originalEventUpdate(self, deltaTime, parameters)
-		if CHUDSettings["mingui"] then
+		if CHUDGetOption("mingui") then
 			self.borderTop:SetIsVisible(false)
 			self.unlockBackground:SetColor(Color(1,1,1,0))
 			self.unlockFlash:SetIsVisible(false)
 			self.unlockFlashStencil:SetIsVisible(false)
 		end
-		if not CHUDSettings["unlocks"] then
+		if not CHUDGetOption("unlocks") then
 			self.unlockFrame:SetIsVisible(false)
 		else
 			self.unlockFrame:SetIsVisible(true)
@@ -106,10 +106,10 @@ Script.Load("lua/GUIAlienTeamMessage.lua")
 originalAlienMessage = Class_ReplaceMethod( "GUIAlienTeamMessage", "SetTeamMessage",
 	function(self, message)
 		originalAlienMessage(self, message)
-		if not CHUDSettings["banners"] then
+		if not CHUDGetOption("banners") then
 			self.background:SetIsVisible(false)
 		end
-		if CHUDSettings["mingui"] then
+		if CHUDGetOption("mingui") then
 			self.background:DestroyAnimations()
 		end
 	end
@@ -119,10 +119,10 @@ Script.Load("lua/GUIMarineTeamMessage.lua")
 originalMarineMessage = Class_ReplaceMethod( "GUIMarineTeamMessage", "SetTeamMessage",
 	function(self, message)
 		originalMarineMessage(self, message)
-		if not CHUDSettings["banners"] then
+		if not CHUDGetOption("banners") then
 			self.background:SetIsVisible(false)
 		end
-		if CHUDSettings["mingui"] then
+		if CHUDGetOption("mingui") then
 			self.background:DestroyAnimations()
 		end
 	end
@@ -131,7 +131,7 @@ originalMarineMessage = Class_ReplaceMethod( "GUIMarineTeamMessage", "SetTeamMes
 Script.Load("lua/Player_Client.lua")
 originalBlur = Class_ReplaceMethod( "Player", "SetBlurEnabled",
 	function(self, blurEnabled)
-		if not CHUDSettings["blur"] then
+		if not CHUDGetOption("blur") then
 			Player.screenEffects.blur:SetActive(false)
 		else
 			originalBlur(self, blurEnabled)
@@ -163,8 +163,8 @@ originalTriggerEffects = Class_ReplaceMethod( "EffectManager", "TriggerEffects",
 	function(self, effectName, tableParams, triggeringEntity)
 		if not table.contains(blockedEffects, effectName) then
 			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
-		elseif	(effectName == "complete_order" and CHUDSettings["wps"]) or
-				(effectName == "upgrade_complete" and CHUDSettings["unlocks"]) then
+		elseif	(effectName == "complete_order" and CHUDGetOption("wps")) or
+				(effectName == "upgrade_complete" and CHUDGetOption("unlocks")) then
 			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
 		end
 	end
@@ -179,7 +179,7 @@ originalExoWeaponHolder = Class_ReplaceMethod( "ExoWeaponHolder", "OnUpdateRende
 		
 			local viewModel = parent:GetViewModelEntity()
 			if viewModel and viewModel:GetRenderModel() then
-				if CHUDSettings["mingui"] then
+				if CHUDGetOption("mingui") then
 					viewModel:GetRenderModel():SetMaterialParameter("scanlinesMap", "ui/blank.dds")
 				else
 					viewModel:GetRenderModel():SetMaterialParameter("scanlinesMap", "ui/exosuit_scanlines.dds")
@@ -204,7 +204,7 @@ function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
 		volume = volume * 0.5
 	end
 	
-	if not table.contains(blockedVO, soundEffectName) or CHUDSettings["wps"] then
+	if not table.contains(blockedVO, soundEffectName) or CHUDGetOption("wps") then
 		Shared.PlaySound(onEntity, soundEffectName, volume or 1)
 	end
 end

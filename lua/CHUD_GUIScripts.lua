@@ -15,7 +15,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			if not MarineHUDOverride then
 				originalSetHUDMap = Class_ReplaceMethod( "GUIMarineHUD", "SetHUDMapEnabled",
 				function(self, enabled)
-					originalSetHUDMap(self, CHUDSettings["minimap"])
+					originalSetHUDMap(self, CHUDGetOption("minimap"))
 				end)
 			end
 
@@ -26,16 +26,16 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						originalMarineHUDUpdate(self, deltaTime)
 						local fullMode = Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Full
 						
-						self.resourceDisplay.teamText:SetIsVisible(CHUDSettings["minimap"] or (CHUDSettings["showcomm"] and not CHUDSettings["minimap"]))
-						if not CHUDSettings["minimap"] and not CHUDSettings["showcomm"] then
+						self.resourceDisplay.teamText:SetIsVisible(CHUDGetOption("minimap") or (CHUDGetOption("showcomm") and not CHUDGetOption("minimap")))
+						if not CHUDGetOption("minimap") and not CHUDGetOption("showcomm") then
 							self.resourceDisplay.teamText:SetText("")
 						end
 						
-						if CHUDSettings["mingui"] then
+						if CHUDGetOption("mingui") then
 							self.inventoryDisplay:SetIsVisible(false)
 						end
 												
-						if CHUDSettings["gametime"] and (CHUDSettings["showcomm"] or CHUDSettings["minimap"]) then
+						if CHUDGetOption("gametime") and (CHUDGetOption("showcomm") or CHUDGetOption("minimap")) then
 							local gameTime = PlayerUI_GetGameStartTime()
 							
 							if gameTime ~= 0 then
@@ -51,7 +51,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						
 						local s_rts
 						
-						if not CHUDSettings["rtcount"] then
+						if not CHUDGetOption("rtcount") then
 							self.resourceDisplay.rtCount:SetIsVisible(false)
 							if CommanderUI_GetTeamHarvesterCount() ~= 1 then
 								s_rts = "RTs"
@@ -67,15 +67,15 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						// Upgrade toggle, easy peasy lemon squeezy
 						
 						if self.armorLevel:GetIsVisible() then
-							self.armorLevel:SetIsVisible(CHUDSettings["uplvl"])
+							self.armorLevel:SetIsVisible(CHUDGetOption("uplvl"))
 						end
 						
 						if self.weaponLevel:GetIsVisible() then
-							self.weaponLevel:SetIsVisible(CHUDSettings["uplvl"])
+							self.weaponLevel:SetIsVisible(CHUDGetOption("uplvl"))
 						end
 						
 						self.commanderName:SetIsVisible(false)
-						if (CHUDSettings["minimap"] or (CHUDSettings["showcomm"] and not CHUDSettings["minimap"])) then
+						if (CHUDGetOption("minimap") or (CHUDGetOption("showcomm") and not CHUDGetOption("minimap"))) then
 							// Update commander name
 							local commanderName = PlayerUI_GetCommanderName()
 						
@@ -122,7 +122,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			
 			Class_ReplaceMethod( "GUIMarineHUD", "OnLocalPlayerChanged",
 				function(self, newPlayer)
-					if CHUDSettings["mingui"] then
+					if CHUDGetOption("mingui") then
 						self.topLeftFrame:SetIsVisible(false)
 						self.topRightFrame:SetIsVisible(false)
 						self.bottomLeftFrame:SetIsVisible(false)
@@ -141,11 +141,11 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						local fullMode = Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Full
 
 						if fullMode then
-							self.innerRing:SetIsVisible(not CHUDSettings["mingui"])
-							self.outerRing:SetIsVisible(not CHUDSettings["mingui"])
-							self.leftInfoBar:SetIsVisible(not CHUDSettings["mingui"])
-							self.rightInfoBar:SetIsVisible(not CHUDSettings["mingui"])
-							self.staticRing:SetIsVisible(not CHUDSettings["mingui"])
+							self.innerRing:SetIsVisible(not CHUDGetOption("mingui"))
+							self.outerRing:SetIsVisible(not CHUDGetOption("mingui"))
+							self.leftInfoBar:SetIsVisible(not CHUDGetOption("mingui"))
+							self.rightInfoBar:SetIsVisible(not CHUDGetOption("mingui"))
+							self.staticRing:SetIsVisible(not CHUDGetOption("mingui"))
 						end
 					end)
 			end
@@ -159,7 +159,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						
 						local s_rts
 						
-						if not CHUDSettings["rtcount"] then
+						if not CHUDGetOption("rtcount") then
 							self.resourceDisplay.rtCount:SetIsVisible(false)
 							if CommanderUI_GetTeamHarvesterCount() ~= 1 then
 								s_rts = "RTs"
@@ -172,7 +172,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							self.resourceDisplay.pResDescription:SetText(Locale.ResolveString("RESOURCES"))
 						end
 						
-						if CHUDSettings["gametime"] then
+						if CHUDGetOption("gametime") then
 							local gameTime = PlayerUI_GetGameStartTime()
 							
 							if gameTime ~= 0 then
@@ -186,13 +186,13 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, math.floor(seconds)))
 						end
 						
-						self.resourceDisplay.teamText:SetIsVisible(CHUDSettings["showcomm"] or CHUDSettings["minimap"])
+						self.resourceDisplay.teamText:SetIsVisible(CHUDGetOption("showcomm") or CHUDGetOption("minimap"))
 				end)
 			end
 		
 		elseif (scriptName == "GUIProgressBar") then
 			script:Uninitialize()
-			if CHUDSettings["mingui"] then
+			if CHUDGetOption("mingui") then
 				ReplaceLocals(GUIProgressBar.Initialize, {kBackgroundPixelCoords = { 0, 0, 0, 0 }})
 				ReplaceLocals(GUIProgressBar.InitCircleMask, {kBackgroundPixelCoords = { 0, 0, 0, 0 }})
 			else
@@ -201,11 +201,11 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			end
 			script:Initialize()
 			if PlayerUI_GetTeamType() == kAlienTeamType then
-				script.smokeyBackground:SetIsVisible(not CHUDSettings["mingui"])
+				script.smokeyBackground:SetIsVisible(not CHUDGetOption("mingui"))
 			end
 			
 		elseif (scriptName == "GUIAlienBuyMenu") then
-			if CHUDSettings["mingui"] then
+			if CHUDGetOption("mingui") then
 				script.backgroundCircle:SetIsVisible(false)
 				script.glowieParticles:Uninitialize()
 				script.smokeParticles:Uninitialize()
@@ -219,7 +219,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			
 		elseif (scriptName == "GUIGorgeBuildMenu") then
 			script:Uninitialize()
-			if CHUDSettings["mingui"] then
+			if CHUDGetOption("mingui") then
 				script.kSmokeSmallTextureCoordinates = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}
 				ReplaceLocals(GUIGorgeBuildMenu.CreateButton, {kSmokeyBackgroundSize = Vector(0, 0, 0)})
 			else
@@ -229,7 +229,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			script:Initialize()
 			
 		elseif (scriptName == "GUIMarineBuyMenu") then
-			if CHUDSettings["mingui"] then
+			if CHUDGetOption("mingui") then
 				script.background:SetColor(Color(1, 1, 1, 0))
 				script.repeatingBGTexture:SetTexturePixelCoordinates(0, 0, 0, 0)
 				script.content:SetTexturePixelCoordinates(0, 0, 0, 0)
@@ -241,7 +241,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 				originalMarineBuyMenu = Class_ReplaceMethod( "GUIMarineBuyMenu", "SetHostStructure",
 					function(self, hostStructure)
 						originalMarineBuyMenu(self, hostStructure)
-						if CHUDSettings["mingui"] then
+						if CHUDGetOption("mingui") then
 							self.menu:SetTexturePixelCoordinates(0, 0, 0, 0)
 							self.menuHeader:SetTexturePixelCoordinates(0, 0, 0, 0)
 						end
@@ -254,10 +254,23 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 				function(self, message, messageItem, useColor, deltaTime)
 					originalWorldTextUpdate(self, message, messageItem, useColor, deltaTime)
 					local oldalpha = useColor.a
-					if CHUDSettings["smalldmg"] then
+					if CHUDGetOption("smalldmg") then
 						messageItem:SetScale(messageItem:GetScale()*0.5)
 					end
-					useColorCHUD = ConditionalValue(PlayerUI_IsOnMarineTeam(), ColorIntToColor(CHUDSettings["dmgcolor_m"]), ColorIntToColor(CHUDSettings["dmgcolor_a"]))
+					local dmgcolor_m = 0x4DDBFF
+					local dmgcolor_a = 0xFFCA3A
+					local dmgoption_m = CHUDGetOption("dmgcolor_m")
+					local dmgoption_a = CHUDGetOption("dmgcolor_a")
+					local colorValues = { 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF }
+					
+					if dmgoption_m > 0 then
+						dmgcolor_m = colorValues[dmgoption_m]
+					end
+					if dmgoption_a > 0 then
+						dmgcolor_a = colorValues[dmgoption_a]
+					end
+					
+					useColorCHUD = ConditionalValue(PlayerUI_IsOnMarineTeam(), ColorIntToColor(dmgcolor_m), ColorIntToColor(dmgcolor_a))
 					messageItem:SetColor(Color(useColorCHUD.r, useColorCHUD.g, useColorCHUD.b, oldalpha))
 				end)
 		
@@ -267,7 +280,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 					originalScoreboardUpdateTeam(self, updateTeam)
 					local playerList = updateTeam["PlayerList"]
 					for index, player in pairs(playerList) do
-						if CHUDSettings["kda"] and player["Assists"]:GetPosition().x < player["Deaths"]:GetPosition().x then
+						if CHUDGetOption("kda") and player["Assists"]:GetPosition().x < player["Deaths"]:GetPosition().x then
 							local temp = player["Assists"]:GetPosition()
 							player["Assists"]:SetPosition(player["Deaths"]:GetPosition())
 							player["Deaths"]:SetPosition(temp)
@@ -281,25 +294,25 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 				function(self, deltaTime)
 					originalWPUpdate(self, deltaTime)
 					local finalWaypointData = PlayerUI_GetFinalWaypointInScreenspace()
-					local showWayPoint = not PlayerUI_GetIsConstructing() and not PlayerUI_GetIsRepairing() and (CHUDSettings["wps"] or Client.GetLocalPlayer():isa("Commander"))
+					local showWayPoint = not PlayerUI_GetIsConstructing() and not PlayerUI_GetIsRepairing() and (CHUDGetOption("wps") or Client.GetLocalPlayer():isa("Commander"))
 					local fullHUD = Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Full
-					self.animatedCircle:SetIsVisible(showWayPoint and fullHUD and not CHUDSettings["minwps"])
+					self.animatedCircle:SetIsVisible(showWayPoint and fullHUD and not CHUDGetOption("minwps"))
 					self.finalWaypoint:SetIsVisible(showWayPoint)
-					self.finalDistanceText:SetIsVisible(fullHUD and not CHUDSettings["minwps"])
-					self.finalNameText:SetIsVisible(fullHUD and not CHUDSettings["minwps"])
-					if CHUDSettings["minwps"] then
+					self.finalDistanceText:SetIsVisible(fullHUD and not CHUDGetOption("minwps"))
+					self.finalNameText:SetIsVisible(fullHUD and not CHUDGetOption("minwps"))
+					if CHUDGetOption("minwps") then
 						self.finalWaypoint:SetTexture(kTransparentTexture)
 					else
 						self.finalWaypoint:SetTexture(self.usedTexture)
 					end
 					
 					// If we have disabled waypoints, we still want to see Attack waypoints
-					if finalWaypointData and not CHUDSettings["wps"] then
+					if finalWaypointData and not CHUDGetOption("wps") then
 						self.finalWaypoint:SetIsVisible(finalWaypointData.type == kTechId.Attack)
 					end
 					
 					// Disabled auto waypoints only
-					if finalWaypointData and not CHUDSettings["autowps"] and CHUDSettings["wps"] then
+					if finalWaypointData and not CHUDGetOption("autowps") and CHUDGetOption("wps") then
 						if finalWaypointData.type == kTechId.AutoConstruct or finalWaypointData.type == kTechId.AutoWeld then
 							self.finalWaypoint:SetIsVisible(false)
 						end
@@ -307,8 +320,8 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 					
 					// Hide the arrows in any of the modes
 					for a = 1, #self.worldArrows do
-						self.worldArrows[a].model:SetIsVisible(not (CHUDSettings["minwps"] or not CHUDSettings["wps"]))
-						self.worldArrows[a].light:SetIsVisible(not (CHUDSettings["minwps"] or not CHUDSettings["wps"]))
+						self.worldArrows[a].model:SetIsVisible(not (CHUDGetOption("minwps") or not CHUDGetOption("wps")))
+						self.worldArrows[a].light:SetIsVisible(not (CHUDGetOption("minwps") or not CHUDGetOption("wps")))
 					end
 					
 					if not finalWaypointData then
@@ -332,7 +345,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						local blipData = activeBlips[i]
 						local updateBlip = self.activeBlipList[i]	
 
-						if CHUDSettings["minnps"] then
+						if CHUDGetOption("minnps") then
 							updateBlip.statusBg:SetTexture(kTransparentTexture)
 							if blipData ~= nil then
 								updateBlip.HintText:SetText(blipData.Hint)
@@ -375,15 +388,15 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 								updateBlip.HintText:SetColor(textColor)
 							end
 						
-							updateBlip.NameText:SetIsVisible(self.fullHUD or blipData.IsPlayer or CHUDSettings["minnps"])
+							updateBlip.NameText:SetIsVisible(self.fullHUD or blipData.IsPlayer or CHUDGetOption("minnps"))
 
 							if updateBlip.smokeyBackground then
-								updateBlip.smokeyBackground:SetIsVisible(blipData.HealthFraction ~= 0 and not CHUDSettings["mingui"])
+								updateBlip.smokeyBackground:SetIsVisible(blipData.HealthFraction ~= 0 and not CHUDGetOption("mingui"))
 							end
 							
 						end
 										
-						if CHUDSettings["mingui"] and self.fullHUD then
+						if CHUDGetOption("mingui") and self.fullHUD then
 							updateBlip.Border:SetSize(Vector(0,0,0))
 						end
 						
@@ -397,7 +410,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 					originalLocationNameInit(self)
 					if script.locationItems ~= nil then
 						for _, locationItem in ipairs(script.locationItems) do
-							locationItem.text:SetColor( Color(1, 1, 1, CHUDSettings["locationalpha"]) )
+							locationItem.text:SetColor( Color(1, 1, 1, CHUDGetOption("locationalpha")) )
 						end
 
 					end

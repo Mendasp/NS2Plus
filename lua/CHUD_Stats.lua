@@ -188,6 +188,9 @@ function AddAttackStat(wTechId, wasHit, target, damageDealt, isPlayer)
 		// Lerk's bite is called "Bite", just like the skulk bite, so clarify this
 		if wTechId == kTechId.LerkBite then
 			weaponname = "Lerk Bite"
+		// This shows up as "Swipe Blink", just "Swipe"
+		elseif wTechId == kTechId.Swipe then
+			weaponname = "Swipe"
 		end
 		
 		if index == nil then

@@ -167,7 +167,7 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 	function(self, cinematicName)
 		//Print(cinematicName)
 		if Client.fullyLoaded then
-			if CHUDSettings["particles"] then
+			if CHUDGetOption("particles") then
 				if table.contains(replacedCinematics, cinematicName) then
 					originalSetCinematic(self, "chud_" .. cinematicName)
 				elseif table.contains(blockedCinematics, cinematicName) then
@@ -257,14 +257,14 @@ end
 
 function RemovePropDynamics()
 	for _, entity in ientitylist(Shared.GetEntitiesWithClassname("PropDynamic")) do
-		if table.contains (BlockedProps, entity:GetModelName()) and CHUDSettings["particles"] then
+		if table.contains (BlockedProps, entity:GetModelName()) and not CHUDGetOption("mapparticles") then
 			entity:SetModel(nil)
 		end
 	end
 end
 		
 function SetCHUDCinematics()
-	if CHUDSettings["particles"] then
+	if not CHUDGetOption("mapparticles") then
 		if cinematicsCache ~= nil then
 			for index, cinematic in ipairs(cinematicsCache) do
 				Client.DestroyCinematic(cinematic)

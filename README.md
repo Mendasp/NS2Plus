@@ -9,6 +9,14 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 19/03/2014 (Build 264):
+	- Reworked options system (internal). Console commands have changed. This has exposed some options that used to be only console commands. Type chud in console for help.
+	- You can now toggle map particles separate from minimal particles.
+	- Added new menu entry "Custom HUD" for the mod options, it has 3 tabs, Visual, HUD, Map.
+	- The changelog is always available in the new Custom HUD menu option on the bottom left.
+	- Reenabled Hive stats for servers that only run CHUD but not [Shine] NS2Stats.
+	- Updated Veil low lights file. Also updated the rest to make sure they are up to date.
+
 - 14/03/2014 (Build 263):
 	- Fixed bug where Minimap locations wouldn't apply transparency on init
 
@@ -29,82 +37,43 @@ Latest changes
 - 05/03/2014 (Build 263):
 	- Minimal GUI now affects the Commander interface as expected
 
-- 01/03/2014 (Build 263):
-	- Fixed friendly evolving players not showing player name
-
-- 28/02/2014 (Build 263):
-	- Fixed lifeform stat tracking (accuracy without Onos hits)
-	- Enabled Alien Vision switcher (chud_av). Switches between default and [Huze's Old Alien Vision](http://steamcommunity.com/sharedfiles/filedetails/?id=201163952).
-	- Added marine upgrade level toggle (chud_uplvl). This enables or disables the weapon/armor level icons on the side of the marine HUD.
-	- Added classic ammo counter toggle (chud_classicammo). Adds an ammo counter on the lower right, like in classic FPS games. Based on Dragon's NS2c ammo display code.
-
-- 19/02/2014 (Build 263):
-	- Disabled the toggling of the build number as it caused weird issues for reasons I fail to understand
-
-- 17/02/2014 (Build 263):
-	- Exos show only armor value in Minimal Nameplates/Exo HUD (since they don't have health)
-	- Parasited friendlies (players or structures) will use a different font color in nameplates (yellow)
-	- Added new option to disable friends highlighting in the minimap/nameplates (chud_friends)
-	- Moved biomass display to avoid overlap with game timer
-
-- 16/02/2014 (Build 263):
-	- Reduced skulk jump sound volume to 50%
-	- Removed build number in Minimal GUI (chud_mingui)
-
-- 14/02/2014 (Build 263):
-	- Added stat tracking. You'll get info in console when you die (the player and structure damage you did while alive) and a more complete overview when the round ends or you go to the ReadyRoom.
-	- No more file overwrites, the mod works only with the entry system
-	- Phase Gates and Gorge Tunnels now show destination in Minimal Nameplates settings (chud_minnps)
-	- You can now switch the official low lights setting with the NSL lights (chud_lowlights)
-	- New option to disable ambient sounds (chud_ambient), and added console command to remove them at any point in the game (stopsound)
-	- Minimal particles (chud_particles) now also removes map cinematics and holograms, like in NSL maps
-	- Removed "Objective completed" sound that still played if you had Waypoints disabled (chud_wps)
-	- Removed "Upgrade complete" sound that still played even with Unlock alerts disabled (chud_unlocks)
-	- Minimal particles additions:
-		- Removed Exo jump/land/overheat/bullet particles
-		- Removed first person low health warning for the Exo
-		- Changed Minigun shooting/impact with rifle effects, looks a bit silly, but less vision obscuring
-		- Removed the jetpack trail effect
-		- Removed most flamethrower effects (really big FPS drain)
-		- Replaced res node effect with older one (less vision obscuring, more like in NS1)
-		- Removed shadowstep trail
-		- Damaged extractor only shows fire (no smoke)
 
 Custom HUD Commands
 ===================
-- **chud_alienbars:** Switches between default health/energy circles or thicker with gradients made by Oma.
-- **chud_ambient:** Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing "stopsound" in console.
-- **chud_assists:** Removes assist score popup.
-- **chud_autowps:** Enables or disables the automatic waypoints (you still get Commander waypoints).
-- **chud_av:** Switches between default alien vision or Huze's old alien vision
-- **chud_banners:** Removes the banners in the center of the screen ("Commander needed", "Power node under attack", "Evolution lost", etc).
-- **chud_classicammo:** Adds an ammo counter on the lower right, like in classic FPS games.
-- **chud_blur:** Removes the background blur from menus/minimap.
-- **chud_dmgcolor_a:** Alien damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.
-- **chud_dmgcolor_m:** Marine damage numbers color. Either RGB or Hex values accepted. For example, you can enter red as 255 0 0 or 0xFF0000.
-- **chud_dmgcolor_reset:** Reset damage numbers colors to the default on both aliens and marines.
-- **chud_friends:** Toggle the friend highlighting in the minimap/nameplates.
-- **chud_gametime:** Adds or removes the game time on the top left (requires having the commander name as marines).
-- **chud_hitindicator:** Controls the speed of the crosshair hit indicator.
-- **chud_hpbar:** Removes the health bars from the marine HUD.
-- **chud_kda:** Switches the scoreboard from KAD to KDA.
-- **chud_locationalpha:** Sets the trasparency of the location text on the minimap.
-- **chud_lowlights:** Changes between the default map low quality lights and the NSL lights.
-- **chud_mingui:** Removes backgrounds/scanlines from all UI elements.
-- **chud_minimap:** Removes the entire top left of the screen for the marines (minimap, comm name, team res, comm actions).
-- **chud_minimapalpha:** Sets the trasparency of the map overview.
-- **chud_minnps:** Removes building names and health/armor bars and replaces them with a simple %.
-- **chud_minwps:** Removes all text/backgrounds and only leaves the waypoint icon.
-- **chud_particles:** Reduces particle clutter and certain map props (holograms).
-- **chud_rtcount:** Removes RT count dots at the bottom and replaces them with a number.
-- **chud_score:** Disables score popup (+5).
-- **chud_showcomm:** Forces showing the commander and resources when disabling the minimap.
-- **chud_smalldmg:** Makes the damage numbers smaller.
-- **chud_smallnps:** Makes fonts in the nameplates smaller.
-- **chud_tracers:** Disables weapon tracers.
-- **chud_unlocks:** Removes the research completed notifications on the right side of the screen.
-- **chud_uplvl:** Removes the weapon/armor level indicator on the right side of the marine HUD
-- **chud_wps:** Disables all waypoints except Attack orders (waypoints can still be seen on minimap).
+- ** chud alienbars <true/false> or <0/1> - ** Lets you choose between the default health/energy bars and Oma's (thicker).
+- ** chud ambient <true/false> or <0/1> - ** Removes map ambient sounds. You can also remove all the ambient sounds during the game by typing "stopsound" in console.
+- ** chud assists <true/false> or <0/1> - ** Disables or enables the assists score popup.
+- ** chud autowps <true/false> or <0/1> - ** Enables or disables automatic waypoints (not given by the commander).
+- ** chud av <integer> - Values: 0 to 2 - ** Lets you choose between different Alien Vision types.
+- ** chud avstate <true/false> or <0/1> - ** Sets the state the alien vision will be in when you respawn.
+- ** chud banners <true/false> or <0/1> - ** Removes the banners in the center of the screen ("Commander needed", "Power node under attack", "Evolution lost", etc.).
+- ** chud blur <true/false> or <0/1> - ** Removes the background blur from menus/minimap.
+- ** chud classicammo <true/false> or <0/1> - ** Toggles a classic ammo counter on the bottom right of the HUD.
+- ** chud dmgcolor_a <integer> - Values: 0 to 9 - ** Changes the color of the alien damage numbers.
+- ** chud dmgcolor_m <integer> - Values: 0 to 9 - ** Changes the color of the marine damage numbers.
+- ** chud friends <true/false> or <0/1> - ** Enables or disables the friend highlighting in the scoreboard/nameplates.
+- ** chud gametime <true/false> or <0/1> - ** Adds or removes the game time on the top left (requires having the commander name as marines).
+- ** chud hitindicator <float> - Values: 0 to 1 - ** Controls the speed of the crosshair hit indicator.
+- ** chud hpbar <true/false> or <0/1> - ** Enables or disables the health bars from the marine HUD.
+- ** chud kda <true/false> or <0/1> - ** Switches the scoreboard between KAD and KDA.
+- ** chud locationalpha <float> - Values: 0 to 1 - ** Sets the trasparency of the location text on the minimap.
+- ** chud mapparticles <true/false> or <0/1> - ** Enables or disables particles, holograms and other map specific effects.
+- ** chud mingui <true/false> or <0/1> - ** Removes backgrounds/scanlines from all UI elements.
+- ** chud minimap <true/false> or <0/1> - ** Toggles the entire top left of the screen for the marines (minimap, comm name, team res, comm actions).
+- ** chud minimapalpha <float> - Values: 0 to 1 - ** Sets the trasparency of the map overview.
+- ** chud minnps <true/false> or <0/1> - ** Toggles building names and health/armor bars with a simple %.
+- ** chud minwps <true/false> or <0/1> - ** Toggles all text/backgrounds and only leaves the waypoint icon.
+- ** chud nsllights <true/false> or <0/1> - ** Replaces the low quality option lights with the lights from the NSL maps.
+- ** chud particles <true/false> or <0/1> - ** Toggles between default and less vision obscuring particles.
+- ** chud rtcount <true/false> or <0/1> - ** Toggles the RT count dots at the bottom and replaces them with a number.
+- ** chud score <true/false> or <0/1> - ** Disables or enables score popup (+5).
+- ** chud showcomm <true/false> or <0/1> - ** Forces showing the commander and resources when disabling the minimap.
+- ** chud smalldmg <true/false> or <0/1> - ** Makes the damage numbers smaller.
+- ** chud smallnps <true/false> or <0/1> - ** Makes fonts in the nameplates smaller.
+- ** chud tracers <true/false> or <0/1> - ** Enables or disables weapon tracers.
+- ** chud unlocks <true/false> or <0/1> - ** Removes the research completed notifications on the right side of the screen.
+- ** chud uplvl <true/false> or <0/1> - ** Toggles the weapon/armor level indicator on the right side of the marine HUD.
+- ** chud wps <true/false> or <0/1> - ** Disables or enables all waypoints except Attack orders (waypoints can still be seen on minimap).
 
 Credits/Thanks to
 =================
@@ -113,4 +82,5 @@ Credits/Thanks to
 - **bawNg** for his awesome injection code (from SparkMod: https://github.com/SparkMod/SparkMod). Tip: Never mention CS:GO to him.
 - **lwf** for the tracer code from Better NS2 (http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
 - **Ghoul** (https://github.com/BrightPaul)
-- **Sewlek** 
+- **Sewlek**
+- **Person8880** (https://github.com/Person8880) GetGamemode function to reenable Hive stats.

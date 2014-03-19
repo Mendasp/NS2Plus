@@ -27,7 +27,7 @@ end
 */
 function ScoreDisplayUI_SetNewScore(score, res, wasKill)
 
-	if CHUDSettings["score"] and (wasKill or CHUDSettings["assists"]) then
+	if CHUDGetOption("score") and (wasKill or CHUDGetOption("assists")) then
 
 		pendingScore = score
 		pendingRes = res

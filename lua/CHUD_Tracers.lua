@@ -5,7 +5,7 @@ local OriginalClipFreq
 OriginalClipFreq = Class_ReplaceMethod( "ClipWeapon", "GetTracerEffectFrequency", 
 	function(self)
 	
-		if not CHUDSettings["tracers"] then
+		if not CHUDGetOption("tracers") then
 			return 0
 		else
 			return OriginalClipFreq(self)
@@ -19,7 +19,7 @@ local OriginalShotgunFreq
 OriginalShotgunFreq = Class_ReplaceMethod( "Shotgun", "GetTracerEffectFrequency", 
 	function(self)
 	
-		if not CHUDSettings["tracers"] then
+		if not CHUDGetOption("tracers") then
 			return 0
 		else
 			return OriginalShotgunFreq(self)
@@ -33,7 +33,7 @@ local OriginalMinigunFreq
 OriginalMinigunFreq = Class_ReplaceMethod( "Minigun", "GetTracerEffectFrequency", 
 	function(self)
 	
-		if not CHUDSettings["tracers"] then
+		if not CHUDGetOption("tracers") then
 			return 0
 		else
 			return OriginalMinigunFreq(self)
