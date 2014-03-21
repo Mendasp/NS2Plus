@@ -22,6 +22,7 @@ function OnCommandCHUDMinimapAlpha()
 	minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
 end
 
+Script.Load("lua/CHUD_Shared.lua")
 Script.Load("lua/CHUD_Utility.lua")
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_MainMenu.lua")

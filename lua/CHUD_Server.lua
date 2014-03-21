@@ -1,3 +1,4 @@
+Script.Load("lua/CHUD_Shared.lua")
 Server.AddTag("CHUD")
 
 local originaldmgmixin = DamageMixin.DoDamage
@@ -71,15 +72,12 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 			
 			damageDone, armorUsed, healthUsed = GetDamageByType(target, attacker, self, damage, damageType, point)
 
-			// To maintain compatibility and not require the server component, we hijack the damage message
-			// posx has to be either 1.0 or 0.0 and posz will always be kHitEffectMaxPosition-1 so we can detect it
 			local msg = { }
-			msg.amount = healthUsed+(armorUsed)*2
+			msg.damage = healthUsed+(armorUsed)*2
 			msg.targetId = (target and target:GetId()) or Entity.invalidId
-			msg.posx = ConditionalValue(target:isa("Player"), 1, 0)
-			msg.posy = weapon
-			msg.posz = kHitEffectMaxPosition-1
-			Server.SendNetworkMessage(attacker, "Damage", msg, false)
+			msg.isPlayer = target:isa("Player")
+			msg.weapon = weapon
+			Server.SendNetworkMessage(attacker, "CHUDStats", msg, false)
 		end
 	end
 	// Now we send the actual damage message

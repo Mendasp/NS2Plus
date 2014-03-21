@@ -230,11 +230,11 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			
 		elseif (scriptName == "GUIMarineBuyMenu") then
 			if CHUDGetOption("mingui") then
-				script.background:SetColor(Color(1, 1, 1, 0))
-				script.repeatingBGTexture:SetTexturePixelCoordinates(0, 0, 0, 0)
-				script.content:SetTexturePixelCoordinates(0, 0, 0, 0)
+				script.content:SetTexture("ui/blank.dds")
+				script.repeatingBGTexture:SetTexture("ui/blank.dds")
 				script.scanLine:SetIsVisible(false)
-				script.resourceDisplayBackground:SetTexturePixelCoordinates(0, 0, 0, 0)
+				script.resourceDisplayBackground:SetTexture("ui/blank.dds")
+				script.background:SetColor(Color(1, 1, 1, 0))
 			end
 			if not MarineBuyMenuOverride then
 				MarineBuyMenuOverride = true
@@ -242,8 +242,8 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 					function(self, hostStructure)
 						originalMarineBuyMenu(self, hostStructure)
 						if CHUDGetOption("mingui") then
-							self.menu:SetTexturePixelCoordinates(0, 0, 0, 0)
-							self.menuHeader:SetTexturePixelCoordinates(0, 0, 0, 0)
+							self.menu:SetTexture("ui/blank.dds")
+							self.menuHeader:SetTexture("ui/blank.dds")
 						end
 					end)
 			end
@@ -394,6 +394,16 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 								updateBlip.smokeyBackground:SetIsVisible(blipData.HealthFraction ~= 0 and not CHUDGetOption("mingui"))
 							end
 							
+							local kAmmoColors = {
+								["rifle"] = Color(0,0,1,1), // blue
+								["shotgun"] = Color(0,1,0,1), // green
+								["flamethrower"] = Color(1,1,0,1), // yellow
+								["grenadelauncher"] = Color(1,0,1,1), // magenta
+							}
+							
+							if blipData.MarineWeapon then
+								updateBlip.AbilityBar:SetColor(kAmmoColors[blipData.MarineWeapon])
+							end
 						end
 										
 						if CHUDGetOption("mingui") and self.fullHUD then

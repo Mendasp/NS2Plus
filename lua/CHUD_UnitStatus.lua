@@ -226,7 +226,16 @@ function PlayerUI_GetUnitStatusInfo()
 					if player:isa("Commander") then        
 						abilityFraction = unit:GetAbilityFraction()
 					end
-										
+					
+					local marineWeapon = nil
+					if unit:isa("Player") and unit:isa("Marine") and HasMixin(unit, "WeaponOwner") then
+						local validWeapons = { "rifle", "shotgun", "flamethrower", "grenadelauncher" }
+					    local primaryWeapon = unit:GetWeaponInHUDSlot(1)
+						if primaryWeapon and primaryWeapon:isa("ClipWeapon") and table.contains(validWeapons, primaryWeapon:GetMapName()) then
+							marineWeapon = primaryWeapon:GetMapName()
+						end
+					end
+					
 					local unitState = {
 						
 						Position = origin,
@@ -248,7 +257,9 @@ function PlayerUI_GetUnitStatusInfo()
 						IsSteamFriend = unit:isa("Player") and unit:GetIsSteamFriend() or false,
 						AbilityFraction = abilityFraction,
 						// (CHUD) Added parasite indicator
-						IsParasited = HasMixin(unit, "ParasiteAble") and unit:GetIsParasited()
+						IsParasited = HasMixin(unit, "ParasiteAble") and unit:GetIsParasited(),
+						// (CHUD) Need active weapon for commander ammo bar color
+						MarineWeapon = marineWeapon,
 					
 					}
 					

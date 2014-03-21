@@ -85,7 +85,7 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
         {
             OnClick = function(self)
             
-                if not mainMenu.CHUDoptionWindow then
+                if not mainMenu.CHUDOptionWindow then
 					mainMenu:CreateCHUDOptionWindow()
                 end
                 mainMenu:TriggerOpenAnimation(mainMenu.CHUDOptionWindow)
@@ -160,7 +160,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		if mainMenu.optionTooltip then
 			local background = mainMenu.optionTooltip.background
 			local bgLayer = self.CHUDOptionWindow:GetContentBox():GetLayer()
-			// Increment by 2 so it works on the Options menu too
+			// Increment by 2 so it works for the Options menu too
 			background:SetLayer(bgLayer+2)
 		end
 		

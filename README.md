@@ -9,6 +9,12 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 21/03/2014 (Build 264):
+	- Fixed bug where the CHUD Options menu was being recreated every time it opened.
+	- Overhead spectators now get the player name in yellow if the player is parasited.
+	- Made ammo bars for Marine Commanders colored depending on primary weapon, like in spectator view.
+	- Redid the way Minimal GUI affects the Armory and Prototype Lab buy menus.
+	
 - 19/03/2014 (Build 264):
 	- Reworked options system (internal). Console commands have changed. This has exposed some options that used to be only console commands. Type chud in console for help.
 	- You can now toggle map particles separate from minimal particles.
@@ -33,9 +39,6 @@ Latest changes
 	- Added third option to the Alien Vision switcher: [Huze's Minimal AV](http://steamcommunity.com/sharedfiles/filedetails/?id=98879398).
 	- Added hit indicator fade time (chud_hitindicator). Controls the time it takes for the crosshair hit indicator to fade out (between 0 and 1 - Default value: 1).
 	- Added new command to disable automatic waypoints (chud_autowps). Disables the waypoints not given by the commander.
-
-- 05/03/2014 (Build 263):
-	- Minimal GUI now affects the Commander interface as expected
 
 Credits/Thanks to
 =================

@@ -2,29 +2,15 @@ CHUDStats = { }
 lastteamnr = 0
 CHUD_pdmg = 0
 CHUD_sdmg = 0
-CHUDServer = false
 
-function OnCHUDDamage(damageTable)
+function OnCHUDDamage(statsTable)
 
-	local target = Shared.GetEntity(damageTable.targetId)
-	local damage = damageTable.amount
-	// Hack the planet
-	if (damageTable.posx == 1 or damageTable.posx == 0) and damageTable.posz == kHitEffectMaxPosition-1 then
-		local weapon = damageTable.posy
-		local isPlayer = false
-		if damageTable.posx == 1 then
-			isPlayer = true
-		end
+	local isPlayer = statsTable.isPlayer
+	local weapon = statsTable.weapon
+	local target = Shared.GetEntity(statsTable.targetId)
+	local damage = statsTable.damage
 		
-		CHUDServer = true
-
-		AddAttackStat(weapon, true, target, damage, isPlayer)
-	else
-		local position = Vector(damageTable.posx, damageTable.posy, damageTable.posz)
-		if target then
-			Client.AddWorldMessage(kWorldTextMessageType.Damage, damage, position, target:GetId())
-		end
-	end
+	AddAttackStat(weapon, true, target, damage, isPlayer)
 end
 
 function ShowClientStats(endRound)
@@ -46,7 +32,7 @@ function ShowClientStats(endRound)
 		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
 	}
 	
-	if #CHUDStats > 0 and CHUDServer then
+	if #CHUDStats > 0 then
 	
 		Shared.Message("-----------------------")
 		Shared.Message("Stats for this " .. text)
@@ -375,4 +361,4 @@ originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "OnTag",
 	end)
 
 Event.Hook("LocalPlayerChanged", CheckPlayerTeam)
-Client.HookNetworkMessage("Damage", OnCHUDDamage)
+Client.HookNetworkMessage("CHUDStats", OnCHUDDamage)

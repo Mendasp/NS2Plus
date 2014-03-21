@@ -21,28 +21,28 @@ function CHUDSetOption(key, value)
 		if option.valueType == "bool" then
 			if value == "true" or value == "1" or value == true then
 				Client.SetOptionBoolean(option.name, true)
-				CHUDOptions[key].currentValue = true
-				setValue = CHUDOptions[key].currentValue
+				option.currentValue = true
+				setValue = option.currentValue
 			elseif value == "false" or value == "0" or value == false then
 				Client.SetOptionBoolean(option.name, false)
-				CHUDOptions[key].currentValue = false
-				setValue = CHUDOptions[key].currentValue
+				option.currentValue = false
+				setValue = option.currentValue
 			end
 			
 		elseif option.valueType == "float" then
 			local number = tonumber(value)
 			if IsNumber(number) and number >= option.minValue and number <= option.maxValue then
 				Client.SetOptionFloat(option.name, number)
-				CHUDOptions[key].currentValue = number
-				setValue = CHUDOptions[key].currentValue
+				option.currentValue = number
+				setValue = option.currentValue
 			end
 			
 		elseif option.valueType == "int" then
 			local number = tonumber(value)
 			if IsNumber(number) and isInteger(number) and number >= 0 and number < #option.values then
 				Client.SetOptionInteger(option.name, number)
-				CHUDOptions[key].currentValue = number
-				setValue = CHUDOptions[key].currentValue
+				option.currentValue = number
+				setValue = option.currentValue
 			end
 		end
 		
