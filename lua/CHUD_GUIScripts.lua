@@ -401,7 +401,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 								["grenadelauncher"] = Color(1,0,1,1), // magenta
 							}
 							
-							if blipData.MarineWeapon then
+							if blipData.AbilityFraction > 0 and blipData.MarineWeapon then
 								updateBlip.AbilityBar:SetColor(kAmmoColors[blipData.MarineWeapon])
 							end
 						end
