@@ -81,7 +81,7 @@ function GetCHUDSettings()
 			value = Client.GetOptionInteger(option.name, option.defaultValue)
 			local number = tonumber(value)
 			if IsNumber(number) and isInteger(number) and number >= 0 and number < #option.values then
-				CHUDOptions[name].currentValue = value
+				CHUDOptions[name].currentValue = number
 			else
 				CHUDSetOption(name, option.defaultValue)
 			end

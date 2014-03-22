@@ -7,6 +7,7 @@ WPOverride = false
 UnitStatusOverride = false
 GameEndOverride = false
 MinimapLocationInitOverride = false
+CommManagerOverride = false
 
 originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 	function(self, scriptName)
@@ -17,6 +18,41 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 				function(self, enabled)
 					originalSetHUDMap(self, CHUDGetOption("minimap"))
 				end)
+				
+				originalShowNewArmorLevel = Class_ReplaceMethod( "GUIMarineHUD", "ShowNewArmorLevel",
+				function(self, armorLevel)
+					local uplvl = CHUDGetOption("uplvl")
+					if uplvl == 0 then
+						self.armorLevel:SetTexture("ui/blank.dds")
+					elseif uplvl == 1 then
+						originalShowNewArmorLevel(self, armorLevel)
+						self.armorLevel:SetTexture(GUIMarineHUD.kUpgradesTexture)
+					elseif uplvl == 2 then
+						self.armorLevel:SetTexture("ui/chud_upgradeicons.dds")
+						local x1 = armorLevel * 80 - 80
+						local x2 = x1 + 80
+						local textureCoords = { x1, 0, x2, 80 }
+						self.armorLevel:SetTexturePixelCoordinates(unpack(textureCoords))
+					end
+				end)
+				
+				originalShowNewWeaponLevel = Class_ReplaceMethod( "GUIMarineHUD", "ShowNewWeaponLevel",
+				function(self, weaponLevel)
+					local uplvl = CHUDGetOption("uplvl")
+					if uplvl == 0 then
+						self.weaponLevel:SetTexture("ui/blank.dds")
+					elseif uplvl == 1 then
+						originalShowNewWeaponLevel(self, weaponLevel)
+						self.weaponLevel:SetTexture(GUIMarineHUD.kUpgradesTexture)
+					elseif uplvl == 2 then
+						self.weaponLevel:SetTexture("ui/chud_upgradeicons.dds")
+						local x1 = 160 + weaponLevel * 80
+						local x2 = x1 + 80
+						local textureCoords = { x1, 0, x2, 80 }
+						self.weaponLevel:SetTexturePixelCoordinates(unpack(textureCoords))
+					end
+				end)
+				
 			end
 
 			if not MarineHUDOverride then
@@ -44,7 +80,6 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							
 							local minutes = math.floor(gameTime / 60)
 							local seconds = gameTime - minutes * 60
-							local gameTimeText = string.format(" - %d:%02d", minutes, math.floor(seconds))
 							
 							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, math.floor(seconds)))
 						end
@@ -63,17 +98,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							self.resourceDisplay.rtCount:SetIsVisible(CommanderUI_GetTeamHarvesterCount() > 0)
 							self.resourceDisplay.pResDescription:SetText(Locale.ResolveString("RESOURCES"))
 						end
-						
-						// Upgrade toggle, easy peasy lemon squeezy
-						
-						if self.armorLevel:GetIsVisible() then
-							self.armorLevel:SetIsVisible(CHUDGetOption("uplvl"))
-						end
-						
-						if self.weaponLevel:GetIsVisible() then
-							self.weaponLevel:SetIsVisible(CHUDGetOption("uplvl"))
-						end
-						
+											
 						self.commanderName:SetIsVisible(false)
 						if (CHUDGetOption("minimap") or (CHUDGetOption("showcomm") and not CHUDGetOption("minimap"))) then
 							// Update commander name
@@ -181,7 +206,6 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							
 							local minutes = math.floor(gameTime / 60)
 							local seconds = gameTime - minutes * 60
-							local gameTimeText = string.format(" - %d:%02d", minutes, math.floor(seconds))
 							
 							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, math.floor(seconds)))
 						end
@@ -189,6 +213,30 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						self.resourceDisplay.teamText:SetIsVisible(CHUDGetOption("showcomm") or CHUDGetOption("minimap"))
 				end)
 			end
+			
+		elseif (scriptName == "GUICommanderManager") and not CommManagerOverride then
+			// One day I'll do stuff like this properly, but not now!
+			// And I don't mean just the part where I use the same code 3 times in 3 places!
+			// HACKSSSSSSSS
+			CommManagerOverride = true
+			originalCommManager = Class_ReplaceMethod( "GUICommanderManager", "Update",
+				function(self, deltaTime)
+					originalCommManager(self, deltaTime)
+					
+					if CHUDGetOption("gametime") then
+						local currentLocationText = self.locationText:GetText()
+						local gameTime = PlayerUI_GetGameStartTime()
+						
+						if gameTime ~= 0 then
+							gameTime = math.floor(Shared.GetTime()) - PlayerUI_GetGameStartTime()
+						end
+						
+						local minutes = math.floor(gameTime / 60)
+						local seconds = gameTime - minutes * 60
+						
+						self.locationText:SetText(string.format(currentLocationText .. "\n%d:%02d", minutes, math.floor(seconds)))
+					end
+				end)
 		
 		elseif (scriptName == "GUIProgressBar") then
 			script:Uninitialize()

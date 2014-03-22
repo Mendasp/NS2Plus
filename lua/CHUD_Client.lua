@@ -72,6 +72,7 @@ function ApplyCHUD(script, scriptName)
 
 			// The weapon upgrade icon gets corrupted after reinitializing this script. We reapply this.
 			script:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
+			script:ShowNewArmorLevel(PlayerUI_GetWeaponLevel())
 			
 		elseif scriptName == "GUIAlienHUD" then
 			// Move the team res to a reasonable position instead of the marine default
@@ -181,7 +182,7 @@ function ApplyCHUD(script, scriptName)
 				script.background:SetTexture("ui/biomass_bar.dds")
 			end
 			
-			if not Client.GetLocalPlayer():isa("Commander") then
+			if not Client.GetLocalPlayer():isa("Commander") or CHUDGetOption("gametime") then
 				// Move this down a bit, since we moved the team res stuff up
 				script.background:SetPosition(GUIScale(Vector(20, 100, 0)))
 				script.smokeyBackground:SetPosition(GUIScale(Vector(-100, 10, 0)))

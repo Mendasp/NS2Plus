@@ -9,6 +9,10 @@ You can type "chud" in console to see all available options or set them directly
 
 Latest changes
 ==============
+- 22/03/2014 (Build 264):
+	- Expanded marine upgrade icons option to include the NS2 Beta icons.
+	- Enabled game timer to Commanders.
+
 - 21/03/2014 (Build 264):
 	- Fixed bug where the CHUD Options menu was being recreated every time it opened.
 	- Overhead spectators now get the player name in yellow if the player is parasited.
@@ -33,12 +37,6 @@ Latest changes
 
 - 09/03/2014 (Build 263):
 	- Server browser is now able to filter servers running CHUD, but can only do so ingame. To be able to search outside of a game use [CHUD Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163).
-
-- 07/03/2014 (Build 263):
-	- Added server tag "CHUD" (in the future this could allow searching for servers that run the mod).
-	- Added third option to the Alien Vision switcher: [Huze's Minimal AV](http://steamcommunity.com/sharedfiles/filedetails/?id=98879398).
-	- Added hit indicator fade time (chud_hitindicator). Controls the time it takes for the crosshair hit indicator to fade out (between 0 and 1 - Default value: 1).
-	- Added new command to disable automatic waypoints (chud_autowps). Disables the waypoints not given by the commander.
 
 Credits/Thanks to
 =================
