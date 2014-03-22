@@ -72,7 +72,7 @@ function ApplyCHUD(script, scriptName)
 
 			// The weapon upgrade icon gets corrupted after reinitializing this script. We reapply this.
 			script:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
-			script:ShowNewArmorLevel(PlayerUI_GetWeaponLevel())
+			script:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
 			
 		elseif scriptName == "GUIAlienHUD" then
 			// Move the team res to a reasonable position instead of the marine default
