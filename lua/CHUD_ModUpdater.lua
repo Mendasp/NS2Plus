@@ -1,3 +1,9 @@
+// Don't use this updater if the server is already using the Shine one
+if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
+	Shared.Message("Shine Workshop Updater is enabled. Disabling CHUD Mod Updater.")
+	return
+end
+
 local updateCheckInterval = 15*60
 local lastTimeChecked = Shared.GetTime() - updateCheckInterval
 local mapChangeNeeded = false
@@ -37,7 +43,6 @@ function CHUDModUpdater()
 		if params["itemcount"] > 0 and not mapChangeNeeded then
 			Shared.SendHTTPRequest("http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/", "POST", params, function(result) CHUDParseModInfo(json.decode(result)) end)
 		end
-		
 	end
 end
 
