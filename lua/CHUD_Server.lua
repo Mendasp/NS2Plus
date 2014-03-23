@@ -1,7 +1,20 @@
 Script.Load("lua/CHUD_Shared.lua")
+Script.Load("lua/CHUD_ModUpdater.lua")
 Server.AddTag("CHUD")
 
 CHUDSendHiveStats = true
+
+function SendCHUDMessage(message)
+
+    if message then
+    
+        Server.SendNetworkMessage("Chat", BuildChatMessage(false, "CHUD", -1, kTeamReadyRoom, kNeutralTeamType, message), true)
+        Shared.Message("Chat All - CHUD: " .. message)
+        Server.AddChatToHistory(message, "CHUD", 0, kTeamReadyRoom, false)
+        
+    end
+    
+end
 
 local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
@@ -150,9 +163,5 @@ Class_ReplaceMethod("PlayerRanking", "GetTrackServer",
 // Bugfix for skulk growl sounds
 Class_ReplaceMethod("Player", "GetPlayIdleSound",
 	function(self)
-		if self:isa("Skulk") and self.movementModiferState then
-			return self:GetIsAlive() and (self:GetVelocityLength() / (self:GetMaxSpeed()*2)) > 0.65
-		else
-			return self:GetIsAlive() and (self:GetVelocityLength() / self:GetMaxSpeed()) > 0.65
-		end
+		return self:GetIsAlive() and (self:GetVelocityLength() / self:GetMaxSpeed(true)) > 0.65
 	end)
