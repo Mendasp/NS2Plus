@@ -7,8 +7,14 @@ If the server allows mods that use the entry system, you can use it as it's 100%
 
 You can type "chud" in console to see all available options or set them directly in your options menu.
 
+To be able to search for servers running CHUD you can use [CHUD Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163). Remember to set it to Active in your Mods list.
+
 Latest changes
 ==============
+- 23/03/2014 (Build 264):
+	- Added better checks for cheats and bots to disable stats reporting in those cases.
+	- Fixed Skulk growl sound playing all the time when walking.
+
 - 22/03/2014 (Build 264):
 	- Expanded marine upgrade icons option to include the NS2 Beta icons.
 	- Enabled game timer to Commanders.
@@ -34,9 +40,6 @@ Latest changes
 	- Added Alien Vision State option (chud_avstate) to set if you want to automatically turn on the AV on respawn.
 	- Added location name transparency (chud_locationalpha) to set the transparency of the location name text on the minimap.
 	- Added minimap transparency (chud_minimapalpha) to set the transparency of the minimap.
-
-- 09/03/2014 (Build 263):
-	- Server browser is now able to filter servers running CHUD, but can only do so ingame. To be able to search outside of a game use [CHUD Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163).
 
 Credits/Thanks to
 =================

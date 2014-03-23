@@ -146,3 +146,14 @@ Class_ReplaceMethod("PlayerRanking", "GetTrackServer",
 	function(self)
 		return CHUDSendHiveStats and ShineGetGamemode() == "ns2"
 	end)
+	
+// Bugfix for skulk growl sounds
+Class_ReplaceMethod("Player", "GetPlayIdleSound",
+	function(self)
+		if self:isa("Skulk") and self.movementModiferState then
+			Print(self:GetVelocityLength() / (self:GetMaxSpeed()*2))
+			return self:GetIsAlive() and (self:GetVelocityLength() / (self:GetMaxSpeed()*2)) > 0.65
+		else
+			return self:GetIsAlive() and (self:GetVelocityLength() / self:GetMaxSpeed()) > 0.65
+		end
+	end)
