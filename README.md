@@ -14,7 +14,7 @@ Latest changes
 - 23/03/2014 (Build 264):
 	- Added better checks for cheats and bots to disable stats reporting in those cases.
 	- Fixed Skulk growl sound playing all the time when walking.
-	- Added a mod update detector. Checks for mod updates every 15 minutes. When the server is empty it automatically changes map.
+	- Added a mod update detector. Checks for mod updates every 15 minutes. When the server is empty it automatically changes map. If it detects the Shine Workshop updater is running it disables itself.
 
 - 22/03/2014 (Build 264):
 	- Expanded marine upgrade icons option to include the NS2 Beta icons.
