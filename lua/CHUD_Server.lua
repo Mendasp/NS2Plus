@@ -1,9 +1,14 @@
 Script.Load("lua/CHUD_Shared.lua")
 Server.AddTag("CHUD")
 
+CHUDSendHiveStats = true
+
 local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 	if Server and GetGamerules():GetGameStarted() then
+		if Shared.GetCheatsEnabled() then
+			CHUDSendHiveStats = false
+		end
 	
 		local weapon
 	
@@ -129,8 +134,15 @@ function ShineGetGamemode()
 	return Gamemode
 end
 
+originalPlayerBotName = Class_ReplaceMethod("PlayerBot", "UpdateNameAndGender",
+	function(self)
+		originalPlayerBotName(self)
+		CHUDSendHiveStats = false
+	end)
+
 // Reenable Hive stats
+// We check if cheats or bots have been used at any point to disable sending stats
 Class_ReplaceMethod("PlayerRanking", "GetTrackServer",
 	function(self)
-		return not GetServerContainsBots() and not Shared.GetCheatsEnabled() and ShineGetGamemode() == "ns2"
+		return CHUDSendHiveStats and ShineGetGamemode() == "ns2"
 	end)

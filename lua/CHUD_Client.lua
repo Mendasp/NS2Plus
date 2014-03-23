@@ -70,7 +70,7 @@ function ApplyCHUD(script, scriptName)
 				script.commanderName:SetPosition(Vector(20, 46, 0))
 			end
 
-			// The weapon upgrade icon gets corrupted after reinitializing this script. We reapply this.
+			// Reapply this so it shows the correct weapon/armor icon version
 			script:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
 			script:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
 			
