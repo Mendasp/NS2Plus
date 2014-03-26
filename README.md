@@ -13,6 +13,7 @@ Latest changes
 ==============
 - 26/03/2014 (Build 264):
 	- Fixed bug where default nameplates would reveal player eggs.
+	- Fixed Summit rock props.
 
 - 23/03/2014 (Build 264):
 	- Added better checks for cheats and bots to disable stats reporting in those cases.
