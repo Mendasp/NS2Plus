@@ -11,6 +11,9 @@ To be able to search for servers running CHUD you can use [CHUD Browser](http://
 
 Latest changes
 ==============
+- 26/03/2014 (Build 264):
+	- Fixed bug where default nameplates would reveal player eggs.
+
 - 23/03/2014 (Build 264):
 	- Added better checks for cheats and bots to disable stats reporting in those cases.
 	- Fixed Skulk growl sound playing all the time when walking.
@@ -36,11 +39,6 @@ Latest changes
 
 - 14/03/2014 (Build 263):
 	- Fixed bug where Minimap locations wouldn't apply transparency on init
-
-- 12/03/2014 (Build 263):
-	- Added Alien Vision State option (chud_avstate) to set if you want to automatically turn on the AV on respawn.
-	- Added location name transparency (chud_locationalpha) to set the transparency of the location name text on the minimap.
-	- Added minimap transparency (chud_minimapalpha) to set the transparency of the minimap.
 
 Credits/Thanks to
 =================

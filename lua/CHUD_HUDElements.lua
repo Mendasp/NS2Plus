@@ -202,6 +202,8 @@ local skulkJumpSounds = {
 function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
 	if table.contains(skulkJumpSounds, soundEffectName) then
 		volume = volume * 0.5
+	elseif soundEffectName == "sound/NS2.fev/alien/skulk/bite" then
+		volume = volume * 0.6
 	end
 	
 	if not table.contains(blockedVO, soundEffectName) or CHUDGetOption("wps") then
