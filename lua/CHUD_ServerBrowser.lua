@@ -29,6 +29,8 @@ function BuildServerEntry(serverIndex)
 	if Client.GetServerHasTag(serverIndex, "CHUD") then
 		serverEntry.mode = "CHUD"
 	end
+	
+	serverEntry.CHUD_MCR = Client.GetServerHasTag(serverIndex, "CHUD_MCR")
     
     return serverEntry
     
@@ -39,6 +41,10 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 		originalSetServerData(self, serverData)
 		if serverData.mode == "CHUD" then
 			self.modName:SetColor(kYellow)
+		end
+		// Mapchange required
+		if serverData.CHUD_MCR then
+			self.playerCount:SetColor(kRed)
 		end
 	end
 )

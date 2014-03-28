@@ -2,27 +2,18 @@ Script.Load("lua/CHUD_Shared.lua")
 Script.Load("lua/CHUD_ModUpdater.lua")
 Server.AddTag("CHUD")
 
-CHUDSendHiveStats = true
+CHUDSendStats = true
 
-function SendCHUDMessage(message)
-
-    if message then
-    
-        Server.SendNetworkMessage("Chat", BuildChatMessage(false, "CHUD", -1, kTeamReadyRoom, kNeutralTeamType, message), true)
-        Shared.Message("Chat All - CHUD: " .. message)
-        Server.AddChatToHistory(message, "CHUD", 0, kTeamReadyRoom, false)
-        
-    end
-    
+function CHUDCheckCheats()
+	if Shared.GetCheatsEnabled() and CHUDSendStats then
+		CHUDSendStats = false
+	end
 end
 
 local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 	if Server and GetGamerules():GetGameStarted() then
-		if Shared.GetCheatsEnabled() then
-			CHUDSendHiveStats = false
-		end
-	
+
 		local weapon
 	
 		if self:isa("Player") then
@@ -123,41 +114,17 @@ function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
 	
 end
 
-// Thanks Shine!
-local Gamemode
-function ShineGetGamemode()
-	if Gamemode then return Gamemode end
-
-	local GameSetup = io.open( "game_setup.xml", "r" )
-
-	if not GameSetup then
-		Gamemode = "ns2"
-
-		return "ns2"
-	end
-
-	local Data = GameSetup:read( "*all" )
-
-	GameSetup:close()
-
-	local Match = Data:match( "<name>(.+)</name>" )
-
-	Gamemode = Match or "ns2"
-
-	return Gamemode
-end
-
 originalPlayerBotName = Class_ReplaceMethod("PlayerBot", "UpdateNameAndGender",
 	function(self)
 		originalPlayerBotName(self)
-		CHUDSendHiveStats = false
+		CHUDSendStats = false
 	end)
 
 // Reenable Hive stats
 // We check if cheats or bots have been used at any point to disable sending stats
 Class_ReplaceMethod("PlayerRanking", "GetTrackServer",
 	function(self)
-		return CHUDSendHiveStats and ShineGetGamemode() == "ns2"
+		return CHUDSendStats and ShineGetGamemode() == "ns2"
 	end)
 	
 // Bugfix for skulk growl sounds
@@ -165,3 +132,5 @@ Class_ReplaceMethod("Player", "GetPlayIdleSound",
 	function(self)
 		return self:GetIsAlive() and (self:GetVelocityLength() / self:GetMaxSpeed(true)) > 0.65
 	end)
+	
+Event.Hook("UpdateServer", CHUDCheckCheats)

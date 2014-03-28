@@ -1,3 +1,15 @@
+function SendCHUDMessage(message)
+
+    if Server and message then
+    
+        Server.SendNetworkMessage("Chat", BuildChatMessage(false, "CHUD", -1, kTeamReadyRoom, kNeutralTeamType, message), true)
+        Shared.Message("Chat All - CHUD: " .. message)
+        Server.AddChatToHistory(message, "CHUD", 0, kTeamReadyRoom, false)
+        
+    end
+    
+end
+
 // bawNg's awesome injection code from SparkMod
 function InjectIntoScope(...)
 	local scope_functions = {...}
@@ -50,4 +62,28 @@ function InjectIntoScope(...)
 	else
 		error("The last argument passed to InjectIntoScope must be a function or string containing a function name")
 	end
+end
+
+// Obviously from Shine
+local Gamemode
+function ShineGetGamemode()
+	if Gamemode then return Gamemode end
+
+	local GameSetup = io.open( "game_setup.xml", "r" )
+
+	if not GameSetup then
+		Gamemode = "ns2"
+
+		return "ns2"
+	end
+
+	local Data = GameSetup:read( "*all" )
+
+	GameSetup:close()
+
+	local Match = Data:match( "<name>(.+)</name>" )
+
+	Gamemode = Match or "ns2"
+
+	return Gamemode
 end

@@ -23,7 +23,6 @@ function OnCommandCHUDMinimapAlpha()
 end
 
 Script.Load("lua/CHUD_Shared.lua")
-Script.Load("lua/CHUD_Utility.lua")
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_MainMenu.lua")
 Script.Load("lua/CHUD_Settings.lua")

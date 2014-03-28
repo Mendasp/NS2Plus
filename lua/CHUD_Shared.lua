@@ -1,3 +1,5 @@
+Script.Load("lua/CHUD_Utility.lua")
+
 local kCHUDStatsMessage =
 {
     isPlayer = "boolean",

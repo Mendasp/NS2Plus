@@ -11,6 +11,9 @@ To be able to search for servers running CHUD you can use [CHUD Browser](http://
 
 Latest changes
 ==============
+- 28/03/2014 (Build 264):
+	- CHUD Server Browser now marks the playercount in red if the server requires a map change to join (only for CHUD servers).
+
 - 26/03/2014 (Build 264):
 	- Fixed bug where default nameplates would reveal player eggs.
 	- Fixed Summit rock props.
@@ -37,9 +40,6 @@ Latest changes
 	- The changelog is always available in the new Custom HUD menu option on the bottom left.
 	- Reenabled Hive stats for servers that only run CHUD but not [Shine] NS2Stats.
 	- Updated Veil low lights file. Also updated the rest to make sure they are up to date.
-
-- 14/03/2014 (Build 263):
-	- Fixed bug where Minimap locations wouldn't apply transparency on init
 
 Credits/Thanks to
 =================

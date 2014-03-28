@@ -1,13 +1,16 @@
-// Don't use this updater if the server is already using the Shine one
-if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
-	Shared.Message("Shine Workshop Updater is enabled. Disabling CHUD Mod Updater.")
-	return
-end
-
 local updateCheckInterval = 15*60
 local lastTimeChecked = Shared.GetTime() - updateCheckInterval
 local mapChangeNeeded = false
 local modsTable = {}
+local ShineUpdater = false
+
+Server.RemoveTag("CHUD_MCR")
+
+// Don't use this updater if the server is already using the Shine one
+if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
+	Shared.Message("Shine Workshop Updater is enabled. Disabling CHUD Mod Updater.")
+	ShineUpdater = true
+end
 
 function CHUDParseModInfo(modInfo)
 	local response = modInfo["response"]
@@ -15,8 +18,11 @@ function CHUDParseModInfo(modInfo)
 		for _, res in pairs(response["publishedfiledetails"]) do
 			if res["result"] == 1 and not mapChangeNeeded then
 				if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
+					Server.AddTag("CHUD_MCR")
 					mapChangeNeeded = true
-					SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+					if not ShineUpdater then
+						SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+					end
 				end
 				
 				modsTable[res["publishedfileid"]] = res["time_updated"]
@@ -26,7 +32,7 @@ function CHUDParseModInfo(modInfo)
 end
 
 function CHUDModUpdater()
-	if mapChangeNeeded and Server.GetNumPlayers() == 0 then
+	if mapChangeNeeded and Server.GetNumPlayers() == 0 and not ShineUpdater then
 		SendCHUDMessage("The server is empty. Changing map.")
 		MapCycle_CycleMap()
 	end
