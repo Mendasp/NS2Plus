@@ -98,20 +98,6 @@ function ShowClientStats(endRound)
 	
 end
 
-originaldeath = DeathMsgUI_GetMessages
-function DeathMsgUI_GetMessages()
-	local deatharray = originaldeath()
-	// We compare the 4th element (victim name) with the player name to see if it died
-	// The problem with this is players can call themselves "Egg" and it will trigger this frequently
-	// Oh well
-	if deatharray[4] == Client.GetLocalPlayer():GetName() and Client.GetIsControllingPlayer() then
-		ShowClientStats(false)
-		CHUD_pdmg = 0
-		CHUD_sdmg = 0
-	end
-	return deatharray
-end
-
 function CheckPlayerTeam()
 	local player = Client.GetLocalPlayer()
 	local teamnr = player:GetTeamNumber()

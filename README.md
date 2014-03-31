@@ -1,16 +1,19 @@
-﻿Custom HUD
+﻿Natural Selection 2+
 ==========
 
-This mod for Natural Selection 2 allows the players to customize a number of settings of their HUD and game behavior (sounds, visuals).
+This Natural Selection 2 mod aims to improve, fix and expand the game in order to bring players a better experience. It contains extra customization options and quality of life improvements. This mod needs to be installed on the server.
 
-If the server allows mods that use the entry system, you can use it as it's 100% client-side, otherwise you need the server to be running it.
-
-You can type "chud" in console to see all available options or set them directly in your options menu.
-
-To be able to search for servers running CHUD you can use [CHUD Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163). Remember to set it to Active in your Mods list.
+To be able to search for servers running NS2+ you can use [NS2+ Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163). Remember to set it to Active in your Mods list.
 
 Latest changes
 ==============
+- 31/03/2014 (Build 264):
+	- Name change: To better reflect what the mod does, it is now called NS2+.
+	- The stats after you die now show up in the UI instead of the console. End round stats still show up in console.
+	- Reduced size of NS2 Beta upgrade icons to better reflect the old size.
+	- Fixed inactive/unbuilt structures not blinking red when under attack.
+	- Fixed alien structures not blinking red when uncysted.
+
 - 28/03/2014 (Build 264):
 	- CHUD Server Browser now marks the playercount in red if the server requires a map change to join (only for CHUD servers).
 
@@ -32,14 +35,6 @@ Latest changes
 	- Overhead spectators now get the player name in yellow if the player is parasited.
 	- Made ammo bars for Marine Commanders colored depending on primary weapon, like in spectator view.
 	- Redid the way Minimal GUI affects the Armory and Prototype Lab buy menus.
-	
-- 19/03/2014 (Build 264):
-	- Reworked options system (internal). Console commands have changed. This has exposed some options that used to be only console commands. Type chud in console for help.
-	- You can now toggle map particles separate from minimal particles.
-	- Added new menu entry "Custom HUD" for the mod options, it has 3 tabs, Visual, HUD, Map.
-	- The changelog is always available in the new Custom HUD menu option on the bottom left.
-	- Reenabled Hive stats for servers that only run CHUD but not [Shine] NS2Stats.
-	- Updated Veil low lights file. Also updated the rest to make sure they are up to date.
 
 Credits/Thanks to
 =================

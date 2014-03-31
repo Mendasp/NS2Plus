@@ -99,11 +99,11 @@ local function CHUDHelp(...)
 			table.sort(SortedOptions)
 		end
 		Shared.Message("-------------------------------------")
-		Shared.Message("Custom HUD Commands")
+		Shared.Message("NS2+ Commands")
 		Shared.Message("-------------------------------------")
 		for name, origOption in pairs(SortedOptions) do
 			local option = CHUDOptions[origOption]
-			local helpStr = "chud " .. origOption
+			local helpStr = "plus " .. origOption
 			if option.valueType == "float" then
 				helpStr = helpStr .. " <float> - Values: " .. option.minValue .. " to " .. option.maxValue
 			elseif option.valueType == "int" then
@@ -121,7 +121,7 @@ local function CHUDHelp(...)
 			Shared.Message(option.label)
 			Shared.Message("-------------------------------------")
 			Shared.Message(option.tooltip)
-			local helpStr = "Usage: chud " .. args[1]
+			local helpStr = "Usage: plus " .. args[1]
 			if option.valueType == "float" then
 				helpStr = helpStr .. " <float> - Values: " .. option.minValue .. " to " .. option.maxValue
 			elseif option.valueType == "int" then
@@ -129,11 +129,11 @@ local function CHUDHelp(...)
 			elseif option.valueType == "bool" then
 				helpStr = helpStr .. " <true/false> or <0/1>"
 			end
-			Shared.Message(helpStr .. " - Example (default value): chud " .. args[1] .. " " .. tostring(option.defaultValue))
+			Shared.Message(helpStr .. " - Example (default value): plus " .. args[1] .. " " .. tostring(option.defaultValue))
 			if option.type == "select" then
 				if option.valueType == "int" then
 					for index, value in pairs(option.values) do
-						Shared.Message("chud " .. args[1] .. " " .. index-1 .. " - " .. value)
+						Shared.Message("plus " .. args[1] .. " " .. index-1 .. " - " .. value)
 					end
 					Shared.Message("-------------------------------------")
 				end
@@ -201,4 +201,4 @@ local function OnCommandCHUD(...)
 	end
 end
 
-Event.Hook("Console_chud", OnCommandCHUD)
+Event.Hook("Console_plus", OnCommandCHUD)

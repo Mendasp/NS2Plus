@@ -270,7 +270,7 @@ function ApplyCHUD(script, scriptName)
 end
 
 function AnnounceCHUD()
-	Shared.Message("Custom HUD mod loaded. Type \"chud\" in console for available commands. You can also customize your HUD from your options menu.")
+	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")
 	GetCHUDSettings()
 end
 
@@ -286,3 +286,7 @@ Event.Hook("LoadComplete", SetCHUDCinematics)
 Event.Hook("Console_stopsound", OnCommandCHUDStopSound)
 Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 Event.Hook("LocalPlayerChanged", ApplyCHUDSettings)
+
+AddClientUIScriptForClass("Marine", "CHUDGUI_DeathStats")
+AddClientUIScriptForClass("Alien", "CHUDGUI_DeathStats")
+AddClientUIScriptForClass("Spectator", "CHUDGUI_DeathStats")

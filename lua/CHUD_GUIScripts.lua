@@ -8,6 +8,8 @@ UnitStatusOverride = false
 GameEndOverride = false
 MinimapLocationInitOverride = false
 CommManagerOverride = false
+AlienSpecOverride = false
+BalanceOverride = false
 
 originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 	function(self, scriptName)
@@ -472,6 +474,22 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 						end
 
 					end
+				end)
+				
+		elseif (scriptName == "GUIAlienSpectatorHUD") and not AlienSpecOverride then
+			AlienSpecOverride = true
+			originalAlienSpecUpdate = Class_ReplaceMethod( "GUIAlienSpectatorHUD", "Update",
+				function(self, deltaTime)
+					originalAlienSpecUpdate(self, deltaTime)
+					if script.eggIcon then
+						script.eggIcon:SetIsVisible(script.eggIcon:GetIsVisible() and not CHUDStatsVisible)
+					end
+				end)
+				
+		elseif (scriptName == "GUIWaitingForAutoTeamBalance") then
+			originalBalanceUpdate = Class_ReplaceMethod( "GUIWaitingForAutoTeamBalance", "Update",
+				function(self, deltaTime)
+					script.waitingText:SetIsVisible(PlayerUI_GetIsWaitingForTeamBalance() and not CHUDStatsVisible)
 				end)
 		
 		end

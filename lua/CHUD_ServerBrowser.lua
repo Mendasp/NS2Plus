@@ -27,7 +27,7 @@ function BuildServerEntry(serverIndex)
     serverEntry.name = FormatServerName(serverEntry.name, serverEntry.rookieFriendly)
 	
 	if Client.GetServerHasTag(serverIndex, "CHUD") then
-		serverEntry.mode = "CHUD"
+		serverEntry.mode = "ns2+"
 	end
 	
 	serverEntry.CHUD_MCR = Client.GetServerHasTag(serverIndex, "CHUD_MCR")
@@ -39,7 +39,7 @@ end
 originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
 		originalSetServerData(self, serverData)
-		if serverData.mode == "CHUD" then
+		if serverData.mode == "ns2+" then
 			self.modName:SetColor(kYellow)
 		end
 		// Mapchange required

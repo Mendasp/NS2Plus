@@ -67,7 +67,7 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 				if className == "options_ingame" then
 					optionsNr = linkNum
 				end
-				if optionsNr and optionsNr <= linkNum and text ~= "CUSTOM HUD" then
+				if optionsNr and optionsNr <= linkNum and text ~= "NS2+ OPTIONS" then
 					linkNum = tostring(tonumber(linkNum)+1)
 					if tonumber(linkNum) < 10 then
 						linkNum = "0" .. linkNum
@@ -80,7 +80,7 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 			end)
 
 		originalInitMainMenu(self)
-        self.chudOptionLink = self:CreateMainLink("CUSTOM HUD", "options", "06")
+        self.chudOptionLink = self:CreateMainLink("NS2+ OPTIONS", "options", "06")
         self.chudOptionLink:AddEventCallbacks(
         {
             OnClick = function(self)
@@ -143,7 +143,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
     self.CHUDOptionWindow:DisableCloseButton()
     self.CHUDOptionWindow:SetCSSClass("option_window")
     
-    self:SetupWindow(self.CHUDOptionWindow, "CUSTOM HUD")
+    self:SetupWindow(self.CHUDOptionWindow, "NS2+ OPTIONS")
     local function InitOptionWindow()
 		for idx, option in pairs(CHUDOptions) do
 			if option.valueType == "bool" then

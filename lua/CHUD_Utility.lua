@@ -2,9 +2,9 @@ function SendCHUDMessage(message)
 
     if Server and message then
     
-        Server.SendNetworkMessage("Chat", BuildChatMessage(false, "CHUD", -1, kTeamReadyRoom, kNeutralTeamType, message), true)
-        Shared.Message("Chat All - CHUD: " .. message)
-        Server.AddChatToHistory(message, "CHUD", 0, kTeamReadyRoom, false)
+        Server.SendNetworkMessage("Chat", BuildChatMessage(false, "NS2+", -1, kTeamReadyRoom, kNeutralTeamType, message), true)
+        Shared.Message("Chat All - NS2+: " .. message)
+        Server.AddChatToHistory(message, "NS2+", 0, kTeamReadyRoom, false)
         
     end
     
