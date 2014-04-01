@@ -7,6 +7,10 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 01/04/2014 (Build 264):
+	- Made the rifle color for commanders teal instead of blue to make it easier on the eyes.
+	- Fixed bug where Egg count icon would overlap with the new Stats UI.
+
 - 31/03/2014 (Build 264):
 	- Name change: To better reflect what the mod does, it is now called NS2+.
 	- The stats after you die now show up in the UI instead of the console. End round stats still show up in console.

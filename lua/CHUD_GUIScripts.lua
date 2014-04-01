@@ -445,7 +445,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 							end
 							
 							local kAmmoColors = {
-								["rifle"] = Color(0,0,1,1), // blue
+								["rifle"] = Color(0,1,1,1), // teal
 								["shotgun"] = Color(0,1,0,1), // green
 								["flamethrower"] = Color(1,1,0,1), // yellow
 								["grenadelauncher"] = Color(1,0,1,1), // magenta
@@ -481,9 +481,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			originalAlienSpecUpdate = Class_ReplaceMethod( "GUIAlienSpectatorHUD", "Update",
 				function(self, deltaTime)
 					originalAlienSpecUpdate(self, deltaTime)
-					if script.eggIcon then
-						script.eggIcon:SetIsVisible(script.eggIcon:GetIsVisible() and not CHUDStatsVisible)
-					end
+					self.eggIcon:SetIsVisible(self.eggIcon:GetIsVisible() and not CHUDStatsVisible)
 				end)
 				
 		elseif (scriptName == "GUIWaitingForAutoTeamBalance") then
