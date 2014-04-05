@@ -2,6 +2,16 @@ CHUDStats = { }
 lastteamnr = 0
 CHUD_pdmg = 0
 CHUD_sdmg = 0
+CHUD_hits = 0
+CHUD_misses = 0
+
+// Weapons that contribute to accuracy
+local trackacc =
+{
+	kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
+	kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
+	kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
+}
 
 function OnCHUDDamage(statsTable)
 
@@ -11,6 +21,10 @@ function OnCHUDDamage(statsTable)
 	local damage = statsTable.damage
 		
 	AddAttackStat(weapon, true, target, damage, isPlayer)
+	if isPlayer and table.contains(trackacc, weapon) then
+		cLastHitTime = Shared.GetTime()
+		cNumHits = cNumHits+1
+	end
 end
 
 function ShowClientStats(endRound)
@@ -23,14 +37,6 @@ function ShowClientStats(endRound)
 	local onoshitssum = 0
 	local overallacc = 0
 	local overallacconos = 0
-	
-	// Weapons that contribute to accuracy
-	local trackacc =
-	{
-		kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
-		kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
-		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
-	}
 	
 	if #CHUDStats > 0 then
 	
@@ -110,6 +116,8 @@ function CheckPlayerTeam()
 			CHUDStats = { }
 			CHUD_pdmg = 0
 			CHUD_sdmg = 0
+			CHUD_hits = 0
+			CHUD_misses = 0
 		end
 	end
 end

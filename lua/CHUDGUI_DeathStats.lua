@@ -15,6 +15,7 @@ local function CHUDGetStatsString()
 	local hitssum = 0
 	local missessum = 0
 	local overallacc = 0
+	local lastacc = 0
 	
 	local statsString = ""
 	
@@ -38,8 +39,15 @@ local function CHUDGetStatsString()
 		if hitssum > 0 or missessum > 0 then
 			overallacc = hitssum/(hitssum+missessum)*100
 		end
+		
+		lastacc = (hitssum-CHUD_hits)/((hitssum-CHUD_hits)+(missessum-CHUD_misses))*100
+		
+		CHUD_hits = hitssum
+		CHUD_misses = missessum
+		
+		statsString = statsString .. string.format("Last life accuracy: %.2f%%\n", lastacc)
+		statsString = statsString .. string.format("Player damage: %d\nStructure damage: %d\n\n", math.ceil(CHUD_pdmg), math.ceil(CHUD_sdmg))
 		statsString = statsString .. string.format("Current accuracy: %.2f%%\n", overallacc)
-		statsString = statsString .. string.format("Player damage: %d\nStructure damage: %d", math.ceil(CHUD_pdmg), math.ceil(CHUD_sdmg))
 		
 		CHUD_pdmg = 0
 		CHUD_sdmg = 0

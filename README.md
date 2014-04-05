@@ -7,6 +7,14 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 05/04/2014 (Build 264):
+	- Added server-confirmed hitsounds.
+	- Added last life accuracy to the death stats.
+	- Added extra checks to Mod Updater.
+	- Updated NSL lights. Smalls changes for veil, summit. Revamp for descent.
+	- Better method for hiding backgrounds in the alien GUI.
+	- Renamed Map tab to Misc. The new Hitsounds option is there.
+
 - 01/04/2014 (Build 264):
 	- Made the rifle color for commanders teal instead of blue to make it easier on the eyes.
 	- Fixed bug where Egg count icon would overlap with the new Stats UI.
@@ -30,15 +38,6 @@ Latest changes
 	- Fixed Skulk growl sound playing all the time when walking.
 	- Added a mod update detector. Checks for mod updates every 15 minutes. When the server is empty it automatically changes map. If it detects the Shine Workshop updater is running it disables itself.
 
-- 22/03/2014 (Build 264):
-	- Expanded marine upgrade icons option to include the NS2 Beta icons.
-	- Enabled game timer to Commanders.
-
-- 21/03/2014 (Build 264):
-	- Fixed bug where the CHUD Options menu was being recreated every time it opened.
-	- Overhead spectators now get the player name in yellow if the player is parasited.
-	- Made ammo bars for Marine Commanders colored depending on primary weapon, like in spectator view.
-	- Redid the way Minimal GUI affects the Armory and Prototype Lab buy menus.
 
 Credits/Thanks to
 =================

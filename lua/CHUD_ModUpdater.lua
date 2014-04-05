@@ -13,19 +13,21 @@ if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
 end
 
 function CHUDParseModInfo(modInfo)
-	local response = modInfo["response"]
-	if response["result"] == 1 then
-		for _, res in pairs(response["publishedfiledetails"]) do
-			if res["result"] == 1 and not mapChangeNeeded then
-				if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
-					Server.AddTag("CHUD_MCR")
-					mapChangeNeeded = true
-					if not ShineUpdater then
-						SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+	if modInfo then
+		local response = modInfo["response"]
+		if response["result"] == 1 then
+			for _, res in pairs(response["publishedfiledetails"]) do
+				if res["result"] == 1 and not mapChangeNeeded then
+					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
+						Server.AddTag("CHUD_MCR")
+						mapChangeNeeded = true
+						if not ShineUpdater then
+							SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+						end
 					end
+					
+					modsTable[res["publishedfileid"]] = res["time_updated"]
 				end
-				
-				modsTable[res["publishedfileid"]] = res["time_updated"]
 			end
 		end
 	end

@@ -10,6 +10,22 @@ function CHUDGetOption(key)
 	return nil
 end
 
+function CHUDGetOptionAssocVal(key)
+	if CHUDOptions[key] ~= nil and CHUDOptions[key].type == "select" and CHUDOptions[key].valueType == "int" then
+		return CHUDOptions[key].valueTable[CHUDOptions[key].currentValue+1]
+	end
+	
+	return nil
+end
+
+function CHUDGetOptionVals(key)
+	if CHUDOptions[key] ~= nil and CHUDOptions[key].type == "select" and CHUDOptions[key].valueType == "int" then
+		return CHUDOptions[key].valueTable
+	end
+	
+	return nil
+end
+
 function CHUDSetOption(key, value)
 	local setValue = nil
 	

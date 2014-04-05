@@ -77,54 +77,35 @@ function ApplyCHUD(script, scriptName)
 			// Move the team res to a reasonable position instead of the marine default
 			GUIPlayerResource.kTeamTextPos = Vector(20, 76, 0)
 			
-			// Oma's alien bars
+			script:Uninitialize()
+			script:Initialize()
+			
 			local kTextureNameCHUD
-			local OMATextureName = PrecacheAsset("ui/oma_alien_hud_health.dds")
-			local kTextureNameOrig = PrecacheAsset("ui/alien_hud_health.dds")
+			local kBackgroundCHUD
 			
 			if CHUDGetOption("alienbars") then
-				kTextureNameCHUD = OMATextureName
+				kTextureNameCHUD = PrecacheAsset("ui/oma_alien_hud_health.dds")
 			else
-				kTextureNameCHUD = kTextureNameOrig
+				kTextureNameCHUD = PrecacheAsset("ui/alien_hud_health.dds")
+			end
+			
+			if CHUDGetOption("mingui") then
+				kBackgroundCHUD = PrecacheAsset("ui/blank.dds")
+			else
+				kBackgroundCHUD = PrecacheAsset("ui/alien_commander_bg_smoke.dds")
 			end
 			
 			// Backgrounds of health/energy
-			local CHUDSmokeSize
-			if CHUDGetOption("mingui") then
-				CHUDSmokeSize = 0
-			else
-				CHUDSmokeSize = 128
-			end
-			ReplaceLocals(GUIAlienHUD.CreateHealthBall, {kHealthBackgroundTextureX2 = CHUDSmokeSize, kHealthBackgroundTextureY2 = CHUDSmokeSize, kTextureName = kTextureNameCHUD})
-			ReplaceLocals(GUIAlienHUD.CreateEnergyBall, {kHealthBackgroundTextureX2 = CHUDSmokeSize, kHealthBackgroundTextureY2 = CHUDSmokeSize, kTextureName = kTextureNameCHUD,
-				energyBallSettings = {
-					BackgroundWidth = GUIScale(160),
-					BackgroundHeight = GUIScale(160),
-					BackgroundAnchorX = GUIItem.Right,
-					BackgroundAnchorY = GUIItem.Bottom,
-					BackgroundOffset = Vector(-160 - 45, -50, 0) * GUIScale(1),
-					BackgroundTextureName = kTextureNameCHUD,
-					BackgroundTextureX1 = 0,
-					BackgroundTextureY1 = 0,
-					BackgroundTextureX2 = CHUDSmokeSize,
-					BackgroundTextureY2 = CHUDSmokeSize,
-					ForegroundTextureName = kTextureNameCHUD,
-					ForegroundTextureWidth = 128,
-					ForegroundTextureHeight = 128,
-					ForegroundTextureX1 = 0,
-					ForegroundTextureY1 = 128,
-					ForegroundTextureX2 = 128,
-					ForegroundTextureY2 = 256,
-					InheritParentAlpha = true,
-					ForegroundTextureX1 = 0,
-					ForegroundTextureY1 = 128,
-					ForegroundTextureX2 = 128,
-					ForegroundTextureY2 = 256
-					}
-				}
-			)
-			script:Uninitialize()
-			script:Initialize()
+			script.healthBall.dialBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
+			script.energyBall.dialBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
+			script.secondaryAbilityBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
+			
+			// Alien bars
+			script.healthBall:SetForegroundTexture(kTextureNameCHUD)
+			script.armorBall:SetForegroundTexture(kTextureNameCHUD)
+			script.energyBall:SetForegroundTexture(kTextureNameCHUD)
+			script.adrenalineEnergy:SetForegroundTexture(kTextureNameCHUD)
+
 			if CHUDGetOption("mingui") then
 				script.resourceDisplay.background:SetColor(Color(1,1,1,0))
 			else
@@ -290,3 +271,6 @@ Event.Hook("LocalPlayerChanged", ApplyCHUDSettings)
 AddClientUIScriptForClass("Marine", "CHUDGUI_DeathStats")
 AddClientUIScriptForClass("Alien", "CHUDGUI_DeathStats")
 AddClientUIScriptForClass("Spectator", "CHUDGUI_DeathStats")
+
+AddClientUIScriptForClass("Marine", "CHUDGUI_Hitsounds")
+AddClientUIScriptForClass("Alien", "CHUDGUI_Hitsounds")

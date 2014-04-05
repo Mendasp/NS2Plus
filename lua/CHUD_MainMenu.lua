@@ -21,6 +21,13 @@ function CHUDMinimapSlider()
 	end
 end
 
+function CHUDHitsoundsSlider()
+	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+		local value = mainMenu.CHUDOptionElements.CHUD_HitsoundsVolume:GetValue()
+		CHUDSetOption("hitsounds_vol", value)
+	end
+end
+
 function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		for _, option in pairs(mainMenu.CHUDOptionElements) do
@@ -227,15 +234,15 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		table.sort(CompOptionsMenu, CHUDOptionsSort)
 	end
     
-    local CHUD_HUDForm = GUIMainMenu.CreateOptionsForm(self, content, HUDOptionsMenu, self.CHUDOptionElements)
-	local CHUD_FuncForm = GUIMainMenu.CreateOptionsForm(self, content, FuncOptionsMenu, self.CHUDOptionElements)
-	local CHUD_CompForm = GUIMainMenu.CreateOptionsForm(self, content, CompOptionsMenu, self.CHUDOptionElements)
+    local CHUD_HUDForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, HUDOptionsMenu, self.CHUDOptionElements)
+	local CHUD_FuncForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, FuncOptionsMenu, self.CHUDOptionElements)
+	local CHUD_CompForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, CompOptionsMenu, self.CHUDOptionElements)
 
     local tabs = 
         {
 			{ label = "VISUAL", form = CHUD_FuncForm, scroll=true  },
 			{ label = "HUD", form = CHUD_HUDForm, scroll=true  },
-			{ label = "MAP", form = CHUD_CompForm, scroll=true  },
+			{ label = "MISC", form = CHUD_CompForm, scroll=true  },
         }
         
     local xTabWidth = 256
@@ -278,4 +285,158 @@ function GUIMainMenu:CreateCHUDOptionWindow()
     
     InitOptionWindow()
   
+end
+
+GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionElements)
+
+    local form = CreateMenuElement(content, "Form", false)
+    
+    local rowHeight = 50
+    
+    for i = 1, #options do
+    
+        local option = options[i]
+        local input
+		local input_display
+        local defaultInputClass = "option_input"
+		
+		local y = rowHeight * (i - 1)
+		
+        if option.type == "select" then
+            input = form:CreateFormElement(Form.kElementType.DropDown, option.name, option.value)
+            if option.values then
+                input:SetOptions(option.values)
+            end                
+			if option.name == "CHUD_Hitsounds" then
+				local soundPreview = CreateMenuElement(form, "MenuButton", false)
+				soundPreview:SetCSSClass("clear_keybind")
+				soundPreview:SetBorderColor(Color(0.54, 0.7, 0.75, 0.7))
+				soundPreview:SetTextColor(Color(0.54, 0.7, 0.75, 0.7))
+				soundPreview:SetText(">")
+				soundPreview:SetTopOffset(y)
+				
+				function soundPreview:OnClick()
+					Client.PrecacheLocalSound(CHUDGetOptionAssocVal("hitsounds"))
+					Shared.PlaySound(nil, CHUDGetOptionAssocVal("hitsounds"), CHUDGetOption("hitsounds_vol"))
+				end
+				
+			elseif option.name == "CHUD_HitsoundsPitch" then
+				local soundPreview = CreateMenuElement(form, "MenuButton", false)
+				soundPreview:SetCSSClass("clear_keybind")
+				soundPreview:SetBorderColor(Color(0.54, 0.7, 0.75, 0.7))
+				soundPreview:SetTextColor(Color(0.54, 0.7, 0.75, 0.7))
+				soundPreview:SetText(">")
+				soundPreview:SetTopOffset(y)
+				
+				function soundPreview:OnClick()
+					local soundEffectName = CHUDGetOptionAssocVal("hitsounds") .. "-hi"
+					if CHUDGetOption("hitsounds_pitch") == 1 then
+						soundEffectName = soundEffectName .. "-h"
+					end
+					Client.PrecacheLocalSound(soundEffectName)
+					Shared.PlaySound(nil, soundEffectName, CHUDGetOption("hitsounds_vol"))
+				end
+			end
+			
+        elseif option.type == "slider" then
+            input = form:CreateFormElement(Form.kElementType.SlideBar, option.name, option.value)
+			input_display = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
+			input_display:SetNumbersOnly(true)	
+			input_display:SetXAlignment(GUIItem.Align_Min)
+			input_display:SetMarginLeft(5)
+			if option.formName and option.formName == "sound" then
+				input_display:SetCSSClass("display_sound_input")
+			else
+				input_display:SetCSSClass("display_input")
+			end
+			input_display:SetTopOffset(y)
+			input_display:SetValue(ToString( input:GetValue() ))
+			input_display:AddEventCallbacks({ 
+				
+			OnEnter = function(self)
+				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
+					input:SetValue(input_display:GetValue() / 100)
+				end
+				if input_display:GetValue() == "" or input_display:GetValue() == "." then
+					input_display:SetValue(ToString(string.sub(input:GetValue()*100,0, 4)))
+				end
+			
+			end,
+			OnBlur = function(self)
+				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
+					input:SetValue(input_display:GetValue() / 100)
+				end
+				
+				if input_display:GetValue() == "" or input_display:GetValue() == "." then
+					input_display:SetValue(ToString(string.sub(input:GetValue()*100,0, 4)))
+				end
+			end,
+			})
+            // HACK: Really should use input:AddSetValueCallback, but the slider bar bypasses that.
+            if option.sliderCallback then
+                input:Register(
+                    {OnSlide =
+                        function(value, interest)
+                            option.sliderCallback(mainMenu)
+							input_display:SetValue(ToString(string.sub(input:GetValue()*100,0, 4)))
+                        end
+                    }, SLIDE_HORIZONTAL)
+            end
+        elseif option.type == "progress" then
+            input = form:CreateFormElement(Form.kElementType.ProgressBar, option.name, option.value)       
+        elseif option.type == "checkbox" then
+            input = form:CreateFormElement(Form.kElementType.Checkbox, option.name, option.value)
+            defaultInputClass = "option_checkbox"
+        else
+            input = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
+        end
+        
+        if option.callback then
+            input:AddSetValueCallback(option.callback)
+        end
+        local inputClass = defaultInputClass
+        if option.inputClass then
+            inputClass = option.inputClass
+        end
+        
+        input:SetCSSClass(inputClass)
+        input:SetTopOffset(y)
+
+        local label = CreateMenuElement(form, "Font", false)
+        label:SetCSSClass("option_label")
+        label:SetText(string.upper(option.label) .. ":")
+        label:SetTopOffset(y)
+        label:SetIgnoreEvents(false)
+
+		label:AddEventCallbacks({ 
+			OnMouseOver = function(self)
+				if mainMenu ~= nil then
+					local text = option.tooltip
+					if text ~= nil then
+
+						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, 0, 0))
+						
+						mainMenu.optionTooltip.tooltip:SetText(text)
+					else
+						mainMenu.optionTooltip.tooltip:SetText("")
+					end
+				end    
+			end,
+			
+			OnMouseOut = function(self)
+				if mainMenu ~= nil then
+					mainMenu.optionTooltip.tooltip:SetText("")
+				end
+			end,
+			})
+        
+        optionElements[option.name] = input
+
+    end
+    
+    form:SetCSSClass("options")
+	form:SetHeight(#options*rowHeight)
+
+    return form
+
 end

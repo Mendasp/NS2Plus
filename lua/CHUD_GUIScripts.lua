@@ -322,6 +322,7 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 					
 					useColorCHUD = ConditionalValue(PlayerUI_IsOnMarineTeam(), ColorIntToColor(dmgcolor_m), ColorIntToColor(dmgcolor_a))
 					messageItem:SetColor(Color(useColorCHUD.r, useColorCHUD.g, useColorCHUD.b, oldalpha))
+					
 				end)
 		
 		elseif (scriptName == "GUIScoreboard") then
