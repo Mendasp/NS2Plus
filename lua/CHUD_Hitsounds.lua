@@ -1,21 +1,15 @@
-class 'CHUDGUI_Hitsounds' (GUIScript)
-
 cLastHitTime = nil
 cNumHits = 0
 
-function CHUDGUI_Hitsounds:Initialize()
-
-	for _, sound in pairs(CHUDGetOptionVals("hitsounds")) do
-		Client.PrecacheLocalSound(sound)
-		Client.PrecacheLocalSound(sound .. "-mid")
-		Client.PrecacheLocalSound(sound .. "-hi")
-		Client.PrecacheLocalSound(sound .. "-mid-h")
-		Client.PrecacheLocalSound(sound .. "-hi-h")
-	end
-	
+for _, sound in pairs(CHUDGetOptionVals("hitsounds")) do
+	Client.PrecacheLocalSound(sound)
+	Client.PrecacheLocalSound(sound .. "-mid")
+	Client.PrecacheLocalSound(sound .. "-hi")
+	Client.PrecacheLocalSound(sound .. "-mid-h")
+	Client.PrecacheLocalSound(sound .. "-hi-h")
 end
 
-function CHUDGUI_Hitsounds:Update(deltaTime)
+function PlayHitsounds()
 
 	if cLastHitTime and Shared.GetTime() - cLastHitTime > 0.005 and cNumHits > 0 then
 		if CHUDGetOption("hitsounds") > 0 and not Client.GetLocalPlayer():isa("Commander") then
@@ -42,8 +36,4 @@ function CHUDGUI_Hitsounds:Update(deltaTime)
 	
 end
 
-function CHUDGUI_Hitsounds:Uninitialize()
-
-	// Nothing I guess
-	
-end
+Event.Hook("UpdateRender", PlayHitsounds)

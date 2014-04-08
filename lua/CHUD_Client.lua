@@ -35,6 +35,8 @@ Script.Load("lua/CHUD_Tracers.lua")
 Script.Load("lua/CHUD_ScoreDisplay.lua")
 Script.Load("lua/CHUD_Stats.lua")
 Script.Load("lua/CHUD_ServerBrowser.lua")
+Script.Load("lua/CHUD_Hitsounds.lua")
+Script.Load("lua/CHUD_Outlines.lua")
 
 function ApplyCHUD(script, scriptName)
 	
@@ -112,22 +114,12 @@ function ApplyCHUD(script, scriptName)
 				script.resourceDisplay.background:SetColor(Color(1,1,1,1))
 			end
 					
-			if CHUDGetOption("av") == 1 then
-				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
-				Client.DestroyScreenEffect(HiveVision_screenEffect)
-				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
-				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/HuzeOldAV.screenfx")
-			elseif CHUDGetOption("av") == 2 then
-				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
-				Client.DestroyScreenEffect(HiveVision_screenEffect)
-				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
-				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/HuzeMinAV.screenfx")
-			else
-				Client.DestroyScreenEffect(Player.screenEffects.darkVision)
-				Client.DestroyScreenEffect(HiveVision_screenEffect)
-				HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
-				Player.screenEffects.darkVision = Client.CreateScreenEffect("shaders/DarkVision.screenfx")
-			end
+			Client.DestroyScreenEffect(Player.screenEffects.darkVision)
+			Client.DestroyScreenEffect(HiveVision_screenEffect)
+			Client.DestroyScreenEffect(HiveVisionExtra_screenEffect)
+			HiveVision_screenEffect = Client.CreateScreenEffect("shaders/HiveVision.screenfx")
+			HiveVisionExtra_screenEffect = Client.CreateScreenEffect("shaders/HiveVisionExtra.screenfx")
+			Player.screenEffects.darkVision = Client.CreateScreenEffect(CHUDGetOptionAssocVal("av"))
 			
 			if Client.GetIsControllingPlayer() then
 				Client.GetLocalPlayer():SetDarkVision(CHUDGetOption("avstate"))
@@ -271,6 +263,3 @@ Event.Hook("LocalPlayerChanged", ApplyCHUDSettings)
 AddClientUIScriptForClass("Marine", "CHUDGUI_DeathStats")
 AddClientUIScriptForClass("Alien", "CHUDGUI_DeathStats")
 AddClientUIScriptForClass("Spectator", "CHUDGUI_DeathStats")
-
-AddClientUIScriptForClass("Marine", "CHUDGUI_Hitsounds")
-AddClientUIScriptForClass("Alien", "CHUDGUI_Hitsounds")

@@ -21,7 +21,7 @@ function OnCHUDDamage(statsTable)
 	local damage = statsTable.damage
 		
 	AddAttackStat(weapon, true, target, damage, isPlayer)
-	if isPlayer and not target:isa("Embryo") and table.contains(trackacc, weapon) then
+	if isPlayer and target and not target:isa("Embryo") and table.contains(trackacc, weapon) then
 		cLastHitTime = Shared.GetTime()
 		cNumHits = cNumHits+1
 	end

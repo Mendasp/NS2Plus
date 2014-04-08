@@ -87,7 +87,7 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 			end)
 
 		originalInitMainMenu(self)
-        self.chudOptionLink = self:CreateMainLink("NS2+ OPTIONS", "options", "06")
+        self.chudOptionLink = self:CreateMainLink("NS2+ OPTIONS", "options_ingame", "06")
         self.chudOptionLink:AddEventCallbacks(
         {
             OnClick = function(self)
@@ -143,6 +143,16 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 		
 		self.profileBackground:SetTopOffset(-70)
 	end)
+
+Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
+	
+function MainMenu_OnOpenMenu()
+    StartSoundEffect("sound/chud.fev/CHUD/open_menu")    
+end
+
+function MainMenu_OnCloseMenu()
+    Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
+end
 	
 function GUIMainMenu:CreateCHUDOptionWindow()
 

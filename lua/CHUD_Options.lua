@@ -44,6 +44,11 @@ CHUDOptions =
 				tooltip = "Lets you choose between different Alien Vision types.",
 				type    = "select",
 				values  = { "Default", "Huze's Old AV", "Huze's Minimal AV" },
+				valueTable = {
+					"shaders/DarkVision.screenfx",
+					"shaders/HuzeOldAV.screenfx",
+					"shaders/HuzeMinAV.screenfx",
+				},
 				callback = CHUDSaveMenuSettings,
 				defaultValue = 0,
 				category = "func",

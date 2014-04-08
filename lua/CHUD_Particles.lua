@@ -91,6 +91,7 @@ local blockedCinematics = {	"cinematics/marine/structures/death_large.cinematic"
 							"cinematics/alien/fade/trail_dark_2.cinematic",
 							"cinematics/alien/fade/trail_light_1.cinematic",
 							"cinematics/alien/fade/trail_light_2.cinematic",
+							"cinematics/alien/fade/blink_view.cinematic",
 						}
 							
 local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
@@ -106,6 +107,8 @@ local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/marine/structures/hurt_small_severe.cinematic",
 							"cinematics/marine/structures/hurt.cinematic",
 							"cinematics/marine/structures/hurt_small.cinematic",
+							"cinematics/alien/fade/blink_in_silent.cinematic",
+							"cinematics/alien/fade/blink_out_silent.cinematic",
 						}
 
 mapCinematicNames = {	"cinematics/environment/biodome/flying_papers.cinematic",

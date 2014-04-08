@@ -7,6 +7,13 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- /04/2014 (Build 264):
+	- Removed looping immersion from main menu.
+	- Tweaked fade blink particles for minimal particles setting.
+	- Added thin outline for marines through buildings.
+	- Fixed bug where out of relevancy entities taking damage were causing script errors.
+	- 
+
 - 05/04/2014 (Build 264):
 	- Added server-confirmed hitsounds.
 	- Added last life accuracy to the death stats.
@@ -32,11 +39,6 @@ Latest changes
 - 26/03/2014 (Build 264):
 	- Fixed bug where default nameplates would reveal player eggs.
 	- Fixed Summit rock props.
-
-- 23/03/2014 (Build 264):
-	- Added better checks for cheats and bots to disable stats reporting in those cases.
-	- Fixed Skulk growl sound playing all the time when walking.
-	- Added a mod update detector. Checks for mod updates every 15 minutes. When the server is empty it automatically changes map. If it detects the Shine Workshop updater is running it disables itself.
 
 
 Credits/Thanks to

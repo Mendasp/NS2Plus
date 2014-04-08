@@ -1,0 +1,51 @@
+settings =
+    [
+        { name="maxDistance" default=0.0 }
+    ]
+
+resources =
+    [
+        { name="temporary1"                  format="R8G8B8A8"        x_scale=1 y_scale=1 }
+        { name="temporary2b"                 format="R8G8B8A8"        x_scale=0.5 y_scale=0.5 }
+        { name="hiveVision"                  file_name="*hive_vision_extra" }
+    ]
+    
+layers =
+    [
+    
+        {
+            color_targets                   = "temporary1"
+            shader                          = "shaders/HiveVisionExtra.shader"
+            technique                       = "Mask"
+            generator                       = "fullscreen"
+            parameters                      = {
+                    hiveVisionTexture       = "hiveVision"
+                    maxDistance             = "maxDistance"
+            }
+        }
+        {
+            color_targets                   = "temporary2b"
+            shader                          = "shaders/HiveVisionExtra.shader"
+            technique                       = "DownSample"
+            generator                       = "fullscreen"
+            parameters                      = {
+                    inputTexture            = { resource="temporary1" linear=true }
+            }
+        }
+        {
+            color_targets                   = "back_buffer"
+            shader                          = "shaders/HiveVisionExtra.shader"
+            technique                       = "FinalComposite"
+            generator                       = "fullscreen"
+            parameters                      = {
+                    inputTexture            = "source_buffer"
+                    inputTexture1           = { resource="temporary2b" linear=true }
+                    inputTexture2           = "temporary1"
+            }
+        }
+        
+        
+        
+    
+    ]
+
