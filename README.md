@@ -7,12 +7,12 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
-- /04/2014 (Build 264):
+- 09/04/2014 (Build 264):
 	- Removed looping immersion from main menu.
 	- Tweaked fade blink particles for minimal particles setting.
 	- Added thin outline for marines through buildings.
 	- Fixed bug where out of relevancy entities taking damage were causing script errors.
-	- Fixed bug where stats wouldn't reset on round reset.
+	- Fixed bug where stats wouldn't reset properly on sv_reset.
 	- Added infestation radius to Cyst dropping.
 
 - 05/04/2014 (Build 264):
