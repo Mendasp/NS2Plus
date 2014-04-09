@@ -388,22 +388,47 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 			UnitStatusOverride = true
 			originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 				function(self, deltaTime)
+					// When CHUDHint is false the unit hints return the usual hints
+					// When it's true it returns a table with the extra info we need for our stuff
+					// Brings tears to my eyes
+					CHUDHint = false
 					originalUnitStatusUpdate(self,deltaTime)
-					
+
+					CHUDHint = true
 					local activeBlips = PlayerUI_GetUnitStatusInfo()
-				
+					CHUDHint = false
+					
 					for i = 1, #script.activeBlipList do
 						local blipData = activeBlips[i]
-						local updateBlip = self.activeBlipList[i]	
-
-						if CHUDGetOption("minnps") then
-							updateBlip.statusBg:SetTexture(kTransparentTexture)
-							if blipData ~= nil then
-								updateBlip.HintText:SetText(blipData.Hint)
-							end
-						end
-											
+						local updateBlip = self.activeBlipList[i]
+						local CHUDBlipData
+																						
 						if blipData ~= nil then
+							if type(blipData.Hint) == "table" then
+								CHUDBlipData = blipData.Hint
+
+								blipData.Hint = CHUDBlipData.Hint
+								blipData.IsParasited = CHUDBlipData.IsParasited
+								blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
+								if CHUDBlipData.MarineWeapon then
+									blipData.MarineWeapon = CHUDBlipData.MarineWeapon
+								end
+							end
+							
+							if CHUDGetOption("mingui") then
+								updateBlip.statusBg:SetTexture(kTransparentTexture)
+							end
+							
+							local player = Client.GetLocalPlayer()
+							
+							if CHUDGetOption("minnps") then
+								updateBlip.HintText:SetText(blipData.Hint)
+								if CHUDBlipData and not player:isa("Commander") then
+									updateBlip.NameText:SetText(CHUDBlipData.Description)
+									updateBlip.HealthBarBg:SetIsVisible(false)
+									updateBlip.ArmorBarBg:SetIsVisible(false)
+								end
+							end
 						
 							local alpha = 0
 							

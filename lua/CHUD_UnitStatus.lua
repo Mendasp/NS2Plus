@@ -23,13 +23,6 @@ function PhaseGate:GetUnitNameOverride(viewer)
 			if CHUDGetOption("minnps") then
 				unitName = destinationName
 			end
-		elseif CHUDGetOption("minnps") and not viewer:isa("Commander") then
-			unitName = nil
-		end
-	
-	else
-		if CHUDGetOption("minnps") and not viewer:isa("Commander") then
-			unitName = nil
 		end
 	end
 
@@ -60,236 +53,75 @@ function TunnelEntrance:GetUnitNameOverride(viewer)
 			if CHUDGetOption("minnps") then
 				unitName = destinationName
 			end
-		elseif CHUDGetOption("minnps") and not viewer:isa("Commander") then
-			unitName = nil
 		end
-	
-	else
-		if CHUDGetOption("minnps") and not viewer:isa("Commander") then
-			unitName = nil
-		end
+		
 	end
 
 	return unitName
 
 end
 
-Script.Load("lua/Player_Client.lua")
-local function LocalIsFriendlyCommander(player, unit)
-	return player:isa("Commander") and ( unit:isa("Player") or (HasMixin(unit, "Selectable") and unit:GetIsSelected(player:GetTeamNumber())) )
-end
-
-local kUnitStatusDisplayRange = 13
-local kUnitStatusCommanderDisplayRange = 50
-local kDefaultHealthOffset = 1.2
-
-// I hate doing this, try to find a way to do this properly at some point (if possible)
-
-function PlayerUI_GetUnitStatusInfo()
-
-	local unitStates = { }
+// This is a 5/10 hack according to Dragon
+// I love it, I'd give it a 7 at least.
+originalGetUnitHint = UnitStatusMixin.GetUnitHint
+function UnitStatusMixin:GetUnitHint(forEntity)
+	
+	local hint = originalGetUnitHint(self, forEntity)
+	
+	if not Client.GetOptionBoolean("showHints", true) then
+		hint = ""
+	end
 	
 	local player = Client.GetLocalPlayer()
 	
-	if player and not player:GetBuyMenuIsDisplaying() and (not player.GetDisplayUnitStates or player:GetDisplayUnitStates()) then
+	if HasMixin(self, "Live") and (not self.GetShowHealthFor or self:GetShowHealthFor(player)) and CHUDHint then
 	
-		local eyePos = player:GetEyePos()
-		local crossHairTarget = player:GetCrossHairTarget()
+		local description = self:GetUnitName(player)
+		local marineWeapon
 		
-		local range = kUnitStatusDisplayRange
-		
-		if player:isa("Commander") then
-			range = kUnitStatusCommanderDisplayRange
-		end
-		
-		local healthOffsetDirection = player:isa("Commander") and Vector.xAxis or Vector.yAxis
-	
-		for index, unit in ipairs(GetEntitiesWithMixinWithinRange("UnitStatus", eyePos, range)) do
-		
-			// checks here if the model was rendered previous frame as well
-			local status = unit:GetUnitStatus(player)
-			if unit:GetShowUnitStatusFor(player) then       
-
-				// Get direction to blip. If off-screen, don't render. Bad values are generated if 
-				// Client.WorldToScreen is called on a point behind the camera.
-				local origin = nil
-				local getEngagementPoint = unit.GetEngagementPoint
-				if getEngagementPoint then
-					origin = getEngagementPoint(unit)
-				else
-					origin = unit:GetOrigin()
-				end
-				
-				local normToEntityVec = GetNormalizedVector(origin - eyePos)
-				local normViewVec = player:GetViewAngles():GetCoords().zAxis
-			
-				local dotProduct = normToEntityVec:DotProduct(normViewVec)
-				
-				if dotProduct > 0 then
-
-					local statusFraction = unit:GetUnitStatusFraction(player)
-					local description = unit:GetUnitName(player)
-					local action = unit:GetActionName(player)
-					local hint = unit:GetUnitHint(player)
-					local distance = (origin - eyePos):GetLength()
-					
-					if CHUDGetOption("minnps") then
-						hint = ""
-					end
-					
-					local healthBarOffset = kDefaultHealthOffset
-					
-					local getHealthbarOffset = unit.GetHealthbarOffset
-					if getHealthbarOffset then
-						healthBarOffset = getHealthbarOffset(unit)
-					end
-					
-					local healthBarOrigin = origin + healthOffsetDirection * healthBarOffset
-					
-					local worldOrigin = Vector(origin)
-					origin = Client.WorldToScreen(origin)
-					healthBarOrigin = Client.WorldToScreen(healthBarOrigin)
-					
-					if unit == crossHairTarget then
-					
-						healthBarOrigin.y = math.max(GUIScale(180), healthBarOrigin.y)
-						healthBarOrigin.x = Clamp(healthBarOrigin.x, GUIScale(320), Client.GetScreenWidth() - GUIScale(320))
-						
-					end
-
-					local health = 0
-					local armor = 0
-
-					local visibleToPlayer = true                        
-					if HasMixin(unit, "Cloakable") and GetAreEnemies(player, unit) then
-					
-						if unit:GetIsCloaked() or (unit:isa("Player") and unit:GetCloakFraction() > 0.2) then                    
-							visibleToPlayer = false
-						end
-						
-					end
-					
-					// Don't show tech points or nozzles if they are attached
-					if (unit:GetMapName() == TechPoint.kMapName or unit:GetMapName() == ResourcePoint.kPointMapName) and unit.GetAttached and (unit:GetAttached() ~= nil) then
-						visibleToPlayer = false
-					end
-					
-					if HasMixin(unit, "Live") and (not unit.GetShowHealthFor or unit:GetShowHealthFor(player)) then
-					
-						health = unit:GetHealthFraction()                
-						if unit:GetArmor() == 0 then
-							armor = 0
-						else 
-							armor = unit:GetArmorScalar()
-						end
-
-						if CHUDGetOption("minnps") and not player:isa("Commander") then				
-							health = 0
-							armor = 0
-							hint = string.format("%d/%d",math.ceil(unit:GetHealth()),math.ceil(unit:GetArmor()))
-							if unit:isa("Exo") then
-								hint = string.format("%d",math.ceil(unit:GetArmor()))
-							end
-						end
-						
-					end
-					
-					local badgeTextures = ""
-					
-					if HasMixin(unit, "Player") then
-						if unit.GetShowBadgeOverride and not unit:GetShowBadgeOverride() then
-							badgeTextures = {}
-						else
-							badgeTextures = Badges_GetBadgeTextures(unit:GetClientIndex(), "unitstatus") or {}
-						end
-					end
-					
-					if (unit:GetMapName() ~= TechPoint.kMapName and unit:GetMapName() ~= ResourcePoint.kPointMapName) and not player:isa("Commander") then
-						if CHUDGetOption("minnps") and (not unit:isa("Player") or (unit:isa("Embryo") and GetAreEnemies(player, unit))) then
-							if (unit:GetMapName() == PhaseGate.kMapName or unit:GetMapName() == TunnelEntrance.kMapName) and description ~= nil then
-								description = string.format("%s (%d%%)",description, math.ceil(unit:GetHealthScalar()*100))
-							else
-								description = string.format("%d%%",math.ceil(unit:GetHealthScalar()*100))
-							end
-							health = 0
-							armor = 0
-							hint = string.format("%d/%d",math.ceil(unit:GetHealth()),math.ceil(unit:GetArmor()))
-						end
-					end
-					
-					local hasWelder = false 
-					if distance < 10 then    
-						hasWelder = unit:GetHasWelder(player)
-					end
-					
-					local abilityFraction = 0
-					if player:isa("Commander") then        
-						abilityFraction = unit:GetAbilityFraction()
-					end
-					
-					local marineWeapon = nil
-					if unit:isa("Player") and unit:isa("Marine") and HasMixin(unit, "WeaponOwner") then
-						local validWeapons = { "rifle", "shotgun", "flamethrower", "grenadelauncher" }
-					    local primaryWeapon = unit:GetWeaponInHUDSlot(1)
-						if primaryWeapon and primaryWeapon:isa("ClipWeapon") and table.contains(validWeapons, primaryWeapon:GetMapName()) then
-							marineWeapon = primaryWeapon:GetMapName()
-						end
-					end
-					
-					local unitState = {
-						
-						Position = origin,
-						WorldOrigin = worldOrigin,
-						HealthBarPosition = healthBarOrigin,
-						Status = status,
-						Name = description,
-						Action = action,
-						Hint = hint,
-						StatusFraction = statusFraction,
-						HealthFraction = health,
-						ArmorFraction = armor,
-						IsCrossHairTarget = (unit == crossHairTarget and visibleToPlayer) or LocalIsFriendlyCommander(player, unit),
-						TeamType = kNeutralTeamType,
-						ForceName = unit:isa("Player") and not GetAreEnemies(player, unit),
-						BadgeTextures = badgeTextures,
-						HasWelder = hasWelder,
-						IsPlayer = unit:isa("Player"),
-						IsSteamFriend = unit:isa("Player") and unit:GetIsSteamFriend() or false,
-						AbilityFraction = abilityFraction,
-						// (CHUD) Added parasite indicator
-						IsParasited = HasMixin(unit, "ParasiteAble") and unit:GetIsParasited(),
-						// (CHUD) Need active weapon for commander ammo bar color
-						MarineWeapon = marineWeapon,
-					
-					}
-					
-					if unit.GetTeamNumber then
-						unitState.IsFriend = (unit:GetTeamNumber() == player:GetTeamNumber())
-					end
-					
-					if unit.GetTeamType then
-						unitState.TeamType = unit:GetTeamType()
-					end
-					
-					if not CHUDGetOption("friends") then
-						unitState.IsSteamFriend = false
-					end
-					
-					table.insert(unitStates, unitState)
-				
-				end
-				
+		if self:isa("Player") and self:isa("Marine") and HasMixin(self, "WeaponOwner") then
+			local validWeapons = { "rifle", "shotgun", "flamethrower", "grenadelauncher" }
+			local primaryWeapon = self:GetWeaponInHUDSlot(1)
+			if primaryWeapon and primaryWeapon:isa("ClipWeapon") and table.contains(validWeapons, primaryWeapon:GetMapName()) then
+				marineWeapon = primaryWeapon:GetMapName()
 			end
-		
 		end
 		
-	end
+		if CHUDGetOption("minnps") and not player:isa("Commander") then
+			hint = string.format("%d/%d",math.ceil(self:GetHealth()),math.ceil(self:GetArmor()))
+			if self:isa("Exo") then
+				hint = string.format("%d",math.ceil(self:GetArmor()))
+			end
+		end
+		
+		if (self:GetMapName() ~= TechPoint.kMapName and self:GetMapName() ~= ResourcePoint.kPointMapName) and not player:isa("Commander") then
+			if CHUDGetOption("minnps") and (not self:isa("Player") or (self:isa("Embryo") and GetAreEnemies(player, self))) then
+				if ((self:GetMapName() == PhaseGate.kMapName and player:isa("Marine")) or (self:GetMapName() == TunnelEntrance.kMapName and player:isa("Alien"))) then
+					description = string.format("%s (%d%%)",description, math.ceil(self:GetHealthScalar()*100))
+				else
+					description = string.format("%d%%",math.ceil(self:GetHealthScalar()*100))
+				end
+			end
+		end
 	
-	return unitStates
-
+		local hintTable = 
+		{
+			Description = description,
+			Percentage = self:GetHealthScalar()*100,
+			Health = self:GetHealth(),
+			Armor = self:GetArmor(),
+			MarineWeapon = marineWeapon,
+			Hint = hint,
+			IsSteamFriend = (self:isa("Player") and self:GetIsSteamFriend() or false) and CHUDGetOption("friends"),
+			IsParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited(),
+		}
+		
+		return hintTable
+	else
+		return hint
+	end
 end
 
-// Gotta do it with this new stuff too!
 local kMinimapBlipTeamAlien = kMinimapBlipTeam.Alien
 local kMinimapBlipTeamMarine = kMinimapBlipTeam.Marine
 local kMinimapBlipTeamFriendAlien = kMinimapBlipTeam.FriendAlien

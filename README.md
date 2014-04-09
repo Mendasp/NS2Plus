@@ -7,6 +7,9 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- /04/2014 (Build 264):
+	- Rewritten minimal nameplates in a more forward-compatible manner.
+
 - 09/04/2014 (Build 264):
 	- Removed looping immersion from main menu.
 	- Tweaked fade blink particles for minimal particles setting.
@@ -36,10 +39,6 @@ Latest changes
 
 - 28/03/2014 (Build 264):
 	- CHUD Server Browser now marks the playercount in red if the server requires a map change to join (only for CHUD servers).
-
-- 26/03/2014 (Build 264):
-	- Fixed bug where default nameplates would reveal player eggs.
-	- Fixed Summit rock props.
 
 
 Credits/Thanks to
