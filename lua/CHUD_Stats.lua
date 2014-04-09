@@ -27,6 +27,14 @@ function OnCHUDDamage(statsTable)
 	end
 end
 
+function OnCommandResetStats()
+	CHUDStats = { }
+	CHUD_pdmg = 0
+	CHUD_sdmg = 0
+	CHUD_hits = 0
+	CHUD_misses = 0
+end
+
 function ShowClientStats(endRound)
 	local text = ConditionalValue(endRound, "round", "life")
 	local hitssum = 0
@@ -113,11 +121,7 @@ function CheckPlayerTeam()
 		// If we moved to the RR, show stats & reset values
 		if teamnr == 0 then
 			ShowClientStats(true)
-			CHUDStats = { }
-			CHUD_pdmg = 0
-			CHUD_sdmg = 0
-			CHUD_hits = 0
-			CHUD_misses = 0
+			OnCommandResetStats()
 		end
 	end
 end
@@ -354,5 +358,6 @@ originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "OnTag",
 		originalSwipeAttack(self, tagName)
 	end)
 
+Event.Hook("Console_resetstats", OnCommandResetStats)
 Event.Hook("LocalPlayerChanged", CheckPlayerTeam)
 Client.HookNetworkMessage("CHUDStats", OnCHUDDamage)

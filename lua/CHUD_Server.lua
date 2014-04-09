@@ -133,4 +133,11 @@ Class_ReplaceMethod("Player", "GetPlayIdleSound",
 		return self:GetIsAlive() and (self:GetVelocityLength() / self:GetMaxSpeed(true)) > 0.65
 	end)
 	
+local resetGame = NS2Gamerules.ResetGame
+function NS2Gamerules:ResetGame()
+	resetGame(self)
+
+	Server.SendCommand(nil, "resetstats")
+end
+	
 Event.Hook("UpdateServer", CHUDCheckCheats)

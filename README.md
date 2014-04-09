@@ -12,7 +12,8 @@ Latest changes
 	- Tweaked fade blink particles for minimal particles setting.
 	- Added thin outline for marines through buildings.
 	- Fixed bug where out of relevancy entities taking damage were causing script errors.
-	- 
+	- Fixed bug where stats wouldn't reset on round reset.
+	- Added infestation radius to Cyst dropping.
 
 - 05/04/2014 (Build 264):
 	- Added server-confirmed hitsounds.
