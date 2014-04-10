@@ -21,6 +21,8 @@ function CHUDParseModInfo(modInfo)
 					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
 						Server.AddTag("CHUD_MCR")
 						mapChangeNeeded = true
+						// Repeat the mod update message every 5 minutes
+						updateCheckInterval = 5*60
 						if not ShineUpdater then
 							SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
 						end
@@ -42,14 +44,18 @@ function CHUDModUpdater()
 	if lastTimeChecked < Shared.GetTime() - updateCheckInterval then
 		lastTimeChecked = Shared.GetTime()
 		
-		local params = {}
-		params["itemcount"] = Server.GetNumActiveMods()
-		for modNum = 1, Server.GetNumActiveMods() do
-			params["publishedfileids[" .. modNum-1 .. "]"] = tonumber("0x" .. Server.GetActiveModId(modNum))
-		end
+		if mapChangeNeeded then
+			SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+		else	
+			local params = {}
+			params["itemcount"] = Server.GetNumActiveMods()
+			for modNum = 1, Server.GetNumActiveMods() do
+				params["publishedfileids[" .. modNum-1 .. "]"] = tonumber("0x" .. Server.GetActiveModId(modNum))
+			end
 
-		if params["itemcount"] > 0 and not mapChangeNeeded then
-			Shared.SendHTTPRequest("http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/", "POST", params, function(result) CHUDParseModInfo(json.decode(result)) end)
+			if params["itemcount"] > 0 then
+				Shared.SendHTTPRequest("http://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/", "POST", params, function(result) CHUDParseModInfo(json.decode(result)) end)
+			end
 		end
 	end
 end

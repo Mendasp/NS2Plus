@@ -7,6 +7,10 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 10/04/2014 (Build 264):
+	- When a mod update is found, the message will get repeated every 5 minutes until map restart.
+	- Reworked friends highlighting again, in a better way this time. (Thanks remi.D!)
+
 - 09/04/2014 (Build 264):
 	- Removed looping immersion from main menu.
 	- Tweaked fade blink particles for minimal particles setting.
@@ -34,10 +38,6 @@ Latest changes
 	- Reduced size of NS2 Beta upgrade icons to better reflect the old size.
 	- Fixed inactive/unbuilt structures not blinking red when under attack.
 	- Fixed alien structures not blinking red when uncysted.
-
-- 28/03/2014 (Build 264):
-	- CHUD Server Browser now marks the playercount in red if the server requires a map change to join (only for CHUD servers).
-
 
 Credits/Thanks to
 =================

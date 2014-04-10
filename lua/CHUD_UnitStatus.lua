@@ -121,13 +121,3 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 		return hint
 	end
 end
-
-// Hopefully noone ever uses this in another mod!
-originalSteamFriend = GetSteamIdForClientIndex
-function GetSteamIdForClientIndex(clientIndex)
-	if CHUDGetOption("friends") then
-		return originalSteamFriend(clientIndex)
-	else
-		return 0
-	end
-end

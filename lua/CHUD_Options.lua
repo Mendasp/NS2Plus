@@ -319,6 +319,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "hud",
 				valueType = "bool",
+				applyFunction = ApplyCHUDSettings,
 			}, 
 			uplvl = {
 				name    = "CHUD_UpgradeLevel",

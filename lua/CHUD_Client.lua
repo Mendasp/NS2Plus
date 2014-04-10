@@ -168,6 +168,11 @@ function ApplyCHUD(script, scriptName)
 			script.buildText:SetIsVisible(not CHUDGetOption("mingui"))*/
 			
 		elseif scriptName == "GUIMinimapFrame" then
+		
+			ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendAlien, =
+				ConditionalValue(CHUDGetOption("friends"), kMinimapBlipTeam.FriendAlien, kMinimapBlipTeam.Alien) } )
+			ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendMarine =
+				ConditionalValue(CHUDGetOption("friends"), kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
 			
 			script:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
 						
