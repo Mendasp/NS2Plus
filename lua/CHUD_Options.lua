@@ -463,4 +463,16 @@ CHUDOptions =
 				valueType = "int",
 				sort = "A2",
             },
+			flashatmos = { 
+                name    = "CHUD_FlashAtmos",
+                label   = "Flashlight atmospherics",
+				tooltip = "Sets the atmospheric density of flashlights",
+				type    = "slider",
+				sliderCallback = CHUDFlashAtmosSlider,
+				defaultValue = 1,
+				minValue = 0,
+				maxValue = 1,
+				category = "comp",
+				valueType = "float",
+            },
 }

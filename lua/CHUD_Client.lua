@@ -37,6 +37,7 @@ Script.Load("lua/CHUD_Stats.lua")
 Script.Load("lua/CHUD_ServerBrowser.lua")
 Script.Load("lua/CHUD_Hitsounds.lua")
 Script.Load("lua/CHUD_Outlines.lua")
+Script.Load("lua/CHUD_FlashAtmos.lua")
 
 function ApplyCHUD(script, scriptName)
 	
@@ -169,7 +170,7 @@ function ApplyCHUD(script, scriptName)
 			
 		elseif scriptName == "GUIMinimapFrame" then
 		
-			ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendAlien, =
+			ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendAlien =
 				ConditionalValue(CHUDGetOption("friends"), kMinimapBlipTeam.FriendAlien, kMinimapBlipTeam.Alien) } )
 			ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendMarine =
 				ConditionalValue(CHUDGetOption("friends"), kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )

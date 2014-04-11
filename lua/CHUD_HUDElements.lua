@@ -212,7 +212,7 @@ end
 
 // I really need to make a new file for all this sound blocking business...
 function StartSoundEffect(soundEffectName, volume)
-	if soundEffectName ~= "sound/NS2.fev/common/dead" and not CHUDGetOption("ambient") then
+	if soundEffectName ~= "sound/NS2.fev/common/dead" or CHUDGetOption("ambient") then
 		Shared.PlaySound(nil, soundEffectName, volume or 1)
 	end
 end

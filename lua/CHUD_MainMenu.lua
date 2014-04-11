@@ -28,6 +28,13 @@ function CHUDHitsoundsSlider()
 	end
 end
 
+function CHUDFlashAtmosSlider()
+	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+		local value = mainMenu.CHUDOptionElements.CHUD_FlashAtmos:GetValue()
+		CHUDSetOption("flashatmos", value)
+	end
+end
+
 function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		for _, option in pairs(mainMenu.CHUDOptionElements) do
@@ -107,6 +114,8 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 		
 		self.profileBackground:SetTopOffset(-70)
 		
+		self.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
+		
 	end)
 	
 originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
@@ -147,7 +156,8 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 	
 function MainMenu_OnOpenMenu()
-    StartSoundEffect("sound/chud.fev/CHUD/open_menu")    
+    StartSoundEffect("sound/chud.fev/CHUD/open_menu")
+	mainMenu.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
 end
 
 function MainMenu_OnCloseMenu()
