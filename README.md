@@ -7,7 +7,7 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
-- 10/04/2014 (Build 264):
+- 11/04/2014 (Build 264):
 	- When a mod update is found, the message will get repeated every 5 minutes until map restart.
 	- Reworked friends highlighting again, in a better way this time. (Thanks remi.D!)
 	- Added flashlight atmospherics slider. Available in the Misc. tab.
