@@ -13,6 +13,7 @@ Latest changes
 	- Added flashlight atmospherics slider. Available in the Misc. tab.
 	- The Minimal GUI setting now also removes the background of the main menu.
 	- Fixed bug where having the map ambient sounds enabled would make the mod not play the hitsounds.
+	- Fixed bug where stats wouldn't show up on round end.
 
 - 09/04/2014 (Build 264):
 	- Removed looping immersion from main menu.

@@ -28,6 +28,7 @@ function OnCHUDDamage(statsTable)
 end
 
 function OnCommandResetStats()
+	ShowClientStats(true)
 	CHUDStats = { }
 	CHUD_pdmg = 0
 	CHUD_sdmg = 0
@@ -120,7 +121,6 @@ function CheckPlayerTeam()
 		lastteamnr = teamnr
 		// If we moved to the RR, show stats & reset values
 		if teamnr == 0 then
-			ShowClientStats(true)
 			OnCommandResetStats()
 		end
 	end
