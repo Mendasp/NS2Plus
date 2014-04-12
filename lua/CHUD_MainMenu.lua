@@ -2,36 +2,46 @@ local mainMenu
 
 function CHUDHitIndicatorSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local value = mainMenu.CHUDOptionElements.CHUD_HitIndicator:GetValue()
-		CHUDSetOption("hitindicator", value)
+		local key = "hitindicator"
+		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local value = mainMenu.CHUDOptionElements.CHUD_HitIndicator:GetValue() * multiplier
+		CHUDSetOption(key, value)
 	end
 end
 
 function CHUDLocationSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local value = mainMenu.CHUDOptionElements.CHUD_LocationAlpha:GetValue()
-		CHUDSetOption("locationalpha", value)
+		local key = "locationalpha"
+		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local value = mainMenu.CHUDOptionElements.CHUD_LocationAlpha:GetValue() * multiplier
+		CHUDSetOption(key, value)
 	end
 end
 
 function CHUDMinimapSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local value = mainMenu.CHUDOptionElements.CHUD_MinimapAlpha:GetValue()
-		CHUDSetOption("minimapalpha", value)
+		local key = "minimapalpha"
+		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local value = mainMenu.CHUDOptionElements.CHUD_MinimapAlpha:GetValue() * multiplier
+		CHUDSetOption(key, value)
 	end
 end
 
 function CHUDHitsoundsSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local value = mainMenu.CHUDOptionElements.CHUD_HitsoundsVolume:GetValue()
-		CHUDSetOption("hitsounds_vol", value)
+		local key = "hitsounds_vol"
+		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local value = mainMenu.CHUDOptionElements.CHUD_HitsoundsVolume:GetValue() * multiplier
+		CHUDSetOption(key, value)
 	end
 end
 
 function CHUDFlashAtmosSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local value = mainMenu.CHUDOptionElements.CHUD_FlashAtmos:GetValue()
-		CHUDSetOption("flashatmos", value)
+		local key = "flashatmos"
+		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local value = mainMenu.CHUDOptionElements.CHUD_FlashAtmos:GetValue() * multiplier
+		CHUDSetOption(key, value)
 	end
 end
 
@@ -45,7 +55,8 @@ function CHUDSaveMenuSettings()
 				elseif CHUDOption.valueType == "int" and CHUDOption.type == "select" then
 					CHUDSetOption(option.index, option:GetActiveOptionIndex()-1)
 				elseif CHUDOption.valueType == "float" then
-					CHUDSetOption(option.index, option:GetValue())
+					local multiplier = CHUDOption.multiplier or 1
+					CHUDSetOption(option.index, option:GetValue() * multiplier)
 				end
 			end
 		end
@@ -319,6 +330,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
         local input
 		local input_display
         local defaultInputClass = "option_input"
+		local multiplier = option.multiplier or 1
 		
 		local y = rowHeight * (i - 1)
 		
@@ -375,20 +387,20 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				
 			OnEnter = function(self)
 				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
-					input:SetValue(input_display:GetValue() / 100)
+					input:SetValue(input_display:GetValue() / multiplier)
 				end
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
-					input_display:SetValue(ToString(string.sub(input:GetValue()*100,0, 4)))
+					input_display:SetValue(ToString(string.sub(input:GetValue() * multiplier,0, 4)))
 				end
 			
 			end,
 			OnBlur = function(self)
 				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
-					input:SetValue(input_display:GetValue() / 100)
+					input:SetValue(input_display:GetValue() / multiplier)
 				end
 				
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
-					input_display:SetValue(ToString(string.sub(input:GetValue()*100,0, 4)))
+					input_display:SetValue(ToString(string.sub(input:GetValue() * multiplier,0, 4)))
 				end
 			end,
 			})
@@ -398,7 +410,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
                     {OnSlide =
                         function(value, interest)
                             option.sliderCallback(mainMenu)
-							input_display:SetValue(ToString(string.sub(input:GetValue()*100,0, 4)))
+							input_display:SetValue(ToString(string.sub(input:GetValue() * multiplier,0, 4)))
                         end
                     }, SLIDE_HORIZONTAL)
             end

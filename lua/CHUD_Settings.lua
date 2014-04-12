@@ -10,6 +10,14 @@ function CHUDGetOption(key)
 	return nil
 end
 
+function CHUDGetOptionParam(key, param)
+	if CHUDOptions[key][param] ~= nil then
+		return CHUDOptions[key][param]
+	end
+	
+	return nil
+end
+
 function CHUDGetOptionAssocVal(key)
 	if CHUDOptions[key] ~= nil and CHUDOptions[key].type == "select" and CHUDOptions[key].valueType == "int" then
 		return CHUDOptions[key].valueTable[CHUDOptions[key].currentValue+1]
@@ -47,7 +55,9 @@ function CHUDSetOption(key, value)
 			
 		elseif option.valueType == "float" then
 			local number = tonumber(value)
-			if IsNumber(number) and number >= option.minValue and number <= option.maxValue then
+			local multiplier = option.multiplier or 1
+			if IsNumber(number) and number >= option.minValue * multiplier and number <= option.maxValue * multiplier then
+				number = number / multiplier
 				Client.SetOptionFloat(option.name, number)
 				option.currentValue = number
 				setValue = option.currentValue
@@ -121,7 +131,8 @@ local function CHUDHelp(...)
 			local option = CHUDOptions[origOption]
 			local helpStr = "plus " .. origOption
 			if option.valueType == "float" then
-				helpStr = helpStr .. " <float> - Values: " .. option.minValue .. " to " .. option.maxValue
+				local multiplier = option.multiplier or 1
+				helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier
 			elseif option.valueType == "int" then
 				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1
 			elseif option.valueType == "bool" then
@@ -133,13 +144,14 @@ local function CHUDHelp(...)
 	elseif #args == 1 then
 		if CHUDOptions[args[1]] ~= nil then
 			option = CHUDOptions[args[1]]
+			local multiplier = option.multiplier or 1
 			Shared.Message("-------------------------------------")
 			Shared.Message(option.label)
 			Shared.Message("-------------------------------------")
 			Shared.Message(option.tooltip)
 			local helpStr = "Usage: plus " .. args[1]
 			if option.valueType == "float" then
-				helpStr = helpStr .. " <float> - Values: " .. option.minValue .. " to " .. option.maxValue
+				helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier
 			elseif option.valueType == "int" then
 				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1
 			elseif option.valueType == "bool" then
@@ -164,7 +176,7 @@ local function CHUDHelp(...)
 					helpStr = option.values[option.currentValue+1]
 				end
 			else
-				helpStr = tostring(option.currentValue)
+				helpStr = tostring(option.currentValue * multiplier)
 			end
 			Shared.Message("Current value: " .. helpStr)
 			Shared.Message("-------------------------------------")
@@ -191,6 +203,7 @@ local function OnCommandCHUD(...)
 	elseif #args == 2 then
 		if CHUDOptions[args[1]] ~= nil then
 			option = CHUDOptions[args[1]]
+			local multiplier = option.multiplier or 1
 			local setValue = CHUDSetOption(args[1], args[2])
 			if option.type == "select" then
 				if option.valueType == "bool" then
@@ -204,7 +217,7 @@ local function OnCommandCHUD(...)
 					helpStr = option.values[option.currentValue+1]
 				end
 			else
-				helpStr = tostring(option.currentValue)
+				helpStr = tostring(option.currentValue * multiplier)
 			end
 			if setValue ~= nil then
 				Shared.Message(option.label .. " set to: " .. helpStr)

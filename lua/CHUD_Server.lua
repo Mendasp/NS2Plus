@@ -57,7 +57,7 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 			//Print(weapon .. " " .. self:GetMapName())
 			
 		else 
-			// Don't be silly, if we return here something won't do damage (apparently ARCs :D)
+			// Don't be silly, if we don't return anything here something won't do damage (apparently ARCs :D)
 			return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 		end
 		
