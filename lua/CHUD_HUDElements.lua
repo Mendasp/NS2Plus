@@ -149,26 +149,17 @@ originalUpdateScreenEff = Class_ReplaceMethod( "Player", "UpdateScreenEffects",
 )
 
 Script.Load("lua/DSPEffects.lua")
+// Disables low health effects
 originalDSPEff = UpdateDSPEffects
 function UpdateDSPEffects()
+	// We're not doing anything in this function
+    // but leave this for future generations to wonder why this was an option in the first place
+
+    // Most ancient piece of code in this mod - Archaeologists pls be careful, this code has a curse
 	/*if Client.GetOptionBoolean("CHUD_LowHealthEff", true) then
 		originalDSPEff()
 	end*/
 end
-
-Script.Load("lua/EffectManager.lua")
-local blockedEffects = {	"complete_order",
-							"upgrade_complete" }
-originalTriggerEffects = Class_ReplaceMethod( "EffectManager", "TriggerEffects",
-	function(self, effectName, tableParams, triggeringEntity)
-		if not table.contains(blockedEffects, effectName) then
-			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
-		elseif	(effectName == "complete_order" and CHUDGetOption("wps")) or
-				(effectName == "upgrade_complete" and CHUDGetOption("unlocks")) then
-			originalTriggerEffects(self, effectName, tableParams, triggeringEntity)
-		end
-	end
-)
 
 Script.Load("lua/Weapons/Marine/ExoWeaponHolder.lua")
 originalExoWeaponHolder = Class_ReplaceMethod( "ExoWeaponHolder", "OnUpdateRender",
@@ -189,43 +180,15 @@ originalExoWeaponHolder = Class_ReplaceMethod( "ExoWeaponHolder", "OnUpdateRende
 	end
 )
 
-Script.Load("lua/SoundEffect.lua")
-local blockedVO = {	"sound/NS2.fev/marine/voiceovers/commander/build",
-					"sound/NS2.fev/marine/voiceovers/commander/defend",
-					"sound/NS2.fev/marine/voiceovers/move" }
-					
-local skulkJumpSounds = {
-	"sound/NS2.fev/alien/skulk/jump_good",
-	"sound/NS2.fev/alien/skulk/jump_best",
-	"sound/NS2.fev/alien/skulk/jump"
-}
-
-function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
-	if table.contains(skulkJumpSounds, soundEffectName) then
-		volume = volume * 0.5
-	end
-	
-	if not table.contains(blockedVO, soundEffectName) or CHUDGetOption("wps") then
-		Shared.PlaySound(onEntity, soundEffectName, volume or 1)
-	end
-end
-
-// I really need to make a new file for all this sound blocking business...
-function StartSoundEffect(soundEffectName, volume)
-	if soundEffectName ~= "sound/NS2.fev/common/dead" or CHUDGetOption("ambient") then
-		Shared.PlaySound(nil, soundEffectName, volume or 1)
-	end
-end
-
-
 // Man I wish I didn't have to hook all this crap
 // This is horrible
 local CystOverride = false
 local kCircleModelName = PrecacheAsset("models/misc/circle/circle_alien.model")
 
-oldLoadGhostModel = LoadGhostModel
+local oldLoadGhostModel = LoadGhostModel
 function LoadGhostModel(className)
 	oldLoadGhostModel(className)
+	// This is horriblier, or maybe horribliest
 	if className == "CystGhostModel" and not CystOverride then
 		CystOverride = true
 			

@@ -75,6 +75,9 @@ local function OnCommandSaveLights()
 	end
 end
 
+// I don't remember how I got to make this function look like this
+// Fragile, do not touch
+// Rewrite, actually
 function CHUDLoadLights()
 	if not lowLightsSwitched then
 	
