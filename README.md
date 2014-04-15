@@ -7,6 +7,10 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 15/04/2014 (Buld 264):
+	- Fixed non-snow rock prop variant size.
+	- Potentially fixed issue that'd let aliens see marines that are not parasited with an outline
+
 - 11/04/2014 (Build 264):
 	- When a mod update is found, the message will get repeated every 5 minutes until map restart.
 	- Reworked friends highlighting again, in a better way this time. (Thanks remi.D!)
@@ -35,13 +39,6 @@ Latest changes
 - 01/04/2014 (Build 264):
 	- Made the rifle color for commanders teal instead of blue to make it easier on the eyes.
 	- Fixed bug where Egg count icon would overlap with the new Stats UI.
-
-- 31/03/2014 (Build 264):
-	- Name change: To better reflect what the mod does, it is now called NS2+.
-	- The stats after you die now show up in the UI instead of the console. End round stats still show up in console.
-	- Reduced size of NS2 Beta upgrade icons to better reflect the old size.
-	- Fixed inactive/unbuilt structures not blinking red when under attack.
-	- Fixed alien structures not blinking red when uncysted.
 
 Credits/Thanks to
 =================

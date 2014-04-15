@@ -83,10 +83,27 @@ function UpdateCHUDOutlines()
 	end
 end
 
+local function GetMaxDistanceFor(player)
+
+	if player:isa("AlienCommander") then
+		return 63
+	end
+
+	return 33
+
+end
+
 local oldHVUpdate = HiveVisionMixin.OnUpdate
 function HiveVisionMixin:OnUpdate(deltaTime)
 	local visible = HasMixin(self, "ParasiteAble") and self:GetIsParasited()
 	local player = Client.GetLocalPlayer()
+	
+	// check the distance here as well. seems that the render mask is not correct for newly created models or models which get destroyed in the same frame
+	local playerCanSeeHiveVision = player ~= nil and (player:GetOrigin() - self:GetOrigin()):GetLength() <= GetMaxDistanceFor(player) and (player:isa("Alien") or player:isa("AlienCommander") or player:isa("AlienSpectator"))
+	
+	if visible and not playerCanSeeHiveVision then
+		visible = false
+	end
 
 	if visible ~= self.hiveSightVisible and (not self.timeHiveVisionChanged or self.timeHiveVisionChanged + 1 < Shared.GetTime()) then
 	
