@@ -38,6 +38,7 @@ Script.Load("lua/CHUD_ServerBrowser.lua")
 Script.Load("lua/CHUD_Hitsounds.lua")
 Script.Load("lua/CHUD_Outlines.lua")
 Script.Load("lua/CHUD_FlashAtmos.lua")
+Script.Load("lua/CHUD_ServerSettings.lua")
 
 function ApplyCHUD(script, scriptName)
 	

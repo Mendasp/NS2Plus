@@ -419,6 +419,9 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
         elseif option.type == "checkbox" then
             input = form:CreateFormElement(Form.kElementType.Checkbox, option.name, option.value)
             defaultInputClass = "option_checkbox"
+        elseif option.type == "number" then
+            input = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
+			input:SetNumbersOnly(true)	
         else
             input = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
         end
