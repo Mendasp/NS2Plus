@@ -9,10 +9,3 @@ local kCHUDStatsMessage =
 }
 
 Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
-
-local kMaxPrintLength = 128
-local kServerConfigMessage =
-{
-    message = string.format("string (%d)", kMaxPrintLength),
-}
-Shared.RegisterNetworkMessage("CHUDServerConfig", kServerConfigMessage)

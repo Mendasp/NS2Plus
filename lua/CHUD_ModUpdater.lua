@@ -1,15 +1,20 @@
-local updateCheckInterval = 15*60
+local updateCheckInterval = CHUDServerOptions["modupdatercheckinterval"].currentValue*60
 local lastTimeChecked = Shared.GetTime() - updateCheckInterval
 local mapChangeNeeded = false
 local modsTable = {}
-local ShineUpdater = false
+local DisableUpdater = false
 
 Server.RemoveTag("CHUD_MCR")
 
 // Don't use this updater if the server is already using the Shine one
 if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
 	Shared.Message("Shine Workshop Updater is enabled. Disabling NS2+ Mod Updater.")
-	ShineUpdater = true
+	DisableUpdater = true
+end
+
+if CHUDServerOptions["modupdater"].currentValue == false then
+	Shared.Message("NS2+ Mod Updater disabled by server settings.")
+	DisableUpdater = true
 end
 
 function CHUDParseModInfo(modInfo)
@@ -21,9 +26,9 @@ function CHUDParseModInfo(modInfo)
 					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
 						Server.AddTag("CHUD_MCR")
 						mapChangeNeeded = true
-						// Repeat the mod update message every 5 minutes
-						updateCheckInterval = 5*60
-						if not ShineUpdater then
+						// Repeat the mod update message
+						updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60
+						if not DisableUpdater then
 							SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
 						end
 					end
@@ -36,16 +41,35 @@ function CHUDParseModInfo(modInfo)
 end
 
 function CHUDModUpdater()
-	if mapChangeNeeded and Server.GetNumPlayers() == 0 and not ShineUpdater then
+	// Update values as soon as they are changed by console commands
+	DisableUpdater = CHUDServerOptions["modupdater"].currentValue == false
+	
+	// Change the check interval and reset the last time checked
+	if not mapChangeNeeded and updateCheckInterval ~= CHUDServerOptions["modupdatercheckinterval"].currentValue*60 then
+		updateCheckInterval = CHUDServerOptions["modupdatercheckinterval"].currentValue*60
+		lastTimeChecked = Shared.GetTime()
+	end
+	
+	// Change the reminder interval (only needed if it's already reminding)
+	if mapChangeNeeded and updateCheckInterval ~= CHUDServerOptions["modupdaterreminderinterval"].currentValue*60 then
+		updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60
+		lastTimeChecked = Shared.GetTime()
+	end
+
+	if mapChangeNeeded and Server.GetNumPlayers() == 0 and not DisableUpdater then
 		SendCHUDMessage("The server is empty. Changing map.")
 		MapCycle_CycleMap()
 	end
 
+	// Even if the updater is disabled, keep running so it can notify players of outdated mods in the server browser
 	if lastTimeChecked < Shared.GetTime() - updateCheckInterval then
 		lastTimeChecked = Shared.GetTime()
 		
 		if mapChangeNeeded then
-			SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+			// If we set the reminder to 0, don't show this message anymore.
+			if updateCheckInterval > 0 and not DisableUpdater then
+				SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+			end
 		else	
 			local params = {}
 			params["itemcount"] = Server.GetNumActiveMods()

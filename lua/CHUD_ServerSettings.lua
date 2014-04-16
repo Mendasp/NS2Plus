@@ -1,131 +1,183 @@
-local serverConfigDefault = {
-						settings =
-							{
-								rookie_friendly = true,
-								force_even_teams_on_join = true,
-								auto_team_balance = { enabled_on_unbalance_amount = 2, enabled_after_seconds = 10 },
-								end_round_on_team_unbalance = 0.4,
-								end_round_on_team_unbalance_check_after_time = 300,
-								end_round_on_team_unbalance_after_warning_time = 30,
-								auto_kick_afk_time = 300,
-								auto_kick_afk_capacity = 0.5,
-								voting = { votekickplayer = true, votechangemap = true, voteresetgame = true, voterandomizerr = true },
-								reserved_slots = { amount = 0, ids = { } }
-							},
-						tags = { "rookie" }
-					  }
-					  
-if Client then
-	for k, v in pairs(serverConfigDefault["settings"]) do
-		if type(v) == "boolean" then
-			CHUDOptions[k] = {
-				name = k,
-				label = k,
-				type = "select",
-				values = { "false", "true" },
-				category = "comp",
-			}
-		elseif type(v) == "number" then
-			CHUDOptions[k] = {
-				name = k,
-				label = k,
-				type = "number",
-				category = "comp",
-			}
-		end
+CHUDServerOptions =
+{
+			modupdater = {
+				label   = "Mod updater",
+				tooltip = "Enables or disables the mod update checker.",
+				valueType = "bool",
+				defaultValue = true,
+				},
+			modupdatercheckinterval = {
+				label   = "Mod updater check interval",
+				tooltip = "Sets the update check interval for the mod updater (in minutes).",
+				valueType = "float",
+				defaultValue = 15,
+				minValue = 1,
+				maxValue = 999,
+				},
+			modupdaterreminderinterval = {
+				label   = "Mod updater reminder interval",
+				tooltip = "Sets the time between reminders when an update has been found. Set to 0 to disable (only shows once).",
+				valueType = "float",
+				defaultValue = 5,
+				minValue = 0,
+				maxValue = 999,
+				},
+}
+
+local configFileName = "NS2PlusServerConfig.json"
+
+local function CHUDSaveServerConfig()
+	local saveConfig = { }
+	
+	for index, option in pairs(CHUDServerOptions) do
+		saveConfig[index] = option.currentValue
 	end
+
+	SaveConfigFile(configFileName, saveConfig)
 end
 
-if Server then
-	function CHUDServerAdminPrint(client, message)
+function CHUDSetServerOption(key, value)
+	local setValue = nil
 
-		if client then
+	if CHUDServerOptions[key] ~= nil then
+	
+		option = CHUDServerOptions[key]
+		oldValue = option.currentValue
 		
-			// First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
-			local messageList = { }
-			while string.len(message) > kMaxPrintLength do
+		if option.valueType == "bool" then
+			if value == "true" or value == "1" or value == true then
+				option.currentValue = true
+				setValue = option.currentValue
+			elseif value == "false" or value == "0" or value == false then
+				option.currentValue = false
+				setValue = option.currentValue
+			end
 			
-				local messagePart = string.sub(message, 0, kMaxPrintLength)
-				table.insert(messageList, messagePart)
-				message = string.sub(message, kMaxPrintLength + 1)
+		elseif option.valueType == "float" then
+			local number = tonumber(value)
+			if IsNumber(number) and number >= option.minValue and number <= option.maxValue then
+				option.currentValue = number
+				setValue = option.currentValue
+			end
+		end
+
+		// Don't waste time saving settings we already have set like that
+		if oldValue ~= option.currentValue then
+			CHUDSaveServerConfig()
+		end
+	
+	end
+	
+	return setValue
+end
+
+local function CHUDServerHelp(...)
+	local args = {...}
+	local client = args[1]
+	
+	if #args == 1 then
+		// Show the options in alphabetical order
+		local SortedOptions = { }
+		for idx, option in pairs(CHUDServerOptions) do
+			table.insert(SortedOptions, idx)
+			table.sort(SortedOptions)
+		end
+		ServerAdminPrint(client, "-------------------------------------")
+		ServerAdminPrint(client, "NS2+ Server Settings")
+		ServerAdminPrint(client, "-------------------------------------")
+		for name, origOption in pairs(SortedOptions) do
+			local option = CHUDServerOptions[origOption]
+			local helpStr = "sv_plus " .. origOption
+			if option.valueType == "float" then
+				helpStr = helpStr .. " <float> - Values: " .. option.minValue .. " to " .. option.maxValue
+			elseif option.valueType == "bool" then
+				helpStr = helpStr .. " <true/false> or <0/1>"
+			end
+			helpStr = helpStr .. " - " .. option.tooltip
+			ServerAdminPrint(client, helpStr)
+		end
+	elseif #args == 2 then
+		if CHUDServerOptions[string.lower(args[2])] ~= nil then
+			option = CHUDServerOptions[string.lower(args[2])]
+			ServerAdminPrint(client, "-------------------------------------")
+			ServerAdminPrint(client, option.label)
+			ServerAdminPrint(client, "-------------------------------------")
+			ServerAdminPrint(client, option.tooltip)
+			local helpStr = "Usage: sv_plus " .. args[2]
+			if option.valueType == "float" then
+				helpStr = helpStr .. " <float> - Values: " .. option.minValue .. " to " .. option.maxValue
+			elseif option.valueType == "bool" then
+				helpStr = helpStr .. " <true/false> or <0/1>"
+			end
+			ServerAdminPrint(client, helpStr)
+			ServerAdminPrint(client, "Example (default value): sv_plus " .. args[2] .. " " .. tostring(option.defaultValue))
+			ServerAdminPrint(client, "Current value: " .. tostring(option.currentValue))
+			ServerAdminPrint(client, "-------------------------------------")
 				
-			end
-			table.insert(messageList, message)
-			
-			for m = 1, #messageList do
-				Server.SendNetworkMessage(client:GetControllingPlayer(), "CHUDServerConfig", { message = messageList[m] }, true)
-			end
-			
+		else
+			CHUDServerHelp(client)
 		end
 	end
-elseif Client then
-
-    local function OnCHUDServerConfig(messageTable)
-        Shared.Message(messageTable.message)
-    end
-    Client.HookNetworkMessage("CHUDServerConfig", OnCHUDServerConfig)
-    
 end
 
-if Server then
-// Fill the missing fields with default values so we can display them in the menu
-function CHUDPopulateConfig(currentTable, defaultsTable)
-	if type(defaultsTable) == "table" then
-		for k, v in pairs(defaultsTable) do
-			if currentTable[k] and type(v) == "table" then
-				CHUDPopulateConfig(currentTable[k], v)
-			elseif not currentTable[k] then
-				currentTable[k] = v
-			end
+local function CHUDServerSetting(...)
+	local args = {...}
+	local client = args[1]
+	
+	for idx, arg in pairs(args) do
+		// First parameter is the client that ran the cmd
+		if idx > 1 then
+			args[idx] = string.lower(arg)
 		end
-	elseif not currentTable then
-		currentTable = defaultsTable
+	end
+	
+	if #args == 1 then
+		CHUDServerHelp(client)
+
+	elseif #args == 2 then
+		CHUDServerHelp(client, args[2])
+
+	elseif #args == 3 then
+		if CHUDServerOptions[args[2]] ~= nil then
+			option = CHUDServerOptions[args[2]]
+			local setValue = CHUDSetServerOption(args[2], args[3])
+		end
+		
+		if setValue ~= nil then
+			ServerAdminPrint(client, option.label .. " set to: " .. tostring(setValue))
+		else
+			CHUDServerHelp(client, args[2])
+		end
+		
+	else
+		CHUDServerHelp(client)
 	end
 end
 
-function CHUDGetServerSetting(client, setting)
-	local kMaxPrintLength = 128
-	local configFileName = "ServerConfig.json"
-
-	WriteDefaultConfigFile(configFileName, defaultConfig)
-
-	local config = LoadConfigFile(configFileName) or defaultConfig
-	Print(json.encode(config))
-	
-	CHUDPopulateConfig(config, defaultConfig)
-	
-	Print(json.encode(config))
-	
-/*	local setting = Server.GetConfigSetting(setting)
-    if not setting then
-    
-        Server.SetConfigSetting("reserved_slots", { amount = 0, ids = { } })
-        setting = Server.GetConfigSetting("reserved_slots")
-        
-    end
-    
-    return setting*/
-
-	/*if client then
-
-		// First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
-		local messageList = { }
-		while string.len(message) > kMaxPrintLength do
-		
-			local messagePart = string.sub(message, 0, kMaxPrintLength)
-			table.insert(messageList, messagePart)
-			message = string.sub(message, kMaxPrintLength)
-			
-		end
-		table.insert(messageList, message)
-		
-		for m = 1, #messageList do
-			Server.SendNetworkMessage(client:GetControllingPlayer(), "CHUDServerConfig", { message = messageList[m] }, true)
-		end
-		
-	end*/
-        
+local defaultCHUDConfig = { }
+for index, option in pairs(CHUDServerOptions) do
+	defaultCHUDConfig[index] = option.defaultValue
 end
 
-CreateServerAdminCommand("Console_sv_getsetting", CHUDGetServerSetting, "Retrieves server configuration", true)
+WriteDefaultConfigFile(configFileName, defaultCHUDConfig)
+
+local config = LoadConfigFile(configFileName) or defaultCHUDConfig
+
+for option, value in pairs(config) do
+	// Make sure the option exists in our table
+	if CHUDServerOptions[option] then
+		CHUDServerOptions[option].currentValue = value
+		local setValue = CHUDSetServerOption(option, value)
+		if setValue == nil and CHUDServerOptions[option] then
+			CHUDSetServerOption(option, CHUDServerOptions[option].defaultValue)
+		end
+	end
 end
+
+for index, option in pairs(CHUDServerOptions) do
+	if option.currentValue == nil then
+		CHUDSetServerOption(index, CHUDServerOptions[index].defaultValue)
+	end
+end
+
+CreateServerAdminCommand("Console_sv_plus", CHUDServerSetting, "Sets NS2+ server settings", false)

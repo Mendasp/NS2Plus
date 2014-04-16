@@ -167,7 +167,7 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 	
 function MainMenu_OnOpenMenu()
-    StartSoundEffect("sound/chud.fev/CHUD/open_menu")
+    StartSoundEffect("sound/chud.fev/CHUD/open_menu", OptionsDialogUI_GetSoundVolume()/100)
 	mainMenu.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
 end
 
@@ -198,7 +198,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		if mainMenu.optionTooltip then
 			local background = mainMenu.optionTooltip.background
 			local bgLayer = self.CHUDOptionWindow:GetContentBox():GetLayer()
-			// Increment by 2 so it works for the Options menu too
+			// Increment by 2 so it works for the Options menu too if we open this menu first
 			background:SetLayer(bgLayer+2)
 		end
 		
@@ -323,16 +323,15 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
     local form = CreateMenuElement(content, "Form", false)
     
     local rowHeight = 50
+	
+	local y = 0
     
-    for i = 1, #options do
+    for _, option in ipairs(options) do
     
-        local option = options[i]
         local input
 		local input_display
         local defaultInputClass = "option_input"
 		local multiplier = option.multiplier or 1
-		
-		local y = rowHeight * (i - 1)
 		
         if option.type == "select" then
             input = form:CreateFormElement(Form.kElementType.DropDown, option.name, option.value)
@@ -419,9 +418,6 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
         elseif option.type == "checkbox" then
             input = form:CreateFormElement(Form.kElementType.Checkbox, option.name, option.value)
             defaultInputClass = "option_checkbox"
-        elseif option.type == "number" then
-            input = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
-			input:SetNumbersOnly(true)	
         else
             input = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
         end
@@ -448,9 +444,8 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				if mainMenu ~= nil then
 					local text = option.tooltip
 					if text ~= nil then
-
 						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, 0, 0))
-						
+
 						mainMenu.optionTooltip.tooltip:SetText(text)
 					else
 						mainMenu.optionTooltip.tooltip:SetText("")
@@ -466,11 +461,13 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			})
         
         optionElements[option.name] = input
+		
+		y = y + rowHeight
 
     end
     
     form:SetCSSClass("options")
-	form:SetHeight(#options*rowHeight)
+	form:SetHeight(y)
 
     return form
 

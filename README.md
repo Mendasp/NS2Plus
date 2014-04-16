@@ -1,4 +1,4 @@
-﻿Natural Selection 2+
+﻿NS2+
 ==========
 
 This Natural Selection 2 mod aims to improve, fix and expand the game in order to bring players a better experience. It contains extra customization options and quality of life improvements. This mod needs to be installed on the server.
@@ -7,6 +7,11 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- /04/2014 (Build 264):
+	- Tweaked Lerk spikes tracers and infantry portal spawning particles for Minimal particles setting.
+	- Menu open sound will now use the user's sound volume.
+	- Added server configurable options. Type sv_plus if you have the appropriate permissions for more information. You can also edit NS2PlusServerConfig.json.
+
 - 15/04/2014 (Buld 264):
 	- Fixed non-snow rock prop variant size.
 	- Potentially fixed issue that'd let aliens see marines that are not parasited with an outline
