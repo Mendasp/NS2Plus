@@ -1,6 +1,7 @@
 Script.Load("lua/CHUD_Shared.lua")
 Script.Load("lua/CHUD_ServerSettings.lua")
 Script.Load("lua/CHUD_ModUpdater.lua")
+Script.Load("lua/CHUD_Respawn.lua")
 Server.AddTag("CHUD")
 
 CHUDSendStats = true

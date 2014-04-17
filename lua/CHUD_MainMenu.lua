@@ -127,6 +127,8 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 		
 		self.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
 		
+		self.newsScript = GetGUIManager():CreateGUIScript("CHUDGUI_MenuNews")
+		
 	end)
 	
 originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
@@ -135,6 +137,9 @@ originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
 		if self.chudOptionLink then
 			self.chudOptionLink:SetIsVisible(false)
 		end
+		
+		self.newsScript:SetPlayAnimation("hide")
+		self.newsScript:PlayFadeAnimation()
 	end)
 	
 originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationCompleted",
@@ -149,8 +154,13 @@ originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationComplet
 				if self.chudOptionLink then
 					self.chudOptionLink:SetIsVisible(true)
 				end
+				
+				self.newsScript:SetPlayAnimation("show")
+				self.newsScript:PlayFadeAnimation()
+				
 			end
 		end
+
 		originalMenuAnimations(self, animatedItem, animationName, itemHandle)
 	end)
 	
@@ -169,10 +179,18 @@ Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 function MainMenu_OnOpenMenu()
     StartSoundEffect("sound/chud.fev/CHUD/open_menu", OptionsDialogUI_GetSoundVolume()/100)
 	mainMenu.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
+	mainMenu.newsScript:SetPlayAnimation("show")
+	mainMenu.newsScript:PlayFadeAnimation()
+	// Refresh the page
+	mainMenu.newsScript:LoadURL(kCHUDMenuNewsURL)
 end
 
 function MainMenu_OnCloseMenu()
     Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
+	if mainMenu then
+		mainMenu.newsScript:SetPlayAnimation("hide")
+		mainMenu.newsScript:PlayFadeAnimation()
+	end
 end
 	
 function GUIMainMenu:CreateCHUDOptionWindow()

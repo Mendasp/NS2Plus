@@ -7,12 +7,14 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
-- /04/2014 (Build 264):
+- 17/04/2014 (Build 264):
 	- Tweaked Lerk spikes tracers and Infantry Portal spawning particles for Minimal particles setting.
 	- Menu open sound will now use the user's game sound volume.
 	- Added server configurable options. Type sv_plus if you have the appropriate permissions for more information. You can also edit NS2PlusServerConfig.json.
 	- Solved problem where the Death Stats UI would still show up when alive (beacon, respawning with cheats, etc).
-	- Added Death Stats UI toggle (Fully disabled/Only request menu/Enabled). You can still access the stats by holding the request menu button (default: X).
+	- Added Death Stats UI toggle (Fully disabled/Only request menu/Enabled). You can still access the stats, if partially enabled, by holding the request menu button (default: X).
+	- Respawn cheat commands now always spawn the player in first person view.
+	- Added ingame news webpage.
 
 - 15/04/2014 (Buld 264):
 	- Fixed non-snow rock prop variant size.
