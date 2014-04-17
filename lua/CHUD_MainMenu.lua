@@ -3,7 +3,7 @@ local mainMenu
 function CHUDHitIndicatorSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "hitindicator"
-		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
 		local value = mainMenu.CHUDOptionElements.CHUD_HitIndicator:GetValue() * multiplier
 		CHUDSetOption(key, value)
 	end
@@ -12,7 +12,7 @@ end
 function CHUDLocationSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "locationalpha"
-		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
 		local value = mainMenu.CHUDOptionElements.CHUD_LocationAlpha:GetValue() * multiplier
 		CHUDSetOption(key, value)
 	end
@@ -21,7 +21,7 @@ end
 function CHUDMinimapSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "minimapalpha"
-		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
 		local value = mainMenu.CHUDOptionElements.CHUD_MinimapAlpha:GetValue() * multiplier
 		CHUDSetOption(key, value)
 	end
@@ -30,7 +30,7 @@ end
 function CHUDHitsoundsSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "hitsounds_vol"
-		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
 		local value = mainMenu.CHUDOptionElements.CHUD_HitsoundsVolume:GetValue() * multiplier
 		CHUDSetOption(key, value)
 	end
@@ -39,7 +39,7 @@ end
 function CHUDFlashAtmosSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "flashatmos"
-		local multiplier = CHUDGetOptionParam(key, multiplier) or 1
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
 		local value = mainMenu.CHUDOptionElements.CHUD_FlashAtmos:GetValue() * multiplier
 		CHUDSetOption(key, value)
 	end

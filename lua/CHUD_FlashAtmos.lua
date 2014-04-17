@@ -3,6 +3,8 @@ originalMarineUpdateRender = Class_ReplaceMethod( "Marine", "OnUpdateRender",
 		
 		originalMarineUpdateRender(self)
 		
+		local isLocal = self:GetIsLocalPlayer()
+		
 		if self.flashlightOn then
 				
 			// Only display atmospherics for third person players.
@@ -21,6 +23,8 @@ originalExoUpdateRender = Class_ReplaceMethod( "Exo", "OnUpdateRender",
 	function(self)
 		
 		originalExoUpdateRender(self)
+		
+		local isLocal = self:GetIsLocalPlayer()
 		
 		if self.flashlightOn then
 				
