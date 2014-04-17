@@ -10,9 +10,7 @@ Server.RemoveTag("CHUD_MCR")
 if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
 	Shared.Message("Shine Workshop Updater is enabled. Disabling NS2+ Mod Updater.")
 	DisableUpdater = true
-end
-
-if CHUDServerOptions["modupdater"].currentValue == false then
+elseif CHUDServerOptions["modupdater"].currentValue == false then
 	Shared.Message("NS2+ Mod Updater disabled by server settings.")
 	DisableUpdater = true
 end

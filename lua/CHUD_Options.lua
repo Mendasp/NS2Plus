@@ -473,7 +473,7 @@ CHUDOptions =
 			flashatmos = { 
                 name    = "CHUD_FlashAtmos",
                 label   = "Flashlight atmospherics",
-				tooltip = "Sets the atmospheric density of flashlights",
+				tooltip = "Sets the atmospheric density of flashlights.",
 				type    = "slider",
 				sliderCallback = CHUDFlashAtmosSlider,
 				defaultValue = 1,
@@ -483,5 +483,17 @@ CHUDOptions =
 				category = "comp",
 				valueType = "float",
 				sort = "C1",
+            },
+			deathstats = { 
+                name    = "CHUD_DeathStats",
+                label   = "Death stats UI",
+				tooltip = "Enables or disables the stats you get after you die.",
+				type    = "select",
+				values  = { "Fully disabled", "Only request menu", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 2,
+				category = "comp",
+				valueType = "int",
+				sort = "D1",
             },
 }

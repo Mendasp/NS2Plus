@@ -6,7 +6,7 @@ CHUDStatsVisible = false
 
 local kTitleFontName = "fonts/AgencyFB_medium.fnt"
 local kStatsFontName = "fonts/AgencyFB_small.fnt"
-local kTopOffset = GUIScale(128)
+local kTopOffset = GUIScale(64)
 local kFontScale = GUIScale(Vector(1, 1, 0))
 local kTitleBackgroundTexture = "ui/objective_banner_marine.dds"
 local kTitleBackgroundSize = GUIScale(Vector(210, 45, 0))
@@ -105,6 +105,8 @@ function CHUDGUI_DeathStats:Initialize()
 	
 	self.lastIsDead = PlayerUI_GetIsDead() and Client.GetIsControllingPlayer() and not PlayerUI_GetIsSpecating()
 	
+	self.requestVisible = false
+	
 end
 
 function CHUDGUI_DeathStats:Reset()
@@ -121,6 +123,12 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 	
 	local isDead = PlayerUI_GetIsDead() and Client.GetIsControllingPlayer() and not PlayerUI_GetIsSpecating()
 	
+	// Hide the stats when you're alive
+	// When getting beaconed right after dying you could still see the UI
+	// Also makes training with cheats in a private server not horrible
+	local visible = not Client.GetIsControllingPlayer() or PlayerUI_GetIsThirdperson() or isDead
+	self.titleBackground:SetIsVisible(self.requestVisible or visible and CHUDGetOption("deathstats") == 2)
+	
 	if isDead ~= self.lastIsDead then
 	
 		self.lastIsDead = isDead
@@ -132,7 +140,9 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 				local statsString = CHUDGetStatsString()
 				if statsString ~= "" then
 					self.statsText:SetText(statsString)
-					self.titleBackground:FadeIn(2, "CHUD_DEATHSTATS")
+					if not self.requestVisible then
+						self.titleBackground:FadeIn(2, "CHUD_DEATHSTATS")
+					end
 				end
 			end
 		end
@@ -151,6 +161,17 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 		CHUDStatsVisible = true
 	else
 		CHUDStatsVisible = false
+	end
+	
+end
+
+function CHUDGUI_DeathStats:SendKeyEvent(key, down)
+
+	// Force show when request menu is open
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 then
+		self.titleBackground:SetIsVisible(down)
+		self.requestVisible = down
+		self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(down, 1, 0)))
 	end
 	
 end
