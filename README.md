@@ -15,6 +15,7 @@ Latest changes
 	- Added Death Stats UI toggle (Fully disabled/Only request menu/Enabled). You can still access the stats, if partially enabled, by holding the request menu button (default: X).
 	- Respawn cheat commands now always spawn the player in first person view.
 	- Added ingame news webpage.
+	- Fixed bug where flashlight atmospherics would get applied to the player's first person flashlight.
 
 - 15/04/2014 (Buld 264):
 	- Fixed non-snow rock prop variant size.
