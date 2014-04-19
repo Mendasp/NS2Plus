@@ -7,6 +7,11 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 20/04/2014 (Build 264):
+	- Fixed bug where Escape key wouldn't work when hovering over the news page.
+	- Fixed news showing up behind main menu graphics.
+	- Properly disabled background graphics in main menu under Minimal GUI setting.
+	
 - 19/04/2014 (Build 264):
 	- Renamed "Only request menu" to "Only voiceover menu" and updated tooltip to hopefully clear up which menu it is that shows the Last life stats.
 	- Respawn cheat commands now make you respawn at your death position (unless you die to map death triggers).
@@ -40,15 +45,6 @@ Latest changes
 	- The Minimal GUI setting now also removes the background of the main menu.
 	- Fixed bug where having the map ambient sounds enabled would make the mod not play the hitsounds.
 	- Fixed bug where stats wouldn't show up on round end.
-
-- 09/04/2014 (Build 264):
-	- Removed looping immersion from main menu.
-	- Tweaked fade blink particles for minimal particles setting.
-	- Added thin outline for marines through buildings.
-	- Fixed bug where out of relevancy entities taking damage were causing script errors.
-	- Fixed bug where stats wouldn't reset properly on sv_reset.
-	- Added infestation radius to Cyst dropping.
-	- Rewritten minimal nameplates and friends highlighting in a more forward-compatible manner.
 
 Credits/Thanks to
 =================

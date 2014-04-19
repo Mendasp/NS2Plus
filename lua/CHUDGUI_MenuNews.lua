@@ -7,7 +7,7 @@
 // ========= For more information, visit us at http://www.unknownworlds.com =====================
 
 local widthFraction = 0.4
-local newsAspect = 1
+local newsAspect = 1.05/1
 local kTextureName = "*chudmenu_news"
 local lastUpdatedtime = 0
 local playAnimation = ""
@@ -19,7 +19,7 @@ class 'CHUDGUI_MenuNews' (GUIScript)
 
 function CHUDGUI_MenuNews:Initialize()
 
-    local layer = kGUILayerMainMenuNews
+    local layer = kGUILayerMainMenuWeb
 
     self.logo = GUIManager:CreateGraphicItem()
     self.logo:SetTexture("ui/chud_logo.dds")
@@ -67,7 +67,7 @@ function CHUDGUI_MenuNews:SendKeyEvent(key, down, amount)
     
     local mouseX, mouseY = Client.GetCursorPosScreen()
     if isReleventKey then
-    
+    	
         local containsPoint, withinX, withinY = GUIItemContainsPoint(self.webContainer, mouseX, mouseY)
         
         // If we pressed the button inside the window, always send it the button up
@@ -97,6 +97,10 @@ function CHUDGUI_MenuNews:SendKeyEvent(key, down, amount)
     elseif key == InputKey.MouseWheelDown then
         self.webView:OnMouseWheel(-30, 0)
 		MainMenu_OnSlide()
+    elseif key == InputKey.Escape and down then
+		LeaveMenu()
+        SetKeyEventBlocker(nil)
+        return true
     end
     
     return false
