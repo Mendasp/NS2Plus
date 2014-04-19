@@ -10,8 +10,11 @@ Latest changes
 - 19/04/2014 (Build 264):
 	- Renamed "Only request menu" to "Only voiceover menu" and updated tooltip to hopefully clear up which menu it is that shows the Last life stats.
 	- Respawn cheat commands now make you respawn at your death position (unless you die to map death triggers).
+	- Respawn cheat commands now save your equipment/upgrades.
+	- Added "jetpack" cheat command to spawn as a Jetpack Marine.
 	- Added player upgrades to player frames in Insight.
 	- Added Uke's Alien Vision.
+	- Made hitsounds scale with game volume in addition to their own volume slider.
 
 - 18/04/2014 (Build 264):
 	- Fixed bug where menu would stop responding in some cases while trying to open the options.

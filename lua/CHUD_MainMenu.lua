@@ -133,7 +133,9 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 	
 originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
 	function(self)
-		self.newsScript:SetIsVisible(false)
+		if self.newsScript then
+			self.newsScript:SetIsVisible(false)
+		end
 	
 		originalHideMenu(self)
 		
@@ -176,8 +178,8 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 	
 function MainMenu_OnOpenMenu()
-    StartSoundEffect("sound/chud.fev/CHUD/open_menu", OptionsDialogUI_GetSoundVolume()/100)
-	mainMenu.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
+    StartSoundEffect("sound/chud.fev/CHUD/open_menu")
+	mainMenu.tvGlareImage:SetIsVisible(false)
 	// Solves issue where the news were visible when you click options and then spam escape
 	// This hides the newsScript properly
 	mainMenu.newsScript:SetIsVisible(mainMenu.resumeLink:GetIsVisible())
