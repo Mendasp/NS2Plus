@@ -7,6 +7,15 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 19/04/2014 (Build 264):
+	- Renamed "Only request menu" to "Only voiceover menu" and updated tooltip to hopefully clear up which menu it is that shows the Last life stats.
+	- Respawn cheat commands now make you respawn at your death position (unless you die to map death triggers).
+	- Added player upgrades to player frames in Insight.
+	- Added Uke's Alien Vision.
+
+- 18/04/2014 (Build 264):
+	- Fixed bug where menu would stop responding in some cases while trying to open the options.
+
 - 17/04/2014 (Build 264):
 	- Tweaked Lerk spikes tracers and Infantry Portal spawning particles for Minimal particles setting.
 	- Menu open sound will now use the user's game sound volume.
@@ -37,18 +46,6 @@ Latest changes
 	- Fixed bug where stats wouldn't reset properly on sv_reset.
 	- Added infestation radius to Cyst dropping.
 	- Rewritten minimal nameplates and friends highlighting in a more forward-compatible manner.
-
-- 05/04/2014 (Build 264):
-	- Added server-confirmed hitsounds.
-	- Added last life accuracy to the death stats.
-	- Added extra checks to Mod Updater.
-	- Updated NSL lights. Smalls changes for veil, summit. Revamp for descent.
-	- Better method for hiding backgrounds in the alien GUI.
-	- Renamed Map tab to Misc. The new Hitsounds option is there.
-
-- 01/04/2014 (Build 264):
-	- Made the rifle color for commanders teal instead of blue to make it easier on the eyes.
-	- Fixed bug where Egg count icon would overlap with the new Stats UI.
 
 Credits/Thanks to
 =================

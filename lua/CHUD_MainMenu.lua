@@ -133,13 +133,13 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 	
 originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
 	function(self)
+		self.newsScript:SetIsVisible(false)
+	
 		originalHideMenu(self)
+		
 		if self.chudOptionLink then
 			self.chudOptionLink:SetIsVisible(false)
 		end
-		
-		self.newsScript:SetPlayAnimation("hide")
-		self.newsScript:PlayFadeAnimation()
 	end)
 	
 originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationCompleted",
@@ -155,8 +155,7 @@ originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationComplet
 					self.chudOptionLink:SetIsVisible(true)
 				end
 				
-				self.newsScript:SetPlayAnimation("show")
-				self.newsScript:PlayFadeAnimation()
+				self.newsScript:SetIsVisible(true)
 				
 			end
 		end
@@ -179,8 +178,10 @@ Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 function MainMenu_OnOpenMenu()
     StartSoundEffect("sound/chud.fev/CHUD/open_menu", OptionsDialogUI_GetSoundVolume()/100)
 	mainMenu.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
-	mainMenu.newsScript:SetPlayAnimation("show")
-	mainMenu.newsScript:PlayFadeAnimation()
+	// Solves issue where the news were visible when you click options and then spam escape
+	// This hides the newsScript properly
+	mainMenu.newsScript:SetIsVisible(mainMenu.resumeLink:GetIsVisible())
+
 	// Refresh the page
 	mainMenu.newsScript:LoadURL(kCHUDMenuNewsURL)
 end
@@ -188,8 +189,7 @@ end
 function MainMenu_OnCloseMenu()
     Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
 	if mainMenu then
-		mainMenu.newsScript:SetPlayAnimation("hide")
-		mainMenu.newsScript:PlayFadeAnimation()
+		mainMenu.newsScript:SetIsVisible(false)
 	end
 end
 	

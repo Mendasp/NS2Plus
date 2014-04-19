@@ -9,7 +9,6 @@
 local widthFraction = 0.4
 local newsAspect = 1
 local kTextureName = "*chudmenu_news"
-local fadeColor = Color(1,1,1,0)
 local lastUpdatedtime = 0
 local playAnimation = ""
 
@@ -34,14 +33,10 @@ function CHUDGUI_MenuNews:Initialize()
     self.webContainer = GUIManager:CreateGraphicItem()
     self.webContainer:SetTexture(kTextureName)
     self.webContainer:SetLayer(layer)
-	self.webContainer:SetColor(fadeColor)
-
-	self.logo:SetColor(fadeColor)
 
     self.buttonDown = { [InputKey.MouseButton0] = false, [InputKey.MouseButton1] = false, [InputKey.MouseButton2] = false }
 
     self.isVisible = true
-	playAnimation = "show"
 
 end
 
@@ -96,8 +91,6 @@ function CHUDGUI_MenuNews:SendKeyEvent(key, down, amount)
             Client.ShowWebpage("http://steamcommunity.com/sharedfiles/filedetails/?id=135458820")
         end
         
-    -- This isn't working currently as the input is blocked by the main menu code in
-    -- MouseTracker_SendKeyEvent(). But it is a nice thought.  
     elseif key == InputKey.MouseWheelUp then
         self.webView:OnMouseWheel(30, 0)
 		MainMenu_OnSlide()
@@ -111,14 +104,6 @@ function CHUDGUI_MenuNews:SendKeyEvent(key, down, amount)
 end
 
 function CHUDGUI_MenuNews:Update(deltaTime)
-	
-	if fadeColor.a <= 0 then
-		self:SetIsVisible(false)
-	elseif fadeColor.a > 0 then
-		self:SetIsVisible(true)
-	end
-	
-	self:PlayFadeAnimation()
 	
     if not self.isVisible then
         return
@@ -170,41 +155,6 @@ function CHUDGUI_MenuNews:SetIsVisible(visible)
     self.webContainer:SetIsVisible(visible)
     self.logo:SetIsVisible(visible)
     self.isVisible = visible
-end
-
-function CHUDGUI_MenuNews:ShowAnimation()
-
-	if fadeColor.a <= 1 and Shared.GetTime() - lastUpdatedtime > 0.005 then
-		fadeColor.a = fadeColor.a + 0.075
-		self.webContainer:SetColor(fadeColor)
-		self.logo:SetColor(fadeColor)
-		lastUpdatedtime = Shared.GetTime()
-	end
-
-end
-
-function CHUDGUI_MenuNews:HideAnimation()
-
-	if fadeColor.a >= 0 and Shared.GetTime() - lastUpdatedtime > 0.005 then
-		fadeColor.a = fadeColor.a - 0.075
-		self.webContainer:SetColor(fadeColor)
-		self.logo:SetColor(fadeColor)
-		lastUpdatedtime = Shared.GetTime()
-	end
-   
-end
-function CHUDGUI_MenuNews:PlayFadeAnimation()
-
-	if playAnimation == "show" then
-		self:ShowAnimation()
-	elseif playAnimation == "hide" then
-		self:HideAnimation()
-	end
-   
-end
-
-function CHUDGUI_MenuNews:SetPlayAnimation(animType)
-    playAnimation = animType
 end
 
 function CHUDGUI_MenuNews:LoadURL(url)
