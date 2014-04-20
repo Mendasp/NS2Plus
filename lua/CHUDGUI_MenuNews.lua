@@ -55,7 +55,7 @@ end
 
 function CHUDGUI_MenuNews:SendKeyEvent(key, down, amount)
 
-    if not self.isVisible or not MainMenu_GetIsOpened() then
+    if not self.isVisible or not self.webContainer or not MainMenu_GetIsOpened() then
         return
     end
 
@@ -109,7 +109,7 @@ end
 
 function CHUDGUI_MenuNews:Update(deltaTime)
 	
-    if not self.isVisible then
+    if not self.isVisible or not self.webContainer then
         return
     end
 

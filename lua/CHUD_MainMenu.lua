@@ -125,8 +125,6 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 		
 		self.profileBackground:SetTopOffset(-70)
 		
-		self.CHUDNewsScript = GetGUIManager():CreateGUIScript("CHUDGUI_MenuNews")
-		
 	end)
 	
 originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
@@ -155,7 +153,9 @@ originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationComplet
 					self.CHUDOptionLink:SetIsVisible(true)
 				end
 				
-				self.CHUDNewsScript:SetIsVisible(true)
+				if self.CHUDNewsScript then
+					self.CHUDNewsScript:SetIsVisible(true)
+				end
 				
 			end
 		end
@@ -187,18 +187,22 @@ function MainMenu_OnOpenMenu()
 		mainMenu.mainWindow:SetBackgroundRepeat(true)
 	end
 	
-	// Solves issue where the news were visible when you click options and then spam escape
-	// This hides the CHUDNewsScript properly
-	mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.resumeLink:GetIsVisible())
+	if not mainMenu.CHUDNewsScript then
+		mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("CHUDGUI_MenuNews")
+	else
+		// Solves issue where the news were visible when you click options and then spam escape
+		// This hides the news script properly
+		mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.resumeLink:GetIsVisible())
+	end
 
-	// Refresh the page
-	mainMenu.CHUDNewsScript:LoadURL(kCHUDMenuNewsURL)
 end
 
 function MainMenu_OnCloseMenu()
     Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
-	if mainMenu then
-		mainMenu.CHUDNewsScript:SetIsVisible(false)
+	
+	if mainMenu and mainMenu.CHUDNewsScript then
+		mainMenu.CHUDNewsScript:Uninitialize()
+		mainMenu.CHUDNewsScript = nil
 	end
 end
 	
