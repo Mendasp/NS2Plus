@@ -55,3 +55,4 @@ Credits/Thanks to
 - **Ghoul** (https://github.com/BrightPaul)
 - **Sewlek**
 - **Person8880** (https://github.com/Person8880) GetGamemode function to reenable Hive stats.
+- **remi.D**

@@ -105,8 +105,8 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 			end)
 
 		originalInitMainMenu(self)
-        self.chudOptionLink = self:CreateMainLink("NS2+ OPTIONS", "options_ingame", "06")
-        self.chudOptionLink:AddEventCallbacks(
+        self.CHUDOptionLink = self:CreateMainLink("NS2+ OPTIONS", "options_ingame", "06")
+        self.CHUDOptionLink:AddEventCallbacks(
         {
             OnClick = function(self)
             
@@ -125,45 +125,37 @@ originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 		
 		self.profileBackground:SetTopOffset(-70)
 		
-		self.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
-		self.scanLine:SetIsVisible(not CHUDGetOption("mingui"))
-		if CHUDGetOption("mingui") then
-			self.mainWindow:SetBackgroundTexture("ui/blank.dds")
-		else
-			self.mainWindow:SetCSSClass("main_frame")
-		end
-		
-		self.newsScript = GetGUIManager():CreateGUIScript("CHUDGUI_MenuNews")
+		self.CHUDNewsScript = GetGUIManager():CreateGUIScript("CHUDGUI_MenuNews")
 		
 	end)
 	
 originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
 	function(self)
-		if self.newsScript then
-			self.newsScript:SetIsVisible(false)
+		if self.CHUDNewsScript then
+			self.CHUDNewsScript:SetIsVisible(false)
 		end
 	
 		originalHideMenu(self)
 		
-		if self.chudOptionLink then
-			self.chudOptionLink:SetIsVisible(false)
+		if self.CHUDOptionLink then
+			self.CHUDOptionLink:SetIsVisible(false)
 		end
 	end)
 	
 originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationCompleted",
 	function(self, animatedItem, animationName, itemHandle)
 		if animationName == "ANIMATE_LINK_BG" then
-			if self.chudOptionLink then
-				self.chudOptionLink:SetFrameCount(15, 1.6, AnimateLinear, "ANIMATE_LINK_BG")
+			if self.CHUDOptionLink then
+				self.CHUDOptionLink:SetFrameCount(15, 1.6, AnimateLinear, "ANIMATE_LINK_BG")
 			end
 			
 		elseif animationName == "MAIN_MENU_MOVE" then
 			if self.menuBackground:HasCSSClass("menu_bg_show") then
-				if self.chudOptionLink then
-					self.chudOptionLink:SetIsVisible(true)
+				if self.CHUDOptionLink then
+					self.CHUDOptionLink:SetIsVisible(true)
 				end
 				
-				self.newsScript:SetIsVisible(true)
+				self.CHUDNewsScript:SetIsVisible(true)
 				
 			end
 		end
@@ -191,21 +183,22 @@ function MainMenu_OnOpenMenu()
 	if CHUDGetOption("mingui") then
 		mainMenu.mainWindow:SetBackgroundTexture("ui/blank.dds")
 	else
-		mainMenu.mainWindow:SetCSSClass("main_frame")
+		mainMenu.mainWindow:SetBackgroundTexture("ui/menu/grid.dds")
+		mainMenu.mainWindow:SetBackgroundRepeat(true)
 	end
 	
 	// Solves issue where the news were visible when you click options and then spam escape
-	// This hides the newsScript properly
-	mainMenu.newsScript:SetIsVisible(mainMenu.resumeLink:GetIsVisible())
+	// This hides the CHUDNewsScript properly
+	mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.resumeLink:GetIsVisible())
 
 	// Refresh the page
-	mainMenu.newsScript:LoadURL(kCHUDMenuNewsURL)
+	mainMenu.CHUDNewsScript:LoadURL(kCHUDMenuNewsURL)
 end
 
 function MainMenu_OnCloseMenu()
     Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
 	if mainMenu then
-		mainMenu.newsScript:SetIsVisible(false)
+		mainMenu.CHUDNewsScript:SetIsVisible(false)
 	end
 end
 	
