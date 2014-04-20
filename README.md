@@ -11,6 +11,8 @@ Latest changes
 	- Fixed bug where Escape key wouldn't work when hovering over the news page.
 	- Fixed news showing up behind main menu graphics.
 	- Properly disabled background graphics in main menu under Minimal GUI setting.
+	- Fixed problem where Options menu and NS2+ Options would overlap with Minimal GUI setting turned off.
+	- News script now gets destroyed on menu close to solve potential performance issue.
 	
 - 19/04/2014 (Build 264):
 	- Renamed "Only request menu" to "Only voiceover menu" and updated tooltip to hopefully clear up which menu it is that shows the Last life stats.
