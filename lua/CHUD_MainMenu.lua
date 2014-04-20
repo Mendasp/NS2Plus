@@ -201,6 +201,8 @@ function MainMenu_OnCloseMenu()
     Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
 	
 	if mainMenu and mainMenu.CHUDNewsScript then
+		// Kill it, KILL IT WITH FIRE
+		GetGUIManager():DestroyGUIScript(mainMenu.CHUDNewsScript)
 		mainMenu.CHUDNewsScript:Uninitialize()
 		mainMenu.CHUDNewsScript = nil
 	end
