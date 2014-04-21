@@ -38,9 +38,8 @@ local function CHUDGetStatsString()
 
 		if hitssum > 0 or missessum > 0 then
 			overallacc = hitssum/(hitssum+missessum)*100
+			lastacc = (hitssum-CHUD_hits)/((hitssum-CHUD_hits)+(missessum-CHUD_misses))*100
 		end
-		
-		lastacc = (hitssum-CHUD_hits)/((hitssum-CHUD_hits)+(missessum-CHUD_misses))*100
 		
 		CHUD_hits = hitssum
 		CHUD_misses = missessum
