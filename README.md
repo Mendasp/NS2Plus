@@ -7,6 +7,12 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 21/04/2014 (Build 264):
+	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.
+	- Added "respawn_clear" cheat command to clear everything that the new cheat commands remember (position, weapons, upgrades and class).
+	- Respawn commands no longer respawn you at last death position. They spawn you where you are. Still remembers upgrades and weapons.
+	- Respawn commands now ignore your team, so you can type "skulk" as a marine without having to type "switch" first, for example.
+
 - 20/04/2014 (Build 264):
 	- Fixed bug where Escape key wouldn't work when hovering over the news page.
 	- Fixed news showing up behind main menu graphics.
@@ -39,14 +45,6 @@ Latest changes
 - 15/04/2014 (Buld 264):
 	- Fixed non-snow rock prop variant size.
 	- Potentially fixed issue that'd let aliens see marines that are not parasited with an outline
-
-- 11/04/2014 (Build 264):
-	- When a mod update is found, the message will get repeated every 5 minutes until map restart.
-	- Reworked friends highlighting again, in a better way this time. (Thanks remi.D!)
-	- Added flashlight atmospherics slider. Available in the Misc. tab.
-	- The Minimal GUI setting now also removes the background of the main menu.
-	- Fixed bug where having the map ambient sounds enabled would make the mod not play the hitsounds.
-	- Fixed bug where stats wouldn't show up on round end.
 
 Credits/Thanks to
 =================
