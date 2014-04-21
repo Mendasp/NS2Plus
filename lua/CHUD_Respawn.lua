@@ -69,7 +69,7 @@ local function OnCommandRespawn(client)
 
 	local player = client:GetControllingPlayer()
 
-	if player.lastClass and player.lastDeathPos and (player:GetTeamNumber() == kTeam1Index or player:GetTeamNumber() == kTeam2Index) then
+	if player.lastClass and player.lastDeathPos and (player:GetTeamNumber() == kTeam1Index or player:GetTeamNumber() == kTeam2Index) and Shared.GetCheatsEnabled() then
 
 		local player = client:GetControllingPlayer()
 		local teamNumber = kTeam2Index
