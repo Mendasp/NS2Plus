@@ -30,7 +30,6 @@ Script.Load("lua/CHUD_Options.lua")
 Script.Load("lua/CHUD_Lights.lua")
 Script.Load("lua/CHUD_UnitStatus.lua")
 Script.Load("lua/CHUD_HUDElements.lua")
-Script.Load("lua/CHUD_GUIScripts.lua")
 Script.Load("lua/CHUD_Tracers.lua")
 Script.Load("lua/CHUD_ScoreDisplay.lua")
 Script.Load("lua/CHUD_Stats.lua")
@@ -39,19 +38,18 @@ Script.Load("lua/CHUD_Sounds.lua")
 Script.Load("lua/CHUD_Hitsounds.lua")
 Script.Load("lua/CHUD_Outlines.lua")
 Script.Load("lua/CHUD_FlashAtmos.lua")
-Script.Load("lua/CHUD_Insight.lua")
 
 function ApplyCHUD(script, scriptName)
 	
 		if scriptName == "GUIMarineHUD" then
-			if CHUDGetOption("showcomm") and not CHUDGetOption("minimap") then
+			/*if CHUDGetOption("showcomm") and not CHUDGetOption("minimap") then
 				GUIPlayerResource.kTeamTextPos = Vector(20, 76, 0)
 			else
 				GUIPlayerResource.kTeamTextPos = Vector(20, 360, 0)
 			end
 						
-			script:Uninitialize()
-			script:Initialize()
+			//script:Uninitialize()
+			//script:Initialize()
 				
 			if CHUDGetOption("mingui") then
 				if CHUDGetOption("minimap") then
@@ -76,7 +74,7 @@ function ApplyCHUD(script, scriptName)
 
 			// Reapply this so it shows the correct weapon/armor icon version
 			script:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
-			script:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
+			script:ShowNewArmorLevel(PlayerUI_GetArmorLevel())*/
 			
 		elseif scriptName == "GUIAlienHUD" then
 			// Move the team res to a reasonable position instead of the marine default

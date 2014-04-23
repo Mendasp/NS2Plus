@@ -84,9 +84,6 @@ Script.Load("lua/Hud/GUIEvent.lua")
 local originalEventUpdate
 originalEventUpdate = Class_ReplaceMethod( "GUIEvent", "Update",
 	function (self, deltaTime, parameters)
-		if not CHUDGetOption("minimap") then
-			parameters[1] = nil
-		end
 		originalEventUpdate(self, deltaTime, parameters)
 		if CHUDGetOption("mingui") then
 			self.borderTop:SetIsVisible(false)

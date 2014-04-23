@@ -1,17 +1,7 @@
-MarineHUDOverride = false
-MarineBuyMenuOverride = false
-AlienHUDOverride = false
-WorldTextOverride = false
-ExoHUDOverride = false
-WPOverride = false
-UnitStatusOverride = false
-GameEndOverride = false
-MinimapLocationInitOverride = false
-CommManagerOverride = false
-AlienSpecOverride = false
-BalanceOverride = false
+Script.Load("lua/CHUD_GUIScripts/GUIInsight_PlayerFrames.lua")
+Script.Load("lua/CHUD_GUIScripts/GUIMarineHUD.lua")
 
-originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
+/*originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 	function(self, scriptName)
 		local script = originalGUIScript(self, scriptName)
 		if (scriptName == "Hud/Marine/GUIMarineHUD") then
@@ -62,40 +52,17 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 				originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 					function(self, deltaTime)
 						originalMarineHUDUpdate(self, deltaTime)
-						local fullMode = Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Full
-						
-						self.resourceDisplay.teamText:SetIsVisible(CHUDGetOption("minimap") or (CHUDGetOption("showcomm") and not CHUDGetOption("minimap")))
-						if not CHUDGetOption("minimap") and not CHUDGetOption("showcomm") then
-							self.resourceDisplay.teamText:SetText("")
-						end
 						
 						if CHUDGetOption("mingui") then
 							self.inventoryDisplay:SetIsVisible(false)
 						end
-												
-						if CHUDGetOption("gametime") and (CHUDGetOption("showcomm") or CHUDGetOption("minimap")) then
-							local gameTime = PlayerUI_GetGameStartTime()
-							
-							if gameTime ~= 0 then
-								gameTime = math.floor(Shared.GetTime()) - PlayerUI_GetGameStartTime()
-							end
-							
-							local minutes = math.floor(gameTime / 60)
-							local seconds = gameTime - minutes * 60
-							
-							self.resourceDisplay.teamText:SetText(string.format(Locale.ResolveString("TEAM_RES") .. "\n%d:%02d", math.floor(PlayerUI_GetTeamResources()), minutes, math.floor(seconds)))
-						end
-						
-						local s_rts
 						
 						if not CHUDGetOption("rtcount") then
 							self.resourceDisplay.rtCount:SetIsVisible(false)
-							if CommanderUI_GetTeamHarvesterCount() ~= 1 then
-								s_rts = "RTs"
-							else
-								s_rts = "RT"
-							end
-							self.resourceDisplay.pResDescription:SetText(Locale.ResolveString("RESOURCES") .. " (" .. ToString(CommanderUI_GetTeamHarvesterCount()) .. " " .. s_rts ..")")
+							self.resourceDisplay.pResDescription:SetText(string.format("%s (%d %s)",
+								Locale.ResolveString("RESOURCES"),
+								CommanderUI_GetTeamHarvesterCount(),
+								ConditionalValue(CommanderUI_GetTeamHarvesterCount() == 1, "RT", "RTs")))
 						else
 							self.resourceDisplay.rtCount:SetIsVisible(CommanderUI_GetTeamHarvesterCount() > 0)
 							self.resourceDisplay.pResDescription:SetText(Locale.ResolveString("RESOURCES"))
@@ -520,4 +487,4 @@ originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 				
 	return script
 	end
-)
+)*/
