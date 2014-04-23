@@ -56,6 +56,5 @@ function New_GUIVoiceChat_Update( self, deltaTime )
 	
 end
 
-//PrintUpValues( GUIVoiceChat.Update )
 SetUpValues( New_GUIVoiceChat_Update, GetUpValues( GUIVoiceChat.Update ) )
 GUIVoiceChat.Update = New_GUIVoiceChat_Update
