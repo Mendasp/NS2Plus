@@ -1,5 +1,8 @@
 Script.Load("lua/CHUD_GUIScripts/GUIInsight_PlayerFrames.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIMarineHUD.lua")
+Script.Load("lua/CHUD_GUIScripts/GUIGameEnd.lua")
+Script.Load("lua/CHUD_GUIScripts/GUIScoreboard.lua")
+Script.Load("lua/CHUD_GUIScripts/GUIVoiceChat.lua")
 
 /*originalGUIScript = Class_ReplaceMethod( "GUIManager", "CreateGUIScript",
 	function(self, scriptName)
