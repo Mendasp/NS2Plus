@@ -1,9 +1,4 @@
-function ApplyCHUDSettings()
-	/*for name, script in pairs(GetGUIManager().scripts) do
-		ApplyCHUD(script, script._scriptName)
-	end*/
-end
-
+Script.Load("lua/Elixer_Utility.lua")
 Script.Load("lua/CHUD_Shared.lua")
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_MainMenu.lua")

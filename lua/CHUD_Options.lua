@@ -1,50 +1,17 @@
-function ApplyMinGUI()
-
-	// Reversed the setting since when it's enabled it hides stuff...
-	// It makes sense to me at least, didn't like seeing so much negativity
-	local mingui = not CHUDGetOption("mingui")
-	local script = ClientUI.GetScript("Hud/Marine/GUIMarineHUD")
-	if script then
-		local alpha = ConditionalValue(mingui,1,0)
-		
-		// Check if the minimap script is running
-		if CHUDGetOption("minimap") then
-			script.minimapBackground:SetColor(Color(1,1,1,alpha))
-			script.minimapScanLines:SetColor(Color(1,1,1,alpha))
-		end
-		
-		script:SetFrameVisible(mingui)
-		script.resourceDisplay.background:SetColor(Color(1,1,1,alpha))
-		
-		local stencilTexture = ConditionalValue(mingui, "ui/marine_HUD_minimap.dds", "ui/chud_square_minimap_stencil.dds")
-		script.minimapStencil:SetTexture(stencilTexture)
-			
-		script.statusDisplay.statusbackground:SetColor(Color(1,1,1,alpha))
-		script.statusDisplay.scanLinesForeground:SetColor(Color(147/255, 206/255, 1,alpha*0.3))
-	end
-	
+local function ApplyCHUDSettings()
+	// Nothing until I actually replace stuff
 end
 
-function ApplyHPBar()
+local function CHUDRestartScripts(scripts)
 
-	local script = ClientUI.GetScript("Hud/Marine/GUIMarineHUD").statusDisplay
-	if script then
-		local hpbar = CHUDGetOption("hpbar")
-			
-		script.healthBar:SetIsVisible(hpbar)
-		script.armorBar:SetIsVisible(hpbar)
-		
-		local xpos = ConditionalValue(hpbar, -20, -300)
-		script.healthText:SetPosition(Vector(xpos, 36, 0))
-		script.armorText:SetPosition(Vector(xpos, 96, 0))
-		
-		local anchor = ConditionalValue(hpbar, GUIItem.Right, GUIItem.Left)
-		script.parasiteState:SetAnchor(anchor, GUIItem.Center)
-		script.scanLinesForeground:SetAnchor(anchor, GUIItem.Top)
-		
-		local texture = ConditionalValue(hpbar, PrecacheAsset("ui/marine_HUD_status.dds"), PrecacheAsset("ui/blank.dds"))
-		script.statusbackground:SetTexture(texture)
+	for _, currentScript in pairs(scripts) do
+		local script = ClientUI.GetScript(currentScript)
+		if script then
+			script:Uninitialize()
+			script:Initialize()
+		end
 	end
+	
 end
 
 CHUDOptions =
@@ -59,7 +26,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "func",
 				valueType = "bool",
-				applyFunction = ApplyMinGUI,
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 				sort = "A1",
 			},
 			minnps = {
@@ -168,14 +135,15 @@ CHUDOptions =
 			gametime = {
 				name    = "CHUD_Gametime",
 				label   = "Game time",
-				tooltip = "Adds or removes the game time on the top left (requires having the commander name as marines).",
+				tooltip = "Adds or removes the game time on the top left.",
 				type    = "select",
 				values  = { "Off", "On" },
 				callback = CHUDSaveMenuSettings,
 				defaultValue = false,
 				category = "hud",
 				valueType = "bool",
-				sort = "C5",
+				sort = "C6",
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 			},
 			hpbar = {
 				name    = "CHUD_HPBar",
@@ -187,7 +155,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "func",
 				valueType = "bool",
-				applyFunction = ApplyHPBar,
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 				sort = "C1",
 			},
 			kda = {
@@ -205,7 +173,7 @@ CHUDOptions =
 			minimap = {
 				name    = "CHUD_Minimap",
 				label   = "Marine minimap",
-				tooltip = "Toggles the entire top left of the screen for the marines (minimap, comm name, team res, comm actions).",
+				tooltip = "Toggles the minimap and location name.",
 				type    = "select",
 				values  = { "Off", "On" },
 				callback = CHUDSaveMenuSettings,
@@ -213,6 +181,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "bool",
 				sort = "C1",
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 			},
 			minwps = {
 				name    = "CHUD_MinWaypoints",
@@ -264,16 +233,29 @@ CHUDOptions =
 			},
 			showcomm = {
 				name    = "CHUD_ShowComm",
-				label   = "Marine Comm name",
-				tooltip = "Forces showing the commander and resources when disabling the minimap.",
+				label   = "Marine comm name",
+				tooltip = "Enables or disables showing the commander name and team resources.",
 				type    = "select",
 				values  = { "Off", "On" },
 				callback = CHUDSaveMenuSettings,
-				defaultValue = false,
+				defaultValue = true,
 				category = "hud",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
 				sort = "C4",
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
+			}, 
+			commactions = {
+				name    = "CHUD_CommActions",
+				label   = "Marine comm actions",
+				tooltip = "Shows or hides the last commander actions.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "hud",
+				valueType = "bool",
+				sort = "C5",
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 			}, 
 			smalldmg = {
 				name    = "CHUD_SmallDMG",
@@ -386,7 +368,12 @@ CHUDOptions =
 				defaultValue = 1,
 				category = "hud",
 				valueType = "int",
-				applyFunction = ApplyCHUDSettings,
+				applyFunction = function() local script = ClientUI.GetScript("Hud/Marine/GUIMarineHUD")
+					if script then
+						script:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
+						script:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
+					end
+				end,
 			}, 
 			classicammo = {
 				name    = "CHUD_ClassicAmmo",

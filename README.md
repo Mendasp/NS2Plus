@@ -11,7 +11,10 @@ Latest changes
 	- Voice chat now shows the team color correctly when alltalk is on. (Thanks remi.D!)
 	- The scoreboard now keeps the time of the previous round until the next round starts. (Thanks remi.D!)
 	- Minimap is now square under Minimal GUI setting.
-	- You can now individually toggle all the elements at the top left of the marine UI (location, minimap, commander name & res, gametime, last comm actions).
+	- Added last comm actions to be toggleable instead of hiding it with the minimap.
+	- Minimap option now only toggles minimap and location text.
+	- Show commander name option is now independent of minimap option.
+	- Game time now doesn't depend on commander minimap on marines.
 
 - 21/04/2014 (Build 264):
 	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.

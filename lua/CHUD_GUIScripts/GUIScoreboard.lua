@@ -1,6 +1,4 @@
-Script.Load( "lua/Elixer_Utility.lua" )
-
-local SetMouseVisible;
+local SetMouseVisible
 local function New_GUIScoreboard_Update( self, deltaTime )
 
     PROFILE("GUIScoreboard:Update")

@@ -1,5 +1,3 @@
-Script.Load( "lua/Elixer_Utility.lua" )
-
 local ClearAllBars, GetFreeBar, kBackgroundTexture, kBackgroundSize, kBackgroundYSpace, kBackgroundOffset, loggedIn
 function New_GUIVoiceChat_Update( self, deltaTime )
 

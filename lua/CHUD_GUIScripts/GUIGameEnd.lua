@@ -1,6 +1,3 @@
-Script.Load( "lua/Elixer_Utility.lua" )
-
-
 function PlayerUI_GetGameLengthTime()
 	
     local entityList = Shared.GetEntitiesWithClassname("GameInfo")
@@ -11,7 +8,7 @@ function PlayerUI_GetGameLengthTime()
         
         if state ~= kGameState.Started then
 			
-			return gameInfo.prevTimeLength or 0;
+			return gameInfo.prevTimeLength or 0
 		
 		else
 		

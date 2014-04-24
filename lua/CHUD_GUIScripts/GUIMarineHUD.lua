@@ -3,10 +3,13 @@ originalMarineInit = Class_ReplaceMethod( "GUIMarineHUD", "Initialize",
 function(self)
 	originalMarineInit(self)
 	
+	// Position of toggleable elements
+	local y = 30
+	
 	// Make the location text non-stupid
 	self.locationText:SetIsVisible(false)
 	
-    self.CHUDLocationText = GUIManager:CreateTextItem()
+    self.CHUDLocationText = self:CreateAnimatedTextItem()
     self.CHUDLocationText:SetFontName(GUIMarineHUD.kTextFontName)
     self.CHUDLocationText:SetTextAlignmentX(GUIItem.Align_Min)
     self.CHUDLocationText:SetTextAlignmentY(GUIItem.Align_Min)
@@ -14,17 +17,79 @@ function(self)
     self.CHUDLocationText:SetLayer(kGUILayerPlayerHUDForeground2)
     self.CHUDLocationText:SetColor(kBrightColor)
     self.CHUDLocationText:SetFontIsBold(true)
-	self.CHUDLocationText:SetScale(GUIScale(Vector(1,1,0)))
-	self.CHUDLocationText:SetPosition(GUIScale(Vector(60, 36, 0)))
-    self.background:AddChild(self.CHUDLocationText)
+	self.CHUDLocationText:SetScale(GUIScale(Vector(1,1,0)*1.2))
+	self.CHUDLocationText:SetPosition(GUIScale(Vector(55, y, 0)*1.7))
+	
+	self.gameTime = self:CreateAnimatedTextItem()
+    self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
+	self.gameTime:SetFontIsBold(true)
+    self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
+    self.gameTime:SetColor(kBrightColor)
+	self.gameTime:SetScale(GUIScale(Vector(1,1,0)*1.15))
 	
 	// Initialize location and power so they show up correctly
 	self.lastLocationText = ""
 	self.lastPowerState = 0
 	
-	if CHUDGetOption("mingui") then
-		self.resourceDisplay.background:SetColor(Color(1,1,1,0))
+	// Reversed the setting since when it's enabled it hides stuff...
+	// It makes sense to me at least, didn't like seeing so much negativity
+	local mingui = not CHUDGetOption("mingui")
+	local hpbar = CHUDGetOption("hpbar")
+	local minimap = CHUDGetOption("minimap")
+	local showcomm = CHUDGetOption("showcomm")
+	local commactions = CHUDGetOption("commactions")
+	local gametime = CHUDGetOption("gametime")
+
+	local alpha = ConditionalValue(mingui,1,0)
+	
+	if minimap then
+		local stencilTexture = ConditionalValue(mingui, "ui/marine_HUD_minimap.dds", "ui/chud_square_minimap_stencil.dds")
+		
+		self.minimapBackground:SetColor(Color(1,1,1,alpha))
+		self.minimapScanLines:SetColor(Color(1,1,1,alpha))
+		self.minimapStencil:SetTexture(stencilTexture)
+
+		y = y + 300
 	end
+	
+	if showcomm then
+		self.commanderName:SetPosition(Vector(20, y, 0))
+		y = y + 30
+		self.resourceDisplay.teamText:SetPosition(Vector(20, y, 0))
+		y = y + 30
+	end
+	
+	if gametime then
+		self.gameTime:SetPosition(GUIScale(Vector(20, y, 0)*1.19))
+		y = y + 30
+	end
+	
+	if commactions then
+		self.eventDisplay.notificationFrame:SetPosition(Vector(20, y, 0) * self.eventDisplay.scale)
+	end
+	
+	self:SetFrameVisible(mingui)
+	self.resourceDisplay.background:SetColor(Color(1,1,1,alpha))
+
+	self.statusDisplay.statusbackground:SetColor(Color(1,1,1,alpha))
+	self.statusDisplay.scanLinesForeground:SetColor(Color(147/255, 206/255, 1,alpha*0.3))
+	
+	self:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
+	self:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
+		
+	self.statusDisplay.healthBar:SetIsVisible(hpbar)
+	self.statusDisplay.armorBar:SetIsVisible(hpbar)
+	
+	local xpos = ConditionalValue(hpbar, -20, -300)
+	self.statusDisplay.healthText:SetPosition(Vector(xpos, 36, 0))
+	self.statusDisplay.armorText:SetPosition(Vector(xpos, 96, 0))
+	
+	local anchor = ConditionalValue(hpbar, GUIItem.Right, GUIItem.Left)
+	self.statusDisplay.parasiteState:SetAnchor(anchor, GUIItem.Center)
+	self.statusDisplay.scanLinesForeground:SetAnchor(anchor, GUIItem.Top)
+	
+	local texture = ConditionalValue(hpbar, PrecacheAsset("ui/marine_HUD_status.dds"), PrecacheAsset("ui/blank.dds"))
+	self.statusDisplay.statusbackground:SetTexture(texture)
 	
 end)
 
@@ -48,7 +113,11 @@ end)
 local originalSetHUDMap
 originalSetHUDMap = Class_ReplaceMethod( "GUIMarineHUD", "SetHUDMapEnabled",
 function(self, enabled)
-	originalSetHUDMap(self, CHUDGetOption("minimap"))
+	local minimap = CHUDGetOption("minimap")
+	originalSetHUDMap(self, minimap)
+	if self.CHUDLocationText then
+		self.CHUDLocationText:SetIsVisible(minimap)
+	end
 end)
 
 local originalShowNewArmorLevel		
@@ -111,6 +180,12 @@ originalTriggerInit = Class_ReplaceMethod( "GUIMarineHUD", "TriggerInitAnimation
 local originalMarineHUDUpdate
 originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 	function(self, deltaTime)
+		local mingui = not CHUDGetOption("mingui")
+		local showcomm = CHUDGetOption("showcomm")
+		local rtcount = CHUDGetOption("rtcount")
+		local commactions = CHUDGetOption("commactions")
+		local gametime = CHUDGetOption("gametime")
+
 		// Non-stupid location text!
 		local locationName = ConditionalValue(PlayerUI_GetLocationName(), string.upper(PlayerUI_GetLocationName()), "")
 			
@@ -121,9 +196,23 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		
 		originalMarineHUDUpdate(self, deltaTime)
 		
-		self.inventoryDisplay:SetIsVisible(not CHUDGetOption("mingui"))
+		if self.gameTime then
+			self.gameTime:SetText(CHUDGetGameTime())
+			self.gameTime:SetIsVisible(gametime)
+		end
+		
+		// Minimal HUD pls go home, you're drunk
+		// Run this again so WE choose if we want to toggle it or not
+        if Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Minimal then
+			local notification = PlayerUI_GetRecentNotification()
+			
+			self.eventDisplay:Update(Client.GetTime() - self.lastNotificationUpdate, { notification, PlayerUI_GetRecentPurchaseable() } )
+			self.lastNotificationUpdate = Client.GetTime()
+		end
+		
+		self.inventoryDisplay:SetIsVisible(mingui)
 
-		if not CHUDGetOption("rtcount") then
+		if not rtcount then
 			self.resourceDisplay.rtCount:SetIsVisible(false)
 			self.resourceDisplay.pResDescription:SetText(string.format("%s (%d %s)",
 				Locale.ResolveString("RESOURCES"),
@@ -135,13 +224,17 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		end
 		
 		// Commander name / TRes
-		self.commanderName:SetIsVisible(CHUDGetOption("showcomm"))
+		self.commanderName:SetIsVisible(showcomm)
+		self.resourceDisplay.teamText:SetIsVisible(showcomm)
+
+		self.eventDisplay.notificationFrame:SetIsVisible(commactions)
 		
 		// In vanilla, the commander name doesn't get updated (or show!) if we use their minimal HUD
 		// Make it run again! Let us choose! Power to the people!
+		// Update commander name
+		local commanderName = PlayerUI_GetCommanderName()
+		
 		if Client.GetOptionInteger("hudmode", kHUDMode.Full) ~= kHUDMode.Full then
-			// Update commander name
-			local commanderName = PlayerUI_GetCommanderName()
 			
 			if commanderName == nil then
 			
@@ -150,8 +243,8 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 				if not self.commanderNameIsAnimating then
 				
 					self.commanderNameIsAnimating = true
-					self.commanderName:SetColor(Color(1, 0, 0, 1))
 					self.commanderName:FadeOut(1, nil, AnimateLinear, AnimFadeIn)
+					self.commanderName:SetColor(Color(1, 0, 0, 1))
 					
 				end
 				
@@ -159,11 +252,12 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 			
 				commanderName = Locale.ResolveString("COMMANDER") .. commanderName
 			
+				self.commanderName:SetColor(GUIMarineHUD.kActiveCommanderColor)
+				
 				if self.commanderNameIsAnimating then
 				
 					self.commanderNameIsAnimating = false
 					self.commanderName:DestroyAnimations()
-					self.commanderName:SetColor(GUIMarineHUD.kActiveCommanderColor)
 					
 				end
 				
@@ -178,5 +272,23 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 				self.lastCommanderName = commanderName
 				
 			end
+		else
+			if commanderName ~= nil then
+				self.commanderName:SetColor(GUIMarineHUD.kActiveCommanderColor)
+			end
 		end
 	end)
+	
+local originalMarineUninit
+originalMarineUninit = Class_ReplaceMethod( "GUIMarineHUD", "Uninitialize",
+function(self)
+	originalMarineUninit(self)
+	
+	GUI.DestroyItem(self.CHUDLocationText)
+	GUI.DestroyItem(self.gameTime)
+	self.CHUDLocationText = nil
+	self.gameTime = nil
+	self.commanderNameIsAnimating = nil
+	self.lastCommanderName = nil
+	
+end)

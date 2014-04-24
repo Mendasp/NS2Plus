@@ -131,3 +131,16 @@ local function FormatTime(time)
     return string.format("%d:%.2d:%.2d", h,  m, s)
     
 end
+
+function CHUDGetGameTime()
+	local gameTime = PlayerUI_GetGameStartTime()
+	
+	if gameTime ~= 0 then
+		gameTime = math.round(Shared.GetTime()) - PlayerUI_GetGameStartTime()
+	end
+							
+	local minutes = math.floor(gameTime / 60)
+	local seconds = math.floor(gameTime % 60)
+							
+	return(string.format("%d:%.2d", minutes, seconds))
+end
