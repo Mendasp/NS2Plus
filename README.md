@@ -7,6 +7,12 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- /04/2014 (Build 264):
+	- Voice chat now shows the team color correctly when alltalk is on. (Thanks remi.D!)
+	- The scoreboard now keeps the time of the previous round until the next round starts. (Thanks remi.D!)
+	- Minimap is now square under Minimal GUI setting.
+	- You can now individually toggle all the elements at the top left of the marine UI (location, minimap, commander name & res, gametime, last comm actions).
+
 - 21/04/2014 (Build 264):
 	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.
 	- Added "respawn_clear" cheat command to clear everything that the new cheat commands remember (position, weapons, upgrades and class).

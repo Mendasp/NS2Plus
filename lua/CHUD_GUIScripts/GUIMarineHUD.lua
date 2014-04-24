@@ -23,12 +23,7 @@ function(self)
 	self.lastPowerState = 0
 	
 	if CHUDGetOption("mingui") then
-		self.minimapBackground:SetColor(Color(1,1,1,0))
-		self.minimapScanLines:SetColor(Color(1,1,1,0))
 		self.resourceDisplay.background:SetColor(Color(1,1,1,0))
-		
-		// Make minimap square when having Minimal GUI on
-		self.minimapStencil:SetTexture("ui/chud_square_minimap_stencil.dds")
 	end
 	
 end)
@@ -37,8 +32,17 @@ local originalResetMinimap
 originalResetMinimap = Class_ReplaceMethod( "GUIMarineHUD", "ResetMinimap",
 function(self)
 	originalResetMinimap(self)
-	// It's already being scaled in the original script, we just need to adjust the position
+
 	self.minimapPower:SetPosition(Vector(0, -34, 0))
+	
+	local setting = not CHUDGetOption("mingui")
+	
+	self.minimapBackground:SetColor(Color(1,1,1,ConditionalValue((setting),1,0)))
+	self.minimapScanLines:SetColor(Color(1,1,1,ConditionalValue((setting),1,0)))
+	
+	local stencilTexture = ConditionalValue(setting, "ui/marine_HUD_minimap.dds", "ui/chud_square_minimap_stencil.dds")
+	self.minimapStencil:SetTexture(stencilTexture)
+
 end)
 
 local originalSetHUDMap
@@ -134,7 +138,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		self.commanderName:SetIsVisible(CHUDGetOption("showcomm"))
 		
 		// In vanilla, the commander name doesn't get updated (or show!) if we use their minimal HUD
-		// Make it run again! Let us choose! Power to the people!		
+		// Make it run again! Let us choose! Power to the people!
 		if Client.GetOptionInteger("hudmode", kHUDMode.Full) ~= kHUDMode.Full then
 			// Update commander name
 			local commanderName = PlayerUI_GetCommanderName()

@@ -1,3 +1,52 @@
+function ApplyMinGUI()
+
+	// Reversed the setting since when it's enabled it hides stuff...
+	// It makes sense to me at least, didn't like seeing so much negativity
+	local mingui = not CHUDGetOption("mingui")
+	local script = ClientUI.GetScript("Hud/Marine/GUIMarineHUD")
+	if script then
+		local alpha = ConditionalValue(mingui,1,0)
+		
+		// Check if the minimap script is running
+		if CHUDGetOption("minimap") then
+			script.minimapBackground:SetColor(Color(1,1,1,alpha))
+			script.minimapScanLines:SetColor(Color(1,1,1,alpha))
+		end
+		
+		script:SetFrameVisible(mingui)
+		script.resourceDisplay.background:SetColor(Color(1,1,1,alpha))
+		
+		local stencilTexture = ConditionalValue(mingui, "ui/marine_HUD_minimap.dds", "ui/chud_square_minimap_stencil.dds")
+		script.minimapStencil:SetTexture(stencilTexture)
+			
+		script.statusDisplay.statusbackground:SetColor(Color(1,1,1,alpha))
+		script.statusDisplay.scanLinesForeground:SetColor(Color(147/255, 206/255, 1,alpha*0.3))
+	end
+	
+end
+
+function ApplyHPBar()
+
+	local script = ClientUI.GetScript("Hud/Marine/GUIMarineHUD").statusDisplay
+	if script then
+		local hpbar = CHUDGetOption("hpbar")
+			
+		script.healthBar:SetIsVisible(hpbar)
+		script.armorBar:SetIsVisible(hpbar)
+		
+		local xpos = ConditionalValue(hpbar, -20, -300)
+		script.healthText:SetPosition(Vector(xpos, 36, 0))
+		script.armorText:SetPosition(Vector(xpos, 96, 0))
+		
+		local anchor = ConditionalValue(hpbar, GUIItem.Right, GUIItem.Left)
+		script.parasiteState:SetAnchor(anchor, GUIItem.Center)
+		script.scanLinesForeground:SetAnchor(anchor, GUIItem.Top)
+		
+		local texture = ConditionalValue(hpbar, PrecacheAsset("ui/marine_HUD_status.dds"), PrecacheAsset("ui/blank.dds"))
+		script.statusbackground:SetTexture(texture)
+	end
+end
+
 CHUDOptions =
 {
 			mingui = {
@@ -10,7 +59,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "func",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
+				applyFunction = ApplyMinGUI,
 				sort = "A1",
 			},
 			minnps = {
@@ -138,7 +187,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "func",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
+				applyFunction = ApplyHPBar,
 				sort = "C1",
 			},
 			kda = {
@@ -163,7 +212,6 @@ CHUDOptions =
 				defaultValue = true,
 				category = "hud",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
 				sort = "C1",
 			},
 			minwps = {
@@ -310,7 +358,10 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				applyFunction = OnCommandCHUDNSLLights,
+				applyFunction = function()
+					lowLightsSwitched = false
+					CHUDLoadLights()
+				end,
 				sort = "B3",
 			}, 
 			friends = {
@@ -360,7 +411,7 @@ CHUDOptions =
 				multiplier = 100,
 				category = "hud",
 				valueType = "float",
-				applyFunction = OnCommandCHUDHitIndicator,
+				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator") end,
             },
 			autowps = { 
                 name    = "CHUD_AutoWPs",
@@ -386,7 +437,9 @@ CHUDOptions =
 				multiplier = 100,
 				category = "hud",
 				valueType = "float",
-				applyFunction = OnCommandCHUDLocationAlpha,
+				applyFunction = function()
+					OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDGetOption("locationalpha"))*255))
+				end,
 				sort = "C3",
             },
 			minimapalpha = { 
@@ -401,7 +454,10 @@ CHUDOptions =
 				multiplier = 100,
 				category = "hud",
 				valueType = "float",
-				applyFunction = OnCommandCHUDMinimapAlpha,
+				applyFunction = function()
+					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
+					minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
+				end,
 				sort = "C2",
             },
 			dmgcolor_a = {
