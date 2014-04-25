@@ -23,7 +23,7 @@ function PlayerUI_GetGameLengthTime()
 end
 
 
-local oldSetGameEnded;
+local oldSetGameEnded
 oldSetGameEnded = Class_ReplaceMethod( "GUIGameEnd", "SetGameEnded", 
 	function( self, playerWon, playerIsMarine )
 			

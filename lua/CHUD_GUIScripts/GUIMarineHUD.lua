@@ -110,6 +110,9 @@ function(self)
 	
 	self:CHUDRepositionGUI()
 	
+	// Fixes marine elements showing up in the Exo HUD when reloading the script
+	self:OnLocalPlayerChanged(Client.GetLocalPlayer())
+	
 end)
 
 local originalResetMinimap
@@ -326,3 +329,17 @@ function(self)
 	
 	self:CHUDRepositionGUI()
 end)
+
+Script.Load("lua/GUIMarineTeamMessage.lua")
+local originalMarineMessage
+originalMarineMessage = Class_ReplaceMethod( "GUIMarineTeamMessage", "SetTeamMessage",
+	function(self, message)
+		originalMarineMessage(self, message)
+		if not CHUDGetOption("banners") then
+			self.background:SetIsVisible(false)
+		end
+		if CHUDGetOption("mingui") then
+			self.background:DestroyAnimations()
+		end
+	end
+)

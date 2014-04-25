@@ -26,7 +26,10 @@ CHUDOptions =
 				defaultValue = false,
 				category = "func",
 				valueType = "bool",
-				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
+				applyFunction = function() CHUDRestartScripts({
+					"Hud/Marine/GUIMarineHUD",
+					"GUIAlienHUD",
+					}) end,
 				sort = "A1",
 			},
 			minnps = {
@@ -70,7 +73,7 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "func",
 				valueType = "int",
-				applyFunction = ApplyCHUDSettings,
+				applyFunction = function() CHUDRestartScripts({	"GUIAlienHUD" }) end,
 				sort = "B1",
 			},
 			avstate = { 
@@ -143,7 +146,10 @@ CHUDOptions =
 				category = "hud",
 				valueType = "bool",
 				sort = "C6",
-				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
+				applyFunction = function() CHUDRestartScripts({
+					"Hud/Marine/GUIMarineHUD",
+					"GUIAlienHUD",
+					}) end,
 			},
 			hpbar = {
 				name    = "CHUD_HPBar",
@@ -233,7 +239,7 @@ CHUDOptions =
 			},
 			showcomm = {
 				name    = "CHUD_ShowComm",
-				label   = "Marine comm name",
+				label   = "Comm name/Team res",
 				tooltip = "Enables or disables showing the commander name and team resources.",
 				type    = "select",
 				values  = { "Off", "On" },
@@ -242,7 +248,10 @@ CHUDOptions =
 				category = "hud",
 				valueType = "bool",
 				sort = "C4",
-				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
+				applyFunction = function() CHUDRestartScripts({
+					"Hud/Marine/GUIMarineHUD",
+					"GUIAlienHUD",
+					}) end,
 			}, 
 			commactions = {
 				name    = "CHUD_CommActions",
@@ -314,7 +323,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "func",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
+				applyFunction = function() CHUDRestartScripts({	"GUIAlienHUD" }) end,
 				sort = "C2",
 			}, 
 			ambient = {

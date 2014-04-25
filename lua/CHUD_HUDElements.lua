@@ -1,48 +1,3 @@
-Script.Load("lua/Hud/GUIEvent.lua")
-local originalEventUpdate
-originalEventUpdate = Class_ReplaceMethod( "GUIEvent", "Update",
-	function (self, deltaTime, parameters)
-		originalEventUpdate(self, deltaTime, parameters)
-		if CHUDGetOption("mingui") then
-			self.borderTop:SetIsVisible(false)
-			self.unlockBackground:SetColor(Color(1,1,1,0))
-			self.unlockFlash:SetIsVisible(false)
-			self.unlockFlashStencil:SetIsVisible(false)
-		end
-		if not CHUDGetOption("unlocks") then
-			self.unlockFrame:SetIsVisible(false)
-		else
-			self.unlockFrame:SetIsVisible(true)
-		end
-	end
-)
-
-Script.Load("lua/GUIAlienTeamMessage.lua")
-originalAlienMessage = Class_ReplaceMethod( "GUIAlienTeamMessage", "SetTeamMessage",
-	function(self, message)
-		originalAlienMessage(self, message)
-		if not CHUDGetOption("banners") then
-			self.background:SetIsVisible(false)
-		end
-		if CHUDGetOption("mingui") then
-			self.background:DestroyAnimations()
-		end
-	end
-)
-
-Script.Load("lua/GUIMarineTeamMessage.lua")
-originalMarineMessage = Class_ReplaceMethod( "GUIMarineTeamMessage", "SetTeamMessage",
-	function(self, message)
-		originalMarineMessage(self, message)
-		if not CHUDGetOption("banners") then
-			self.background:SetIsVisible(false)
-		end
-		if CHUDGetOption("mingui") then
-			self.background:DestroyAnimations()
-		end
-	end
-)
-
 Script.Load("lua/Player_Client.lua")
 originalBlur = Class_ReplaceMethod( "Player", "SetBlurEnabled",
 	function(self, blurEnabled)
@@ -75,25 +30,6 @@ function UpdateDSPEffects()
 		originalDSPEff()
 	end*/
 end
-
-Script.Load("lua/Weapons/Marine/ExoWeaponHolder.lua")
-originalExoWeaponHolder = Class_ReplaceMethod( "ExoWeaponHolder", "OnUpdateRender",
-	function(self)
-		originalExoWeaponHolder(self)
-		local parent = self:GetParent()
-		if parent and parent == Client.GetLocalPlayer() then
-		
-			local viewModel = parent:GetViewModelEntity()
-			if viewModel and viewModel:GetRenderModel() then
-				if CHUDGetOption("mingui") then
-					viewModel:GetRenderModel():SetMaterialParameter("scanlinesMap", "ui/blank.dds")
-				else
-					viewModel:GetRenderModel():SetMaterialParameter("scanlinesMap", "ui/exosuit_scanlines.dds")
-				end
-			end
-		end
-	end
-)
 
 // Man I wish I didn't have to hook all this crap
 // This is horrible
