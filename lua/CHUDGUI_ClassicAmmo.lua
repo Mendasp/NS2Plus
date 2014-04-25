@@ -11,15 +11,17 @@ function CHUDGUI_ClassicAmmo:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
+	self.scale =  Client.GetScreenHeight() / kBaseScreenHeight
+	
 	self.ammoText = self:CreateAnimatedTextItem()
 	self.ammoText:SetFontName(kFontName)
 	self.ammoText:SetAnchor(GUIItem.Right, GUIItem.Bottom)    
 	self.ammoText:SetTextAlignmentX(GUIItem.Align_Min)    
 	self.ammoText:SetTextAlignmentY(GUIItem.Align_Center)    
 	self.ammoText:SetColor(kAmmoColor)
-	self.ammoText:SetPosition(GUIScale(kAmmoPos))
-	self.ammoText:SetUniformScale(GUIScale(1))
+	self.ammoText:SetUniformScale(self.scale)
 	self.ammoText:SetScale(GetScaledVector())
+	self.ammoText:SetPosition(kAmmoPos)
 	
 end
 
@@ -27,9 +29,9 @@ function CHUDGUI_ClassicAmmo:Reset()
 
     GUIAnimatedScript.Reset(self)
 	
-	self.ammoText:SetUniformScale(GUIScale(1))
+	self.ammoText:SetUniformScale(self.scale)
 	self.ammoText:SetScale(GetScaledVector())
-	self.ammoText:SetPosition(GUIScale(kAmmoPos))
+	self.ammoText:SetPosition(kAmmoPos)
 	
 end
 

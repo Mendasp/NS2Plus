@@ -1,10 +1,56 @@
+Class_AddMethod( "GUIMarineHUD", "CHUDRepositionGUI",
+	function(self)
+		local hpbar = CHUDGetOption("hpbar")
+		local minimap = CHUDGetOption("minimap")
+		local showcomm = CHUDGetOption("showcomm")
+		local commactions = CHUDGetOption("commactions")
+		local gametime = CHUDGetOption("gametime")
+		
+		// Position of toggleable elements
+		local y = 30
+		
+		if self.CHUDLocationText then
+			self.CHUDLocationText:SetUniformScale(self.scale)
+			self.CHUDLocationText:SetScale(GetScaledVector()*1.2)
+			self.CHUDLocationText:SetPosition(Vector(75, y+11, 0))
+		end
+			
+		if minimap then
+			y = y + 300
+		end
+		
+		if showcomm then
+			self.commanderName:SetPosition(Vector(20, y, 0))
+			y = y + 30
+			self.resourceDisplay.teamText:SetUniformScale(self.scale)
+			self.resourceDisplay.teamText:SetPosition(Vector(20, y, 0))
+			y = y + 30
+		end
+		
+		if gametime and self.gameTime then
+			self.gameTime:SetUniformScale(self.scale)
+			self.gameTime:SetScale(GetScaledVector()*1.15)
+			self.gameTime:SetPosition(Vector(20, y, 0))
+			y = y + 30
+		end
+		
+		if commactions then
+			self.eventDisplay.notificationFrame:SetPosition(Vector(20, y, 0) * self.eventDisplay.scale)
+		end
+		
+		local xpos = ConditionalValue(hpbar, -20, -300)
+		self.statusDisplay.healthText:SetPosition(Vector(xpos, 36, 0))
+		self.statusDisplay.armorText:SetPosition(Vector(xpos, 96, 0))
+		
+		local anchor = ConditionalValue(hpbar, GUIItem.Right, GUIItem.Left)
+		self.statusDisplay.parasiteState:SetAnchor(anchor, GUIItem.Center)
+		self.statusDisplay.scanLinesForeground:SetAnchor(anchor, GUIItem.Top)
+	end)
+
 local originalMarineInit
 originalMarineInit = Class_ReplaceMethod( "GUIMarineHUD", "Initialize",
 function(self)
 	originalMarineInit(self)
-	
-	// Position of toggleable elements
-	local y = 30
 	
 	// Make the location text non-stupid
 	self.locationText:SetIsVisible(false)
@@ -17,15 +63,12 @@ function(self)
     self.CHUDLocationText:SetLayer(kGUILayerPlayerHUDForeground2)
     self.CHUDLocationText:SetColor(kBrightColor)
     self.CHUDLocationText:SetFontIsBold(true)
-	self.CHUDLocationText:SetScale(GUIScale(Vector(1,1,0)*1.2))
-	self.CHUDLocationText:SetPosition(GUIScale(Vector(55, y, 0)*1.7))
 	
 	self.gameTime = self:CreateAnimatedTextItem()
     self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 	self.gameTime:SetFontIsBold(true)
     self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
     self.gameTime:SetColor(kBrightColor)
-	self.gameTime:SetScale(GUIScale(Vector(1,1,0)*1.15))
 	
 	// Initialize location and power so they show up correctly
 	self.lastLocationText = ""
@@ -48,26 +91,8 @@ function(self)
 		self.minimapBackground:SetColor(Color(1,1,1,alpha))
 		self.minimapScanLines:SetColor(Color(1,1,1,alpha))
 		self.minimapStencil:SetTexture(stencilTexture)
-
-		y = y + 300
 	end
-	
-	if showcomm then
-		self.commanderName:SetPosition(Vector(20, y, 0))
-		y = y + 30
-		self.resourceDisplay.teamText:SetPosition(Vector(20, y, 0))
-		y = y + 30
-	end
-	
-	if gametime then
-		self.gameTime:SetPosition(GUIScale(Vector(20, y, 0)*1.19))
-		y = y + 30
-	end
-	
-	if commactions then
-		self.eventDisplay.notificationFrame:SetPosition(Vector(20, y, 0) * self.eventDisplay.scale)
-	end
-	
+		
 	self:SetFrameVisible(mingui)
 	self.resourceDisplay.background:SetColor(Color(1,1,1,alpha))
 
@@ -80,16 +105,10 @@ function(self)
 	self.statusDisplay.healthBar:SetIsVisible(hpbar)
 	self.statusDisplay.armorBar:SetIsVisible(hpbar)
 	
-	local xpos = ConditionalValue(hpbar, -20, -300)
-	self.statusDisplay.healthText:SetPosition(Vector(xpos, 36, 0))
-	self.statusDisplay.armorText:SetPosition(Vector(xpos, 96, 0))
-	
-	local anchor = ConditionalValue(hpbar, GUIItem.Right, GUIItem.Left)
-	self.statusDisplay.parasiteState:SetAnchor(anchor, GUIItem.Center)
-	self.statusDisplay.scanLinesForeground:SetAnchor(anchor, GUIItem.Top)
-	
 	local texture = ConditionalValue(hpbar, PrecacheAsset("ui/marine_HUD_status.dds"), PrecacheAsset("ui/blank.dds"))
 	self.statusDisplay.statusbackground:SetTexture(texture)
+	
+	self:CHUDRepositionGUI()
 	
 end)
 
@@ -291,4 +310,12 @@ function(self)
 	self.commanderNameIsAnimating = nil
 	self.lastCommanderName = nil
 	
+end)
+
+local originalMarineReset
+originalMarineReset = Class_ReplaceMethod( "GUIMarineHUD", "Reset",
+function(self)
+	originalMarineReset(self)
+	
+	self:CHUDRepositionGUI()
 end)
