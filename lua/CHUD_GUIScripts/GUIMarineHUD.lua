@@ -204,6 +204,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local rtcount = CHUDGetOption("rtcount")
 		local commactions = CHUDGetOption("commactions")
 		local gametime = CHUDGetOption("gametime")
+		local hpbar = CHUDGetOption("hpbar")
 
 		// Non-stupid location text!
 		local locationName = ConditionalValue(PlayerUI_GetLocationName(), string.upper(PlayerUI_GetLocationName()), "")
@@ -247,6 +248,12 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		self.resourceDisplay.teamText:SetIsVisible(showcomm)
 
 		self.eventDisplay.notificationFrame:SetIsVisible(commactions)
+		
+		// Disable that rotating border around the HP Bars if we have MinGUI or disabled bars
+		if not mingui or not hpbar then
+			self.statusDisplay.healthBorderMask:SetColor(Color(1,1,1,0))
+			self.statusDisplay.armorBorderMask:SetColor(Color(1,1,1,0))
+		end
 		
 		// In vanilla, the commander name doesn't get updated (or show!) if we use their minimal HUD
 		// Make it run again! Let us choose! Power to the people!
