@@ -365,7 +365,12 @@ CHUDOptions =
 				defaultValue = true,
 				category = "hud",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
+				applyFunction = function() 	local friends = CHUDGetOption("friends")
+					ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendAlien =
+						ConditionalValue(friends, kMinimapBlipTeam.FriendAlien, kMinimapBlipTeam.Alien) } )
+					ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendMarine =
+						ConditionalValue(friends, kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
+				end,
 			}, 
 			uplvl = {
 				name    = "CHUD_UpgradeLevel",
