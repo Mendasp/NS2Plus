@@ -15,6 +15,7 @@ Latest changes
 	- Minimap option now only toggles minimap and location text.
 	- Show commander name option is now independent of minimap option.
 	- Game time now doesn't depend on commander minimap on marines.
+	- Added grenades and mines to Insight's equipment display (only shows 3 icons max with this priority/order: JP > Welder > Grenades > Mines).
 
 - 21/04/2014 (Build 264):
 	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.

@@ -40,13 +40,23 @@ if Server then
 				if playerEntity:isa("JetpackMarine") then
 					upgrades = tostring(kTechId.Jetpack)
 				end
-				if playerEntity:GetWeapon(Welder.kMapName) ~= nil then
-					if upgrades == "" then
-						upgrades = tostring(kTechId.Welder)
-					else
-						upgrades = upgrades .. " " .. tostring(kTechId.Welder)
+				
+				local displayWeapons = { { Welder.kMapName, kTechId.Welder },
+					{ ClusterGrenade.kMapName, kTechId.ClusterGrenade },
+					{ PulseGrenade.kMapName, kTechId.PulseGrenade },
+					{ GasGrenade.kMapName, kTechId.GasGrenade },
+					{ Mine.kMapName, kTechId.Mine} }
+				
+				for _, weapon in pairs(displayWeapons) do
+					if playerEntity:GetWeapon(weapon[1]) ~= nil then
+						if upgrades == "" then
+							upgrades = tostring(weapon[2])
+						else
+							upgrades = upgrades .. " " .. tostring(weapon[2])
+						end
 					end
 				end
+
 			end
 			
 			self.extraTech = upgrades

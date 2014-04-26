@@ -63,7 +63,7 @@ function(self)
 	originalMinimapInit(self)
 	
 	self.minimap:SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
-	self.lastMingui = CHUDGetOption("mingui")
+	self.lastMinGUI = CHUDGetOption("mingui")
 	
 	local friends = CHUDGetOption("friends")
 	ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendAlien =
@@ -115,9 +115,9 @@ function(self, deltaTime)
 	originalMinimapUpdate(self, deltaTime)
 	
 	local mingui = CHUDGetOption("mingui")
-	if self.lastMingui ~= mingui then
+	if self.lastMinGUI ~= mingui then
 		self:UpdateCHUDCommSettings()
-		self.lastMingui = mingui
+		self.lastMinGUI = mingui
 	end
 end)
 
