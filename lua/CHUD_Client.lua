@@ -15,10 +15,14 @@ Script.Load("lua/CHUD_Sounds.lua")
 Script.Load("lua/CHUD_Hitsounds.lua")
 Script.Load("lua/CHUD_Outlines.lua")
 Script.Load("lua/CHUD_FlashAtmos.lua")
+Script.Load("lua/CHUD_HUDElements.lua")
 
 function AnnounceCHUD()
 	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")
 	GetCHUDSettings()
+	if not CHUDGetOption("ambient") then
+		OnCommandCHUDStopSound()
+	end
 end
 
 function OnCommandCHUDStopSound()

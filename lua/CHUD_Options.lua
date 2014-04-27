@@ -1,7 +1,3 @@
-local function ApplyCHUDSettings()
-	// Nothing until I actually replace stuff
-end
-
 local function CHUDRestartScripts(scripts)
 
 	for _, currentScript in pairs(scripts) do
@@ -54,7 +50,6 @@ CHUDOptions =
 				defaultValue = false,
 				category = "func",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
 				sort = "A6",
 			},
 			av = {
@@ -336,7 +331,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "comp",
 				valueType = "bool",
-				applyFunction = ApplyCHUDSettings,
+				applyFunction = function() if not CHUDGetOption("ambient") then OnCommandCHUDStopSound() end end,
 				sort = "B1",
 			}, 
 			nsllights = {

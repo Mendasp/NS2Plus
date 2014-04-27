@@ -9,6 +9,8 @@ Script.Load("lua/CHUD_GUIScripts/GUIAlienBuyMenu.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIGorgeBuildMenu.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIMarineBuyMenu.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIWorldText.lua")
+Script.Load("lua/CHUD_GUIScripts/GUIWaypoints.lua")
+Script.Load("lua/CHUD_GUIScripts/GUIUnitStatus.lua")
 
 Script.Load("lua/CHUD_GUIScripts/GUIGameEnd.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIScoreboard.lua")
