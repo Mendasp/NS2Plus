@@ -4,7 +4,11 @@ Script.Load("lua/CHUD_ModUpdater.lua")
 Script.Load("lua/CHUD_Respawn.lua")
 Server.AddTag("CHUD")
 
-CHUDSendStats = true
+CHUDSendStats = CHUDServerOptions["hivestats"].currentValue
+
+local hiveReportStr = ConditionalValue(CHUDSendStats, "Enabled", "Disabled")
+
+Shared.Message("[NS2+] Hive stats reporting is: " .. hiveReportStr)
 
 function CHUDCheckCheats()
 	if Shared.GetCheatsEnabled() and CHUDSendStats then

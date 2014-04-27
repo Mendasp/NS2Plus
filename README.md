@@ -18,6 +18,7 @@ Latest changes
 	- Added grenades and mines to Insight's equipment display (only shows 3 icons max with this priority/order: JP > Welder > Grenades > Mines).
 	- Added a new Alien bars option made by Rantology.
 	- Added map atmospherics slider, available in the Misc. tab.
+	- Added server toggle for Hive stats reporting.
 
 - 21/04/2014 (Build 264):
 	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.
