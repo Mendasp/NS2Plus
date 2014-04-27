@@ -16,6 +16,7 @@ Latest changes
 	- Show commander name option is now independent of minimap option.
 	- Game time now doesn't depend on commander minimap on marines.
 	- Added grenades and mines to Insight's equipment display (only shows 3 icons max with this priority/order: JP > Welder > Grenades > Mines).
+	- Added parasited name color to Insight names on the sides.
 	- Added a new Alien bars option made by Rantology.
 	- Added map atmospherics slider, available in the Misc. tab.
 	- Added server toggle for Hive stats reporting.

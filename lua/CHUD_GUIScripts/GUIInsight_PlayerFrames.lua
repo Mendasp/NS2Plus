@@ -6,6 +6,9 @@ function GUIInsight_PlayerFrames:UpdatePlayer(player, playerRecord, team, yPosit
 	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 		if playerInfo.playerId == playerRecord.EntityId then
+			local nameColor = ConditionalValue(playerInfo.isParasited, kCommanderColorFloat, Color(1,1,1,1))
+			player["Name"]:SetColor(nameColor)
+		
 			if not player["Background"].ups then
 			
 				local pos = 0

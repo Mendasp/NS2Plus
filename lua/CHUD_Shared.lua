@@ -12,7 +12,8 @@ Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
 
 local networkVars =
 {
-	extraTech = "string (128)"
+	extraTech = "string (128)",
+	isParasited = "boolean",
 }
 
 if Server then
@@ -37,6 +38,8 @@ if Server then
 				end
 				extraInfo = upgrades
 			elseif playerEntity:isa("Marine") then
+				self.isParasited = playerEntity:GetIsParasited()
+
 				if playerEntity:isa("JetpackMarine") then
 					upgrades = tostring(kTechId.Jetpack)
 				end
