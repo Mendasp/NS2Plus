@@ -50,6 +50,12 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		local mingui = not CHUDGetOption("mingui")
 		local alienbars = CHUDGetOption("alienbars")
 	
+		if alienbars == 2 then
+			ReplaceLocals( GUIAlienHUD.CreateEnergyBall, { kEnergyTextureX1 = 128, kEnergyTextureX2 = 256 } )
+		else
+			ReplaceLocals( GUIAlienHUD.CreateEnergyBall, { kEnergyTextureX1 = 0, kEnergyTextureX2 = 128 } )
+		end
+	
 		originalAlienInit(self)
 		
 		self.gameTime = self:CreateAnimatedTextItem()
@@ -58,7 +64,7 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
 		self.gameTime:SetColor(kAlienTeamColorFloat)
 		
-		local kTextureNameCHUD = ConditionalValue(alienbars, PrecacheAsset("ui/oma_alien_hud_health.dds"), PrecacheAsset("ui/alien_hud_health.dds"))
+		local kTextureNameCHUD = CHUDGetOptionAssocVal("alienbars")
 		local kBackgroundCHUD = ConditionalValue(mingui, PrecacheAsset("ui/alien_commander_bg_smoke.dds"), PrecacheAsset("ui/blank.dds"))
 		
 		// Backgrounds of health/energy
@@ -66,11 +72,28 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self.energyBall.dialBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
 		self.secondaryAbilityBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
 		
-		// Alien bars
+		// Alien bars		
 		self.healthBall:SetForegroundTexture(kTextureNameCHUD)
 		self.armorBall:SetForegroundTexture(kTextureNameCHUD)
 		self.energyBall:SetForegroundTexture(kTextureNameCHUD)
 		self.adrenalineEnergy:SetForegroundTexture(kTextureNameCHUD)
+		
+		local healthColor = ConditionalValue(alienbars == 2, Color(1, 1, 1, 1), Color(230/255, 171/255, 46/255, 1))
+		local armorColor = ConditionalValue(alienbars == 2, Color(1, 1, 1, 1), Color(1, 121/255, 12/255, 1))
+		local energyColor = ConditionalValue(alienbars == 2, Color(1, 1, 1, 1), Color(230/255, 171/255, 46/255, 1))
+		local adrenalineColor = ConditionalValue(alienbars == 2, Color(1, 1, 1, 1), Color(1, 121/255, 12/255, 1))
+		
+		self.healthBall:GetLeftSide():SetColor(healthColor)
+		self.healthBall:GetRightSide():SetColor(healthColor)
+		
+		self.armorBall:GetLeftSide():SetColor(armorColor)
+		self.armorBall:GetRightSide():SetColor(armorColor)
+		
+		self.energyBall:GetLeftSide():SetColor(energyColor)
+		self.energyBall:GetRightSide():SetColor(energyColor)
+		
+		self.adrenalineEnergy:GetLeftSide():SetColor(adrenalineColor)
+		self.adrenalineEnergy:GetRightSide():SetColor(adrenalineColor)
 
 		if CHUDGetOption("mingui") then
 			self.resourceDisplay.background:SetColor(Color(1,1,1,0))

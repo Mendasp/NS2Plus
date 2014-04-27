@@ -120,6 +120,9 @@ function CHUDLoadLights()
 		end
 		
 	end
+	
+	CHUDApplyMapAtmos()
+	
 end
 
 Event.Hook("Console_savelights", OnCommandSaveLights)

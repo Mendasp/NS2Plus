@@ -45,6 +45,15 @@ function CHUDFlashAtmosSlider()
 	end
 end
 
+function CHUDMapAtmosSlider()
+	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+		local key = "mapatmos"
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
+		local value = mainMenu.CHUDOptionElements.CHUD_MapAtmos:GetValue() * multiplier
+		CHUDSetOption(key, value)
+	end
+end
+
 function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		for _, option in pairs(mainMenu.CHUDOptionElements) do
