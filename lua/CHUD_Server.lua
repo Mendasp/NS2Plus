@@ -18,7 +18,7 @@ end
 
 local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
-	if Server and GetGamerules():GetGameStarted() then
+	if Server then
 
 		local weapon
 	

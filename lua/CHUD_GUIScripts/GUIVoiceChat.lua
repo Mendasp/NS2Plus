@@ -21,14 +21,18 @@ function New_GUIVoiceChat_Update( self, deltaTime )
             local chatBar = GetFreeBar(self)
             
             chatBar.Background:SetIsVisible(true)
+			chatBar.Background:SetLayer(15)
             
 			local textureSet, fontColor;
 			if clientTeam == kTeam1Index then
 				textureSet = "marine"
 				fontColor = GUIVoiceChat.kMarineFontColor
-            else
+            elseif clientTeam == kTeam2Index then
                 textureSet = "alien"
                 fontColor = GUIVoiceChat.kAlienFontColor
+			else
+				textureSet = "spectator"
+				fontColor = Color(1, 1, 1, 1)
             end    
 
             chatBar.Background:SetTexture(string.format(kBackgroundTexture, textureSet))

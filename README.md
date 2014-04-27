@@ -7,7 +7,7 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
-- /04/2014 (Build 264):
+- 28/04/2014 (Build 264):
 	- Voice chat now shows the team color correctly when alltalk is on. (Thanks remi.D!)
 	- The scoreboard now keeps the time of the previous round until the next round starts. (Thanks remi.D!)
 	- Minimap is now square under Minimal GUI setting.
@@ -20,6 +20,7 @@ Latest changes
 	- Added a new Alien bars option made by Rantology.
 	- Added map atmospherics slider, available in the Misc. tab.
 	- Added server toggle for Hive stats reporting.
+	- Hitsounds also work in pregame now.
 
 - 21/04/2014 (Build 264):
 	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.
@@ -55,10 +56,6 @@ Latest changes
 	- Respawn cheat commands now always spawn the player in first person view.
 	- Added ingame news webpage.
 	- Fixed bug where flashlight atmospherics would get applied to the player's first person flashlight.
-
-- 15/04/2014 (Buld 264):
-	- Fixed non-snow rock prop variant size.
-	- Potentially fixed issue that'd let aliens see marines that are not parasited with an outline
 
 Credits/Thanks to
 =================
