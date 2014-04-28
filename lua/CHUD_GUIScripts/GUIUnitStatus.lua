@@ -57,11 +57,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 				end
 				
 				if CHUDBlipData and CHUDBlipData.IsSpawning and not blipData.IsCrossHairTarget and not isEnemy then
-				
-					local origin = blipData.WorldOrigin
-					origin.y = origin.y+2.5
-					updateBlip.statusBg:SetPosition(Client.WorldToScreen(origin) - GUIUnitStatus.kStatusBgSize * .5)
-					
+									
 					if CHUDGetOption("minnps") and not player:isa("Commander") then		
 						
 						updateBlip.NameText:SetText(CHUDBlipData.PlayerName)
@@ -99,7 +95,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 			
 				local alpha = 0
 				
-				if blipData.IsCrossHairTarget or (CHUDBlipData and CHUDBlipData.IsSpawning) then
+				if blipData.IsCrossHairTarget or (CHUDBlipData and CHUDBlipData.IsSpawning and not isEnemy) then
 					alpha = 1
 				else
 					alpha = 0
