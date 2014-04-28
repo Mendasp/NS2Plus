@@ -1,7 +1,7 @@
 Script.Load( "lua/Class.lua" )
 
 function DPrint( string )
-	//Shared.Message( string )
+	Shared.Message( string )
 end
 
 function Class_AddMethod( className, methodName, method )

@@ -1,3 +1,4 @@
+local kHealthBarWidth, kHealthBarHeight, GetPixelCoordsForFraction, kArmorBarWidth, kArmorBarHeight
 local originalUnitStatusUpdate
 originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	function(self, deltaTime)
@@ -33,23 +34,24 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					
 					CHUDBlipData = blipData.Hint
 					
-					blipData.Hint = CHUDBlipData
+					blipData.Hint = CHUDBlipData.Hint
 					
-					if CHUDBlipData.IsInfantryPortal then
-						Shared.Message( "Processing IP blipData" )
-						
-						if CHUDBlipData.IsSpawning then
-							if not blipData.IsCrosshairTarget then
-								blipData.Name = CHUDBlipData.PlayerName
-								blipData.HealthFraction = CHUDBlipData.SpawnFraction;
-								blipData.ArmorFraction = 0;
-								Shared.Message( "Overwrote blipData for IP: "..blipData.Name..", "..blipData.HealthFraction )
-							else
-								Shared.Message( "Not overwriting blipData for IP" )
-							end
+					if CHUDBlipData.IsSpawning then
+						if not blipData.IsCrossHairTarget then
+							
+							updateBlip.NameText:SetText( CHUDBlipData.PlayerName );
+							
+							updateBlip.ArmorBarBg:SetIsVisible(false)
+							
+							updateBlip.HealthBar:SetSize(Vector(kHealthBarWidth * CHUDBlipData.SpawnFraction, kHealthBarHeight, 0))
+							updateBlip.HealthBar:SetTexturePixelCoordinates(GetPixelCoordsForFraction( CHUDBlipData.SpawnFraction ))
+							
+							updateBlip.ArmorBar:SetSize(Vector(0, kArmorBarHeight, 0))
+							updateBlip.ArmorBar:SetTexturePixelCoordinates(GetPixelCoordsForFraction(0))
 						end
 						
 						CHUDBlipData = nil;
+						
 					else
 						blipData.IsParasited = CHUDBlipData.IsParasited
 						blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
@@ -132,3 +134,6 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 			
 		end
 	end)
+
+
+SetUpValues( GUIUnitStatus.Update, GetUpValues( GetLocalFunction( originalUnitStatusUpdate, "UpdateUnitStatusList" ) ) )
