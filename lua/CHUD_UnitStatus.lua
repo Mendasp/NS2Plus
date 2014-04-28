@@ -123,7 +123,7 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 				for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 					if playerInfo.playerId == self.queuedPlayerId then
 						playerName = playerInfo.playerName
-						break;
+						break
 					end
 				end
 				

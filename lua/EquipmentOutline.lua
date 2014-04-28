@@ -12,9 +12,9 @@ local _maxDistance = 38
 local _maxDistance_Commander = 60
 local _enabled = true
 
-local lookup = { "GrenadeLauncher", "Shotgun", "Flamethrower" };
-local renderMasks = { [0] = 0x04, 0x08, 0x10, 0x20 };
-local cameras = {};
+local lookup = { "GrenadeLauncher", "Shotgun", "Flamethrower" }
+local renderMasks = { [0] = 0x04, 0x08, 0x10, 0x20 }
+local cameras = {}
 
 function EquipmentOutline_Initialize()
 	
@@ -26,13 +26,13 @@ function EquipmentOutline_Initialize()
 		camera:SetIsVisible(false)
 		camera:SetCullingMode(RenderCamera.CullingMode_Frustum)
 		camera:SetRenderSetup("shaders/Mask.render_setup")
-		cameras[i] = camera;
+		cameras[i] = camera
 	
 	end
 
 	local screenEffect = Client.CreateScreenEffect("shaders/EquipmentOutline.screenfx")
 	screenEffect:SetActive(false)
-	EquipmentOutline_screenEffect = screenEffect;
+	EquipmentOutline_screenEffect = screenEffect
 end
 
 function EquipmentOutline_Shudown()
@@ -40,8 +40,8 @@ function EquipmentOutline_Shudown()
 		Client.DestroyRenderCamera( cameras[i] )
 		cameras[i] = nil	
 	end
-	Client.DestroyScreenEffect( EquipmentOutline_screenEffect );
-	EquipmentOutline_screenEffect = nil;
+	Client.DestroyScreenEffect( EquipmentOutline_screenEffect )
+	EquipmentOutline_screenEffect = nil
 end
 
 /** Enables or disabls the hive vision effect. When the effect is not needed it should 
@@ -61,13 +61,13 @@ function EquipmentOutline_SyncCamera(rendercamera, forCommander)
     local distance = ConditionalValue(forCommander, _maxDistance_Commander, _maxDistance)
 	
 	for i=0,#lookup do
-		local camera = cameras[i];
+		local camera = cameras[i]
 		camera:SetCoords(rendercamera:GetCoords())
 		camera:SetFov(rendercamera:GetFov())
 		camera:SetFarPlane(distance + 1)
 	end
 	
-	local screenEffect = EquipmentOutline_screenEffect;		
+	local screenEffect = EquipmentOutline_screenEffect		
 	
 	screenEffect:SetParameter("time", Shared.GetTime())
 	screenEffect:SetParameter("maxDistance", distance)
@@ -97,11 +97,11 @@ function EquipmentOutline_UpdateModel(forEntity)
     local visible = player ~= nil and forEntity:GetIsValidRecipient(player)
     local model = HasMixin(forEntity, "Model") and forEntity:GetRenderModel() or nil
     
-	local weaponclass = 0;
+	local weaponclass = 0
 	for i=1,#lookup do
 		if forEntity:isa( lookup[i] ) then
-			weaponclass = i;
-			break;
+			weaponclass = i
+			break
 		end
 	end
 	

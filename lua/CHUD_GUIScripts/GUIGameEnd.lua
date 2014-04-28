@@ -30,7 +30,7 @@ oldSetGameEnded = Class_ReplaceMethod( "GUIGameEnd", "SetGameEnded",
 		local entityList = Shared.GetEntitiesWithClassname("GameInfo")
 		if entityList:GetSize() > 0 then
 			local gameInfo = entityList:GetEntityAtIndex(0)		
-			gameInfo.prevTimeLength = math.floor(Shared.GetTime()) - gameInfo:GetStartTime();
+			gameInfo.prevTimeLength = math.floor(Shared.GetTime()) - gameInfo:GetStartTime()
 		end
 	
 		oldSetGameEnded( self, playerWon, playerIsMarine )
