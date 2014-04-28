@@ -30,13 +30,32 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 																			
 			if blipData ~= nil then
 				if type(blipData.Hint) == "table" then
+					
 					CHUDBlipData = blipData.Hint
-
-					blipData.Hint = CHUDBlipData.Hint
-					blipData.IsParasited = CHUDBlipData.IsParasited
-					blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
-					if CHUDBlipData.MarineWeapon then
-						blipData.MarineWeapon = CHUDBlipData.MarineWeapon
+					
+					blipData.Hint = CHUDBlipData
+					
+					if CHUDBlipData.IsInfantryPortal then
+						Shared.Message( "Processing IP blipData" )
+						
+						if CHUDBlipData.IsSpawning then
+							if not blipData.IsCrosshairTarget then
+								blipData.Name = CHUDBlipData.PlayerName
+								blipData.HealthFraction = CHUDBlipData.SpawnFraction;
+								blipData.ArmorFraction = 0;
+								Shared.Message( "Overwrote blipData for IP: "..blipData.Name..", "..blipData.HealthFraction )
+							else
+								Shared.Message( "Not overwriting blipData for IP" )
+							end
+						end
+						
+						CHUDBlipData = nil;
+					else
+						blipData.IsParasited = CHUDBlipData.IsParasited
+						blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
+						if CHUDBlipData.MarineWeapon then
+							blipData.MarineWeapon = CHUDBlipData.MarineWeapon
+						end
 					end
 				end
 				

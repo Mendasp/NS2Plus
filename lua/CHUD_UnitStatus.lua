@@ -117,7 +117,33 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 		}
 		
 		return hintTable
-	else
-		return hint
+	elseif self:isa("InfantryPortal") then
+		local isSpawning = self.queuedPlayerId ~= Entity.invalidId;
+		if isSpawning then			
+			local playerName;
+			for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
+				if playerInfo.playerId == self.queuedPlayerId then
+					playerName = playerInfo.playerName;
+					break;
+				end
+			end
+			
+			return 
+				{
+					IsInfantryPortal = true;
+					IsSpawning = true;
+					PlayerName = playerName or "";
+					SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1);
+					Hint = hint;
+				}
+		else
+			return 
+				{
+					IsInfantryPortal = true;
+					Hint = hint;
+				}
+		end
 	end
+	
+	return hint
 end
