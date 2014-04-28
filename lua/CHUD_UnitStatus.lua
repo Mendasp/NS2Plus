@@ -74,26 +74,8 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 	
 	local player = Client.GetLocalPlayer()
 	
-	if self:isa("InfantryPortal") then
-		local isSpawning = self.queuedPlayerId ~= Entity.invalidId;
-		if isSpawning then			
-			local playerName = "";
-			for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
-				if playerInfo.playerId == self.queuedPlayerId then
-					playerName = playerInfo.playerName;
-					break;
-				end
-			end
-			
-			return 
-				{
-					IsSpawning = true;
-					PlayerName = playerName;
-					SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1);
-					Hint = hint;
-				}
-		end
-	elseif HasMixin(self, "Live") and (not self.GetShowHealthFor or self:GetShowHealthFor(player)) and CHUDHint then
+	
+	if HasMixin(self, "Live") and (not self.GetShowHealthFor or self:GetShowHealthFor(player)) and CHUDHint then
 	
 		local description = self:GetUnitName(player)
 		local marineWeapon
@@ -134,6 +116,22 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			IsSteamFriend = (self:isa("Player") and self:GetIsSteamFriend() or false) and CHUDGetOption("friends"),
 			IsParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited(),
 		}
+		
+		if self:isa("InfantryPortal") then
+		local isSpawning = self.queuedPlayerId ~= Entity.invalidId;
+		if isSpawning then			
+			local playerName = "";
+			for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
+				if playerInfo.playerId == self.queuedPlayerId then
+					playerName = playerInfo.playerName;
+					break;
+				end
+			end
+			
+				hintTable.IsSpawning = true;
+				hintTable.PlayerName = playerName;
+				hintTable.SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1);				
+		end
 		
 		return hintTable
 	end

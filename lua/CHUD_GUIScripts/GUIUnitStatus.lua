@@ -78,7 +78,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 			
 				local alpha = 0
 				
-				if blipData.IsCrossHairTarget then        
+				if blipData.IsCrossHairTarget or (CHUDBlipData and CHUDBlipData.IsSpawning) then
 					alpha = 1
 				else
 					alpha = 0
