@@ -21,6 +21,7 @@ Latest changes
 	- Added map atmospherics slider, available in the Misc. tab.
 	- Added server toggle for Hive stats reporting.
 	- Hitsounds also work in pregame now.
+	- Disabled backgrounds for the Voice/Request menu under Minimal GUI setting.
 
 - 21/04/2014 (Build 264):
 	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.
