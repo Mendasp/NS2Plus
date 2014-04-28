@@ -35,29 +35,11 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					CHUDBlipData = blipData.Hint
 					
 					blipData.Hint = CHUDBlipData.Hint
-					
-					if CHUDBlipData.IsSpawning then
-						if not blipData.IsCrossHairTarget then
-							
-							updateBlip.NameText:SetText( CHUDBlipData.PlayerName );
-							
-							updateBlip.ArmorBarBg:SetIsVisible(false)
-							
-							updateBlip.HealthBar:SetSize(Vector(kHealthBarWidth * CHUDBlipData.SpawnFraction, kHealthBarHeight, 0))
-							updateBlip.HealthBar:SetTexturePixelCoordinates(GetPixelCoordsForFraction( CHUDBlipData.SpawnFraction ))
-							
-							updateBlip.ArmorBar:SetSize(Vector(0, kArmorBarHeight, 0))
-							updateBlip.ArmorBar:SetTexturePixelCoordinates(GetPixelCoordsForFraction(0))
-						end
-						
-						CHUDBlipData = nil;
-						
-					else
-						blipData.IsParasited = CHUDBlipData.IsParasited
-						blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
-						if CHUDBlipData.MarineWeapon then
-							blipData.MarineWeapon = CHUDBlipData.MarineWeapon
-						end
+									
+					blipData.IsParasited = CHUDBlipData.IsParasited
+					blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
+					if CHUDBlipData.MarineWeapon then
+						blipData.MarineWeapon = CHUDBlipData.MarineWeapon
 					end
 				end
 				
@@ -67,13 +49,41 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 				
 				local player = Client.GetLocalPlayer()
 				
-				if CHUDGetOption("minnps") then
-					updateBlip.HintText:SetText(blipData.Hint)
-					if CHUDBlipData and not player:isa("Commander") then
-						updateBlip.NameText:SetText(CHUDBlipData.Description)
+				if CHUDBlipData and CHUDBlipData.IsSpawning and not blipData.IsCrossHairTarget then
+					
+					if CHUDGetOption("minnps") and not player:isa("Commander") then		
+						
+						updateBlip.NameText:SetText(CHUDBlipData.PlayerName)
+						updateBlip.HintText:SetText(string.format("%d%%", CHUDBlipData.SpawnFraction*100))
+						
 						updateBlip.HealthBarBg:SetIsVisible(false)
 						updateBlip.ArmorBarBg:SetIsVisible(false)
+					
+					else
+					
+						updateBlip.NameText:SetText( CHUDBlipData.PlayerName );
+							
+						updateBlip.statusBg:SetColor(Color(1,1,1,1))
+						
+						updateBlip.HealthBarBg:SetIsVisible(true)
+						updateBlip.HealthBar:SetSize(Vector(kHealthBarWidth * CHUDBlipData.SpawnFraction, kHealthBarHeight, 0))
+						updateBlip.HealthBar:SetTexturePixelCoordinates(GetPixelCoordsForFraction( CHUDBlipData.SpawnFraction ))
+							
+						updateBlip.ArmorBarBg:SetIsVisible(false)
+					
 					end
+				
+				else
+					
+					if CHUDGetOption("minnps") then
+						updateBlip.HintText:SetText(blipData.Hint)
+						if CHUDBlipData and not player:isa("Commander") then
+							updateBlip.NameText:SetText(CHUDBlipData.Description)
+							updateBlip.HealthBarBg:SetIsVisible(false)
+							updateBlip.ArmorBarBg:SetIsVisible(false)
+						end
+					end
+					
 				end
 			
 				local alpha = 0
