@@ -1,0 +1,51 @@
+settings =
+    [
+    ]
+
+resources =
+    [
+        { name="temporary1"                  format="R8G8B8A8"        x_scale=1 y_scale=1 }
+        { name="temporary2b"                 format="R8G8B8A8"        x_scale=0.5 y_scale=0.5 }
+        { name="outlineTex0"                 file_name="*equipment_outline0" }
+        { name="outlineTex1"                 file_name="*equipment_outline1" }
+        { name="outlineTex2"                 file_name="*equipment_outline2" }
+        { name="outlineTex3"                 file_name="*equipment_outline3" }
+    ]
+    
+layers =
+    [
+    
+        {
+            color_targets                   = "temporary1"
+            shader                          = "shaders/EquipmentOutline.shader"
+            technique                       = "Mask"
+            generator                       = "fullscreen"
+            parameters                      = {
+					outlineTex0				= "outlineTex0"
+					outlineTex1				= "outlineTex1"
+					outlineTex2				= "outlineTex2"
+					outlineTex3				= "outlineTex3"
+            }
+        }
+        {
+            color_targets                   = "temporary2b"
+            shader                          = "shaders/EquipmentOutline.shader"
+            technique                       = "DownSample"
+            generator                       = "fullscreen"
+            parameters                      = {
+                    inputTexture            = { resource="temporary1" linear=true }
+            }
+        }
+        {
+            color_targets                   = "back_buffer"
+            shader                          = "shaders/EquipmentOutline.shader"
+            technique                       = "FinalComposite"
+            generator                       = "fullscreen"
+            parameters                      = {
+                    inputTexture            = "source_buffer"
+                    inputTexture1           = { resource="temporary2b" linear=true }
+                    inputTexture2           = "temporary1"
+            }
+        }
+    ]
+
