@@ -57,7 +57,7 @@ function CHUDModUpdater()
 
 	if mapChangeNeeded and Server.GetNumPlayers() == 0 and not DisableUpdater then
 		SendCHUDMessage("The server is empty. Changing map.")
-		MapCycle_CycleMap()
+		MapCycle_ChangeMap( Shared.GetMapName() )
 	end
 
 	// Even if the updater is disabled, keep running so it can notify players of outdated mods in the server browser

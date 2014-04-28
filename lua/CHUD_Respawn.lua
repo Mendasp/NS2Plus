@@ -104,6 +104,26 @@ local function OnCommandRespawnClear(client)
     
 end
 
+local function OnCommandSwitch(client)
+
+	local func = nil
+    local player = client:GetControllingPlayer()
+    local teamNumber = player:GetTeamNumber()
+	
+	// For some reason the player team is swapped here, maybe the old function has been run first?
+    if teamNumber == kTeam2Index then
+		func = OnCommandChangeClass("skulk", kTeam2Index)
+	elseif teamNumber == kTeam1Index then
+		func = OnCommandChangeClass("marine", kTeam1Index)
+	end
+	
+	if func ~= nil then
+		func(client)
+	end
+		
+    player:SetDesiredCameraDistance(0)
+end
+
 Event.Hook("Console_skulk", OnCommandChangeClass("skulk", kTeam2Index))
 Event.Hook("Console_gorge", OnCommandChangeClass("gorge", kTeam2Index))
 Event.Hook("Console_lerk", OnCommandChangeClass("lerk", kTeam2Index))
@@ -117,6 +137,7 @@ Event.Hook("Console_clawrailgun", OnCommandChangeClass("exo", kTeam1Index, { lay
 Event.Hook("Console_dualrailgun", OnCommandChangeClass("exo", kTeam1Index, { layout = "RailgunRailgun" }))
 Event.Hook("Console_respawn", OnCommandRespawn)
 Event.Hook("Console_respawn_clear", OnCommandRespawnClear)
+Event.Hook("Console_switch", OnCommandSwitch)
 
 local originalPlayerOnKill
 
