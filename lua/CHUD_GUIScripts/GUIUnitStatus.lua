@@ -47,9 +47,16 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					updateBlip.statusBg:SetTexture(kTransparentTexture)
 				end
 				
-				local player = Client.GetLocalPlayer()
+				local player = Client.GetLocalPlayer()				
+				local playerTeamType = PlayerUI_GetTeamType()
+								
+				local isEnemy = false
 				
-				if CHUDBlipData and CHUDBlipData.IsSpawning and not blipData.IsCrossHairTarget then
+				if playerTeamType ~= kNeutralTeamType then
+					isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
+				end
+				
+				if CHUDBlipData and CHUDBlipData.IsSpawning and not blipData.IsCrossHairTarget and not isEnemy then
 					
 					if CHUDGetOption("minnps") and not player:isa("Commander") then		
 						
@@ -94,13 +101,6 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					alpha = 0
 				end
 			
-				local playerTeamType = PlayerUI_GetTeamType()
-				local isEnemy = false
-				
-				if playerTeamType ~= kNeutralTeamType then
-					isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
-				end
-				
 				local textColor = Color(kNameTagFontColors[blipData.TeamType])
 				if isEnemy then
 					textColor = GUIUnitStatus.kEnemyColor
