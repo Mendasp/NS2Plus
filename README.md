@@ -11,7 +11,7 @@ Latest changes
 	- Voice chat now shows the team color correctly when alltalk is on. (Thanks remi.D!)
 	- The scoreboard now keeps the time of the previous round until the next round starts. (Thanks remi.D!)
 	- The Infantry Portal now shows the name and progress of the spawning player. (Thanks remi.D!)
-	- Dropped marine weapons now have colored outlines depending on the weapon. (Thanks remi.D!)
+	- Dropped marine weapons now have different colored outlines. (Thanks remi.D!)
 	- Minimap is now square under Minimal GUI setting.
 	- Added last comm actions to be toggleable instead of hiding it with the minimap.
 	- Minimap option now only toggles minimap and location text.
