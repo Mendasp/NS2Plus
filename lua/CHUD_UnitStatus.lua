@@ -116,34 +116,25 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			IsParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited(),
 		}
 		
-		return hintTable
-	elseif self:isa("InfantryPortal") then
-		local isSpawning = self.queuedPlayerId ~= Entity.invalidId;
-		if isSpawning then			
-			local playerName;
-			for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
-				if playerInfo.playerId == self.queuedPlayerId then
-					playerName = playerInfo.playerName;
-					break;
+		if self:isa("InfantryPortal") then
+			local isSpawning = self.queuedPlayerId ~= Entity.invalidId
+			if isSpawning then			
+				local playerName
+				for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
+					if playerInfo.playerId == self.queuedPlayerId then
+						playerName = playerInfo.playerName
+						break
+					end
 				end
+				
+				hintTable.IsSpawning = isSpawning
+				hintTable.Description = playerName or description
+				hintTable.SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1)
 			end
-			
-			return 
-				{
-					IsInfantryPortal = true;
-					IsSpawning = true;
-					PlayerName = playerName or "";
-					SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1);
-					Hint = hint;
-				}
-		else
-			return 
-				{
-					IsInfantryPortal = true;
-					Hint = hint;
-				}
 		end
+		
+		return hintTable
+	else	
+		return hint
 	end
-	
-	return hint
 end
