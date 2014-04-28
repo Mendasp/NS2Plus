@@ -23,7 +23,7 @@ function New_GUIVoiceChat_Update( self, deltaTime )
             chatBar.Background:SetIsVisible(true)
 			chatBar.Background:SetLayer(15)
             
-			local textureSet, fontColor;
+			local textureSet, fontColor
 			if clientTeam == kTeam1Index then
 				textureSet = "marine"
 				fontColor = GUIVoiceChat.kMarineFontColor

@@ -62,7 +62,7 @@ function PrintUpValues( func )
 			vals = vals and vals..", "..name or name
 		end 
 	)
-	Shared.Message( "Upvalues for "..tostring(func)..": local "..vals );
+	Shared.Message( "Upvalues for "..tostring(func)..": local "..vals )
 	
 end
 
