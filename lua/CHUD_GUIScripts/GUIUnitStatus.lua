@@ -61,7 +61,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					
 					else
 					
-						updateBlip.NameText:SetText( CHUDBlipData.PlayerName );
+						updateBlip.NameText:SetText( CHUDBlipData.PlayerName )
 							
 						updateBlip.statusBg:SetColor(Color(1,1,1,1))
 						

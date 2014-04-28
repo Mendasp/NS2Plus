@@ -119,17 +119,17 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 		
 		if self:isa("InfantryPortal") then
 			if self.queuedPlayerId ~= Entity.invalidId then			
-				local playerName = "";
+				local playerName = ""
 				for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 					if playerInfo.playerId == self.queuedPlayerId then
-						playerName = playerInfo.playerName;
+						playerName = playerInfo.playerName
 						break;
 					end
 				end
 				
-				hintTable.IsSpawning = true;
-				hintTable.PlayerName = playerName;
-				hintTable.SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1);				
+				hintTable.IsSpawning = true
+				hintTable.PlayerName = playerName
+				hintTable.SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1)			
 			end
 		end
 		
