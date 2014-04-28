@@ -101,12 +101,12 @@ function(self, input)
 	end
 end)
 
-local originalCommanderLogout
-originalCommanderLogout = Class_ReplaceMethod( "Commander", "Logout",
+local originalCommanderOnDestroy
+originalCommanderOnDestroy = Class_ReplaceMethod( "Commander", "OnDestroy",
 function(self)
 	GUI.DestroyItem(self.gameTime)
 	self.gameTime = nil
-	originalCommanderLogout(self)
+	originalCommanderOnDestroy(self)
 end)
 
 local originalMinimapUpdate
