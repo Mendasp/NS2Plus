@@ -1,33 +1,60 @@
+CHUDClientOptions = { }
+
 CHUDServerOptions =
 {
-			modupdater = {
-				label   = "Mod updater",
-				tooltip = "Enables or disables the mod update checker.",
-				valueType = "bool",
-				defaultValue = true,
-				},
-			modupdatercheckinterval = {
-				label   = "Mod updater check interval",
-				tooltip = "Sets the update check interval for the mod updater (in minutes).",
-				valueType = "float",
-				defaultValue = 15,
-				minValue = 1,
-				maxValue = 999,
-				},
-			modupdaterreminderinterval = {
-				label   = "Mod updater reminder interval",
-				tooltip = "Sets the time between reminders when an update has been found. Set to 0 to disable (only shows once).",
-				valueType = "float",
-				defaultValue = 5,
-				minValue = 0,
-				maxValue = 999,
-				},
-			hivestats = {
-				label   = "Report stats to Hive",
-				tooltip = "Enables or disables the Hive stats reporting",
-				valueType = "bool",
-				defaultValue = true,
-				},
+	allow_ambient = {
+		label   = "Ambient sounds",
+		tooltip = "Enables or disables the ambient sounds option for clients.",
+		valueType = "bool",
+		defaultValue = true,
+		},
+	allow_mapparticles = {
+		label   = "Map particles",
+		tooltip = "Enables or disables the map particles option for clients.",
+		valueType = "bool",
+		defaultValue = true,
+		},
+	allow_nsllights = {
+		label   = "NSL Lights",
+		tooltip = "Enables or disables the NSL lights option for clients.",
+		valueType = "bool",
+		defaultValue = true,
+		},
+	allow_deathstats = {
+		label   = "NS2+ personal stats",
+		tooltip = "Enables or disables the NS2+ stats display for clients.",
+		valueType = "bool",
+		defaultValue = true,
+		},
+
+	modupdater = {
+		label   = "Mod updater",
+		tooltip = "Enables or disables the mod update checker.",
+		valueType = "bool",
+		defaultValue = true,
+		},
+	modupdatercheckinterval = {
+		label   = "Mod updater check interval",
+		tooltip = "Sets the update check interval for the mod updater (in minutes).",
+		valueType = "float",
+		defaultValue = 15,
+		minValue = 1,
+		maxValue = 999,
+		},
+	modupdaterreminderinterval = {
+		label   = "Mod updater reminder interval",
+		tooltip = "Sets the time between reminders when an update has been found. Set to 0 to disable (only shows once).",
+		valueType = "float",
+		defaultValue = 5,
+		minValue = 0,
+		maxValue = 999,
+		},
+	hivestats = {
+		label   = "Report stats to Hive",
+		tooltip = "Enables or disables the Hive stats reporting",
+		valueType = "bool",
+		defaultValue = true,
+		},
 }
 
 local configFileName = "NS2PlusServerConfig.json"
@@ -180,9 +207,19 @@ for option, value in pairs(config) do
 	end
 end
 
+// Add blocked options to a table so when clients connect we can send them a command to do so
 for index, option in pairs(CHUDServerOptions) do
 	if option.currentValue == nil then
 		CHUDSetServerOption(index, CHUDServerOptions[index].defaultValue)
+	end
+	
+	local _, pos = string.find(index, "allow_")
+	if pos and CHUDServerOptions[index].currentValue == false then
+		local option = string.sub(index, pos+1)
+		table.insert(CHUDClientOptions, option)
+		
+		// Add server tags for disabled features
+		AddCHUDTagBitmask(CHUDTagBitmask[option])
 	end
 end
 

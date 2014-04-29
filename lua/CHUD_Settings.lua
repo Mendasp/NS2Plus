@@ -4,7 +4,12 @@ end
 
 function CHUDGetOption(key)
 	if CHUDOptions[key] ~= nil then
-		return CHUDOptions[key].currentValue
+		if CHUDOptions[key].disabled then
+			local ret = ConditionalValue(CHUDOptions[key].disabledValue == nil, CHUDOptions[key].defaultValue, CHUDOptions[key].disabledValue)
+			return ret
+		else
+			return CHUDOptions[key].currentValue
+		end
 	end
 	
 	return nil
@@ -73,7 +78,7 @@ function CHUDSetOption(key, value)
 		end
 		
 		// Don't waste time reapplying settings we already have active
-		if oldValue ~= option.currentValue and option.applyFunction then
+		if oldValue ~= option.currentValue and option.applyFunction and option.disabled == nil then
 			option.applyFunction()
 		end
 		
@@ -221,6 +226,9 @@ local function OnCommandCHUD(...)
 			end
 			if setValue ~= nil then
 				Shared.Message(option.label .. " set to: " .. helpStr)
+				if option.disabled then
+					Shared.Message("The server admin has disabled this option (" .. option.label .. "). The option will get saved, but the blocked value will be used." )
+				end
 			else
 				CHUDHelp(args[1])
 			end
@@ -230,4 +238,16 @@ local function OnCommandCHUD(...)
 	end
 end
 
+function OnCHUDOption(msg)
+	local key = msg.disabledOption
+	
+	if CHUDOptions[key] ~= nil then
+		CHUDOptions[key].disabled = true
+		if CHUDOptions[key].applyFunction then
+			CHUDOptions[key].applyFunction()
+		end
+	end
+end
+
 Event.Hook("Console_plus", OnCommandCHUD)
+Client.HookNetworkMessage("CHUDOption", OnCHUDOption)

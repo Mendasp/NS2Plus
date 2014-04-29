@@ -4,8 +4,6 @@ local mapChangeNeeded = false
 local modsTable = {}
 local DisableUpdater = false
 
-Server.RemoveTag("CHUD_MCR")
-
 // Don't use this updater if the server is already using the Shine one
 if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
 	Shared.Message("[NS2+] Shine workshop updater is enabled. Disabling NS2+ mod updater.")
@@ -23,7 +21,7 @@ function CHUDParseModInfo(modInfo)
 			for _, res in pairs(response["publishedfiledetails"]) do
 				if res["result"] == 1 and not mapChangeNeeded then
 					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
-						Server.AddTag("CHUD_MCR")
+						AddCHUDTagBitmask(CHUDTagBitmask["mcr"])
 						mapChangeNeeded = true
 						// Repeat the mod update message
 						updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60

@@ -1,6 +1,6 @@
 modEntry = [[
 	Client: lua/CHUD_Client.lua,
-	Server: lua/CHUD_Server.lua,
+	Server: lua/Server/CHUD_Server.lua,
 	GUIScripts: lua/CHUD_GUIScripts.lua,
 	Priority: 50
 ]]

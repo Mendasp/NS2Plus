@@ -1,9 +1,13 @@
+// This file is a bit of a mess... needs a cleanup, just like the lights loading stuff
+
 local PropCache = { }
 local PropValuesCache = { }
 local propsRemoved = false
 local cinematicsCache = { }
 local cinematicsValuesCache = { }
 local cinematicsRemoved = false
+local ambientsValuesCache = { }
+local ambientsRemoved = false
 
 local BlockedProps = { 	"models/props/veil/veil_hologram_01.model", 
 						"models/props/veil/veil_holosign_01_nanogrid.model", 
@@ -200,6 +204,12 @@ function CacheCinematics(className, groupName, values)
 		end
 		table.remove(Client.cinematics, #Client.cinematics)
 	end
+	
+	if className == "ambient_sound" then
+		if not Client.fullyLoaded then
+			table.insert(ambientsValuesCache, {className = className, groupName = groupName, values = values})
+		end
+	end
 end
 
 function CreateCinematic(className, groupName, values)
@@ -290,12 +300,34 @@ function SetCHUDCinematics()
 			for i, cinematic in pairs(cinematicsValuesCache) do
 				CreateCinematic(cinematic.className, cinematic.groupName, cinematic.values)
 			end
+			cinematicsRemoved = false
 		end
 		if propsRemoved then
 			for i, prop in pairs(PropValuesCache) do
 				LoadMapEntity(prop.className, prop.groupName, prop.values)
 			end
+			propsRemoved = false
 		end		
+	end
+end
+
+function SetCHUDAmbients()
+	if not CHUDGetOption("ambient") then
+		for a = 1, #Client.ambientSoundList do
+			Client.ambientSoundList[a]:OnDestroy()
+		end
+		Client.ambientSoundList = { }
+		ambientsRemoved = true
+	elseif ambientsRemoved then
+		for _, ambient in pairs(ambientsValuesCache) do
+		
+			local entity = AmbientSound()
+			LoadEntityFromValues(entity, ambient.values)
+			Client.PrecacheLocalSound(entity.eventName)
+			table.insert(Client.ambientSoundList, entity)
+
+		end
+		ambientsRemoved = false
 	end
 end
 

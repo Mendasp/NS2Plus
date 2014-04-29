@@ -1,5 +1,5 @@
 Script.Load("lua/Elixer_Utility.lua")
-Script.Load("lua/CHUD_Shared.lua")
+Script.Load("lua/Shared/CHUD_Shared.lua")
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_MainMenu.lua")
 Script.Load("lua/CHUD_Settings.lua")
@@ -19,21 +19,11 @@ Script.Load("lua/CHUD_Outlines.lua")
 function AnnounceCHUD()
 	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")
 	GetCHUDSettings()
-	if not CHUDGetOption("ambient") then
-		OnCommandCHUDStopSound()
-	end
-end
-
-function OnCommandCHUDStopSound()
-	for a = 1, #Client.ambientSoundList do
-		Client.ambientSoundList[a]:OnDestroy()
-	end
-	Client.ambientSoundList = { }
 end
 
 Event.Hook("LoadComplete", AnnounceCHUD)
 Event.Hook("LoadComplete", SetCHUDCinematics)
-Event.Hook("Console_stopsound", OnCommandCHUDStopSound)
+Event.Hook("LoadComplete", SetCHUDAmbients)
 Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 
 AddClientUIScriptForClass("Marine", "CHUDGUI_DeathStats")

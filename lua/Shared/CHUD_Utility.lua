@@ -12,7 +12,7 @@ if Server then
 	end
 
 	local kMaxPrintLength = 128
-	// Messages were cut off by 1 character when over kMaxPrintLength
+	// Messages were cut off by 1 character when over kMaxPrintLength, fixed
     function ServerAdminPrint(client, message)
     
         if client then
@@ -41,6 +41,51 @@ if Server then
         
     end
 	
+	function GetCHUDTagBitmask()
+		
+		local tags = { }
+		Server.GetTags(tags)
+			
+		for t = 1, #tags do
+			local _, pos = string.find(tags[t], "CHUD_0x")
+			if pos then
+				return(tonumber(string.sub(tags[t], pos+1)))
+			end
+		end
+		
+	end
+	
+	function SetCHUDTagBitmask(bitmask)
+		
+		local tags = { }
+		Server.GetTags(tags)
+		
+		for t = 1, #tags do
+			if string.find(tags[t], "CHUD_0x") then
+				Server.RemoveTag(tags[t])
+			end
+		end
+		
+		Server.AddTag("CHUD_0x" .. bitmask)
+		
+	end
+	
+	function AddCHUDTagBitmask(mask)
+		local bitmask = GetCHUDTagBitmask() or 0
+		bitmask = bit.bor(bitmask, mask)
+		SetCHUDTagBitmask(bitmask)
+	end
+	
+	function SubstractCHUDTagBitmask(mask)
+		local bitmask = GetCHUDTagBitmask() or 0
+		bitmask = bit.band(bitmask, bit.bnot(mask))
+		SetCHUDTagBitmask(bitmask)
+	end
+	
+end
+
+function CheckCHUDTagOption(bitmask, option)
+	return(bit.band(bitmask, option) > 0)
 end
 
 // Obviously from Shine

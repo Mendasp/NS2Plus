@@ -26,10 +26,18 @@ function BuildServerEntry(serverIndex)
     
     serverEntry.name = FormatServerName(serverEntry.name, serverEntry.rookieFriendly)
 	
-	serverEntry.CHUD = Client.GetServerHasTag(serverIndex, "CHUD")
-	serverEntry.CHUD_MCR = Client.GetServerHasTag(serverIndex, "CHUD_MCR")
+	local serverTags = { }
+	Client.GetServerTags(serverIndex, serverTags)
 	
-	if serverEntry.CHUD and serverEntry.mode == "ns2" then
+	for t = 1, #serverTags do
+		local _, pos = string.find(serverTags[t], "CHUD_0x")
+		if pos then
+			serverEntry.CHUDBitmask = tonumber(string.sub(serverTags[t], pos+1))
+			break
+		end
+	end
+	
+	if serverEntry.CHUDBitmask ~= nil and serverEntry.mode == "ns2" then
 		serverEntry.mode = "ns2+"
 	end
     
@@ -41,12 +49,25 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
 		originalSetServerData(self, serverData)
 		
-		if serverData.CHUD then
+		if serverData.CHUDBitmask ~= nil then
+		
 			self.modName:SetColor(kYellow)
+			
+			for index, mask in pairs(CHUDTagBitmask) do
+				if CheckCHUDTagOption(serverData.CHUDBitmask, mask) then
+					if index == "mcr" then
+						self.playerCount:SetColor(kRed)
+					else
+						local val = ConditionalValue(CHUDOptions[index].disabledValue == nil, CHUDOptions[index].defaultValue, CHUDOptions[index].disabledValue)
+						
+						if CHUDOptions[index].currentValue ~= val then
+							self.modName:SetColor(kRed)
+						end
+					end
+				end
+			end
+			
 		end
-		// Mapchange required
-		if serverData.CHUD_MCR then
-			self.playerCount:SetColor(kRed)
-		end
+		
 	end
 )

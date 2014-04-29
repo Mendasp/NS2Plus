@@ -47,7 +47,7 @@ function ShowClientStats(endRound)
 	local overallacc = 0
 	local overallacconos = 0
 	
-	if #CHUDStats > 0 then
+	if #CHUDStats > 0 and CHUDGetOption("deathstats") > 0 then
 	
 		Shared.Message("-----------------------")
 		Shared.Message("Stats for this " .. text)

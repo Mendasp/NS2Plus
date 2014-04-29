@@ -1,0 +1,12 @@
+css = [[ 
+font.option_label_disabled
+{ 
+    text-color: #FF0000; 
+    opacity: 0; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    text-align: left; 
+    width: 200px; 
+    left: 30px; 
+    hover-background-color: rgba(0.5,0.5,0.5,0.4); 
+} 
+]] 

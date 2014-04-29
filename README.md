@@ -7,6 +7,13 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 30/04/2014 (Build 264):
+	- Added the ability for server admins to disable some client options. Type sv_plus in console if you have permission to change these settings or edit NS2PlusServerConfig.json.
+	- The server browser now displays ns2+ in red if server-disabled features conflict with your settings.
+	- When opening the options menu in a server with restricted options, the option label will turn red when it conflicts. The setting will get saved, but won't get applied until you join a server without the restriction.
+	- Updated Rantology's alien bars.
+	- You can now toggle the ambient sounds back on after setting them to off.
+
 - 28/04/2014 (Build 264):
 	- Changed map changing method for the mod updater, since the previous one was being blocked by the NSL Mod.
 	- Fixed bug that caused commanders to be stuck with the game timer after a reset or getting logged out at the end of the round.

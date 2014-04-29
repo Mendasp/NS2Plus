@@ -97,6 +97,7 @@ function CHUDGUI_DeathStats:Initialize()
 	self.statsText:SetPosition(GUIScale(Vector(10, 45, 0)))
 	self.statsText:SetScale(kFontScale)
 	self.statsText:SetInheritsParentAlpha(true)
+	self.statsText:SetText("")
 	self.titleBackground:AddChild(self.statsText)
 	
 	self.timePassed = 10
@@ -170,7 +171,7 @@ function CHUDGUI_DeathStats:SendKeyEvent(key, down)
 	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 then
 		self.titleBackground:SetIsVisible(down)
 		self.requestVisible = down
-		self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(down, 1, 0)))
+		self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(down and self.statsText:GetText() ~= "", 1, 0)))
 	end
 	
 end

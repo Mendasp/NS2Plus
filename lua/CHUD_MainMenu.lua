@@ -67,6 +67,15 @@ function CHUDSaveMenuSettings()
 					local multiplier = CHUDOption.multiplier or 1
 					CHUDSetOption(option.index, option:GetValue() * multiplier)
 				end
+							
+				if CHUDOption.disabled then
+					local val = ConditionalValue(CHUDOption.disabledValue == nil, CHUDOption.defaultValue, CHUDOption.disabledValue)
+					if val == CHUDOption.currentValue then
+						option.label:SetCSSClass("option_label")
+					else
+						option.label:SetCSSClass("option_label_disabled")
+					end
+				end
 			end
 		end
 	end
@@ -90,6 +99,8 @@ originalMenuCreateOptions = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionsFo
 local menuLinks = { }
 originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 	function(self)
+	
+		LoadCSSFile("lua/chud.css")
 
 		mainMenu = self
 		local optionsNr
@@ -474,7 +485,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
         
         input:SetCSSClass(inputClass)
         input:SetTopOffset(y)
-
+		
         local label = CreateMenuElement(form, "Font", false)
         label:SetCSSClass("option_label")
         label:SetText(string.upper(option.label) .. ":")
@@ -488,6 +499,11 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					if text ~= nil then
 						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, 0, 0))
 
+						local val = ConditionalValue(option.disabledValue == nil, option.defaultValue, option.disabledValue)
+						if option.disabled and val ~= option.currentValue then
+							text = text .. " (Disabled by server)."
+						end
+						
 						mainMenu.optionTooltip.tooltip:SetText(text)
 					else
 						mainMenu.optionTooltip.tooltip:SetText("")
@@ -503,6 +519,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			})
         
         optionElements[option.name] = input
+		optionElements[option.name].label = label
 		
 		y = y + rowHeight
 

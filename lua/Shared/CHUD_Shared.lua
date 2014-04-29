@@ -1,4 +1,12 @@
-Script.Load("lua/CHUD_Utility.lua")
+Script.Load("lua/Shared/CHUD_Utility.lua")
+
+CHUDTagBitmask = {
+	mcr = 0x1,
+	ambient = 0x2,
+	mapparticles = 0x4,
+	nsllights = 0x8,
+	deathstats = 0x10,
+}
 
 local kCHUDStatsMessage =
 {
@@ -8,7 +16,10 @@ local kCHUDStatsMessage =
     damage = "float",
 }
 
-Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
+local kCHUDOptionMessage =
+{
+	disabledOption = "string (32)"
+}
 
 local networkVars =
 {
@@ -73,3 +84,6 @@ if Server then
 end
 
 Class_Reload("PlayerInfoEntity", networkVars)
+
+Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
+Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
