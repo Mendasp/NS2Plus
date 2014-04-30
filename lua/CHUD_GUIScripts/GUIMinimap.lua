@@ -56,10 +56,14 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 	end)
 
 local minimapScript
-	
+
+local kBlipInfo
 local originalMinimapInit
 originalMinimapInit = Class_ReplaceMethod( "GUIMinimap", "Initialize",
 function(self)
+	if kBlipInfo ~= nil then
+		ReplaceUpValue( originalMinimapInit, "kBlipInfo", kBlipInfo )
+	end
 	originalMinimapInit(self)
 	
 	self.minimap:SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))

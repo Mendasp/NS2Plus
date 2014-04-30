@@ -61,6 +61,41 @@ function TunnelEntrance:GetUnitNameOverride(viewer)
 
 end
 
+// Compmod compatibility
+// FU Dragon
+if ModLoader_GetModInfo("CompMod") then
+	Script.Load("lua/TunnelExit.lua")
+	function TunnelExit:GetUnitNameOverride(viewer)
+
+		local function GetDestinationLocationName(self)
+
+			local location = Shared.GetEntity(self.destLocationId)
+			
+			if location then
+				return location:GetName()
+			end
+
+		end
+
+		local unitName = GetDisplayName(self)
+
+		if not GetAreEnemies(self, viewer) then
+			local destinationName = GetDestinationLocationName(self)        
+			if destinationName then
+				unitName = unitName .. " to " .. destinationName
+				if CHUDGetOption("minnps") then
+					unitName = destinationName
+				end
+			end
+			
+		end
+
+		return unitName
+
+	end
+end
+
+
 // This is a 5/10 hack according to Dragon
 // I love it, I'd give it a 7 at least.
 originalGetUnitHint = UnitStatusMixin.GetUnitHint
@@ -97,7 +132,9 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 		
 		if (self:GetMapName() ~= TechPoint.kMapName and self:GetMapName() ~= ResourcePoint.kPointMapName) and not player:isa("Commander") then
 			if CHUDGetOption("minnps") and (not self:isa("Player") or (self:isa("Embryo") and GetAreEnemies(player, self))) then
-				if ((self:GetMapName() == PhaseGate.kMapName and player:isa("Marine")) or (self:GetMapName() == TunnelEntrance.kMapName and player:isa("Alien"))) then
+				if ((self:GetMapName() == PhaseGate.kMapName and player:isa("Marine")) or
+				(self:GetMapName() == TunnelEntrance.kMapName and player:isa("Alien")) or
+				(TunnelExit and self:GetMapName() == TunnelExit.kMapName and player:isa("Alien"))) then
 					description = string.format("%s (%d%%)",description, math.ceil(self:GetHealthScalar()*100))
 				else
 					description = string.format("%d%%",math.ceil(self:GetHealthScalar()*100))
