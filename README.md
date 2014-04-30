@@ -13,6 +13,7 @@ Latest changes
 	- When opening the options menu in a server with restricted options, the option label will turn red when it conflicts. The setting will get saved, but won't get applied until you join a server without the restriction.
 	- Updated Rantology's alien bars.
 	- You can now toggle the ambient sounds back on after setting them to off.
+	- Added new option for Instant alien health bars. (Thanks kmg!).
 
 - 28/04/2014 (Build 264):
 	- Changed map changing method for the mod updater, since the previous one was being blocked by the NSL Mod.

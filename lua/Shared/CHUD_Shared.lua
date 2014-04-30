@@ -5,7 +5,7 @@ CHUDTagBitmask = {
 	ambient = 0x2,
 	mapparticles = 0x4,
 	nsllights = 0x8,
-	deathstats = 0x10,
+	deathstats = 0x0,
 }
 
 local kCHUDStatsMessage =
