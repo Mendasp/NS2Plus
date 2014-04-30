@@ -9,6 +9,7 @@ Script.Load("lua/Server/CHUD_HiveStats.lua")
 Script.Load("lua/Server/CHUD_Respawn.lua")
 Script.Load("lua/Server/CHUD_ServerStats.lua")
 Script.Load("lua/Server/CHUD_ClientOptions.lua")
+Script.Load("lua/Server/CHUD_MarineTeam.lua")
 
 local skulkJumpSounds = {
 	"sound/NS2.fev/alien/skulk/jump_good",
@@ -26,9 +27,9 @@ function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
 	soundEffectEntity:SetVolume(volume)
 	soundEffectEntity:SetPredictor(predictor)
 	soundEffectEntity:Start()
-	
+
 	return soundEffectEntity
-	
+
 end
 
 // Bugfix for skulk growl sounds
