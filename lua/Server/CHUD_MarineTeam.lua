@@ -1,7 +1,7 @@
-local oldMarineTeamInitTechTree = MarineTeam.InitTechTree;
+local oldMarineTeamInitTechTree = MarineTeam.InitTechTree
 function MarineTeam:InitTechTree()
 
-	oldMarineTeamInitTechTree( self );
+	oldMarineTeamInitTechTree( self )
 
 	self.techTree:GetTechNode( kTechId.Sentry ).prereq2 = kTechId.None
 
