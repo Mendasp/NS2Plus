@@ -16,18 +16,8 @@ local blockedVO = {	"sound/NS2.fev/marine/voiceovers/commander/build",
 					"sound/NS2.fev/marine/voiceovers/commander/defend",
 					"sound/NS2.fev/marine/voiceovers/move" }
 					
-local skulkJumpSounds = {
-	"sound/NS2.fev/alien/skulk/jump_good",
-	"sound/NS2.fev/alien/skulk/jump_best",
-	"sound/NS2.fev/alien/skulk/jump"
-}
-
 Script.Load("lua/SoundEffect.lua")
 function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
-	if table.contains(skulkJumpSounds, soundEffectName) then
-		volume = volume * 0.5
-	end
-	
 	if not table.contains(blockedVO, soundEffectName) or CHUDGetOption("wps") then
 		Shared.PlaySound(onEntity, soundEffectName, volume or 1)
 	end
