@@ -157,7 +157,19 @@ CHUDOptions =
 				valueType = "int",
 				applyFunction = function() CHUDRestartScripts({	"GUIAlienHUD" }) end,
 				sort = "C2",
-			}, 
+			},
+			instantalienhealth = {
+				name    = "CHUD_InstantAlienHealth",
+				label   = "Instant Alien Health Bar",
+				tooltip = "Update alien health bar instantly instead of animating.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "func",
+				valueType = "bool",
+				sort = "C2"
+			},
 			dmgcolor_m = {
 				name    = "CHUD_DMGColorM",
 				label   = "Marine damage numbers color",

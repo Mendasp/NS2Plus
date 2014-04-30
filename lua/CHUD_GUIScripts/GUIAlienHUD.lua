@@ -112,6 +112,32 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self:CHUDRepositionGUI()
 	end)
 
+Class_AddMethod( "GUIAlienHUD", "CHUDUpdateHealthBall",
+	function(self, deltaTime)
+		local healthBarPercentageGoal = PlayerUI_GetPlayerHealth() / PlayerUI_GetPlayerMaxHealth()
+		self.healthBarPercentage = healthBarPercentageGoal
+
+		local maxArmor = PlayerUI_GetPlayerMaxArmor()
+
+		if not (maxArmor == 0) then
+			local armorBarPercentageGoal = PlayerUI_GetPlayerArmor() / maxArmor
+			self.armorBarPercentage = armorBarPercentageGoal
+		end
+
+		// don't use more than 60% for armor in case armor value is bigger than health
+		// for skulk use 10 / 70 = 14% as armor and 86% as health
+		local armorUseFraction = Clamp( PlayerUI_GetPlayerMaxArmor() / PlayerUI_GetPlayerMaxHealth(), 0, 0.6)
+		local healthUseFraction = 1 - armorUseFraction
+
+		// set global rotation to snap to the health ring
+		self.armorBall:SetRotation( - 2 * math.pi * self.healthBarPercentage * healthUseFraction )
+
+		self.healthBall:SetPercentage(self.healthBarPercentage * healthUseFraction)
+		self.armorBall:SetPercentage(self.armorBarPercentage * armorUseFraction)
+
+		self:UpdateFading(self.healthBall:GetBackground(), self.healthBarPercentage * self.armorBarPercentage, deltaTime)
+	end)
+
 local originalAlienUpdate
 originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 	function(self, deltaTime)
@@ -121,6 +147,11 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 		local rtcount = CHUDGetOption("rtcount")
 		local gametime = CHUDGetOption("gametime")
 		local showcomm = CHUDGetOption("showcomm")
+		local instanthealth = CHUDGetOption("instantalienhealth")
+
+		if instanthealth then
+			self:CHUDUpdateHealthBall(deltaTime)
+		end
 			
 		if not rtcount then
 			self.resourceDisplay.rtCount:SetIsVisible(false)
