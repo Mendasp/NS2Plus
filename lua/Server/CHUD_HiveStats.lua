@@ -16,9 +16,11 @@ originalPlayerBotName = Class_ReplaceMethod("PlayerBot", "UpdateNameAndGender",
 	function(self)
 		originalPlayerBotName(self)
 		
-		CHUDSendStats = false
+		if CHUDSendStats then
+			Shared.Message("[NS2+] Bots have been added. Disabling Hive stats reporting.")
+		end
 		
-		Shared.Message("[NS2+] Bots have been added. Disabling Hive stats reporting.")
+		CHUDSendStats = false
 	end)
 
 // We check if cheats or bots have been used at any point to disable sending stats
