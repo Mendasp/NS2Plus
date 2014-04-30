@@ -14,6 +14,7 @@ Latest changes
 	- Updated Rantology's alien bars.
 	- You can now toggle the ambient sounds back on after setting them to off.
 	- Added new option for Instant alien health bars. (Thanks kmg!).
+	- Fixed sentries not being able to be dropped until the first sentry battery is finished. (Thanks remi.D!).
 
 - 28/04/2014 (Build 264):
 	- Changed map changing method for the mod updater, since the previous one was being blocked by the NSL Mod.
