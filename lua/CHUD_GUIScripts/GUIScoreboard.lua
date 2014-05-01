@@ -30,7 +30,7 @@ function(self, updateTeam)
 end)
 
 // I removed all of remi.D's semicolons here
-local oldCreateTeamBackground = GetLocalFunction( GUIScoreboard.Initialize, "CreateTeamBackground" )
+local oldCreateTeamBackground = GetUpValue( GUIScoreboard.Initialize, "CreateTeamBackground" )
 local function NewCreateTeamBackground( self, teamNumber )
 	local textItems = { }
 	local oldCreateTextItem = GUIManager.CreateTextItem

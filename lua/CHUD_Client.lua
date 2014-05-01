@@ -1,4 +1,6 @@
 Script.Load("lua/chud/Elixer_Utility.lua")
+Elixer.UseVersion( 1.2 ) 
+
 Script.Load("lua/Shared/CHUD_Shared.lua")
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_MainMenu.lua")
