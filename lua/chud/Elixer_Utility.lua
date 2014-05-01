@@ -2,14 +2,15 @@
 // Put this file in a subdirectory of your mod to avoid any conflicts
 //
 
-local version = 1.0;
+Script.Load( "lua/Class.lua" )
+
+local version = 1.2;
 
 if not Elixer or Elixer.Version ~= version then
 	Shared.Message( "[Elixer] Loading Utility Scripts v."..string.format("%.1f",version) );
 end
 
-Elixer = Elixer or { Debug = false; }
-Elixer.Version = 1.0;
+Elixer = Elixer or { Debug = false; Module = { [version] = {} }; }
 
 
 local function DPrint( string )
@@ -19,8 +20,24 @@ local function DPrint( string )
 end
 
 
-Script.Load( "lua/Class.lua" )
-function Class_AddMethod( className, methodName, method )
+function Elixer.UseVersion( version ) 
+	if Elixer.Version ~= version then
+		Shared.Message( "[Elixer] Using Utility Scripts v."..string.format("%.1f",version) );
+		if Elixer.Version and Elixer.Module and Elixer.Module[Elixer.Version] then
+			for k,v in pairs( Elixer.Module[Elixer.Version] ) do
+				_G[k] = nil;
+			end
+		end
+		for k,v in pairs( Elixer.Module[version] ) do
+			_G[k] = v;
+		end
+		Elixer.Version = version;
+	end
+end
+
+local ELIXER = Elixer.Module[version];
+
+function ELIXER.Class_AddMethod( className, methodName, method )
 	if _G[className][methodName] and _G[className][methodName] ~= method then
 		return
 	end
@@ -33,22 +50,26 @@ function Class_AddMethod( className, methodName, method )
 	for _, c in ipairs(classes) do
 		Class_AddMethod(c, methodName, method )
 	end
-end
+end;
 
 
-function upvalues( func )
+function ELIXER.upvalues( func )
 	local i = 0;
-	return function()
-		i = i + 1
-		local name, val = debug.getupvalue (func, i)
-		if name then
-			return i,name,val
-		end -- if
+	if not func then
+		return function() end
+	else
+		return function()
+			i = i + 1
+			local name, val = debug.getupvalue (func, i)
+			if name then
+				return i,name,val
+			end -- if
+		end
 	end
-end
+end;
 
 
-function PrintUpValues( func )
+function ELIXER.PrintUpValues( func )
 
 	local vals = nil;
 
@@ -58,14 +79,16 @@ function PrintUpValues( func )
 
 	Shared.Message( "Upvalues for "..tostring(func)..": local "..vals );
 
-end
+end;
 
 
-function GetUpValue( func, upname, options )
-	return LocateUpValue( func, upname, options )[2];
-end
+function ELIXER.GetUpValue( func, upname, options )
+	local _,val = LocateUpValue( func, upname, options );
+	return val;
+end;
 	
-function LocateUpValue( func, upname, options )
+	
+function ELIXER.LocateUpValue( func, upname, options )
 	for i,name,val in upvalues( func ) do
 		if name == upname then
 			DPrint( "LocateUpValue found "..upname )
@@ -76,7 +99,7 @@ function LocateUpValue( func, upname, options )
 	if options and options.LocateRecurse then
 		for i,name,innerfunc in upvalues( func ) do
 			if type( innerfunc ) == "function" then
-				local r = { LocateUpValue( innerfunc, upname, recurse ) }
+				local r = { LocateUpValue( innerfunc, upname, options ) }
 				if #r > 0 then
 					DPrint( "\ttrace: "..name )
 					return unpack( r )
@@ -84,10 +107,10 @@ function LocateUpValue( func, upname, options )
 			end
 		end
 	end
-end
+end;
 
 
-function GetUpValues( func )
+function ELIXER.GetUpValues( func )
 
 	local data = {}
 
@@ -97,10 +120,10 @@ function GetUpValues( func )
 
 	return data
 
-end
+end;
 
 
-function SetUpValues( func, source )
+function ELIXER.SetUpValues( func, source )
 
 	DPrint( "Setting upvalue for "..tostring(func) )
 
@@ -123,18 +146,18 @@ function SetUpValues( func, source )
 		end
 	end
 
-end
+end;
 
-function CopyUpValues( dst, src )
+function ELIXER.CopyUpValues( dst, src )
 	SetUpValues( dst, GetUpValues( src ) )
-end
+end;
 
 
 // Example usage:
 // 		ReplaceUpValue( GUIMinimap.Update, "UpdateStaticBlips", NewUpdateStaticBlips, { LocateRecurse = true; CopyUpValues = true; } )
 //		ReplaceUpValue( GUIMinimap.Initialize, "kBlipInfo", kBlipInfo, { LocateRecurse = true } )
 
-function ReplaceUpValue( func, localname, newval, options )
+function ELIXER.ReplaceUpValue( func, localname, newval, options )
 	local val,i;
 
 	DPrint( "Replacing upvalue "..localname )
@@ -146,7 +169,22 @@ function ReplaceUpValue( func, localname, newval, options )
 	end
 
 	debug.setupvalue( func, i, newval )
-end
+end;
 
+ELIXER = nil
+Elixer.UseVersion( version );
 
-
+--[[
+Elixer.Module[version] =
+{
+	Class_AddMethod = Class_AddMethod;
+	upvalues = upvalues;
+	PrintUpValues = PrintUpValues;
+	GetUpValue = GetUpValue;
+	LocateUpValue = LocateUpValue;
+	GetUpValues = GetUpValues;
+	SetUpValues = SetUpValues;
+	CopyUpValues = CopyUpValues;
+	ReplaceUpValue = ReplaceUpValue;
+}
+]]--
