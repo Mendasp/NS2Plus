@@ -136,3 +136,23 @@ originalLocationNameInit = Class_ReplaceMethod( "GUIMinimap", "InitializeLocatio
 
 		end
 	end)
+
+
+local updateStaticBlips, oldDrawMinimapNames = LocateUpValue( GUIMinimap.Update, "DrawMinimapNames", { LocateRecurse = true } );
+if oldDrawMinimapNames then
+	local GetNamePool;
+	local function NewDrawMinimapNames(self, shouldShowPlayerNames, clientIndex, spectating, blipTeam, xPos, yPos, isParasited)
+
+		oldDrawMinimapNames( self, shouldShowPlayerNames, clientIndex, spectating, blipTeam, xPos, yPos, isParasited )
+		
+		if clientIndex > 0 and shouldShowPlayerNames and not isParasited and not spectating then				
+			local record = Scoreboard_GetPlayerRecord( clientIndex );			
+			if not record.IsRookie then
+				local nameItem = GetNamePool(self, clientIndex)		
+				nameItem:SetColor( Color( 0, 1, 0 ) )
+			end
+		end
+		
+	end		
+	ReplaceUpValue( updateStaticBlips, "DrawMinimapNames", NewDrawMinimapNames, { CopyUpValues = true } )
+end

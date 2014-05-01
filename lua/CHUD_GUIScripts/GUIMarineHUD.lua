@@ -330,7 +330,9 @@ function(self)
 	self:CHUDRepositionGUI()
 end)
 
-Script.Load("lua/GUIMarineTeamMessage.lua")
+if not GUIMarineTeamMessage then
+	Script.Load("lua/GUIMarineTeamMessage.lua")
+end
 local originalMarineMessage
 originalMarineMessage = Class_ReplaceMethod( "GUIMarineTeamMessage", "SetTeamMessage",
 	function(self, message)

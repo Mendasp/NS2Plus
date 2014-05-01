@@ -58,5 +58,5 @@ function New_GUIVoiceChat_Update( self, deltaTime )
 	
 end
 
-SetUpValues( New_GUIVoiceChat_Update, GetUpValues( GUIVoiceChat.Update ) )
+CopyUpValues( New_GUIVoiceChat_Update, GUIVoiceChat.Update )
 GUIVoiceChat.Update = New_GUIVoiceChat_Update
