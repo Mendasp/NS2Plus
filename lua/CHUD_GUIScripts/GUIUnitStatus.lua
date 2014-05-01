@@ -150,7 +150,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					updateBlip.AbilityBar:SetColor(kAmmoColors[blipData.MarineWeapon])
 				end
 				
-				if updateBlip.AbilityBarBg and CHUDBlipData.EvolvePercentage then
+				if updateBlip.AbilityBarBg and CHUDBlipData.EvolvePercentage and not isEnemy then
 
 					if not CHUDGetOption("minnps") or player:isa("Commander") then
 						local bgColor = Color(0,0,0,alpha)
