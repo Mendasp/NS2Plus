@@ -146,4 +146,4 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	end)
 
 
-SetUpValues( GUIUnitStatus.Update, GetUpValues( GetLocalFunction( originalUnitStatusUpdate, "UpdateUnitStatusList" ) ) )
+CopyUpValues( GUIUnitStatus.Update, GetUpValue( originalUnitStatusUpdate, "UpdateUnitStatusList" ) )
