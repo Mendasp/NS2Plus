@@ -100,6 +100,18 @@ function CHUDGUI_DeathStats:Initialize()
 	self.statsText:SetText("")
 	self.titleBackground:AddChild(self.statsText)
 	
+	self.helpText = GetGUIManager():CreateTextItem()
+	self.helpText:SetFontName(kStatsFontName)
+	self.helpText:SetAnchor(GUIItem.Middle, GUIItem.Middle)
+	self.helpText:SetTextAlignmentX(GUIItem.Align_Center)
+	self.helpText:SetTextAlignmentY(GUIItem.Align_Center)
+	self.helpText:SetPosition(GUIScale(Vector(0, -35, 0)))
+	self.helpText:SetColor(Color(1, 1, 1, 1))
+	self.helpText:SetScale(kFontScale)
+	self.helpText:SetInheritsParentAlpha(false)
+	self.titleBackground:AddChild(self.helpText)
+	
+	
 	self.timePassed = 10
 	self.messageShown = true
 	
@@ -128,6 +140,8 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 	// Also makes training with cheats in a private server not horrible
 	local visible = not Client.GetIsControllingPlayer() or PlayerUI_GetIsThirdperson() or isDead
 	self.titleBackground:SetIsVisible(self.requestVisible or visible and CHUDGetOption("deathstats") == 2)
+	local binding = BindingsUI_GetInputValue("RequestMenu")
+	self.helpText:SetIsVisible(visible and CHUDGetOption("deathstats") == 2 and binding ~= "None")
 	
 	if isDead ~= self.lastIsDead then
 	
@@ -139,6 +153,7 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 			if CHUD_pdmg > 0 or CHUD_sdmg > 0 then
 				local statsString = CHUDGetStatsString()
 				if statsString ~= "" then
+					self.helpText:SetText("Press " .. binding .. " to display the last life stats at any point")
 					self.statsText:SetText(statsString)
 					if not self.requestVisible then
 						self.titleBackground:FadeIn(2, "CHUD_DEATHSTATS")
@@ -151,6 +166,7 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 			self.timePassed = self.timePassed + deltaTime
 		else
 			if self.messageShown == false then
+				self.helpText:SetIsVisible(false)
 				self.titleBackground:FadeOut(2, "CHUD_DEATHSTATS")
 				self.messageShown = true
 			end
