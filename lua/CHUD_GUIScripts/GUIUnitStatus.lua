@@ -40,6 +40,8 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
 					if CHUDBlipData.MarineWeapon then
 						blipData.MarineWeapon = CHUDBlipData.MarineWeapon
+					elseif CHUDBlipData.EvolvePercentage then
+						blipData.AbilityFraction = CHUDBlipData.EvolvePercentage
 					end
 				end
 				
@@ -60,8 +62,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 									
 					if CHUDGetOption("minnps") and not player:isa("Commander") then		
 						
-						updateBlip.NameText:SetText(CHUDBlipData.PlayerName)
-						updateBlip.HintText:SetText(string.format("%d%%", CHUDBlipData.SpawnFraction*100))
+						updateBlip.NameText:SetText(string.format("%s (%d%%)", CHUDBlipData.PlayerName, CHUDBlipData.SpawnFraction*100))
 						
 						updateBlip.HealthBarBg:SetIsVisible(false)
 						updateBlip.ArmorBarBg:SetIsVisible(false)
@@ -95,7 +96,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 			
 				local alpha = 0
 				
-				if blipData.IsCrossHairTarget or (CHUDBlipData and CHUDBlipData.IsSpawning and not isEnemy) then
+				if blipData.IsCrossHairTarget or (CHUDBlipData and (CHUDBlipData.IsSpawning or CHUDBlipData.EvolvePercentage) and not isEnemy) then
 					alpha = 1
 				else
 					alpha = 0
@@ -133,9 +134,42 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					["grenadelauncher"] = Color(1,0,1,1), // magenta
 				}
 				
-				if blipData.AbilityFraction > 0 and blipData.MarineWeapon and updateBlip.AbilityBar then
+				if blipData.AbilityFraction > 0 and not updateBlip.AbilityBarBg then
+				
+					AddAbilityBar(updateBlip)
+				
+				elseif blipData.AbilityFraction == 0 and updateBlip.AbilityBarBg then
+					
+					GUI.DestroyItem(updateBlip.AbilityBarBg)
+					updateBlip.AbilityBarBg = nil
+					updateBlip.AbilityBar = nil
+					
+				end
+				
+				if blipData.AbilityFraction > 0 and blipData.MarineWeapon then
 					updateBlip.AbilityBar:SetColor(kAmmoColors[blipData.MarineWeapon])
 				end
+				
+				if updateBlip.AbilityBarBg and CHUDBlipData.EvolvePercentage then
+
+					if not CHUDGetOption("minnps") or player:isa("Commander") then
+						local bgColor = Color(0,0,0,alpha)
+						updateBlip.AbilityBarBg:SetColor(bgColor)
+						
+						updateBlip.AbilityBar:SetSize(Vector(kArmorBarWidth * blipData.AbilityFraction, kArmorBarHeight * 2, 0))
+						updateBlip.AbilityBar:SetTexturePixelCoordinates(GetPixelCoordsForFraction(blipData.AbilityFraction))
+						
+						if player:isa("Commander") then
+							local origin = blipData.WorldOrigin
+							origin.x = origin.x+2
+							updateBlip.statusBg:SetPosition(Client.WorldToScreen(origin) - GUIUnitStatus.kStatusBgSize * .5)
+						end
+					else
+						updateBlip.NameText:SetText(string.format("%s (%d%%)", CHUDBlipData.Description, CHUDBlipData.EvolvePercentage*100))
+					end
+						
+				end
+				
 			end
 							
 			if CHUDGetOption("mingui") and self.fullHUD then

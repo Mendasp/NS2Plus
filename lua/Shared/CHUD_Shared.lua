@@ -21,10 +21,15 @@ local kCHUDOptionMessage =
 	disabledOption = "string (32)"
 }
 
-local networkVars =
+local playerInfoNetworkVars =
 {
 	extraTech = "string (128)",
 	isParasited = "boolean",
+}
+
+local embryoNetworkVars =
+{
+    evolvePercentage = "float",
 }
 
 if Server then
@@ -83,7 +88,8 @@ if Server then
 
 end
 
-Class_Reload("PlayerInfoEntity", networkVars)
+Class_Reload("PlayerInfoEntity", playerInfoNetworkVars)
+Class_Reload("Embryo", embryoNetworkVars)
 
 Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
