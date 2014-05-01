@@ -197,7 +197,7 @@ Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 	
 function MainMenu_OnOpenMenu()
     StartSoundEffect("sound/chud.fev/CHUD/open_menu")
-	mainMenu.tvGlareImage:SetIsVisible(not CHUDGetOption("mingui"))
+	mainMenu.tvGlareImage:SetIsVisible(false)
 	mainMenu.scanLine:SetIsVisible(not CHUDGetOption("mingui"))
 	
 	if CHUDGetOption("mingui") then

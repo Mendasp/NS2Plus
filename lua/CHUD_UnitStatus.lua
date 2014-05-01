@@ -168,6 +168,8 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 				hintTable.PlayerName = playerName
 				hintTable.SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1)			
 			end
+		elseif self:isa("Embryo") then
+			hintTable.EvolvePercentage = self.evolvePercentage / 100
 		end
 		
 		return hintTable

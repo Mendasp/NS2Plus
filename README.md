@@ -7,6 +7,12 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 01/05/2014 (Build 265):
+	- Fixed console spam about disabled Hive stats when adding bots.
+	- Added help text to the death stats to let players know which key brings up the stats again.
+	- Added alien evolution progress bars.
+	- If the mod is enabled in the mods list it will also let you look for servers in the main menu now.
+
 - 30/04/2014 (Build 264):
 	- Added the ability for server admins to disable some client options. Type sv_plus in console if you have permission to change these settings or edit NS2PlusServerConfig.json.
 	- The server browser now displays ns2+ in red if server-disabled features conflict with your settings.
@@ -68,7 +74,7 @@ Credits/Thanks to
 - **Unknown Worlds Entertainment** (http://unknownworlds.com)
 - **Dragon** (https://github.com/xToken)
 - **bawNg** (https://github.com/bawNg)
-- **lwf** [Better NS2](http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
+- **lwf** [(Better NS2)](http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
 - **Ghoul** (https://github.com/BrightPaul)
 - **Sewlek**
 - **Person8880** (https://github.com/Person8880)
