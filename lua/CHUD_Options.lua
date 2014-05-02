@@ -170,6 +170,25 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "C3"
 			},
+			motiontracking = {
+				name    = "CHUD_MotionTracking",
+				label   = "Motion tracking circle",
+				tooltip = "Lets you choose between default scan circles and a minimal one.",
+				type    = "select",
+				values  = { "Default", "Minimal" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "func",
+				valueType = "int",
+				applyFunction = function()
+					if CHUDGetOption("motiontracking") == 0 then
+						GUISensorBlips.kBlipImageName = "ui/sensor.dds"
+					else
+						GUISensorBlips.kBlipImageName = "ui/chud_sensor.dds"
+					end
+				end,
+				sort = "C4"
+			},
 			dmgcolor_m = {
 				name    = "CHUD_DMGColorM",
 				label   = "Marine damage numbers color",
