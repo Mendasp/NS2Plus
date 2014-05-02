@@ -150,10 +150,16 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					updateBlip.AbilityBar:SetColor(kAmmoColors[blipData.MarineWeapon])
 				end
 				
-				if updateBlip.AbilityBarBg and CHUDBlipData.EvolvePercentage and not isEnemy then
+				if updateBlip.AbilityBarBg and CHUDBlipData and CHUDBlipData.EvolvePercentage and not isEnemy then
 
 					if not CHUDGetOption("minnps") or player:isa("Commander") then
-						local bgColor = Color(0,0,0,alpha)
+					
+						local bgColor = Color(0,0,0,1)
+						updateBlip.statusBg:SetIsVisible(true)
+						updateBlip.AbilityBarBg:SetIsVisible(true)
+						
+						updateBlip.statusBg:SetColor(bgColor)
+						updateBlip.AbilityBar:SetColor(Color(1,1,1,1))
 						updateBlip.AbilityBarBg:SetColor(bgColor)
 						
 						updateBlip.AbilityBar:SetSize(Vector(kArmorBarWidth * blipData.AbilityFraction, kArmorBarHeight * 2, 0))
@@ -166,7 +172,11 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 						end
 					else
 						updateBlip.NameText:SetText(string.format("%s (%d%%)", CHUDBlipData.Description, CHUDBlipData.EvolvePercentage*100))
+						updateBlip.NameText:SetColor(textColor)
 					end
+					
+					// Disable research progress UI
+					updateBlip.ProgressingIcon:SetIsVisible(false)
 						
 				end
 				
