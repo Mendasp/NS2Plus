@@ -180,13 +180,6 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "func",
 				valueType = "int",
-				applyFunction = function()
-					if CHUDGetOption("motiontracking") == 0 then
-						GUISensorBlips.kBlipImageName = "ui/sensor.dds"
-					else
-						GUISensorBlips.kBlipImageName = "ui/chud_sensor.dds"
-					end
-				end,
 				sort = "C4"
 			},
 			dmgcolor_m = {
