@@ -7,6 +7,9 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- /05/2014 (Build 265):
+	- Rookies will show with a green name on the minimap. (Thanks remi.D!)
+
 - 01/05/2014 (Build 265):
 	- Fixed console spam about disabled Hive stats when adding bots.
 	- Added help text to the death stats to let players know which key brings up the stats again.
