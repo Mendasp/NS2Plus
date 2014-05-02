@@ -316,7 +316,7 @@ CHUDOptions =
 				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 			},
 			showcomm = {
-				name    = "CHUD_ShowComm",
+				name    = "CHUD_CommName",
 				label   = "Comm name/Team res",
 				tooltip = "Enables or disables showing the commander name and team resources.",
 				type    = "select",
