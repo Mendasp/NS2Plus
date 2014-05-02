@@ -9,6 +9,7 @@ Latest changes
 ==============
 - /05/2014 (Build 265):
 	- Rookies will show with a green name on the minimap. (Thanks remi.D!)
+	- Commander evolved eggs now display progress bars too, to make it consistent with player eggs.
 
 - 01/05/2014 (Build 265):
 	- Fixed console spam about disabled Hive stats when adding bots.
