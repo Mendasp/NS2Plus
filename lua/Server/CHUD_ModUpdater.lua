@@ -17,7 +17,7 @@ end
 function CHUDParseModInfo(modInfo)
 	if modInfo then
 		local response = modInfo["response"]
-		if response["result"] == 1 then
+		if response and response["result"] == 1 then
 			for _, res in pairs(response["publishedfiledetails"]) do
 				if res["result"] == 1 and not mapChangeNeeded then
 					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
