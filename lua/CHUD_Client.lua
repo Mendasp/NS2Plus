@@ -1,4 +1,4 @@
-Script.Load("lua/chud/Elixer_Utility.lua")
+Script.Load("lua/CHUD/Elixer_Utility.lua")
 Elixer.UseVersion( 1.2 ) 
 
 Script.Load("lua/Shared/CHUD_Shared.lua")
