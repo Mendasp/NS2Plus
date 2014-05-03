@@ -9,7 +9,7 @@ function(self, deltaTime)
         local minutes = math.floor(gameTime / 60)
         local seconds = gameTime - minutes * 60
         local serverName = Client.GetServerIsHidden() and "Hidden" or Client.GetConnectedServerName()
-        local gameTimeText = string.format(serverName .. " | " .. Shared.GetMapName() .. " - %d:%02d", minutes, seconds)
+        local gameTimeText = serverName .. " | " .. Shared.GetMapName() .. string.format(" - %d:%02d", minutes, seconds)
         
         self.gameTime:SetText(gameTimeText)
 	end
