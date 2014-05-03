@@ -7,7 +7,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 		// Brings tears to my eyes
 		CHUDHint = false
 		originalUnitStatusUpdate(self,deltaTime)
-		
+
 		if CHUDGetOption("smallnps") then
 			GUIUnitStatus.kFontScale = GUIScale( Vector(1,1,1) ) * 0.8
 			GUIUnitStatus.kActionFontScale = GUIScale( Vector(1,1,1) ) * 0.7
@@ -28,7 +28,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 			local blipData = activeBlips[i]
 			local updateBlip = self.activeBlipList[i]
 			local CHUDBlipData
-																			
+
 			if blipData ~= nil then
 				if type(blipData.Hint) == "table" then
 					
@@ -188,6 +188,5 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 			
 		end
 	end)
-
 
 CopyUpValues( GUIUnitStatus.Update, GetUpValue( originalUnitStatusUpdate, "UpdateUnitStatusList" ) )

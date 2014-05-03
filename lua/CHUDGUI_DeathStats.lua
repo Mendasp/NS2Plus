@@ -123,8 +123,8 @@ end
 
 function CHUDGUI_DeathStats:Reset()
 
-    GUIAnimatedScript.Reset(self)
-	
+	GUIAnimatedScript.Reset(self)
+
 end
 
 function CHUDGUI_DeathStats:Update(deltaTime)
@@ -141,7 +141,7 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 	local visible = not Client.GetIsControllingPlayer() or PlayerUI_GetIsThirdperson() or isDead
 	self.titleBackground:SetIsVisible(self.requestVisible or visible and CHUDGetOption("deathstats") == 2)
 	local binding = BindingsUI_GetInputValue("RequestMenu")
-	self.helpText:SetIsVisible(visible and CHUDGetOption("deathstats") == 2 and binding ~= "None")
+	self.helpText:SetIsVisible(visible and CHUDGetOption("deathstats") == 2 and binding ~= "None" and Client.GetIsControllingPlayer())
 	
 	if isDead ~= self.lastIsDead then
 	
