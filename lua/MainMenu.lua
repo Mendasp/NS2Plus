@@ -273,6 +273,7 @@ function MainMenu_Open()
 		if not MainMenu_IsInGame() then
 			Script.Load("lua/Class.lua")
 			Script.Load("lua/CHUD_ServerBrowserMain.lua")
+			Script.Load("lua/CHUDGUI_MainMenu_Mods.lua")
 		end
 		
     end
