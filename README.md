@@ -7,6 +7,9 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 04/05/2014 (Build 265):
+	- Added warning message about Player Badges (outdated - blocks the customization menu) and instructions to use Badges+ instead.
+
 - 03/05/2014 (Build 265):
 	- Added yellow outlines for parasited players in Insight.
 	- Made the mods list sorted by Active > Subscribed > Alphabetically (this is also in the NS2+ Server Browser).
