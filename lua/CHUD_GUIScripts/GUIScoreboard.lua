@@ -22,7 +22,7 @@ function(self, updateTeam)
 	
 	// Add number of players connecting
 	local teamNumber = updateTeam["TeamNumber"]
-	if teamNumber == kSpectatorIndex then
+	if teamNumber == kTeamReadyRoom then
 			
 		local numPlayersReported = #Scoreboard_GetPlayerList()
 		local numPlayersTotal = PlayerUI_GetServerNumPlayers()
