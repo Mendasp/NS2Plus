@@ -33,6 +33,11 @@ local embryoNetworkVars =
     evolvePercentage = "float",
 }
 
+local kCHUDAutopickupMessage =
+{
+	autoPickup = "boolean",
+}
+
 if Server then
 
 	local originalUpdateScore = PlayerInfoEntity.UpdateScore
@@ -94,3 +99,4 @@ Class_Reload("Embryo", embryoNetworkVars)
 
 Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
+Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)

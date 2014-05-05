@@ -170,6 +170,18 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "C3"
 			},
+			motiontracking = {
+				name    = "CHUD_MotionTracking",
+				label   = "Motion tracking circle",
+				tooltip = "Lets you choose between default scan circles and a minimal one.",
+				type    = "select",
+				values  = { "Default", "Minimal" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "func",
+				valueType = "int",
+				sort = "C4"
+			},
 			dmgcolor_m = {
 				name    = "CHUD_DMGColorM",
 				label   = "Marine damage numbers color",
@@ -297,7 +309,7 @@ CHUDOptions =
 				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 			},
 			showcomm = {
-				name    = "CHUD_ShowComm",
+				name    = "CHUD_CommName",
 				label   = "Comm name/Team res",
 				tooltip = "Enables or disables showing the commander name and team resources.",
 				type    = "select",
@@ -586,5 +598,22 @@ CHUDOptions =
 				category = "comp",
 				valueType = "int",
 				sort = "D1",
+            },
+			autopickup = { 
+                name    = "CHUD_Autopickup",
+                label   = "Weapon autopickup",
+				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "D2",
+				applyFunction = function()
+					local message = { }
+					message.autoPickup = CHUDGetOption("autopickup")
+					Client.SendNetworkMessage("SetCHUDAutopickup", message)
+				end,
             },
 }

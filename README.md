@@ -7,6 +7,21 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 05/05/2014 (Build 265):
+	- Added weapon autopickup feature (enabled by default). You will pick up weapons automatically for your empty weapon slots. Available in the Misc. tab.
+
+- 04/05/2014 (Build 265):
+	- Added warning message about Player Badges (outdated - blocks the customization menu) and instructions to use Badges+ instead.
+
+- 03/05/2014 (Build 265):
+	- Added yellow outlines for parasited players in Insight.
+	- Made the mods list sorted by Active > Subscribed > Alphabetically (this is also in the NS2+ Server Browser).
+
+- 02/05/2014 (Build 265):
+	- Rookies will show with a green name on the minimap. (Thanks remi.D!)
+	- Commander evolved eggs now display progress bars too, to make it consistent with player eggs.
+	- Added minimal motion tracking circle.
+
 - 01/05/2014 (Build 265):
 	- Fixed console spam about disabled Hive stats when adding bots.
 	- Added help text to the death stats to let players know which key brings up the stats again.
@@ -56,18 +71,6 @@ Latest changes
 	- Properly disabled background graphics in main menu under Minimal GUI setting.
 	- Fixed problem where Options menu and NS2+ Options would overlap with Minimal GUI setting turned off.
 	- News script now gets destroyed on menu close to solve potential performance issue.
-	
-- 19/04/2014 (Build 264):
-	- Renamed "Only request menu" to "Only voiceover menu" and updated tooltip to hopefully clear up which menu it is that shows the Last life stats.
-	- Respawn cheat commands now make you respawn at your death position (unless you die to map death triggers).
-	- Respawn cheat commands now save your equipment/upgrades.
-	- Added "jetpack" cheat command to spawn as a Jetpack Marine.
-	- Added player upgrades to player frames in Insight.
-	- Added Uke's Alien Vision.
-	- Made hitsounds scale with game volume in addition to their own volume slider.
-
-- 18/04/2014 (Build 264):
-	- Fixed bug where menu would stop responding in some cases while trying to open the options.
 
 Credits/Thanks to
 =================

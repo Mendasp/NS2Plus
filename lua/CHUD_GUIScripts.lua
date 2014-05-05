@@ -1,4 +1,4 @@
-Script.Load("lua/chud/Elixer_Utility.lua")
+Script.Load("lua/CHUD/Elixer_Utility.lua")
 Elixer.UseVersion( 1.2 ) 
 
 Script.Load("lua/CHUD_GUIScripts/GUIInsight_PlayerFrames.lua")
@@ -15,6 +15,7 @@ Script.Load("lua/CHUD_GUIScripts/GUIWorldText.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIWaypoints.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIUnitStatus.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIRequestMenu.lua")
+Script.Load("lua/CHUD_GUIScripts/GUISensorBlips.lua")
 
 Script.Load("lua/CHUD_GUIScripts/GUIGameEnd.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIScoreboard.lua")

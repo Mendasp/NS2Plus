@@ -170,6 +170,8 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			end
 		elseif self:isa("Embryo") then
 			hintTable.EvolvePercentage = self.evolvePercentage / 100
+		elseif self:isa("Egg") and self.researchProgress > 0 and self.researchProgress < 1 then
+			hintTable.EvolvePercentage = self.researchProgress
 		end
 		
 		return hintTable
