@@ -94,16 +94,13 @@ function PlayerUI_GetServerNumPlayers()
 	if ingameNumPlayers < lastIngameNumPlayers then
 		totalNumPlayers = math.max( ingameNumPlayers, totalNumPlayers - ( lastIngameNumPlayers - ingameNumPlayers ) )
 	end
-	lastIngameNumPlayers = ingameNumPlayers
+	lastIngameNumPlayers = ingameNumPlayers	
 	
-	local time = Shared.GetTime()
-	if nextUpdateTotalNumPlayers ~= -1 and nextUpdateTotalNumPlayers < time then
-		
+	if nextUpdateTotalNumPlayers ~= -1 and nextUpdateTotalNumPlayers < Shared.GetTime() then	
 		local addy = Client.GetOptionString(kLastServerConnected, "")	
 		Client.RefreshServer(addy, OnServerRefreshed)
 		
-		nextUpdateTotalNumPlayers = -1
-		
+		nextUpdateTotalNumPlayers = -1		
 	end
 	
 	return ingameNumPlayers, totalNumPlayers

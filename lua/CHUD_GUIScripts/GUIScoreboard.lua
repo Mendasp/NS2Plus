@@ -21,11 +21,11 @@ originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam
 function(self, updateTeam)
 	originalScoreboardUpdateTeam(self, updateTeam)
 	
-	// Add number of players connecting
-	local teamScores
 	local teamNumber = updateTeam["TeamNumber"]
+    local teamScores = updateTeam["GetScores"]()
+	
+	// Add number of players connecting
 	if teamNumber == kTeamReadyRoom then
-				
 		local numPlayersReported, numPlayersTotal = PlayerUI_GetServerNumPlayers()
 		if numPlayersReported < numPlayersTotal then
 			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]			
@@ -37,16 +37,26 @@ function(self, updateTeam)
 			teamNameGUIItem:SetText( teamHeaderText )
 			
 			updateTeam["GUIs"]["Background"]:SetIsVisible( true )
-		end		
-		
-		teamScores = updateTeam["GetScores"]()
+		end
 	end
 	
-			
-	// Swap KDA/KAD
+	
+	// Determines if the local player can see secret information for this team.
+	local isVisibleTeam = false
+	if Client.GetLocalPlayer() then
+		local playerTeamNum = Client.GetLocalPlayer():GetTeamNumber()
+		if playerTeamNum == kSpectatorIndex or playerTeamNum == teamNumber then
+			isVisibleTeam = true
+		end
+	end
+    
+	
 	local currentPlayerIndex = 1
 	local playerList = updateTeam["PlayerList"]
 	for index, player in pairs(playerList) do
+		local playerRecord = teamScores[currentPlayerIndex]
+		
+		// Swap KDA/KAD
 		if CHUDGetOption("kda") and player["Assists"]:GetPosition().x < player["Deaths"]:GetPosition().x then
 			local temp = player["Assists"]:GetPosition()
 			player["Assists"]:SetPosition(player["Deaths"]:GetPosition())
@@ -55,8 +65,14 @@ function(self, updateTeam)
 		
 		// Fix spectator status not showing up when on a team
 		if teamNumber == kTeamReadyRoom then
-			local playerRecord = teamScores[currentPlayerIndex]
 			player["Status"]:SetText( playerRecord.Status )
+		end
+		
+		// Show if holding JP
+		if isVisibleTeam and teamNumber == kTeam1Index then			
+			if playerRecord.hasJP then
+				player["Status"]:SetText(string.format("%s/JP", playerRecord.Status == "Flamethrower" and "Flame" or playerRecord.Status))
+			end
 		end
 		
 		currentPlayerIndex = currentPlayerIndex + 1
@@ -91,3 +107,23 @@ local function NewCreateTeamBackground( self, teamNumber )
 	return ret
 end
 ReplaceUpValue( GUIScoreboard.Initialize, "CreateTeamBackground", NewCreateTeamBackground )
+
+
+local function UpdatePlayerRecords2()
+    for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
+		
+		local playerRecord = Scoreboard_GetPlayerRecord(playerInfo.clientId)
+		playerRecord.hasJP = nil
+		
+		if playerInfo.status ~= kPlayerStatus.Exo then
+			for val in string.gmatch(playerInfo.extraTech, "%S+") do
+				if val == tostring(kTechId.Jetpack) then
+					playerRecord.hasJP = true			
+					break
+				end
+			end
+		end
+	end
+end
+
+Event.Hook("UpdateClient", UpdatePlayerRecords2)
