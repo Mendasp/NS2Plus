@@ -10,7 +10,7 @@ Script.Load("lua/Server/CHUD_Respawn.lua")
 Script.Load("lua/Server/CHUD_ServerStats.lua")
 Script.Load("lua/Server/CHUD_ClientOptions.lua")
 Script.Load("lua/Server/CHUD_MarineTeam.lua")
-Script.Load("lua/CHUD_Autopickup.lua")
+Script.Load("lua/Server/CHUD_PlayerInfo.lua")
 
 local oldBadgesActive = false
 // Warning about outdated mod
