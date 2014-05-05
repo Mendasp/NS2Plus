@@ -156,14 +156,18 @@ if Server then
 	originalWeaponDropped = Class_ReplaceMethod( "Weapon", "Dropped",
 		function(self, prevOwner)
 			local slot = self:GetHUDSlot()
-			local impulse = 0.075
-			if slot == 2 then
-				impulse = 0.0075
-			elseif slot == 3 then
-				impulse = 0.005
-			end
+
 			originalWeaponDropped(self, prevOwner)
-			local viewCoords = prevOwner:GetViewCoords()
-			self.physicsModel:AddImpulse(self:GetOrigin(), (viewCoords.zAxis * impulse))
+			
+			if self.physicsModel then
+				local viewCoords = prevOwner:GetViewCoords()
+				local impulse = 0.075
+				if slot == 2 then
+					impulse = 0.0075
+				elseif slot == 3 then
+					impulse = 0.005
+				end
+				self.physicsModel:AddImpulse(self:GetOrigin(), (viewCoords.zAxis * impulse))
+			end
 		end)
 end
