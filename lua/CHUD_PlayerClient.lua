@@ -88,8 +88,10 @@ function PlayerUI_GetServerNumPlayers()
 			local name = Client.GetConnectedServerName()
 			if name ~= serverData.name then
 				Shared.Message( "Mismatched server, connected player count reporting may be incorrect" )
-			end
-			totalNumPlayers = serverData.numPlayers
+				totalNumPlayers = 0
+			else
+				totalNumPlayers = serverData.numPlayers
+			end			
 		end
 		Client.RefreshServer(addy, OnServerRefreshed)
 	end

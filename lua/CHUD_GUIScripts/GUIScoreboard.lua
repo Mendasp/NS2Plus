@@ -25,20 +25,19 @@ function(self, updateTeam)
 	local teamScores
 	local teamNumber = updateTeam["TeamNumber"]
 	if teamNumber == kTeamReadyRoom then
-			
+				
 		local numPlayersReported = #Scoreboard_GetPlayerList()
 		local numPlayersTotal = PlayerUI_GetServerNumPlayers()
 		if numPlayersReported < numPlayersTotal then
-			
 			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]			
 			local teamNameText = updateTeam["TeamName"]
 			local numPlayers = table.count(updateTeam["GetScores"]())
-						
-			local text = string.format("%s (%d %s, %d Connecting)", teamNameText, 
-				numPlayers, Locale.ResolveString( numPlayers == 1 and "SB_PLAYER" or "SB_PLAYERS" ),
-				numPlayersTotal - numPlayersReported )
-		
-			teamNameGUIItem:SetText( text )
+			
+			local playersOnTeamText = numPlayers > 0 and string.format( "%d %s, ", numPlayers, Locale.ResolveString( numPlayers == 1 and "SB_PLAYER" or "SB_PLAYERS" ) ) or ""				
+			local teamHeaderText = string.format("%s (%s%d Connecting)", teamNameText, playersOnTeamText,	numPlayersTotal - numPlayersReported )		
+			teamNameGUIItem:SetText( teamHeaderText )
+			
+			updateTeam["GUIs"]["Background"]:SetIsVisible( true )
 		end		
 		
 		teamScores = updateTeam["GetScores"]()
