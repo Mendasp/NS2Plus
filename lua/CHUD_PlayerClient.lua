@@ -74,28 +74,38 @@ local function UpdateTotalNumPlayers()
 end
 
 
+local lastIngameNumPlayers = 0
 local totalNumPlayers = 0
 local nextUpdateTotalNumPlayers = 0
+
+local function OnServerRefreshed(serverData)
+	local name = Client.GetConnectedServerName()
+	if name ~= serverData.name then
+		totalNumPlayers = 0
+	else
+		totalNumPlayers = serverData.numPlayers
+	end			
+	nextUpdateTotalNumPlayers = Shared.GetTime() + 3
+end
+
 function PlayerUI_GetServerNumPlayers()
 	
+	local ingameNumPlayers = #Scoreboard_GetPlayerList()
+	if ingameNumPlayers < lastIngameNumPlayers then
+		totalNumPlayers = math.max( ingameNumPlayers, totalNumPlayers - lastIngameNumPlayers - ingameNumPlayers );
+	end
+	lastIngameNumPlayers = ingameNumPlayers;
+	
 	local time = Shared.GetTime()
-	if nextUpdateTotalNumPlayers < time then
-		nextUpdateTotalNumPlayers = time + 3
+	if nextUpdateTotalNumPlayers ~= -1 and nextUpdateTotalNumPlayers < time then
 		
-		local addy = Client.GetOptionString(kLastServerConnected, "")
-		
-		local function OnServerRefreshed(serverData)
-			local name = Client.GetConnectedServerName()
-			if name ~= serverData.name then
-				Shared.Message( "Mismatched server, connected player count reporting may be incorrect" )
-				totalNumPlayers = 0
-			else
-				totalNumPlayers = serverData.numPlayers
-			end			
-		end
+		local addy = Client.GetOptionString(kLastServerConnected, "")	
 		Client.RefreshServer(addy, OnServerRefreshed)
+		
+		nextUpdateTotalNumPlayers = -1
+		
 	end
 	
-	return totalNumPlayers
+	return ingameNumPlayers, totalNumPlayers
     
 end

@@ -26,8 +26,7 @@ function(self, updateTeam)
 	local teamNumber = updateTeam["TeamNumber"]
 	if teamNumber == kTeamReadyRoom then
 				
-		local numPlayersReported = #Scoreboard_GetPlayerList()
-		local numPlayersTotal = PlayerUI_GetServerNumPlayers()
+		local numPlayersReported, numPlayersTotal = PlayerUI_GetServerNumPlayers()
 		if numPlayersReported < numPlayersTotal then
 			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]			
 			local teamNameText = updateTeam["TeamName"]
