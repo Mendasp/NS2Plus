@@ -17,7 +17,6 @@ Script.Load("lua/CHUD_ServerBrowser.lua")
 Script.Load("lua/CHUD_Sounds.lua")
 Script.Load("lua/CHUD_Hitsounds.lua")
 Script.Load("lua/CHUD_Outlines.lua")
-Script.Load("lua/CHUD_Autopickup.lua")
 
 function AnnounceCHUD()
 	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")

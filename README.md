@@ -7,6 +7,11 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 06/05/2014 (Build 265):
+	- Fixed scoreboard not showing spectators to players in teams. (Thanks remi.D!)
+	- Added connecting players to the scoreboard. (Thanks remi.D!)
+	- Extra checks in main menu functionality so it doesn't break on mod updates.
+
 - 05/05/2014 (Build 265):
 	- Added weapon autopickup feature (enabled by default). You will pick up weapons automatically for your empty weapon slots. Available in the Misc. tab.
 
@@ -58,19 +63,6 @@ Latest changes
 	- Added server toggle for Hive stats reporting.
 	- Hitsounds also work in pregame now.
 	- Disabled backgrounds for the Voice/Request menu under Minimal GUI setting.
-
-- 21/04/2014 (Build 264):
-	- Added "respawn" cheat command. It restores your last class (with team), weaponry and teleports you to your last valid death position.
-	- Added "respawn_clear" cheat command to clear everything that the new cheat commands remember (position, weapons, upgrades and class).
-	- Respawn commands no longer respawn you at last death position. They spawn you where you are. Still remembers upgrades and weapons.
-	- Respawn commands now ignore your team, so you can type "skulk" as a marine without having to type "switch" first, for example.
-
-- 20/04/2014 (Build 264):
-	- Fixed bug where Escape key wouldn't work when hovering over the news page.
-	- Fixed news showing up behind main menu graphics.
-	- Properly disabled background graphics in main menu under Minimal GUI setting.
-	- Fixed problem where Options menu and NS2+ Options would overlap with Minimal GUI setting turned off.
-	- News script now gets destroyed on menu close to solve potential performance issue.
 
 Credits/Thanks to
 =================
