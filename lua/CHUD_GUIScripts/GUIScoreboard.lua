@@ -19,6 +19,28 @@ local originalScoreboardUpdateTeam
 originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam",
 function(self, updateTeam)
 	originalScoreboardUpdateTeam(self, updateTeam)
+	
+	// Add number of players connecting
+	local teamNumber = updateTeam["TeamNumber"]
+	if teamNumber == kSpectatorIndex then
+			
+		local numPlayersReported = #Scoreboard_GetPlayerList()
+		local numPlayersTotal = PlayerUI_GetServerNumPlayers()
+		if numPlayersReported < numPlayersTotal then
+			
+			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]			
+			local teamNameText = updateTeam["TeamName"]
+			local numPlayers = table.count(updateTeam["GetScores"]())
+						
+			local text = string.format("%s (%d %s, %d Connecting)", teamNameText, 
+				numPlayers, Locale.ResolveString( numPlayers == 1 and "SB_PLAYER" or "SB_PLAYERS" ),
+				numPlayersTotal - numPlayersReported )
+		
+			teamNameGUIItem:SetText( text )
+		end
+	end
+	
+	// Swap KDA/KAD
 	local playerList = updateTeam["PlayerList"]
 	for index, player in pairs(playerList) do
 		if CHUDGetOption("kda") and player["Assists"]:GetPosition().x < player["Deaths"]:GetPosition().x then

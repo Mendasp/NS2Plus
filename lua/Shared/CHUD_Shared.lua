@@ -1,4 +1,5 @@
 Script.Load("lua/Shared/CHUD_Utility.lua")
+Script.Load("lua/Shared/CHUD_GameInfo.lua")
 
 CHUDTagBitmask = {
 	mcr = 0x1,
