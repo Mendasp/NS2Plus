@@ -283,8 +283,8 @@ function MainMenu_Open()
 					
 					Shared.Message("NS2+ Main Menu mods loaded.")
 					break
-				else
-					Shared.Message("NS2+ has been updated or is not available, not loading main menu mods.")
+				elseif name == "NS2+" and active == "YES" then
+					Shared.Message("NS2+ has been updated or is not available, not loading main menu mods. A restart will be required when the update is installed (you can do it from the mods menu).")
 				end
 			end
 		end
