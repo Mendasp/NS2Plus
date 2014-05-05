@@ -599,4 +599,21 @@ CHUDOptions =
 				valueType = "int",
 				sort = "D1",
             },
+			autopickup = { 
+                name    = "CHUD_Autopickup",
+                label   = "Weapon autopickup",
+				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "D2",
+				applyFunction = function()
+					local message = { }
+					message.autoPickup = CHUDGetOption("autopickup")
+					Client.SendNetworkMessage("SetCHUDAutopickup", message)
+				end,
+            },
 }

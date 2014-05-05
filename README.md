@@ -7,6 +7,9 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 05/05/2014 (Build 265):
+	- Added weapon autopickup feature (enabled by default). You will pick up weapons automatically for your empty weapon slots. Available in the Misc. tab.
+
 - 04/05/2014 (Build 265):
 	- Added warning message about Player Badges (outdated - blocks the customization menu) and instructions to use Badges+ instead.
 
