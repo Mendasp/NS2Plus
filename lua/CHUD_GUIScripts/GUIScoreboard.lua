@@ -21,6 +21,7 @@ function(self, updateTeam)
 	originalScoreboardUpdateTeam(self, updateTeam)
 	
 	// Add number of players connecting
+	local teamScores
 	local teamNumber = updateTeam["TeamNumber"]
 	if teamNumber == kTeamReadyRoom then
 			
@@ -37,10 +38,14 @@ function(self, updateTeam)
 				numPlayersTotal - numPlayersReported )
 		
 			teamNameGUIItem:SetText( text )
-		end
+		end		
+		
+		teamScores = updateTeam["GetScores"]()
 	end
 	
+			
 	// Swap KDA/KAD
+	local currentPlayerIndex = 1
 	local playerList = updateTeam["PlayerList"]
 	for index, player in pairs(playerList) do
 		if CHUDGetOption("kda") and player["Assists"]:GetPosition().x < player["Deaths"]:GetPosition().x then
@@ -48,6 +53,14 @@ function(self, updateTeam)
 			player["Assists"]:SetPosition(player["Deaths"]:GetPosition())
 			player["Deaths"]:SetPosition(temp)
 		end
+		
+		// Fix spectator status not showing up when on a team
+		if teamNumber == kTeamReadyRoom then
+			local playerRecord = teamScores[currentPlayerIndex]
+			player["Status"]:SetText( playerRecord.Status )
+		end
+		
+		currentPlayerIndex = currentPlayerIndex + 1
 	end
 end)
 
