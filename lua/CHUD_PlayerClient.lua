@@ -92,9 +92,9 @@ function PlayerUI_GetServerNumPlayers()
 	
 	local ingameNumPlayers = #Scoreboard_GetPlayerList()
 	if ingameNumPlayers < lastIngameNumPlayers then
-		totalNumPlayers = math.max( ingameNumPlayers, totalNumPlayers - lastIngameNumPlayers - ingameNumPlayers );
+		totalNumPlayers = math.max( ingameNumPlayers, totalNumPlayers - ( lastIngameNumPlayers - ingameNumPlayers ) )
 	end
-	lastIngameNumPlayers = ingameNumPlayers;
+	lastIngameNumPlayers = ingameNumPlayers
 	
 	local time = Shared.GetTime()
 	if nextUpdateTotalNumPlayers ~= -1 and nextUpdateTotalNumPlayers < time then
