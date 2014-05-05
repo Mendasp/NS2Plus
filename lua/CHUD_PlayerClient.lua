@@ -55,12 +55,45 @@ function PlayerUI_GetGameLengthTime()
 end
 
 
+local function UpdateTotalNumPlayers()
+	local time = Shared.GetTime()
+	if nextUpdateTotalNumPlayers < time then
+		nextUpdateTotalNumPlayers = time + 3
+		
+		local addy = Client.GetOptionString(kLastServerConnected, "")
+		
+		local function OnServerRefreshed(serverData)
+			local name = Client.GetConnectedServerName()
+			if name ~= serverData.name then
+				Shared.Message( "Mismatched server, connected player reporting may be incorrect" )
+			end
+			totalNumPlayers = serverData.numPlayers
+		end
+		Client.RefreshServer(addy, OnServerRefreshed)
+	end
+end
+
+
+local totalNumPlayers = 0
+local nextUpdateTotalNumPlayers = 0
 function PlayerUI_GetServerNumPlayers()
 	
-    local entityList = Shared.GetEntitiesWithClassname("GameInfo")
-    if entityList:GetSize() > 0 then    
-        local gameInfo = entityList:GetEntityAtIndex(0)
-        return gameInfo.numPlayers or 0
+	local time = Shared.GetTime()
+	if nextUpdateTotalNumPlayers < time then
+		nextUpdateTotalNumPlayers = time + 3
+		
+		local addy = Client.GetOptionString(kLastServerConnected, "")
+		
+		local function OnServerRefreshed(serverData)
+			local name = Client.GetConnectedServerName()
+			if name ~= serverData.name then
+				Shared.Message( "Mismatched server, connected player count reporting may be incorrect" )
+			end
+			totalNumPlayers = serverData.numPlayers
+		end
+		Client.RefreshServer(addy, OnServerRefreshed)
 	end
+	
+	return totalNumPlayers
     
 end

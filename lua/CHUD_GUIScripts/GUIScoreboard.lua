@@ -14,7 +14,8 @@ function(self, deltaTime)
         self.gameTime:SetText(gameTimeText)
 	end
 end)
-
+	
+	
 local originalScoreboardUpdateTeam
 originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam",
 function(self, updateTeam)
@@ -63,6 +64,7 @@ function(self, updateTeam)
 		currentPlayerIndex = currentPlayerIndex + 1
 	end
 end)
+
 
 // I removed all of remi.D's semicolons here
 local oldCreateTeamBackground = GetUpValue( GUIScoreboard.Initialize, "CreateTeamBackground" )
