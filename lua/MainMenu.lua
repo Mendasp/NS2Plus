@@ -283,6 +283,8 @@ function MainMenu_Open()
 					
 					Shared.Message("NS2+ Main Menu mods loaded.")
 					break
+				else
+					Shared.Message("NS2+ has been updated or is not available, not loading main menu mods.")
 				end
 			end
 		end
