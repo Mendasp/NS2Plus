@@ -271,9 +271,20 @@ function MainMenu_Open()
         MainMenu_OnOpenMenu()
         
 		if not MainMenu_IsInGame() then
-			Script.Load("lua/Class.lua")
-			Script.Load("lua/CHUD_ServerBrowserMain.lua")
-			Script.Load("lua/CHUDGUI_MainMenu_Mods.lua")
+			for s = 1, Client.GetNumMods() do
+				local name = Client.GetModTitle(s)
+				local active = Client.GetIsModActive(s) and "YES" or "NO"
+				local state = Client.GetModState(s)
+
+				if name == "NS2+" and active == "YES" and state == "available" then
+					Script.Load("lua/Class.lua")
+					Script.Load("lua/CHUD_ServerBrowserMain.lua")
+					Script.Load("lua/CHUDGUI_MainMenu_Mods.lua")
+					
+					Shared.Message("NS2+ Main Menu mods loaded.")
+					break
+				end
+			end
 		end
 		
     end
