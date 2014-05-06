@@ -8,8 +8,9 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 Latest changes
 ==============
 - 06/05/2014 (Build 265):
-	- Fixed scoreboard not showing spectators to players in teams. (Thanks remi.D!)
-	- Added connecting players to the scoreboard. (Thanks remi.D!)
+	- Added showing number of connecting players to the scoreboard. (Thanks remi.D!)
+	- Fixed scoreboard not showing spectators to players on teams. (Thanks Wyzcrack and remi.D!)
+	- Added showing if a marine has a jetpack. (Thanks Wyzcrack and remi.D!)
 	- Extra checks in main menu functionality so it doesn't break on mod updates.
 
 - 05/05/2014 (Build 265):
