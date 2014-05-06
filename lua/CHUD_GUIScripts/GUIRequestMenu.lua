@@ -85,9 +85,24 @@ local impulseMap = {
 	},
 }
 
+local function PrintOnCommandImpulseHelp()	
+	local keys = {}
+	for k,v in pairs( impulseMap ) do
+		keys[#keys+1] = k	
+	end	
+	Shared.Message( "Usage: \"impulse arg1 [arg2 [...]]\"\n"..
+					"\tArguments may be one or more of: [ \""..table.concat( keys , "\", \"" ).."\" ]\n"..
+					"\tIf more than one of the provided arguments is available to the player's class, it will randomly select between them." )
+end
 
 local SendRequest = GetUpValue( GUIRequestMenu.SendKeyEvent, "SendRequest", { LocateRecurse = true } )
 local function OnCommandImpulse( ... )
+	local args = {...}
+	if #args == 0 then
+		PrintOnCommandImpulseHelp()
+		return
+	end
+		
 	local request = {}
 	local impulseType = ""
 	
@@ -98,9 +113,14 @@ local function OnCommandImpulse( ... )
 			break
 		end
 	end
-
-	for i,v in ipairs( { ... } ) do	
-		if impulseMap[v] and impulseMap[v][impulseType] then
+	
+	for i,v in ipairs( args ) do	
+		if not impulseMap[v] then
+			Shared.Message( "Invalid argument: \""..v.."\"" )
+			PrintOnCommandImpulseHelp()
+			return
+		end
+		if impulseMap[v][impulseType] then
 			request[ #request + 1 ] = impulseMap[v][impulseType]
 		end
 	end
