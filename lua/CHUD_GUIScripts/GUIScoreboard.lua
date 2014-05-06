@@ -71,7 +71,11 @@ function(self, updateTeam)
 		// Show if holding JP
 		if isVisibleTeam and teamNumber == kTeam1Index then			
 			if playerRecord.hasJP then
-				player["Status"]:SetText(string.format("%s/JP", playerRecord.Status == "Flamethrower" and "Flame" or playerRecord.Status))
+				if playerRecord.Status ~= "" then
+					player["Status"]:SetText(string.format("%s/JP", playerRecord.Status == "Flamethrower" and "Flame" or playerRecord.Status))
+				else
+					player["Status"]:SetText("JP")
+				end
 			end
 		end
 		
