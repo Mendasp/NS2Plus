@@ -2,7 +2,7 @@
 Script.Load("lua/Hud/Commander/CystGhostModel.lua")
 local kCircleModelName = PrecacheAsset("models/misc/circle/circle_alien.model")
 			
-oldCystGhostModelInit = CystGhostModel.Initialize
+local oldCystGhostModelInit = CystGhostModel.Initialize
 function CystGhostModel:Initialize()
 
 	oldCystGhostModelInit(self)
@@ -12,7 +12,7 @@ function CystGhostModel:Initialize()
 	end
 end
 		
-oldCystGhostModelDestroy = CystGhostModel.Destroy
+local oldCystGhostModelDestroy = CystGhostModel.Destroy
 function CystGhostModel:Destroy()
 	oldCystGhostModelDestroy(self)
 	if self.circleModel then
@@ -21,7 +21,7 @@ function CystGhostModel:Destroy()
 	end
 end
 
-oldCystGhostModelVis = CystGhostModel.SetIsVisible
+local oldCystGhostModelVis = CystGhostModel.SetIsVisible
 function CystGhostModel:SetIsVisible(isVisible)
 	oldCystGhostModelVis(self, isVisible)
 	if not self.circleModel then
@@ -31,7 +31,7 @@ function CystGhostModel:SetIsVisible(isVisible)
 	self.circleModel:SetIsVisible(isVisible)
 end
 		
-oldCystGhostModelUpdate = CystGhostModel.Update
+local oldCystGhostModelUpdate = CystGhostModel.Update
 function CystGhostModel:Update()
 	
 	local modelCoords = GhostModel.Update(self)
