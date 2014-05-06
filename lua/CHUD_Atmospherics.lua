@@ -39,19 +39,3 @@ originalExoUpdateRender = Class_ReplaceMethod( "Exo", "OnUpdateRender",
 		
 	end
 )
-
-function CHUDApplyMapAtmos()
-
-    if Client.lightList then
-
-        for index, light in ipairs(Client.lightList) do
-
-            if light.originalAtmosphericDensity then
-                light:SetAtmosphericDensity(light.originalAtmosphericDensity * CHUDGetOption("mapatmos"))
-            end  
-  
-        end
-           
-    end
-	
-end

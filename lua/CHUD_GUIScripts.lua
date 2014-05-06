@@ -21,6 +21,6 @@ Script.Load("lua/CHUD_GUIScripts/GUIGameEnd.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIScoreboard.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIVoiceChat.lua")
 
-// I suppose this isn't really a GUIScript, but... it still draws stuff on screen? :D
+// I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/CHUD_GUIScripts/GhostModel.lua")
 Script.Load("lua/CHUD_GUIScripts/CystGhostModel.lua")

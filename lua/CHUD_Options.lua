@@ -584,7 +584,15 @@ CHUDOptions =
 				category = "comp",
 				valueType = "float",
 				sort = "C2",
-				applyFunction = CHUDApplyMapAtmos,
+				applyFunction = function()
+					if Client.lightList then
+						for index, light in ipairs(Client.lightList) do
+							if light.originalAtmosphericDensity then
+								light:SetAtmosphericDensity(light.originalAtmosphericDensity * CHUDGetOption("mapatmos"))
+							end
+						end
+					end
+				end,
             },
 			deathstats = { 
                 name    = "CHUD_DeathStats",

@@ -121,7 +121,9 @@ function CHUDLoadLights()
 		
 	end
 	
-	CHUDApplyMapAtmos()
+	if CHUDOptions["mapatmos"] ~= nil and CHUDOptions["mapatmos"].applyFunction then
+		CHUDOptions["mapatmos"].applyFunction()
+	end
 	
 end
 
