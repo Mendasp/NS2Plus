@@ -2,6 +2,43 @@ Script.Load("lua/GUIInsight_PlayerFrames.lua")
 
 local originalIPFUpdatePlayer = GUIInsight_PlayerFrames.UpdatePlayer
 function GUIInsight_PlayerFrames:UpdatePlayer(player, playerRecord, team, yPosition)
+
+	local playerName = playerRecord.Name
+	local newStatus = playerRecord.Status
+	local teamNumber = team["TeamNumber"]
+	
+	if newStatus ~= player.status then
+
+		local oldStatus = player.status
+
+		if newStatus == Locale.ResolveString("STATUS_DEAD") then
+		
+			if player.Name:GetText() == playerName then
+
+				local texture = nil
+				local textureCoordinates = nil
+				if oldStatus == Locale.ResolveString("STATUS_LERK") then
+					texture = "ui/Lerk.dds"
+					textureCoordinates = {0, 0, 284, 253}
+				end
+				
+				if texture ~= nil then
+				
+					local position = player["Background"]:GetScreenPosition(Client.GetScreenWidth(), Client.GetScreenHeight())
+					local text = string.format("%s %s Has Died", oldStatus, playerName)
+					local icon = {Texture = texture, TextureCoordinates = textureCoordinates, Color = Color(1,1,1,0.25), Size = Vector(0,0,0)}
+					local info = {Text = text, Scale = Vector(0.2,0.2,0.2), Color = Color(0.5,0.5,0.5,0.5), ShadowColor = Color(0,0,0,0.5)}
+					local alert = GUIInsight_AlertQueue:CreateAlert(position, icon, info, teamNumber)
+					GUIInsight_AlertQueue:AddAlert(alert, Color(1,1,1,1), Color(1,1,1,1))
+					
+				end
+			
+			end
+		
+		end
+		
+	end
+
 	originalIPFUpdatePlayer(self, player, playerRecord, team, yPosition)
 	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
