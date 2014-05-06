@@ -102,7 +102,6 @@ local function OnCommandImpulse( ... )
 	for i,v in ipairs( { ... } ) do	
 		if impulseMap[v] and impulseMap[v][impulseType] then
 			request[ #request + 1 ] = impulseMap[v][impulseType]
-			Shared.Message( "Found voice over for "..v);
 		end
 	end
 	
