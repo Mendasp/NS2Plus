@@ -491,8 +491,8 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
         label:SetText(string.upper(option.label) .. ":")
         label:SetTopOffset(y)
         label:SetIgnoreEvents(false)
-
-		label:AddEventCallbacks({ 
+		
+		local tooltipCallbacks = { 
 			OnMouseOver = function(self)
 				if mainMenu ~= nil then
 					local text = option.tooltip
@@ -516,7 +516,12 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					mainMenu.optionTooltip.tooltip:SetText("")
 				end
 			end,
-			})
+			}
+
+		label:AddEventCallbacks(tooltipCallbacks)
+		for _, child in ipairs(input.children) do
+			child:AddEventCallbacks(tooltipCallbacks)
+		end
         
         optionElements[option.name] = input
 		optionElements[option.name].label = label
