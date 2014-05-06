@@ -10,12 +10,15 @@ Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",
 		local closestWeapon = nil
 		local closestDistance = Math.infinity
 		
+		local pickupPriority = { [kTechId.Flamethrower] = 1, [kTechId.GrenadeLauncher] = 2, [kTechId.Shotgun] = 3 }
+		local bestPriority = pickupPriority[self:GetWeaponInHUDSlot(1) and self:GetWeaponInHUDSlot(1):GetTechId()] or -1
+		
 		for i, nearbyWeapon in ipairs(nearbyWeapons) do
 		
 			local pickupSlot = nearbyWeapon:isa("Weapon") and nearbyWeapon:GetHUDSlot()
 			local isEmptySlot = (self:GetWeaponInHUDSlot(pickupSlot) == nil) or (self:GetWeaponInHUDSlot(pickupSlot):isa("Axe"))
 		
-			if nearbyWeapon:isa("Weapon") and nearbyWeapon:GetIsValidRecipient(self) and isEmptySlot then
+			if nearbyWeapon:isa("Weapon") and nearbyWeapon:GetIsValidRecipient(self) and isEmptySlot and self.autoPickup then
 			
 				local nearbyWeaponDistance = (nearbyWeapon:GetOrigin() - toPosition):GetLengthSquared()
 				if nearbyWeaponDistance < closestDistance then
@@ -25,6 +28,15 @@ Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",
 				
 				end
 				
+			elseif nearbyWeapon:isa("Weapon") and nearbyWeapon:GetIsValidRecipient(self) and pickupSlot == 1 and self.autoPickupBetter then
+
+				local techId = nearbyWeapon:GetTechId()
+				local curPriority = pickupPriority[techId] or 0
+
+				if curPriority > bestPriority then
+					bestPriority = curPriority
+					closestWeapon = nearbyWeapon
+				end
 			end
 			
 		end
@@ -34,9 +46,14 @@ Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",
 	end)
 	
 Class_AddMethod( "Marine", "SetCHUDAutopickup",
-	function(self, autoPickup)
-		if autoPickup ~= nil then
-			self.autoPickup = autoPickup
+	function(self, message)
+		if message ~= nil then
+			if message.autoPickup ~= nil then
+				self.autoPickup = message.autoPickup
+			end
+			if message.autoPickupBetter ~= nil then
+				self.autoPickupBetter = message.autoPickupBetter
+			end
 		end
 	end
 )
@@ -46,10 +63,12 @@ originalMarineOnInit = Class_ReplaceMethod( "Marine", "OnInitialized",
 		originalMarineOnInit(self)
 	
 		self.autoPickup = true
+		self.autoPickupBetter = false
 	
 		if Client then
 			local message = { }
 			message.autoPickup = CHUDGetOption("autopickup")
+			message.autoPickupBetter = CHUDGetOption("autopickupbetter")
 			Client.SendNetworkMessage("SetCHUDAutopickup", message)
 		end
 	end)
@@ -75,9 +94,7 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
         end
         self.flashlightLastFrame = flashlightPressed
 
-		local pickupSlot = self:FindNearbyAutoPickupWeapon() and self:FindNearbyAutoPickupWeapon():GetHUDSlot()
-		local isEmptySlot = (self:GetWeaponInHUDSlot(pickupSlot) == nil) or (self:GetWeaponInHUDSlot(pickupSlot):isa("Axe"))
-		local autoPickup = self:FindNearbyAutoPickupWeapon() and isEmptySlot and bit.band(input.commands, Move.Drop) == 0 and self.autoPickup
+		local autoPickup = self:FindNearbyAutoPickupWeapon() and bit.band(input.commands, Move.Drop) == 0
         if (bit.band(input.commands, Move.Drop) ~= 0 or autoPickup) and not self:GetIsVortexed() then
         
             if Server then
@@ -143,7 +160,9 @@ if Server then
 		
 			local player = client:GetControllingPlayer()
 			if player and player:isa("Marine") then
-				player:SetCHUDAutopickup(message.autoPickup)
+				if message ~= nil then
+					player:SetCHUDAutopickup(message)
+				end
 			end
 			
 		end

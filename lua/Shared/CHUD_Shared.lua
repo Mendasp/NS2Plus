@@ -14,6 +14,7 @@ local kCHUDOptionMessage =
 local kCHUDAutopickupMessage =
 {
 	autoPickup = "boolean",
+	autoPickupBetter = "boolean",
 }
 
 Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )

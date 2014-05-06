@@ -621,6 +621,25 @@ CHUDOptions =
 				applyFunction = function()
 					local message = { }
 					message.autoPickup = CHUDGetOption("autopickup")
+					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
+					Client.SendNetworkMessage("SetCHUDAutopickup", message)
+				end,
+            },
+			autopickupbetter = { 
+                name    = "CHUD_AutopickupBetter",
+                label   = "Autopickup better weapon",
+				tooltip = "Picks up better weapons in the primary slot automatically.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "D3",
+				applyFunction = function()
+					local message = { }
+					message.autoPickup = CHUDGetOption("autopickup")
+					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
 					Client.SendNetworkMessage("SetCHUDAutopickup", message)
 				end,
             },
