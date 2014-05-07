@@ -8,8 +8,9 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 Latest changes
 ==============
 - 08/05/2014 (Build 265):
-	- When Autopickup is enabled Welders, Mines and Pistols will no longer show a pickup hint when running over them (Thanks remi.D)
+	- When Autopickup is enabled Welders, Mines and Pistols will no longer show a pickup hint when running over them. (Thanks remi.D)
 	- Autopickup will now pick up a weapon more quickly if it was not the last weapon you dropped. (Thanks remi.D)
+	- Fixed commander selection bug that made buildings selected with hotgroups not respond properly sometimes.
 	
 - 07/05/2014 (Build 265):
 	- Added "impulse" command to trigger voice overs without using the request menu. (Thanks remi.D!)
