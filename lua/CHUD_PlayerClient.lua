@@ -106,3 +106,53 @@ function PlayerUI_GetServerNumPlayers()
 	return ingameNumPlayers, totalNumPlayers
     
 end
+
+local lastChatCommand = Shared.GetTime()
+local chatInterval = 15
+
+local function ClientSay(...)
+
+	local args = {...}
+	local message = ""
+	
+	for _, word in ipairs(args) do
+		if message == "" then
+			message = word
+		else
+			message = message .. " " .. word
+		end
+	end
+	
+	if message ~= nil and string.len(message) > 0 and Shared.GetTime() > lastChatCommand + chatInterval then
+
+		lastChatCommand = Shared.GetTime()
+		message = string.sub(message, 1, kMaxChatLength)
+		Client.SendNetworkMessage("ChatClient", BuildChatClientMessage(false, message), true)
+		
+	end
+
+end
+
+local function ClientTeamSay(...)
+	local args = {...}
+	local message = ""
+	
+	for _, word in ipairs(args) do
+		if message == "" then
+			message = word
+		else
+			message = message .. " " .. word
+		end
+	end
+	
+	if message ~= nil and string.len(message) > 0 and Shared.GetTime() > lastChatCommand + chatInterval then
+
+		lastChatCommand = Shared.GetTime()
+		message = string.sub(message, 1, kMaxChatLength)
+		Client.SendNetworkMessage("ChatClient", BuildChatClientMessage(true, message), true)
+		
+	end
+end
+
+Event.Hook("Console_say", ClientSay)
+Event.Hook("Console_team_say", ClientTeamSay)
