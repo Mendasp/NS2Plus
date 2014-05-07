@@ -231,7 +231,5 @@ if Client then
 
 	end
 
-	Elixer.Debug = true
 	ReplaceUpValue( MarineActionFinderMixin.OnProcessMove, "FindNearbyWeapon", NewFindNearbyWeapon )
-	Elixer.Debug = false
 end
