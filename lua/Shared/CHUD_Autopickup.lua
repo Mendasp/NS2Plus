@@ -195,3 +195,43 @@ if Server then
 			end
 		end)
 end
+
+
+if Client then
+	local function SortByGreatestCost(item1, item2)
+
+		local cost1 = HasMixin(item1, "Tech") and LookupTechData(item1:GetTechId(), kTechDataCostKey, 0) or 0
+		local cost2 = HasMixin(item2, "Tech") and LookupTechData(item2:GetTechId(), kTechDataCostKey, 0) or 0
+
+		return cost1 < cost2
+
+	end
+
+
+	local function NewFindNearbyWeapon(self, toPosition )
+
+		local autoPickupEnabled = CHUDGetOption("autopickup") or CHUDGetOption("autopickupbetter")
+				
+		local nearbyWeapons = GetEntitiesWithMixinWithinRange("Pickupable", toPosition, kFindWeaponRange)
+		table.sort(nearbyWeapons, SortByGreatestCost )
+		
+		for i, nearbyWeapon in ipairs(nearbyWeapons) do
+		
+			if nearbyWeapon:isa("Weapon") and nearbyWeapon:GetIsValidRecipient(self) then
+				local techId = HasMixin(nearbyWeapon, "Tech") and nearbyWeapon:GetTechId() or 0
+				if not autoPickupEnabled or ( techId ~= kTechId.LayMines and techId ~= kTechId.Welder and techId ~= kTechId.Pistol ) then
+					return nearbyWeapon
+				end
+				
+			end
+			
+		end
+		
+		return nil
+
+	end
+
+	Elixer.Debug = true
+	ReplaceUpValue( MarineActionFinderMixin.OnProcessMove, "FindNearbyWeapon", NewFindNearbyWeapon )
+	Elixer.Debug = false
+end

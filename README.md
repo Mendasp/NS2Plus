@@ -7,6 +7,10 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 08/05/2014 (Build 265):
+	- When Autopickup is enabled Welders, Mines and Pistols will no longer show a pickup hint when running over them (Thanks remi.D)
+	- Autopickup will now pick up a weapon more quickly if it was not the last weapon you dropped. (Thanks remi.D)
+	
 - 07/05/2014 (Build 265):
 	- Added "impulse" command to trigger voice overs without using the request menu. (Thanks remi.D!)
 	- Added showing number of connecting players to the scoreboard. (Thanks remi.D!)
