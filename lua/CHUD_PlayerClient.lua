@@ -80,9 +80,7 @@ local nextUpdateTotalNumPlayers = 0
 
 local function OnServerRefreshed(serverData)
 	local name = Client.GetConnectedServerName()
-	if name ~= serverData.name then
-		totalNumPlayers = 0
-	else
+	if name == serverData.name then
 		totalNumPlayers = serverData.numPlayers
 	end			
 	nextUpdateTotalNumPlayers = Shared.GetTime() + 3
