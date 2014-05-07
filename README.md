@@ -17,6 +17,7 @@ Latest changes
 	- Added Lerk deaths to Insight alerts.
 	- Added hints to option inputs.
 	- Added autopickup better primary weapon option (default off). Available in Misc. tab.
+	- Reset autopickup options so they default to off.
 
 - 05/05/2014 (Build 265):
 	- Added weapon autopickup feature (enabled by default). You will pick up weapons automatically for your empty weapon slots. Available in the Misc. tab.
