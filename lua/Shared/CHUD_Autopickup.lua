@@ -106,7 +106,7 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
 
 					local lastActiveHUD = self:GetActiveWeapon():GetHUDSlot()
                 
-                    if Shared.GetTime() > self.timeOfLastPickUpWeapon + kPickupWeaponTimeLimit then
+                    if self.lastDroppedWeapon ~= nearbyDroppedWeapon or Shared.GetTime() > self.timeOfLastPickUpWeapon + kPickupWeaponTimeLimit then
                     
                         if nearbyDroppedWeapon.GetReplacementWeaponMapName then
                         
@@ -139,10 +139,15 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
                     
                 else
                 
-                    // No nearby weapon, drop our current weapon.
-                    self:Drop()
+					local activeWeapon = self:GetActiveWeapon()
 					
-					self.timeOfLastPickUpWeapon = Shared.GetTime()
+					// No nearby weapon, drop our current weapon.
+                    if self:Drop() then						
+						self.lastDroppedWeapon = activeWeapon                    
+						self.timeOfLastPickUpWeapon = Shared.GetTime()
+					end
+					
+					
                     
                 end
                 
