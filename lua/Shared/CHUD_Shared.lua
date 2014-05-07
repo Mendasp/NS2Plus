@@ -23,6 +23,7 @@ Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 
 Script.Load("lua/Shared/CHUD_Utility.lua")
 Script.Load("lua/Shared/CHUD_Autopickup.lua")
+Script.Load("lua/Shared/CHUD_CommanderSelection.lua")
 
 CHUDTagBitmask = {
 	mcr = 0x1,
