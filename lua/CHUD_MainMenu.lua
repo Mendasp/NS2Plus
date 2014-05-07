@@ -497,14 +497,16 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				if mainMenu ~= nil then
 					local text = option.tooltip
 					if text ~= nil then
-						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, 0, 0))
-
 						local val = ConditionalValue(option.disabledValue == nil, option.defaultValue, option.disabledValue)
 						if option.disabled and val ~= option.currentValue then
 							text = text .. " (Disabled by server)."
 						end
 						
-						mainMenu.optionTooltip.tooltip:SetText(text)
+						local cutoff = 60
+						
+						mainMenu.optionTooltip.tooltip:SetText(WrapText( text, cutoff, nil, "" ))
+						
+						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, ConditionalValue(string.len(text) <= cutoff, 0, -10), 0))
 					else
 						mainMenu.optionTooltip.tooltip:SetText("")
 					end
