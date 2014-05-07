@@ -1,3 +1,4 @@
+local originalMarineUpdateRender
 originalMarineUpdateRender = Class_ReplaceMethod( "Marine", "OnUpdateRender", 
 	function(self)
 		
@@ -19,6 +20,7 @@ originalMarineUpdateRender = Class_ReplaceMethod( "Marine", "OnUpdateRender",
 	end
 )
 
+local originalExoUpdateRender
 originalExoUpdateRender = Class_ReplaceMethod( "Exo", "OnUpdateRender", 
 	function(self)
 		
