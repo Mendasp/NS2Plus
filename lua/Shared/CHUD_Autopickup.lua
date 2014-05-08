@@ -11,7 +11,9 @@ Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",
 		local closestDistance = Math.infinity
 		
 		local pickupPriority = { [kTechId.Flamethrower] = 1, [kTechId.GrenadeLauncher] = 2, [kTechId.Shotgun] = 3 }
-		local bestPriority = pickupPriority[self:GetWeaponInHUDSlot(1) and self:GetWeaponInHUDSlot(1):GetTechId()] or -1
+		
+		local currentWeapon = self:GetWeaponInHUDSlot(1)
+		local bestPriority = currentWeapon and ( pickupPriority[currentWeapon:GetTechId()] or 0 ) or -1
 		
 		for i, nearbyWeapon in ipairs(nearbyWeapons) do
 		
