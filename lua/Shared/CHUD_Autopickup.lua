@@ -212,7 +212,7 @@ if Client then
 
 	local function NewFindNearbyWeapon(self, toPosition )
 
-		local autoPickupEnabled = CHUDGetOption("autopickup") or CHUDGetOption("autopickupbetter")
+		local autoPickupEnabled = CHUDGetOption("autopickup")
 				
 		local nearbyWeapons = GetEntitiesWithMixinWithinRange("Pickupable", toPosition, kFindWeaponRange)
 		table.sort(nearbyWeapons, SortByGreatestCost )
