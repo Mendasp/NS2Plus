@@ -9,13 +9,15 @@ Latest changes
 ==============
 - /05/2014 (Build 265):
 	- Changed pickup expire bar options. You can now toggle between Disabled/Equipment Only/All pickupables.
+	- Mines now still show their pickup icon even if already holding mines. (Thanks remi.D!)
+	- Fixed not showing that mines can be picked up when already holding mines. (Thanks remi.D!)
+	- Made weapons that were actively picked up get swapped to (pistols, mines). (Thanks remi.D!)
+	- Added option to prevent shotgun damage numbers from accumulating. (Thanks remi.D!)
+	- Added option to speed up damage number accumulation. (Thanks remi.D!)
 
 - 09/05/2014 (Build 265):
 	- Added pickup expire bar. You can now see how much time left you have to pick up things on the ground. Default is off. Available in the Misc. tab.
 	- Fixed lights staying red if the power node was under attack (infestation). (Thanks remi.D!)
-	- Mines will now still show their pickup icon even if already holding mines. (Thanks remi.D!)
-	- Fixing not showing that mines can be picked up when already holding mines. (Thanks remi.D!)
-	- Making weapons that were actively picked up get swapped to (pistols, mines). (Thanks remi.D!)
 
 - 08/05/2014 (Build 265):
 	- When Autopickup is enabled Welders, Mines and Pistols will no longer show a pickup hint when running over them. (Thanks remi.D)

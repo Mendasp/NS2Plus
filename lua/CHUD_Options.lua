@@ -353,6 +353,50 @@ CHUDOptions =
 				sort = "C4",
 				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 			}, 
+			uniqueshotgunhits = {
+                name    = "CHUD_UniqueShotgunHits",
+                label   = "Shotgun damage numbers",
+				tooltip = "Optionally show unique damage numbers for each shotgun shot",
+				type    = "select",
+				values  = { "Default", "Per shot" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "hud",
+				valueType = "bool",
+				sort = "C5",
+			},
+			fasterdamagenumbers = {
+                name    = "CHUD_FasterDamageNumbers",
+                label   = "Faster damage numbers",
+				tooltip = "Makes damage numbers accumulate faster",
+				type    = "select",
+				values  = { "Default", "Faster", "Instant" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "hud",
+				valueType = "int",
+				applyFunction = 
+					function() 
+						local speeds = { [0] = 220, [1] = 800, [2] = 9001 }
+						kWorldDamageNumberAnimationSpeed = speeds[CHUDGetOption("fasterdamagenumbers")]
+					end,
+				sort = "C6",
+			},
+			hitindicator = { 
+                name    = "CHUD_HitIndicator",
+                label   = "Hit indicator fade time",
+				tooltip = "Controls the speed of the crosshair hit indicator.",
+                type    = "slider",
+				sliderCallback = CHUDHitIndicatorSlider,
+				defaultValue = 1,
+				minValue = 0,
+				maxValue = 1,
+				multiplier = 100,
+				category = "hud",
+				valueType = "float",
+				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator") end,
+				sort = "C7"
+            },
 			minimapalpha = { 
                 name    = "CHUD_MinimapAlpha",
                 label   = "Overview transparency",
@@ -369,7 +413,7 @@ CHUDOptions =
 					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
 					minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
 				end,
-				sort = "C5",
+				sort = "C8",
             },
             locationalpha = { 
                 name    = "CHUD_LocationAlpha",
@@ -386,7 +430,7 @@ CHUDOptions =
 				applyFunction = function()
 					OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDGetOption("locationalpha"))*255))
 				end,
-				sort = "C6",
+				sort = "C9",
             },
 			classicammo = {
 				name    = "CHUD_ClassicAmmo",
@@ -416,20 +460,6 @@ CHUDOptions =
 						ConditionalValue(friends, kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
 				end,
 			}, 
-			hitindicator = { 
-                name    = "CHUD_HitIndicator",
-                label   = "Hit indicator fade time",
-				tooltip = "Controls the speed of the crosshair hit indicator.",
-                type    = "slider",
-				sliderCallback = CHUDHitIndicatorSlider,
-				defaultValue = 1,
-				minValue = 0,
-				maxValue = 1,
-				multiplier = 100,
-				category = "hud",
-				valueType = "float",
-				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator") end,
-            },
 			kda = {
 				name    = "CHUD_KDA",
 				label   = "KDA/KAD",
