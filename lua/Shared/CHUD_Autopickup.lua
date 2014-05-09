@@ -220,8 +220,25 @@ if Client then
 		for i, nearbyWeapon in ipairs(nearbyWeapons) do
 		
 			if nearbyWeapon:isa("Weapon") and nearbyWeapon:GetIsValidRecipient(self) then
+				
+				local foundWeapon = true
+				
 				local techId = HasMixin(nearbyWeapon, "Tech") and nearbyWeapon:GetTechId() or 0
-				if not autoPickupEnabled or ( techId ~= kTechId.LayMines and techId ~= kTechId.Welder and techId ~= kTechId.Pistol ) then
+				if autoPickupEnabled then
+					
+					if kTechId.LayMines or techId == kTechId.Pistol then
+						local pickupSlot = nearbyWeapon:GetHUDSlot()
+						local isEmptySlot = (self:GetWeaponInHUDSlot(pickupSlot) == nil) or (self:GetWeaponInHUDSlot(pickupSlot):isa("Axe"))
+						if isEmptySlot then
+							foundWeapon = false
+						end
+					elseif techId == kTechId.Welder then
+						foundWeapon = false						
+					end
+					
+				end
+				
+				if foundWeapon then
 					return nearbyWeapon
 				end
 				
