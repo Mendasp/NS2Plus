@@ -15,6 +15,7 @@ Latest changes
 	- Fixed lights staying red if the power node was under attack (infestation). (Thanks remi.D!)
 	- Mines will now still show their pickup icon even if already holding mines. (Thanks remi.D!)
 	- Fixing not showing that mines can be picked up when already holding mines. (Thanks remi.D!)
+	- Making weapons that were actively picked up get swapped to (pistols, mines). (Thanks remi.D!)
 
 - 08/05/2014 (Build 265):
 	- When Autopickup is enabled Welders, Mines and Pistols will no longer show a pickup hint when running over them. (Thanks remi.D)

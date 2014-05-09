@@ -123,7 +123,7 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
                             
                         end
                         
-						local active = not self.autoPickup or nearbyDroppedWeapon:GetHUDSlot() == 1
+						local active = not self.autoPickup or nearbyDroppedWeapon:GetHUDSlot() == 1 or bit.band(input.commands, Move.Drop) ~= 0
                         self:AddWeapon(nearbyDroppedWeapon, active)
                         StartSoundEffectAtOrigin(Marine.kGunPickupSound, self:GetOrigin())
 						
