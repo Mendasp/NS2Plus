@@ -1,9 +1,9 @@
 local kCHUDStatsMessage =
 {
-    isPlayer = "boolean",
-    weapon = "enum kTechId",
-    targetId = "entityid",
-    damage = "float",
+	isPlayer = "boolean",
+	weapon = "enum kTechId",
+	targetId = "entityid",
+	damage = "float",
 }
 
 local kCHUDOptionMessage =
@@ -41,9 +41,15 @@ local playerInfoNetworkVars =
 
 local embryoNetworkVars =
 {
-    evolvePercentage = "float",
+	evolvePercentage = "float",
+}
+
+local pickupableNetworkVars =
+{
+	expireTime = "time (by 0.1)",
 }
 
 Class_Reload("PlayerInfoEntity", playerInfoNetworkVars)
 Class_Reload("Embryo", embryoNetworkVars)
-
+Class_Reload("Weapon", pickupableNetworkVars)
+Class_Reload("DropPack", pickupableNetworkVars)

@@ -7,6 +7,10 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 09/05/2014 (Build 265):
+	- Added pickup expire bar. You can now see how much time left you have to pick up things on the ground. Default is off. Available in the Misc. tab.
+	- Fixed lights staying red if the power node was under attack (infestation). (Thanks remi.D!)
+
 - 08/05/2014 (Build 265):
 	- When Autopickup is enabled Welders, Mines and Pistols will no longer show a pickup hint when running over them. (Thanks remi.D)
 	- Autopickup will now pick up a weapon more quickly if it was not the last weapon you dropped. (Thanks remi.D)

@@ -643,4 +643,16 @@ CHUDOptions =
 					Client.SendNetworkMessage("SetCHUDAutopickup", message)
 				end,
             },
+			pickupexpire = { 
+                name    = "CHUD_PickupExpire",
+                label   = "Pickup expiration bar",
+				tooltip = "Adds a bar indicating the time left for the pickupable to disappear.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "D4",
+            },
 }
