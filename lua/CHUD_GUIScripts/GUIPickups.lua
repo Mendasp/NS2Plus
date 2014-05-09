@@ -80,7 +80,7 @@ originalGUIPickupsUpdate = Class_ReplaceMethod( "GUIPickups", "Update",
 				
 				if dotProduct > 0 then
 				
-					local pickupExpire = CHUDGetOption("pickupexpire")
+					local pickupExpire = (CHUDGetOption("pickupexpire") > 0 and pickup:isa("Weapon")) or CHUDGetOption("pickupexpire") == 2
 					local freePickupGraphic = self:GetFreePickupGraphic()
 					freePickupGraphic:SetIsVisible(true)
 					freePickupGraphic.expireBarBg:SetIsVisible(timeLeft > -1 and pickupExpire)
