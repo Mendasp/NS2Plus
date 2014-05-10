@@ -1,6 +1,5 @@
 ﻿NS2+
 ==========
-
 This Natural Selection 2 mod aims to improve, fix and expand the game in order to bring players a better experience. It contains extra customization options and quality of life improvements. This mod needs to be installed on the server.
 
 To be able to search for servers running NS2+ you can use [NS2+ Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163). Remember to set it to Active in your Mods list.
@@ -10,6 +9,7 @@ Latest changes
 - 10/05/2014 (Build 265):
 	- Changed pickup expire bar options. You can now toggle between Disabled/Equipment Only/All pickupables. Available in Misc. tab.
 	- Added option to disable click selecting for Marine players (only Marine Commander). You can still do marquee selection. Available in Misc. tab.
+	- You can now make the minimap key act as a toggle. Available in the Misc. tab.
 	- Added marquee selection for enemy units. If the marquee selection contains units from both teams it will default to your team's units.
 	- Fixed bug where some elements of the Marine UI would remain on screen after death.
 	- Changed last life stats helper text to use the normal graphics for showing key binds with their actions.
