@@ -63,12 +63,14 @@ function(self)
     self.CHUDLocationText:SetLayer(kGUILayerPlayerHUDForeground2)
     self.CHUDLocationText:SetColor(kBrightColor)
     self.CHUDLocationText:SetFontIsBold(true)
+	self.background:AddChild(self.CHUDLocationText)
 	
 	self.gameTime = self:CreateAnimatedTextItem()
     self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 	self.gameTime:SetFontIsBold(true)
     self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
     self.gameTime:SetColor(kBrightColor)
+	self.background:AddChild(self.gameTime)
 	
 	// Initialize location and power so they show up correctly
 	self.lastLocationText = ""

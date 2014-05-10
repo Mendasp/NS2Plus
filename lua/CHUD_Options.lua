@@ -41,8 +41,8 @@ CHUDOptions =
 				sort = "A2",
 			},
 			autowps = { 
-                name    = "CHUD_AutoWPs",
-                label   = "Automatic waypoints",
+				name    = "CHUD_AutoWPs",
+				label   = "Automatic waypoints",
 				tooltip = "Enables or disables automatic waypoints (not given by the commander).",
 				type    = "select",
 				values  = { "Off", "On" },
@@ -51,7 +51,7 @@ CHUDOptions =
 				category = "func",
 				valueType = "bool",
 				sort = "A3",
-            },
+			},
 			minwps = {
 				name    = "CHUD_MinWaypoints",
 				label   = "Minimal waypoints",
@@ -120,8 +120,8 @@ CHUDOptions =
 				sort = "B1",
 			},
 			avstate = { 
-                name    = "CHUD_AVState",
-                label   = "Default AV state",
+				name    = "CHUD_AVState",
+				label   = "Default AV state",
 				tooltip = "Sets the state the alien vision will be in when you respawn.",
 				type    = "select",
 				values  = { "Off", "On" },
@@ -130,7 +130,7 @@ CHUDOptions =
 				category = "func",
 				valueType = "bool",
 				sort = "B2",
-            },
+			},
 			hpbar = {
 				name    = "CHUD_HPBar",
 				label   = "Marine health bars",
@@ -259,6 +259,22 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "A1",
 			},
+			scorecolor = {
+				name    = "CHUD_ScorePopupColor",
+				label   = "Score popup color",
+				tooltip = "Changes the color of the score popup.",
+				type    = "select",
+				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
+				valueTable = { 0x19FF19, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = function()
+					GUINotifications.kScoreDisplayKillTextColor = ColorIntToColor(CHUDGetOptionAssocVal("scorecolor"))
+				end,
+				sort = "A2",
+			},
 			assists = {
 				name    = "CHUD_Assists",
 				label   = "Assist score popup",
@@ -269,7 +285,23 @@ CHUDOptions =
 				defaultValue = true,
 				category = "hud",
 				valueType = "bool",
-				sort = "A2",
+				sort = "A3",
+			},
+			assistscolor = {
+				name    = "CHUD_AssistsPopupColor",
+				label   = "Assists popup color",
+				tooltip = "Changes the color of the assists popup.",
+				type    = "select",
+				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
+				valueTable = { 0xBFBF19, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = function()
+					GUINotifications.kScoreDisplayTextColor = ColorIntToColor(CHUDGetOptionAssocVal("assistscolor"))
+				end,
+				sort = "A4",
 			},
 			banners = {
 				name    = "CHUD_Banners",
@@ -354,8 +386,8 @@ CHUDOptions =
 				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 			}, 
 			uniqueshotgunhits = {
-                name    = "CHUD_UniqueShotgunHits",
-                label   = "Shotgun damage numbers",
+				name    = "CHUD_UniqueShotgunHits",
+				label   = "Shotgun damage numbers",
 				tooltip = "Optionally show unique damage numbers for each shotgun shot",
 				type    = "select",
 				values  = { "Default", "Per shot" },
@@ -366,8 +398,8 @@ CHUDOptions =
 				sort = "C5",
 			},
 			fasterdamagenumbers = {
-                name    = "CHUD_FasterDamageNumbers",
-                label   = "Faster damage numbers",
+				name    = "CHUD_FasterDamageNumbers",
+				label   = "Faster damage numbers",
 				tooltip = "Makes damage numbers accumulate faster",
 				type    = "select",
 				values  = { "Default", "Faster", "Instant" },
@@ -383,10 +415,10 @@ CHUDOptions =
 				sort = "C6",
 			},
 			hitindicator = { 
-                name    = "CHUD_HitIndicator",
-                label   = "Hit indicator fade time",
+				name    = "CHUD_HitIndicator",
+				label   = "Hit indicator fade time",
 				tooltip = "Controls the speed of the crosshair hit indicator.",
-                type    = "slider",
+				type    = "slider",
 				sliderCallback = CHUDHitIndicatorSlider,
 				defaultValue = 1,
 				minValue = 0,
@@ -396,10 +428,10 @@ CHUDOptions =
 				valueType = "float",
 				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator") end,
 				sort = "C7"
-            },
+			},
 			minimapalpha = { 
-                name    = "CHUD_MinimapAlpha",
-                label   = "Overview transparency",
+				name    = "CHUD_MinimapAlpha",
+				label   = "Overview transparency",
 				tooltip = "Sets the trasparency of the map overview.",
 				type    = "slider",
 				sliderCallback = CHUDMinimapSlider,
@@ -414,10 +446,10 @@ CHUDOptions =
 					minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
 				end,
 				sort = "C8",
-            },
-            locationalpha = { 
-                name    = "CHUD_LocationAlpha",
-                label   = "Location transparency",
+			},
+			locationalpha = { 
+				name    = "CHUD_LocationAlpha",
+				label   = "Location transparency",
 				tooltip = "Sets the trasparency of the location text on the minimap.",
 				type    = "slider",
 				sliderCallback = CHUDLocationSlider,
@@ -431,7 +463,7 @@ CHUDOptions =
 					OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDGetOption("locationalpha"))*255))
 				end,
 				sort = "C9",
-            },
+			},
 			classicammo = {
 				name    = "CHUD_ClassicAmmo",
 				label   = "Classic ammo counter",
@@ -520,8 +552,8 @@ CHUDOptions =
 				sort = "A1",
 			},
 			hitsounds_pitch = { 
-                name    = "CHUD_HitsoundsPitch",
-                label   = "Hitsounds pitch modifier",
+				name    = "CHUD_HitsoundsPitch",
+				label   = "Hitsounds pitch modifier",
 				tooltip = "Sets the pitch for high damage hits (only shotgun).",
 				type    = "select",
 				values  = { "Low pitch", "High pitch" },
@@ -530,10 +562,10 @@ CHUDOptions =
 				category = "comp",
 				valueType = "int",
 				sort = "A2",
-            },
+			},
 			hitsounds_vol = { 
-                name    = "CHUD_HitsoundsVolume",
-                label   = "Hitsounds volume",
+				name    = "CHUD_HitsoundsVolume",
+				label   = "Hitsounds volume",
 				tooltip = "Sets the volume for hitsounds.",
 				type    = "slider",
 				sliderCallback = CHUDHitsoundsSlider,
@@ -544,7 +576,7 @@ CHUDOptions =
 				category = "comp",
 				valueType = "float",
 				sort = "A3",
-            },
+			},
 			ambient = {
 				name    = "CHUD_Ambient",
 				label   = "Ambient sounds",
@@ -588,8 +620,8 @@ CHUDOptions =
 				sort = "B3",
 			}, 
 			flashatmos = { 
-                name    = "CHUD_FlashAtmos",
-                label   = "Flashlight atmospherics",
+				name    = "CHUD_FlashAtmos",
+				label   = "Flashlight atmospherics",
 				tooltip = "Sets the atmospheric density of flashlights.",
 				type    = "slider",
 				sliderCallback = CHUDFlashAtmosSlider,
@@ -600,10 +632,10 @@ CHUDOptions =
 				category = "comp",
 				valueType = "float",
 				sort = "C1",
-            },
+			},
 			mapatmos = { 
-                name    = "CHUD_MapAtmos",
-                label   = "Map atmospherics",
+				name    = "CHUD_MapAtmos",
+				label   = "Map atmospherics",
 				tooltip = "Sets the atmospheric density of the map lights.",
 				type    = "slider",
 				sliderCallback = CHUDMapAtmosSlider,
@@ -623,10 +655,10 @@ CHUDOptions =
 						end
 					end
 				end,
-            },
+			},
 			deathstats = { 
-                name    = "CHUD_DeathStats",
-                label   = "Death stats UI",
+				name    = "CHUD_DeathStats",
+				label   = "Death stats UI",
 				tooltip = "Enables or disables the stats you get after you die. Also visible on voiceover menu (default: X).",
 				type    = "select",
 				values  = { "Fully disabled", "Only voiceover menu", "Enabled" },
@@ -636,10 +668,10 @@ CHUDOptions =
 				category = "comp",
 				valueType = "int",
 				sort = "D1",
-            },
+			},
 			autopickup = { 
-                name    = "CHUD_AutoPickup",
-                label   = "Weapon autopickup",
+				name    = "CHUD_AutoPickup",
+				label   = "Weapon autopickup",
 				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
 				type    = "select",
 				values  = { "Off", "On" },
@@ -647,17 +679,17 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				sort = "D2",
+				sort = "E1",
 				applyFunction = function()
 					local message = { }
 					message.autoPickup = CHUDGetOption("autopickup")
 					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
 					Client.SendNetworkMessage("SetCHUDAutopickup", message)
 				end,
-            },
+			},
 			autopickupbetter = { 
-                name    = "CHUD_AutoPickupBetter",
-                label   = "Autopickup better weapon",
+				name    = "CHUD_AutoPickupBetter",
+				label   = "Autopickup better weapon",
 				tooltip = "Picks up better weapons in the primary slot automatically.",
 				type    = "select",
 				values  = { "Off", "On" },
@@ -665,17 +697,17 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				sort = "D3",
+				sort = "E2",
 				applyFunction = function()
 					local message = { }
 					message.autoPickup = CHUDGetOption("autopickup")
 					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
 					Client.SendNetworkMessage("SetCHUDAutopickup", message)
 				end,
-            },
+			},
 			pickupexpire = { 
-                name    = "CHUD_PickupExpire",
-                label   = "Pickup expiration bar",
+				name    = "CHUD_PickupExpire",
+				label   = "Pickup expiration bar",
 				tooltip = "Adds a bar indicating the time left for the pickupable to disappear.",
 				type    = "select",
 				values  = { "Disabled", "Equipment Only", "All pickupables" },
@@ -683,6 +715,30 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "comp",
 				valueType = "int",
-				sort = "D4",
-            },
+				sort = "E3",
+			},
+			minimaptoggle = { 
+				name    = "CHUD_MinimapToggle",
+				label   = "Minimap key behavior",
+				tooltip = "Lets you make the minimap key a toggle instead of holding.",
+				type    = "select",
+				values  = { "Hold", "Toggle" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "comp",
+				valueType = "int",
+				sort = "F1",
+			},
+			marinecommselect = { 
+				name    = "CHUD_MarineCommSelect",
+				label   = "(Comm) Marine Click Selection",
+				tooltip = "Lets you disable click selecting for Marines.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "F2",
+			},
 }
