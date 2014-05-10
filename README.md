@@ -7,7 +7,7 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
-- /05/2014 (Build 265):
+- 10/05/2014 (Build 265):
 	- Changed pickup expire bar options. You can now toggle between Disabled/Equipment Only/All pickupables. Available in Misc. tab.
 	- Added option to disable click selecting for Marine players (only Marine Commander). You can still do marquee selection. Available in Misc. tab.
 	- Added marquee selection for enemy units. If the marquee selection contains units from both teams it will default to your team's units.
@@ -16,8 +16,8 @@ Latest changes
 	- Added assists/score popup color selection. Available in the HUD tab.
 	- Mines now still show their pickup icon even if already holding mines. (Thanks remi.D!)
 	- Made weapons that were actively picked up get swapped to (pistols, mines). (Thanks remi.D!)
-	- Added option to prevent shotgun damage numbers from accumulating. (Thanks remi.D!)
-	- Added option to speed up damage number accumulation. (Thanks remi.D!)
+	- Added option to prevent shotgun damage numbers from accumulating. Available in the HUD tab. (Thanks remi.D!)
+	- Added option to speed up damage number accumulation. Available in the HUD tab. (Thanks remi.D!)
 
 - 09/05/2014 (Build 265):
 	- Added pickup expire bar. You can now see how much time left you have to pick up things on the ground. Default is off. Available in the Misc. tab.
