@@ -55,24 +55,6 @@ function PlayerUI_GetGameLengthTime()
 end
 
 
-local function UpdateTotalNumPlayers()
-	local time = Shared.GetTime()
-	if nextUpdateTotalNumPlayers < time then
-		nextUpdateTotalNumPlayers = time + 3
-		
-		local addy = Client.GetOptionString(kLastServerConnected, "")
-		
-		local function OnServerRefreshed(serverData)
-			local name = Client.GetConnectedServerName()
-			if name ~= serverData.name then
-				Shared.Message( "Mismatched server, connected player reporting may be incorrect" )
-			end
-			totalNumPlayers = serverData.numPlayers
-		end
-		Client.RefreshServer(addy, OnServerRefreshed)
-	end
-end
-
 
 local lastIngameNumPlayers = 0
 local totalNumPlayers = 0
@@ -96,7 +78,9 @@ function PlayerUI_GetServerNumPlayers()
 	
 	if nextUpdateTotalNumPlayers ~= -1 and nextUpdateTotalNumPlayers < Shared.GetTime() then	
 		local addy = Client.GetOptionString(kLastServerConnected, "")	
-		Client.RefreshServer(addy, OnServerRefreshed)
+		if Client.GetOptionBoolean("CHUDScoreboardConnecting", true) then
+			Client.RefreshServer(addy, OnServerRefreshed)
+		end
 		
 		nextUpdateTotalNumPlayers = -1		
 	end
@@ -151,6 +135,18 @@ local function ClientTeamSay(...)
 		
 	end
 end
+
+// Bandaid fix for players crashing when they run Client.RefreshServer
+local function OnCommandNS2PDC()
+	if Client.GetOptionBoolean("CHUDScoreboardConnecting", true) then
+		Client.SetOptionBoolean("CHUDScoreboardConnecting", false)
+		Shared.Message("Players connecting in scoreboard ENABLED")
+	else
+		Client.SetOptionBoolean("CHUDScoreboardConnecting", true)
+		Shared.Message("Players connecting in scoreboard DISABLED")
+	end
+end
+Event.Hook("Console_ns2pdc", OnCommandNS2PDC)
 
 Event.Hook("Console_say", ClientSay)
 Event.Hook("Console_team_say", ClientTeamSay)

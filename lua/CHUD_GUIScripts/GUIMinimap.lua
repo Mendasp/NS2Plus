@@ -153,3 +153,26 @@ local function NewDrawMinimapNames(self, shouldShowPlayerNames, clientIndex, spe
 	
 end		
 ReplaceUpValue( updateStaticBlips, "DrawMinimapNames", NewDrawMinimapNames, { CopyUpValues = true } )
+
+local originalMinimapSendKeyEvent
+originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
+	function(self, key, down)
+	
+		local player = Client.GetLocalPlayer()
+		
+		if GetIsBinding(key, "ShowMap") and not ChatUI_EnteringChatMessage() and not player:isa("Commander") and CHUDGetOption("minimaptoggle") == 1 then
+		
+			if not down then
+		
+				local showMap = not self.background:GetIsVisible()
+				self:ShowMap(showMap)
+				self:SetBackgroundMode(GUIMinimapFrame.kModeBig)
+			
+			end
+			
+			return true
+			
+		else
+			originalMinimapSendKeyEvent(self, key, down)
+		end
+	end)
