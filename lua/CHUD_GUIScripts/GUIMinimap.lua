@@ -123,6 +123,16 @@ function(self, deltaTime)
 		self:UpdateCHUDCommSettings()
 		self.lastMinGUI = mingui
 	end
+	
+    local mapConnectors = Shared.GetEntitiesWithClassname("MapConnector")
+
+    for index, connector in ientitylist(mapConnectors) do
+
+		if self.minimapConnections[index] then
+			self.minimapConnections[index]:UpdateAnimation(connector:GetTeamNumber())
+		end
+        
+    end
 end)
 
 local originalLocationNameInit

@@ -6,6 +6,13 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
+- 14/05/2014 (Build 265):
+	- Enabled weapon specific ammo models for dropped weapons.
+	- Ammo for dropped weapons now follow the parent weapon. They also have outlines now.
+	- Added new option for Phase Gate lines. Default/Static arrows/Animated lines/Animated arrows. Available in HUD tab.
+	- Fixed bug where the Faster damage numbers option would not get applied after map load.
+	- Replaced Small damage numbers option with Damage numbers scale option. The scale goes between 50% and 100%.
+
 - 10/05/2014 (Build 265):
 	- Changed pickup expire bar options. You can now toggle between Disabled/Equipment Only/All pickupables. Available in Misc. tab.
 	- Added option to disable click selecting for Marine players (only Marine Commander). You can still do marquee selection. Available in Misc. tab.

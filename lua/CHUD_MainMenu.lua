@@ -4,7 +4,9 @@ function CHUDHitIndicatorSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "hitindicator"
 		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local value = mainMenu.CHUDOptionElements.CHUD_HitIndicator:GetValue() * multiplier
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local value = (mainMenu.CHUDOptionElements.CHUD_HitIndicator:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, value)
 	end
 end
@@ -13,7 +15,9 @@ function CHUDLocationSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "locationalpha"
 		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local value = mainMenu.CHUDOptionElements.CHUD_LocationAlpha:GetValue() * multiplier
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local value = (mainMenu.CHUDOptionElements.CHUD_LocationAlpha:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, value)
 	end
 end
@@ -22,7 +26,9 @@ function CHUDMinimapSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "minimapalpha"
 		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local value = mainMenu.CHUDOptionElements.CHUD_MinimapAlpha:GetValue() * multiplier
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local value = (mainMenu.CHUDOptionElements.CHUD_MinimapAlpha:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, value)
 	end
 end
@@ -31,7 +37,9 @@ function CHUDHitsoundsSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "hitsounds_vol"
 		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local value = mainMenu.CHUDOptionElements.CHUD_HitsoundsVolume:GetValue() * multiplier
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local value = (mainMenu.CHUDOptionElements.CHUD_HitsoundsVolume:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, value)
 	end
 end
@@ -40,7 +48,9 @@ function CHUDFlashAtmosSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "flashatmos"
 		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local value = mainMenu.CHUDOptionElements.CHUD_FlashAtmos:GetValue() * multiplier
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local value = (mainMenu.CHUDOptionElements.CHUD_FlashAtmos:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, value)
 	end
 end
@@ -49,7 +59,20 @@ function CHUDMapAtmosSlider()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local key = "mapatmos"
 		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local value = mainMenu.CHUDOptionElements.CHUD_MapAtmos:GetValue() * multiplier
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local value = (mainMenu.CHUDOptionElements.CHUD_MapAtmos:GetValue() * (maxValue - minValue) + minValue) * multiplier
+		CHUDSetOption(key, value)
+	end
+end
+
+function CHUDDMGScaleSlider()
+	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+		local key = "dmgscale"
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local value = (mainMenu.CHUDOptionElements.CHUD_DMGScale:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, value)
 	end
 end
@@ -65,7 +88,9 @@ function CHUDSaveMenuSettings()
 					CHUDSetOption(option.index, option:GetActiveOptionIndex()-1)
 				elseif CHUDOption.valueType == "float" then
 					local multiplier = CHUDOption.multiplier or 1
-					CHUDSetOption(option.index, option:GetValue() * multiplier)
+					local minValue = CHUDOption.minValue or 0
+					local maxValue = CHUDOption.maxValue or 1
+					CHUDSetOption(option.index, (option:GetValue() * (maxValue - minValue) + minValue) * multiplier)
 				end
 							
 				if CHUDOption.disabled then
@@ -242,7 +267,9 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 			elseif option.valueType == "int" and option.type == "select" then
 				self.CHUDOptionElements[option.name]:SetOptionActive( CHUDOptions[idx].currentValue+1 )
 			elseif option.valueType == "float" then
-				self.CHUDOptionElements[option.name]:SetValue( CHUDOptions[idx].currentValue )
+				local minValue = option.minValue or 0
+				local maxValue = option.maxValue or 1
+				self.CHUDOptionElements[option.name]:SetValue( (CHUDOptions[idx].currentValue - minValue) / (maxValue - minValue) )
 			end
 			self.CHUDOptionElements[option.name].index = idx
 		end
@@ -385,6 +412,8 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		local input_display
         local defaultInputClass = "option_input"
 		local multiplier = option.multiplier or 1
+		local minValue = option.minValue or 0
+		local maxValue = option.maxValue or 1
 		
         if option.type == "select" then
             input = form:CreateFormElement(Form.kElementType.DropDown, option.name, option.value)
@@ -439,20 +468,20 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				
 			OnEnter = function(self)
 				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
-					input:SetValue(input_display:GetValue() / multiplier)
+					input:SetValue(((input_display:GetValue() / multiplier) - minValue) / (maxValue - minValue))
 				end
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
-					input_display:SetValue(ToString(string.sub(input:GetValue() * multiplier,0, 4)))
+					input_display:SetValue(ToString(string.sub((input:GetValue() * (maxValue - minValue) + minValue) * multiplier,0, 4)))
 				end
 			
 			end,
 			OnBlur = function(self)
 				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
-					input:SetValue(input_display:GetValue() / multiplier)
+					input:SetValue(((input_display:GetValue() / multiplier) - minValue) / (maxValue - minValue))
 				end
 				
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
-					input_display:SetValue(ToString(string.sub(input:GetValue() * multiplier,0, 4)))
+					input_display:SetValue(ToString(string.sub((input:GetValue() * (maxValue - minValue) + minValue) * multiplier,0, 4)))
 				end
 			end,
 			})
@@ -462,7 +491,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
                     {OnSlide =
                         function(value, interest)
                             option.sliderCallback(mainMenu)
-							input_display:SetValue(ToString(string.sub(input:GetValue() * multiplier,0, 4)))
+							input_display:SetValue(ToString(string.sub((input:GetValue() * (maxValue - minValue) + minValue) * multiplier,0, 4)))
                         end
                     }, SLIDE_HORIZONTAL)
             end

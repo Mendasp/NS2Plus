@@ -25,6 +25,7 @@ Script.Load("lua/Shared/CHUD_Utility.lua")
 Script.Load("lua/Shared/CHUD_Autopickup.lua")
 Script.Load("lua/Shared/CHUD_CommanderSelection.lua")
 Script.Load("lua/Shared/CHUD_LayMines.lua")
+Script.Load("lua/Shared/CHUD_AmmoPack.lua")
 
 CHUDTagBitmask = {
 	mcr = 0x1,

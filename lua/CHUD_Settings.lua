@@ -103,7 +103,7 @@ function GetCHUDSettings()
 			value = Client.GetOptionFloat(option.name, option.defaultValue)
 			local number = tonumber(value)
 			if IsNumber(number) and number >= option.minValue and number <= option.maxValue then
-				CHUDOptions[name].currentValue = value
+				CHUDOptions[name].currentValue = number
 			else
 				CHUDSetOption(name, option.defaultValue)
 			end
@@ -162,7 +162,7 @@ local function CHUDHelp(...)
 			elseif option.valueType == "bool" then
 				helpStr = helpStr .. " <true/false> or <0/1>"
 			end
-			Shared.Message(helpStr .. " - Example (default value): plus " .. args[1] .. " " .. tostring(option.defaultValue))
+			Shared.Message(helpStr .. " - Example (default value): plus " .. args[1] .. " " .. tostring(option.defaultValue * multiplier))
 			if option.type == "select" then
 				if option.valueType == "int" then
 					for index, value in pairs(option.values) do
