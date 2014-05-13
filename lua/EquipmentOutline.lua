@@ -97,6 +97,11 @@ function EquipmentOutline_UpdateModel(forEntity)
     local visible = player ~= nil and forEntity:GetIsValidRecipient(player)
     local model = HasMixin(forEntity, "Model") and forEntity:GetRenderModel() or nil
     
+	if forEntity:isa("WeaponAmmoPack") then
+		model = forEntity:GetRenderModel() or nil
+		visible = player ~= nil and player:GetActiveWeapon() and player:GetActiveWeapon():isa(forEntity:GetWeaponClassName())
+	end
+	
 	local weaponclass = 0
 	for i=1,#lookup do
 		if forEntity:isa( lookup[i] ) then
