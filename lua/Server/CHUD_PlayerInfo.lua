@@ -42,19 +42,21 @@ function PlayerInfoEntity:UpdateScore()
 		end
 		
 		self.extraTech = upgrades
+		
+		if not Shine then
 
-	elseif not Shine then
+			local client = playerEntity:GetClient()
+				if not client then
+					return true
+				end
 
-		local client = playerEntity:GetClient()
-			if not client then
-				return true
-			end
+			local score = playerEntity.score or 0
 
-		local score = playerEntity.score or 0
+			local name = playerEntity.GetName and playerEntity:GetName() or "Unknown"
 
-		local name = playerEntity.GetName and playerEntity:GetName() or "Unknown"
+			Server.UpdatePlayerInfo(client, name, score)
+		end
 
-		Server.UpdatePlayerInfo(client, name, score)
 	end
 	
 	return true
