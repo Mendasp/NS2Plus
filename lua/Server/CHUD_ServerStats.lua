@@ -1,7 +1,7 @@
 local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 	local weapon
-
+	
 	if self:isa("Player") then
 		attacker = self
 	elseif self:GetParent() and self:GetParent():isa("Player") then
@@ -47,6 +47,11 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	end
 	
+	// Save the last damage time so we can revert to it later
+	local oldDamageTime = attacker.giveDamageTime
+	
+	local damageMessage = originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
+	
 	// Secondary attack on alien weapons (lerk spikes, gorge healspray)
 	if (self.secondaryAttacking or self.shootingSpikes) and attacker:isa("Alien") then
 		weapon = attacker:GetActiveWeapon():GetSecondaryTechId()
@@ -63,6 +68,9 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		damageType = LookupTechData(self:GetTechId(), kTechDataDamageType, kDamageType.Normal)
 	end
 	
+	// Keep the old time and only update it if we hit enemies
+	attacker.giveDamageTime = oldDamageTime
+	
 	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
 		
 		damageDone, armorUsed, healthUsed = GetDamageByType(target, attacker, self, damage, damageType, point)
@@ -73,10 +81,15 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		msg.isPlayer = target:isa("Player")
 		msg.weapon = weapon
 		Server.SendNetworkMessage(attacker, "CHUDStats", msg, true)
+		
+		// Only show damage indicator if we're hitting enemies
+		if not self.GetShowHitIndicator or self:GetShowHitIndicator() then
+			attacker.giveDamageTime = Shared.GetTime()
+		end
 	end
 
 	// Now we send the actual damage message
-	return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
+	return damageMessage
 end
 
 local resetGame = NS2Gamerules.ResetGame
