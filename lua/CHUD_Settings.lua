@@ -56,6 +56,10 @@ function CHUDSetOption(key, value)
 				Client.SetOptionBoolean(option.name, false)
 				option.currentValue = false
 				setValue = option.currentValue
+			elseif value == "cycle" then
+				Client.SetOptionBoolean(option.name, not oldValue)
+				option.currentValue = not oldValue
+				setValue = option.currentValue
 			end
 			
 		elseif option.valueType == "float" then
@@ -74,6 +78,16 @@ function CHUDSetOption(key, value)
 				Client.SetOptionInteger(option.name, number)
 				option.currentValue = number
 				setValue = option.currentValue
+			elseif value == "cycle" then
+				if oldValue == #option.values-1 then
+					Client.SetOptionInteger(option.name, 0)
+					option.currentValue = 0
+					setValue = option.currentValue
+				else
+					Client.SetOptionInteger(option.name, oldValue+1)
+					option.currentValue = oldValue+1
+					setValue = option.currentValue
+				end
 			end
 		end
 		
@@ -139,9 +153,9 @@ local function CHUDHelp(...)
 				local multiplier = option.multiplier or 1
 				helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier
 			elseif option.valueType == "int" then
-				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1
+				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle"
 			elseif option.valueType == "bool" then
-				helpStr = helpStr .. " <true/false> or <0/1>"
+				helpStr = helpStr .. " <true/false> or <0/1> or <cycle>"
 			end
 			helpStr = helpStr .. " - " .. option.tooltip
 			Shared.Message(helpStr)
@@ -154,15 +168,17 @@ local function CHUDHelp(...)
 			Shared.Message(option.label)
 			Shared.Message("-------------------------------------")
 			Shared.Message(option.tooltip)
+			local default = option.defaultValue
 			local helpStr = "Usage: plus " .. args[1]
 			if option.valueType == "float" then
 				helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier
+				default = default * multiplier
 			elseif option.valueType == "int" then
-				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1
+				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle"
 			elseif option.valueType == "bool" then
-				helpStr = helpStr .. " <true/false> or <0/1>"
+				helpStr = helpStr .. " <true/false> or <0/1> or <cycle>"
 			end
-			Shared.Message(helpStr .. " - Example (default value): plus " .. args[1] .. " " .. tostring(option.defaultValue * multiplier))
+			Shared.Message(helpStr .. " - Example (default value): plus " .. args[1] .. " " .. tostring(default))
 			if option.type == "select" then
 				if option.valueType == "int" then
 					for index, value in pairs(option.values) do
