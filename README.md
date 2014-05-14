@@ -9,6 +9,7 @@ Latest changes
 - /05/2014 (Build 265):
 	- Fixed bug with NS2+ console commands where the example usage would not be displayed correctly.
 	- Added "cycle" parameter to console commands that cycles through int and boolean values.
+	- Crosshair damage indicator now only shows up if we're hitting enemies.
 
 - 14/05/2014 (Build 265):
 	- Enabled weapon specific ammo models for dropped weapons.

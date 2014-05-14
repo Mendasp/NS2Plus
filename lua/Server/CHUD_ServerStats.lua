@@ -50,6 +50,16 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 	// Save the last damage time so we can revert to it later
 	local oldDamageTime = attacker.giveDamageTime
 	
+	// Save target health before the hit
+	local oldTargetHealth = 0
+	local oldTargetArmor = 0
+	
+	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
+		oldTargetHealth = target:GetHealth()
+		oldTargetArmor = target:GetArmor()
+	end
+	
+	// Save the result of the original so it updates all values
 	local damageMessage = originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	
 	// Secondary attack on alien weapons (lerk spikes, gorge healspray)
@@ -73,10 +83,8 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 	
 	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
 		
-		damageDone, armorUsed, healthUsed = GetDamageByType(target, attacker, self, damage, damageType, point)
-
 		local msg = { }
-		msg.damage = healthUsed+(armorUsed)*2
+		msg.damage = (oldTargetHealth - target.health + (oldTargetArmor - target.armor) * 2)
 		msg.targetId = (target and target:GetId()) or Entity.invalidId
 		msg.isPlayer = target:isa("Player")
 		msg.weapon = weapon
