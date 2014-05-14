@@ -11,6 +11,7 @@ Latest changes
 	- Added "cycle" parameter to console commands that cycles through int and boolean values.
 	- Crosshair damage indicator now only shows up if we're hitting enemies.
 	- Fixed NS2 bug where damage numbers wouldn't show the damage for the killing blow.
+	- Fixed "Unknown" player info in server browser. Big, gigantic thanks to Person8880 (Shine author) for the fix.
 
 - 14/05/2014 (Build 265):
 	- Enabled weapon specific ammo models for dropped weapons.
