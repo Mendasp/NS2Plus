@@ -41,10 +41,6 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 			weapon = 1
 		end
 		//Print(weapon .. " " .. self:GetMapName())
-		
-	else 
-		// Don't be silly, if we don't return anything here something won't do damage (apparently ARCs :D)
-		return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	end
 	
 	// Save the last damage time so we can revert to it later
@@ -60,16 +56,12 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 	end
 	
 	// Save the result of the original so it updates all values
-	local damageMessage = originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
+	local killedFromDamage = originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	
 	// Secondary attack on alien weapons (lerk spikes, gorge healspray)
 	if (self.secondaryAttacking or self.shootingSpikes) and attacker:isa("Alien") then
 		weapon = attacker:GetActiveWeapon():GetSecondaryTechId()
 	end
-	
-	local armorUsed = 0
-	local healthUsed = 0
-	local damageDone = 0
 	
 	local damageType = kDamageType.Normal
 	if self.GetDamageType then
@@ -83,8 +75,10 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 	
 	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
 		
+		local damageDone = (oldTargetHealth - target.health + (oldTargetArmor - target.armor) * 2)
+		
 		local msg = { }
-		msg.damage = (oldTargetHealth - target.health + (oldTargetArmor - target.armor) * 2)
+		msg.damage = damageDone
 		msg.targetId = (target and target:GetId()) or Entity.invalidId
 		msg.isPlayer = target:isa("Player")
 		msg.weapon = weapon
@@ -94,10 +88,23 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		if not self.GetShowHitIndicator or self:GetShowHitIndicator() then
 			attacker.giveDamageTime = Shared.GetTime()
 		end
+		
+		// When the damage kills the target it doesn't send the last damage number message
+		if killedFromDamage then
+			local msg = BuildDamageMessage(target, damageDone, point)
+			Server.SendNetworkMessage(attacker, "Damage", msg, false)
+			
+			for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do
+			
+				if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
+					Server.SendNetworkMessage(spectator, "Damage", msg, false)
+				end
+				
+			end
+		end
 	end
 
-	// Now we send the actual damage message
-	return damageMessage
+	return killedFromDamage
 end
 
 local resetGame = NS2Gamerules.ResetGame
