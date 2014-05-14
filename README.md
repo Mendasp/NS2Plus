@@ -6,14 +6,14 @@ To be able to search for servers running NS2+ you can use [NS2+ Browser](http://
 
 Latest changes
 ==============
-- /05/2014 (Build 265):
+- 14/05/2014 (Build 265):
 	- Fixed bug with NS2+ console commands where the example usage would not be displayed correctly.
 	- Added "cycle" parameter to console commands that cycles through int and boolean values.
 	- Crosshair damage indicator now only shows up if we're hitting enemies.
 	- Fixed NS2 bug where damage numbers wouldn't show the damage for the killing blow.
 	- Fixed "Unknown" player info in server browser. Big, gigantic thanks to Person8880 (Shine author) for the fix.
 
-- 14/05/2014 (Build 265):
+- 13/05/2014 (Build 265):
 	- Enabled weapon specific ammo models for dropped weapons.
 	- Ammo for dropped weapons now follow the parent weapon. They also have outlines now.
 	- Added new option for Phase Gate lines. Default/Static arrows/Animated lines/Animated arrows. Available in HUD tab.
