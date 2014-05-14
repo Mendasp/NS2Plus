@@ -43,6 +43,7 @@ function PlayerInfoEntity:UpdateScore()
 		
 		self.extraTech = upgrades
 		
+		// Unknown server browser fix, Shine is already fixing this, so don't run if it's active
 		if not Shine then
 
 			local client = playerEntity:GetClient()
