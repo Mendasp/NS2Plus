@@ -3,23 +3,8 @@ function PlayerInfoEntity:UpdateScore()
 
 	originalUpdateScore(self)
 
-	local playerEntity = Shared.GetEntity( self.playerId )  
+	local playerEntity = Shared.GetEntity(self.playerId)  
 	
-	if not Shine then
-		if not playerEntity then return end
-
-		local client = playerEntity:GetClient()
-			if not client then return end
-
-		local score = playerEntity.score or 0
-
-		local name = playerEntity.GetName and playerEntity:GetName() or "Unknown"
-
-		Server.UpdatePlayerInfo( client, name, score )
-	end
-	
-	local playerEntity = Shared.GetEntity(self.entityId)
-
 	if playerEntity then
 		local upgrades = ""
 		if playerEntity:isa("Alien") then
@@ -58,6 +43,18 @@ function PlayerInfoEntity:UpdateScore()
 		
 		self.extraTech = upgrades
 
+	elseif not Shine then
+
+		local client = playerEntity:GetClient()
+			if not client then
+				return true
+			end
+
+		local score = playerEntity.score or 0
+
+		local name = playerEntity.GetName and playerEntity:GetName() or "Unknown"
+
+		Server.UpdatePlayerInfo(client, name, score)
 	end
 	
 	return true
