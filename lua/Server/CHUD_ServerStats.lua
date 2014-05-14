@@ -1,7 +1,7 @@
 local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 	local weapon
-
+	
 	if self:isa("Player") then
 		attacker = self
 	elseif self:GetParent() and self:GetParent():isa("Player") then
@@ -41,20 +41,27 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 			weapon = 1
 		end
 		//Print(weapon .. " " .. self:GetMapName())
-		
-	else 
-		// Don't be silly, if we don't return anything here something won't do damage (apparently ARCs :D)
-		return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	end
+	
+	// Save the last damage time so we can revert to it later
+	local oldDamageTime = attacker.giveDamageTime
+	
+	// Save target health before the hit
+	local oldTargetHealth = 0
+	local oldTargetArmor = 0
+	
+	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
+		oldTargetHealth = target:GetHealth()
+		oldTargetArmor = target:GetArmor()
+	end
+	
+	// Save the result of the original so it updates all values
+	local killedFromDamage = originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	
 	// Secondary attack on alien weapons (lerk spikes, gorge healspray)
 	if (self.secondaryAttacking or self.shootingSpikes) and attacker:isa("Alien") then
 		weapon = attacker:GetActiveWeapon():GetSecondaryTechId()
 	end
-	
-	local armorUsed = 0
-	local healthUsed = 0
-	local damageDone = 0
 	
 	local damageType = kDamageType.Normal
 	if self.GetDamageType then
@@ -63,20 +70,41 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		damageType = LookupTechData(self:GetTechId(), kTechDataDamageType, kDamageType.Normal)
 	end
 	
+	// Keep the old time and only update it if we hit enemies
+	attacker.giveDamageTime = oldDamageTime
+	
 	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
 		
-		damageDone, armorUsed, healthUsed = GetDamageByType(target, attacker, self, damage, damageType, point)
-
+		local damageDone = (oldTargetHealth - target.health + (oldTargetArmor - target.armor) * 2)
+		
 		local msg = { }
-		msg.damage = healthUsed+(armorUsed)*2
+		msg.damage = damageDone
 		msg.targetId = (target and target:GetId()) or Entity.invalidId
 		msg.isPlayer = target:isa("Player")
 		msg.weapon = weapon
 		Server.SendNetworkMessage(attacker, "CHUDStats", msg, true)
+		
+		// Only show damage indicator if we're hitting enemies
+		if not self.GetShowHitIndicator or self:GetShowHitIndicator() then
+			attacker.giveDamageTime = Shared.GetTime()
+		end
+		
+		// When the damage kills the target it doesn't send the last damage number message
+		if killedFromDamage then
+			local msg = BuildDamageMessage(target, damageDone, point)
+			Server.SendNetworkMessage(attacker, "Damage", msg, false)
+			
+			for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do
+			
+				if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
+					Server.SendNetworkMessage(spectator, "Damage", msg, false)
+				end
+				
+			end
+		end
 	end
 
-	// Now we send the actual damage message
-	return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
+	return killedFromDamage
 end
 
 local resetGame = NS2Gamerules.ResetGame

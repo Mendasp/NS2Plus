@@ -2,11 +2,16 @@
 ==========
 This Natural Selection 2 mod aims to improve, fix and expand the game in order to bring players a better experience. It contains extra customization options and quality of life improvements. This mod needs to be installed on the server.
 
-To be able to search for servers running NS2+ you can use [NS2+ Browser](http://steamcommunity.com/sharedfiles/filedetails/?id=236685163). Remember to set it to Active in your Mods list.
-
 Latest changes
 ==============
 - 14/05/2014 (Build 265):
+	- Fixed bug with NS2+ console commands where the example usage would not be displayed correctly.
+	- Added "cycle" parameter to console commands that cycles through int and boolean values.
+	- Crosshair damage indicator now only shows up if we're hitting enemies.
+	- Fixed NS2 bug where damage numbers wouldn't show the damage for the killing blow.
+	- Fixed "Unknown" player info in server browser. Big, gigantic thanks to Person8880 (Shine author) for the fix.
+
+- 13/05/2014 (Build 265):
 	- Enabled weapon specific ammo models for dropped weapons.
 	- Ammo for dropped weapons now follow the parent weapon. They also have outlines now.
 	- Added new option for Phase Gate lines. Default/Static arrows/Animated lines/Animated arrows. Available in HUD tab.
@@ -48,40 +53,7 @@ Latest changes
 	- Added autopickup better primary weapon option (default off). Available in Misc. tab.
 	- Reset autopickup options so they default to off.
 
-- 05/05/2014 (Build 265):
-	- Added weapon autopickup feature (enabled by default). You will pick up weapons automatically for your empty weapon slots. Available in the Misc. tab.
-
-- 04/05/2014 (Build 265):
-	- Added warning message about Player Badges (outdated - blocks the customization menu) and instructions to use Badges+ instead.
-
-- 03/05/2014 (Build 265):
-	- Added yellow outlines for parasited players in Insight.
-	- Made the mods list sorted by Active > Subscribed > Alphabetically (this is also in the NS2+ Server Browser).
-
-- 02/05/2014 (Build 265):
-	- Rookies will show with a green name on the minimap. (Thanks remi.D!)
-	- Commander evolved eggs now display progress bars too, to make it consistent with player eggs.
-	- Added minimal motion tracking circle.
-
-- 01/05/2014 (Build 265):
-	- Fixed console spam about disabled Hive stats when adding bots.
-	- Added help text to the death stats to let players know which key brings up the stats again.
-	- Added alien evolution progress bars.
-	- If the mod is enabled in the mods list it will also let you look for servers in the main menu now.
-
-- 30/04/2014 (Build 264):
-	- Added the ability for server admins to disable some client options. Type sv_plus in console if you have permission to change these settings or edit NS2PlusServerConfig.json.
-	- The server browser now displays ns2+ in red if server-disabled features conflict with your settings.
-	- When opening the options menu in a server with restricted options, the option label will turn red when it conflicts. The setting will get saved, but won't get applied until you join a server without the restriction.
-	- Updated Rantology's alien bars.
-	- You can now toggle the ambient sounds back on after setting them to off.
-	- Added new option for Instant alien health bars. (Thanks kmg!).
-	- Fixed sentries not being able to be dropped until the first sentry battery is finished. (Thanks remi.D!).
-
-- 28/04/2014 (Build 264):
-	- Changed map changing method for the mod updater, since the previous one was being blocked by the NSL Mod.
-	- Fixed bug that caused commanders to be stuck with the game timer after a reset or getting logged out at the end of the round.
-
+=================
 Credits/Thanks to
 =================
 - **Unknown Worlds Entertainment** (http://unknownworlds.com)

@@ -2,6 +2,20 @@ local originalUpdateScore = PlayerInfoEntity.UpdateScore
 function PlayerInfoEntity:UpdateScore()
 
 	originalUpdateScore(self)
+
+if not Shine then
+	local player = Shared.GetEntity( self.playerId )  
+		if not player then return end
+
+	local client = player:GetClient()
+		if not client then return end
+
+	local score = player.score or 0
+
+	local name = player.GetName and player:GetName() or "Unknown"
+
+	Server.UpdatePlayerInfo( client, name, score )
+end
 	
 	local scorePlayer = Shared.GetEntity(self.playerId)
 	local playerEntity = Shared.GetEntity(self.entityId)
