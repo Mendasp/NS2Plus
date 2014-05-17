@@ -1,5 +1,3 @@
-Script.Load("lua/CHUD/Elixer_Utility.lua")
-
 local kFindWeaponRange = 2
 local kPickupWeaponTimeLimit = 1
 Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",

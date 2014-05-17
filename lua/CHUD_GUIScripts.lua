@@ -1,6 +1,3 @@
-Script.Load("lua/CHUD/Elixer_Utility.lua")
-Elixer.UseVersion( 1.2 ) 
-
 Script.Load("lua/CHUD_GUIScripts/GUIInsight_PlayerFrames.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIAlienHUD.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIMarineHUD.lua")

@@ -1,3 +1,6 @@
+Script.Load("lua/CHUD/Elixer_Utility.lua")
+Elixer.UseVersion( 1.2 ) 
+
 local kCHUDStatsMessage =
 {
 	isPlayer = "boolean",

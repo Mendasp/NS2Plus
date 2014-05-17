@@ -41,6 +41,8 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 			weapon = 1
 		end
 		//Print(weapon .. " " .. self:GetMapName())
+	else
+		return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	end
 	
 	// Save the last damage time so we can revert to it later
