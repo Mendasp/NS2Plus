@@ -146,7 +146,7 @@ function AddAttackStat(wTechId, wasHit, target, damageDealt, isPlayer)
 		local sdmg = 0
 		local pdmg = 0
 		
-		if damageDealt then	
+		if damageDealt then
 			if isPlayer then
 				pdmg = damageDealt
 				CHUD_pdmg = CHUD_pdmg + damageDealt

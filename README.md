@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /05/2014 (Build 265):
+	- Added Marine Commander stats. At the end of the round they will show up in console.
+
 - 14/05/2014 (Build 265):
 	- Fixed bug with NS2+ console commands where the example usage would not be displayed correctly.
 	- Added "cycle" parameter to console commands that cycles through int and boolean values.

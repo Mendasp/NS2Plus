@@ -14,6 +14,7 @@ originalWeaponSetWorldState = Class_ReplaceMethod( "Weapon", "SetWeaponWorldStat
 	
 	end)
 	
+local commDrops = { "ammopack", "medpack", "catpack" }
 local originalDropPackOnInit
 originalDropPackOnInit = Class_ReplaceMethod( "DropPack", "OnInitialized",
 	function(self)
@@ -21,5 +22,11 @@ originalDropPackOnInit = Class_ReplaceMethod( "DropPack", "OnInitialized",
 		originalDropPackOnInit(self)
 		
 		self.expireTime = Shared.GetTime() + kItemStayTime
+		
+		local mapName = self:GetMapName()
+		
+		if table.contains(commDrops, mapName) then
+			CHUDCommStats[CHUDMarineComm][mapName].misses = CHUDCommStats[CHUDMarineComm][mapName].misses + 1
+		end
 	
 	end)

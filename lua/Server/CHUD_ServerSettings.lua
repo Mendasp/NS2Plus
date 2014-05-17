@@ -115,9 +115,9 @@ local function CHUDServerHelp(...)
 			table.insert(SortedOptions, idx)
 			table.sort(SortedOptions)
 		end
-		ServerAdminPrint(client, "-------------------------------------")
-		ServerAdminPrint(client, "NS2+ Server Settings")
-		ServerAdminPrint(client, "-------------------------------------")
+		CHUDServerAdminPrint(client, "-------------------------------------")
+		CHUDServerAdminPrint(client, "NS2+ Server Settings")
+		CHUDServerAdminPrint(client, "-------------------------------------")
 		for name, origOption in pairs(SortedOptions) do
 			local option = CHUDServerOptions[origOption]
 			local helpStr = "sv_plus " .. origOption
@@ -127,25 +127,25 @@ local function CHUDServerHelp(...)
 				helpStr = helpStr .. " <true/false> or <0/1>"
 			end
 			helpStr = helpStr .. " - " .. option.tooltip
-			ServerAdminPrint(client, helpStr)
+			CHUDServerAdminPrint(client, helpStr)
 		end
 	elseif #args == 2 then
 		if CHUDServerOptions[string.lower(args[2])] ~= nil then
 			option = CHUDServerOptions[string.lower(args[2])]
-			ServerAdminPrint(client, "-------------------------------------")
-			ServerAdminPrint(client, option.label)
-			ServerAdminPrint(client, "-------------------------------------")
-			ServerAdminPrint(client, option.tooltip)
+			CHUDServerAdminPrint(client, "-------------------------------------")
+			CHUDServerAdminPrint(client, option.label)
+			CHUDServerAdminPrint(client, "-------------------------------------")
+			CHUDServerAdminPrint(client, option.tooltip)
 			local helpStr = "Usage: sv_plus " .. args[2]
 			if option.valueType == "float" then
 				helpStr = helpStr .. " <float> - Values: " .. option.minValue .. " to " .. option.maxValue
 			elseif option.valueType == "bool" then
 				helpStr = helpStr .. " <true/false> or <0/1>"
 			end
-			ServerAdminPrint(client, helpStr)
-			ServerAdminPrint(client, "Example (default value): sv_plus " .. args[2] .. " " .. tostring(option.defaultValue))
-			ServerAdminPrint(client, "Current value: " .. tostring(option.currentValue))
-			ServerAdminPrint(client, "-------------------------------------")
+			CHUDServerAdminPrint(client, helpStr)
+			CHUDServerAdminPrint(client, "Example (default value): sv_plus " .. args[2] .. " " .. tostring(option.defaultValue))
+			CHUDServerAdminPrint(client, "Current value: " .. tostring(option.currentValue))
+			CHUDServerAdminPrint(client, "-------------------------------------")
 				
 		else
 			CHUDServerHelp(client)
@@ -177,7 +177,7 @@ local function CHUDServerSetting(...)
 		end
 		
 		if setValue ~= nil then
-			ServerAdminPrint(client, option.label .. " set to: " .. tostring(setValue))
+			CHUDServerAdminPrint(client, option.label .. " set to: " .. tostring(setValue))
 		else
 			CHUDServerHelp(client, args[2])
 		end

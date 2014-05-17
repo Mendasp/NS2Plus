@@ -13,33 +13,33 @@ if Server then
 
 	local kMaxPrintLength = 128
 	// Messages were cut off by 1 character when over kMaxPrintLength, fixed
-    function ServerAdminPrint(client, message)
-    
-        if client then
-        
-            // First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
-            local messageList = { }
-            while string.len(message) > kMaxPrintLength do
-            
-                local messagePart = string.sub(message, 0, kMaxPrintLength)
-                table.insert(messageList, messagePart)
+	function CHUDServerAdminPrint(client, message)
+	
+		if client then
+		
+			// First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
+			local messageList = { }
+			while string.len(message) > kMaxPrintLength do
+			
+				local messagePart = string.sub(message, 0, kMaxPrintLength)
+				table.insert(messageList, messagePart)
 				// Right here, this mofo
 				// Fixed and stuff
-                message = string.sub(message, kMaxPrintLength)
-                
-            end
-            table.insert(messageList, message)
-            
-            for m = 1, #messageList do
-                Server.SendNetworkMessage(client:GetControllingPlayer(), "ServerAdminPrint", { message = messageList[m] }, true)
-            end
-            
-        end
-        
-        // Display message in the server console.
-        Shared.Message(message)
-        
-    end
+				message = string.sub(message, kMaxPrintLength)
+				
+			end
+			table.insert(messageList, message)
+			
+			for m = 1, #messageList do
+				Server.SendNetworkMessage(client:GetControllingPlayer(), "ServerAdminPrint", { message = messageList[m] }, true)
+			end
+			
+		end
+		
+		// Display message in the server console.
+		//Shared.Message(message)
+		
+	end
 	
 	function GetCHUDTagBitmask()
 		
