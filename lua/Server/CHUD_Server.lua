@@ -13,6 +13,7 @@ Script.Load("lua/Server/CHUD_MarineTeam.lua")
 Script.Load("lua/Server/CHUD_PlayerInfo.lua")
 Script.Load("lua/Server/CHUD_PowerPoint.lua")
 Script.Load("lua/Server/CHUD_PickupExpire.lua")
+Script.Load("lua/Server/CHUD_DropPack.lua")
 
 local oldBadgesActive = false
 // Warning about outdated mod

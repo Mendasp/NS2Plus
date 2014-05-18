@@ -55,6 +55,12 @@ CHUDServerOptions =
 		valueType = "bool",
 		defaultValue = true,
 		},
+	droppacksignorey = {
+		label   = "Drop packs ignore Y axis",
+		tooltip = "If true med / ammo packs ignore Y axis.",
+		valueType = "bool",
+		defaultValue = true,
+		}
 }
 
 local configFileName = "NS2PlusServerConfig.json"
