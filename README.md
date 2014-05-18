@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /05/2014 (Build 265):
+	- Ammo, medpacks and catpacks now ignore the vertical element for pickup by marines. This should mitigate some of the problems commanders have with weird geometry in levels blocking their drops. (Thanks kmg!)
+
 - 17/05/2014 (Build 265):
 	- Added Marine Commander stats. At the end of the round they will show up in console for people that have been in the chair.
 
