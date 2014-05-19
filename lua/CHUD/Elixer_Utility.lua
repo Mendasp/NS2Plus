@@ -4,7 +4,7 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.2;
+local version = 1.3;
 
 if not Elixer or Elixer.Version ~= version then
 	Shared.Message( "[Elixer] Loading Utility Scripts v."..string.format("%.1f",version) );
@@ -170,6 +170,25 @@ function ELIXER.ReplaceUpValue( func, localname, newval, options )
 
 	debug.setupvalue( func, i, newval )
 end;
+
+function ELIXER.AppendToEnum( tbl, key )	
+	local maxVal = 0
+	if rawget( tbl, 'Max' ) then
+		maxVal = tbl.Max - 1
+		rawset( tbl, 'Max', maxVal+2 )
+		rawset( tbl, maxVal+2, 'Max' )
+	else
+		for k, v in next, tbl do
+			if type(v) == "number" and v > maxVal then
+				maxVal = v 
+			end
+		end
+	end	
+	
+	rawset( tbl, key, maxVal+1 )
+	rawset( tbl, maxVal+1, key )
+end
+
 
 ELIXER = nil
 Elixer.UseVersion( version );

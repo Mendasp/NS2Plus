@@ -57,13 +57,9 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 
 local minimapScript
 
-local kBlipInfo
 local originalMinimapInit
 originalMinimapInit = Class_ReplaceMethod( "GUIMinimap", "Initialize",
 function(self)
-	if kBlipInfo ~= nil then
-		ReplaceUpValue( originalMinimapInit, "kBlipInfo", kBlipInfo )
-	end
 	originalMinimapInit(self)
 	
 	self.minimap:SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
@@ -78,7 +74,8 @@ function(self)
 	
 	minimapScript = self
 end)
-
+	
+	
 local originalCommanderInit
 originalCommanderInit = Class_ReplaceMethod( "Commander", "OnInitLocalClient",
 function(self)
@@ -186,3 +183,25 @@ originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
 			originalMinimapSendKeyEvent(self, key, down)
 		end
 	end)
+
+
+-- Bone Wall size change
+local kBlipColorType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipColorType", 		{ LocateRecurse = true } )
+local kStaticBlipsLayer = GetUpValue( GUIMinimap.Initialize,   "kStaticBlipsLayer", 	{ LocateRecurse = true } )
+local kBlipSize 		= GetUpValue( GUIMinimap.SetBlipScale, "kBlipSize", 			{ LocateRecurse = true } )
+
+local kBlipSizeType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipSizeType", 		{ LocateRecurse = true } )
+AppendToEnum( kBlipSizeType, "BoneWall" )
+
+local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ LocateRecurse = true } )
+kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.Team, kBlipSizeType.BoneWall, kStaticBlipsLayer }
+
+local oldSetBlipScale 
+oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
+	function( self, blipScale )
+		if blipScale ~= self.blipScale then				
+			local blipSize = Vector(kBlipSize, kBlipSize, 0)
+			self.blipSizeTable[kBlipSizeType.BoneWall] = blipSize * 1.5 * blipScale 
+		end
+		oldSetBlipScale( self, blipScale )
+	end)	
