@@ -48,7 +48,11 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
             
                 if currentWorldMessage.messageType == messageType and currentWorldMessage.entityId == entityId and entityId ~= nil and entityId ~= Entity.invalidId then
 					
-					local diff = CHUDGetOption( "uniqueshotgunhits" ) and time - currentWorldMessage.creationTime
+					// When you have a flamethrower this creates new messages when the ground is in flames too
+					// Let's just check that we have a shotgun active
+					local player = Client.GetLocalPlayer()
+					local weapon = player and player:GetActiveWeapon()
+					local diff = weapon and weapon:isa("Shotgun") and CHUDGetOption( "uniqueshotgunhits" ) and time - currentWorldMessage.creationTime
 					
 					if diff and diff < 0.001 then
 						currentWorldMessage.canAccumulate = false
