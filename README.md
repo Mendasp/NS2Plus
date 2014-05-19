@@ -6,6 +6,8 @@ Latest changes
 ==============
 - /05/2014 (Build 265):
 	- Ammo, medpacks and catpacks now ignore the vertical element for pickup by marines. This should mitigate some of the problems commanders have with weird geometry in levels blocking their drops. (Thanks kmg!)
+	- Added Bonewall minimap icon. (Thanks kmg!)
+	- Bonewalls now show range before dropping.
 	- Shift Echo now updates the buttons faster when trying to echo upgrade chambers, and updates immediately after the shift is echoed to a new location (Thanks remi.D!)
 	- Fixed Grenade collision radius to be more representative of the visual model -- proximity detonation radius is unchanged (Thanks remi.D!)
 	- Fix drifters trying to build structures they can't and fake-building them forever (Thanks remi.D!)
