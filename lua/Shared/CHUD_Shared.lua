@@ -30,6 +30,7 @@ Script.Load("lua/Shared/CHUD_CommanderSelection.lua")
 Script.Load("lua/Shared/CHUD_LayMines.lua")
 Script.Load("lua/Shared/CHUD_AmmoPack.lua")
 Script.Load("lua/Shared/CHUD_Grenade.lua")
+Script.Load("lua/Shared/CHUD_BoneWall.lua")
 
 CHUDTagBitmask = {
 	mcr = 0x1,
