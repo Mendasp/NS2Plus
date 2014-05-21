@@ -8,9 +8,6 @@ local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ Locat
 AppendToEnum( kBlipColorType, "White" )
 AppendToEnum( kBlipSizeType, "BoneWall" )
 kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.White, kBlipSizeType.BoneWall, kStaticBlipsLayer }
-if rawget(kMinimapBlipType, "TunnelExit") then
-	kBlipInfo[kMinimapBlipType.TunnelEntrance] = { kBlipColorType.MAC, kBlipSizeType.Normal, kStaticBlipsLayer }
-end
 
 
 Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
