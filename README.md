@@ -9,7 +9,7 @@ Latest changes
 	- Added Bonewall minimap icon. (Thanks kmg, remi.D!)
 	- Shift Echo now updates the buttons faster when trying to echo upgrade chambers, and updates immediately after the shift is echoed to a new location (Thanks remi.D!)
 	- Fixed Grenade collision radius to be more representative of the visual model -- proximity detonation radius is unchanged (Thanks remi.D!)
-	- Fix drifters trying to build structures they can't and fake-building them forever (Thanks remi.D!)
+	- Fixed drifters trying to build structures they can't and fake-building them forever (Thanks remi.D!)
 	- Bonewalls now show range before dropping.
 	- Fixed bug where the Unique Shotgun Hits setting would affect Flamethrower damage numbers sometimes.
 	- Minimap connectors display as a line when there's only 2 PGs.
