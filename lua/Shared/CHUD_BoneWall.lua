@@ -25,4 +25,4 @@ if Server then
 end
 
 -- Add range to bonewalls before dropping
-//LookupTechData(kTechId.BoneWall, kVisualRange, 2.75)
+LookupTechData(kTechId.BoneWall, kVisualRange, 2.75)

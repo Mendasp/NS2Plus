@@ -195,9 +195,6 @@ AppendToEnum( kBlipSizeType, "BoneWall" )
 
 local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ LocateRecurse = true } )
 kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.MAC, kBlipSizeType.BoneWall, kStaticBlipsLayer }
-if rawget(kMinimapBlipType, "TunnelExit") then
-	kBlipInfo[kMinimapBlipType.TunnelEntrance] = { kBlipColorType.MAC, kBlipSizeType.Normal, kStaticBlipsLayer }
-end
 
 local oldSetBlipScale 
 oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
