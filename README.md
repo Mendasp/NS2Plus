@@ -12,6 +12,8 @@ Latest changes
 	- Fix drifters trying to build structures they can't and fake-building them forever (Thanks remi.D!)
 	- Bonewalls now show range before dropping.
 	- Fixed bug where the Unique Shotgun Hits setting would affect Flamethrower damage numbers sometimes.
+	- Minimap connectors display as a line when there's only 2 PGs.
+	- Minimap connectors now display with the team color.
 
 - 17/05/2014 (Build 265):
 	- Added Marine Commander stats. At the end of the round they will show up in console for people that have been in the chair.
