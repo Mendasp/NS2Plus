@@ -6,20 +6,20 @@ local kLineTextureCoord = {0, 0, 32, 16}
 Class_AddMethod("GUIMinimapConnection", "UpdateAnimation",
 	function(self, teamNumber)
 		local pglines = CHUDGetOption("pglines")
-	
-		local animation = (pglines > 1 and (Shared.GetTime() % 1) / 1) or 0
+		
+		local animatedArrows = teamNumber == kTeam1Index and #GetEntitiesForTeam("MapConnector", kTeam1Index) > 2
+
+		local animation = ConditionalValue(animatedArrows and pglines > 1, (Shared.GetTime() % 1) / 1, 0)
 					
 		local x1Coord = kLineTextureCoord[1] - animation * (kLineTextureCoord[3] - kLineTextureCoord[1])
 		local x2Coord = x1Coord + (self.length or 0)
 		
-		local textureIndex = CHUDGetOption("pglines") * 16
+		// Don't draw arrows for just 2 PGs, the direction is clear here
+		// Gorge tunnels also don't need this since it is limited to entrance/exit
+		local textureIndex = ConditionalValue(animatedArrows, CHUDGetOption("pglines") * 16, 0)
 		
-		if teamNumber == kTeam1Index then
-			self.line:SetTexturePixelCoordinates(x1Coord, textureIndex, x2Coord, textureIndex + 16)
-		else
-			self.line:SetTexturePixelCoordinates(x1Coord, kLineTextureCoord[2], x2Coord, kLineTextureCoord[4])
-		end
-		
+		self.line:SetTexturePixelCoordinates(x1Coord, textureIndex, x2Coord, textureIndex + 16)
+		self.line:SetColor(ConditionalValue(teamNumber == kTeam1Index, kMarineFontColor, kAlienFontColor))
 	end)
 	
 local originalMinimapConnectionSetup
