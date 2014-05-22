@@ -69,8 +69,15 @@ originalGUIPickupsUpdate = Class_ReplaceMethod( "GUIPickups", "Update",
 			for i, pickup in ipairs(nearbyPickups) do
 				local timeLeft = -1
 				
+				local time = kItemStayTime
+				
+				// CompMod compatibility
+				if pickup:isa("Weapon") and kWeaponStayTime then
+					time = kWeaponStayTime
+				end
+				
 				if pickup.expireTime and pickup.expireTime ~= 0 then
-					timeLeft = Clamp(math.abs(pickup.expireTime - Shared.GetTime())/kItemStayTime, 0, 1)
+					timeLeft = Clamp(math.abs(pickup.expireTime - Shared.GetTime())/time, 0, 1)
 				end
 				
 				// Check if the pickup is in front of the player.

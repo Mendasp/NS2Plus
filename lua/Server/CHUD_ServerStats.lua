@@ -137,6 +137,9 @@ function NS2Gamerules:ResetGame()
 	
 	CHUDCommStats = { }
 	
+	// Do this so we can spawn items without a commander with cheats on
+	CHUDResetCommStats(0)
+	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 	
 		if playerInfo.teamNumber == kTeam1Index and playerInfo.isCommander then
