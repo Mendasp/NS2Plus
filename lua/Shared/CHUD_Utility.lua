@@ -1,43 +1,52 @@
+function CHUDWrapTextIntoTable( str, limit, indent, indent1 )
+
+	limit = limit or 72
+	indent = indent or ""
+	indent1 = indent1 or indent
+	
+	local here = 1 - #indent1
+	str = indent1..str:gsub( "(%s+)()(%S+)()",
+		function( sp, st, word, fi )
+			if fi-here > limit then
+				here = st - #indent
+				//Print(indent..word)
+				return "\n"..indent..word
+			end
+		end )
+	
+	return StringSplit(str, "\n")
+end
+
 if Server then
 	function SendCHUDMessage(message)
-
+		
 		if message then
 		
-			Server.SendNetworkMessage("Chat", BuildChatMessage(false, "NS2+", -1, kTeamReadyRoom, kNeutralTeamType, message), true)
-			Shared.Message("Chat All - NS2+: " .. message)
-			Server.AddChatToHistory(message, "NS2+", 0, kTeamReadyRoom, false)
+			local messageList = CHUDWrapTextIntoTable(message, kMaxChatLength)
 			
+			for m = 1, #messageList do
+				Server.SendNetworkMessage("Chat", BuildChatMessage(false, "NS2+", -1, kTeamReadyRoom, kNeutralTeamType, messageList[m]), true)
+				Shared.Message("Chat All - NS2+: " .. messageList[m])
+				Server.AddChatToHistory(messageList[m], "NS2+", 0, kTeamReadyRoom, false)
+			end
+						
 		end
 		
 	end
 
-	local kMaxPrintLength = 128
-	// Messages were cut off by 1 character when over kMaxPrintLength, fixed
 	function CHUDServerAdminPrint(client, message)
-	
+		local kMaxPrintLength = 128
+		
 		if client then
 		
 			// First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
-			local messageList = { }
-			while string.len(message) > kMaxPrintLength do
-			
-				local messagePart = string.sub(message, 0, kMaxPrintLength)
-				table.insert(messageList, messagePart)
-				// Right here, this mofo
-				// Fixed and stuff
-				message = string.sub(message, kMaxPrintLength)
-				
-			end
-			table.insert(messageList, message)
+			local messageList = CHUDWrapTextIntoTable(message, kMaxPrintLength)
 			
 			for m = 1, #messageList do
 				Server.SendNetworkMessage(client:GetControllingPlayer(), "ServerAdminPrint", { message = messageList[m] }, true)
 			end
 			
 		end
-		
-		// Display message in the server console.
-		//Shared.Message(message)
 		
 	end
 	
