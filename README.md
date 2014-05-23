@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /05/2014 (Build 265):
+	- You can now sort by column in the mods window.
+
 - 22/05/2014 (Build 265):
 	- Added new BoneWall icon for the minimap (Thanks remi.D!)
 	- Mod updater now shows a list of the mods that have been updated.
