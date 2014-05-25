@@ -6,6 +6,7 @@ Latest changes
 ==============
 - /05/2014 (Build 265):
 	- You can now sort by column in the mods window.
+	- Fixed bug where Last life stats would show up as "nan%" sometimes.
 
 - 22/05/2014 (Build 265):
 	- Added new BoneWall icon for the minimap (Thanks remi.D!)
