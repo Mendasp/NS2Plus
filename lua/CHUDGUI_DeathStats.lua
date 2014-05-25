@@ -37,8 +37,12 @@ local function CHUDGetStatsString()
 		end
 
 		if hitssum > 0 or missessum > 0 then
+			local lasthit = hitssum-CHUD_hits
+			local lastmiss = missessum-CHUD_misses
 			overallacc = hitssum/(hitssum+missessum)*100
-			lastacc = (hitssum-CHUD_hits)/((hitssum-CHUD_hits)+(missessum-CHUD_misses))*100
+			if lasthit > 0 or lastmiss > 0 then
+				lastacc = lasthit/(lasthit+lastmiss)*100
+			end
 		end
 		
 		CHUD_hits = hitssum
