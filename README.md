@@ -14,6 +14,9 @@ Latest changes
 		- docking_loadingdoor_closed.model
 		- docking_loadingdoor_closed_var.model
 		- refinery_gantrycrane.model
+		- biodome_elevator.model
+		- biodome_wallmods_01_corner_in_90_01.model
+		- biodome_wallmods_01_corner_in_90_02.model
 
 - 22/05/2014 (Build 265):
 	- Added new BoneWall icon for the minimap (Thanks remi.D!)
