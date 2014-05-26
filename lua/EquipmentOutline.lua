@@ -94,7 +94,7 @@ function EquipmentOutline_UpdateModel(forEntity)
     local player = Client.GetLocalPlayer()
     
     // Check if player can pickup this item.
-    local visible = player ~= nil and forEntity:GetIsValidRecipient(player)
+    local visible = player ~= nil and forEntity:GetIsValidRecipient(player) or (player:isa("Spectator") and Client.GetOutlinePlayers())
     local model = HasMixin(forEntity, "Model") and forEntity:GetRenderModel() or nil
     
 	if forEntity:isa("WeaponAmmoPack") then
