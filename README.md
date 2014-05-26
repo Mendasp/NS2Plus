@@ -12,6 +12,7 @@ Latest changes
 		- refinery_tram_door2.model
 		- docking_loadingdoor_closed.model
 		- docking_loadingdoor_closed_var.model
+		- refinery_gantrycrane.model
 
 - 22/05/2014 (Build 265):
 	- Added new BoneWall icon for the minimap (Thanks remi.D!)
