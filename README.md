@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /05/2014 (Build 265):
+- 28/05/2014 (Build 265):
 	- You can now sort by column in the mods window.
 	- Fixed bug where Last life stats would show up as "nan%" sometimes.
 	- Dropped marine weapons and deployed mines are now outlined for spectators.
