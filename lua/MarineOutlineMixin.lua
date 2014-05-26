@@ -44,9 +44,9 @@ if Client then
         local model = self:GetRenderModel()
         if model ~= nil then 
         
-            local outlineModel = Client.GetLocalClientTeamNumber() == kSpectatorIndex and self:isa("Player") and Client.GetOutlinePlayers()
+            local outlineModel = Client.GetLocalClientTeamNumber() == kSpectatorIndex and Client.GetOutlinePlayers()
 
-			if outlineModel and self.isParasited ~= self:GetIsParasited() and self.marineOutlineVisible then
+			if outlineModel and (HasMixin(self, "ParasiteAble") and self.isParasited ~= self:GetIsParasited()) and self.marineOutlineVisible then
 				if self:GetIsParasited() then
 					EquipmentOutline_RemoveModel( model, 0 )
 					EquipmentOutline_AddModel( model, 3 )
@@ -56,7 +56,7 @@ if Client then
 				end
 			end
 			
-			self.isParasited = ConditionalValue(self:GetIsParasited(), 3, 0)
+			self.isParasited = ConditionalValue(HasMixin(self, "ParasiteAble") and self:GetIsParasited(), 3, 0)
 			
             if outlineModel and not self.marineOutlineVisible then
 

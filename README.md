@@ -7,7 +7,7 @@ Latest changes
 - /05/2014 (Build 265):
 	- You can now sort by column in the mods window.
 	- Fixed bug where Last life stats would show up as "nan%" sometimes.
-	- Dropped marine weapons are now outlined for spectators.
+	- Dropped marine weapons and deployed mines are now outlined for spectators.
 	- Fixed invisible collision/hitboxes for the following models:
 		- refinery_tram_door1.model
 		- refinery_tram_door2.model
