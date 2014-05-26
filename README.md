@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /05/2014 (Build 265)
+	- Integrated 'Ready Room Special' mod (Thanks remi.D!)
+	
 - 28/05/2014 (Build 265):
 	- You can now sort by column in the mods window.
 	- Fixed bug where Last life stats would show up as "nan%" sometimes.
