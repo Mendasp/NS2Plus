@@ -8,9 +8,8 @@ local networkVars = { }
 
 if Server then
 	function ReadyRoomEmbryo:CopyPlayerDataFrom( player )
-		--ReadyRoomPlayer.CopyPlayerDataFrom( self, player )
-		Alien.CopyPlayerDataFrom( self, player )
-		self.gestationClass = player.gestationClass
+		ReadyRoomPlayer.CopyPlayerDataFrom( self, player )
+		Alien.CopyPlayerDataForReadyRoomFrom( self, player )
 	end
 
 	function ReadyRoomEmbryo:PerformEject()

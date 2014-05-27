@@ -108,28 +108,6 @@ if Server then
 		end)
 	
 	
-	local function CopyPlayerDataForReadyRoom( self, player )
-		local respawnMapName = ReadyRoomTeam.GetRespawnMapName(nil,player)
-		local gestationMapName = respawnMapName == ReadyRoomEmbryo.kMapName and player.gestationClass or nil
-		
-		local charge = 
-			( respawnMapName == Onos.kMapName or gestationMapName == Onos.kMapName ) and 
-			( player.oneHive or GetIsTechUnlocked( player, kTechId.Charge ) )
-			
-		local sstep = 
-			( respawnMapName == Fade.kMapName or gestationMapName == Fade.kMapName ) and 
-			( player.oneHive or GetIsTechUnlocked( player, kTechId.ShadowStep ) )
-		
-		local leap = 
-			( respawnMapName == Skulk.kMapName or gestationMapName == Skulk.kMapName ) and 
-			( player.twoHives or GetIsTechUnlocked( player, kTechId.Leap ) )
-		
-		self.oneHive = charge or sstep
-		self.twoHives = leap
-		self.gestationClass = gestationMapName	
-	end
-	
-	
 	local oldOnJoinTeam
 	oldOnJoinTeam = Class_ReplaceMethod( "Alien", "OnJoinTeam", 
 		function( self )
@@ -137,19 +115,44 @@ if Server then
 				oldOnJoinTeam( self )
 			end
 		end)
+	
+	
+	Class_AddMethod( "Alien", "CopyPlayerDataForReadyRoomFrom",
+		function( self, player )
+			local respawnMapName = ReadyRoomTeam.GetRespawnMapName(nil,player)
+			local gestationMapName = respawnMapName == ReadyRoomEmbryo.kMapName and player.gestationClass or nil
+			
+			local charge = 
+				( respawnMapName == Onos.kMapName or gestationMapName == Onos.kMapName ) and 
+				( player.oneHive or GetIsTechUnlocked( player, kTechId.Charge ) )
+				
+			local sstep = 
+				( respawnMapName == Fade.kMapName or gestationMapName == Fade.kMapName ) and 
+				( player.oneHive or GetIsTechUnlocked( player, kTechId.ShadowStep ) )
+			
+			local leap = 
+				( respawnMapName == Skulk.kMapName or gestationMapName == Skulk.kMapName ) and 
+				( player.twoHives or GetIsTechUnlocked( player, kTechId.Leap ) )
+			
+			self.oneHive = charge or sstep
+			self.twoHives = leap
+			self.gestationClass = gestationMapName	
+		end)
+	
 
 
 	local oldAlienCopyPlayerDataFrom
 	oldAlienCopyPlayerDataFrom = Class_ReplaceMethod( "Alien", "CopyPlayerDataFrom",
 		function (self, player)
-			if self:GetTeamNumber() == kNeutralTeamType then
+			if self:GetTeamNumber() == kNeutralTeamType and player:GetTeamNumber() ~= kNeutralTeamType then
 				-- always copy when going from live alien to ready room
 				Player.CopyPlayerDataFrom(self, player)
-				CopyPlayerDataForReadyRoom( self, player )
+				Alien.CopyPlayerDataForReadyRoomFrom( self, player )
 			elseif player:isa("AlienSpectator") then		
 				-- don't copy data from an AlienSpectator to live alien if not going to the RR
 				Player.CopyPlayerDataFrom(self, player)
 			else
+				-- live alien to live alien, use defaults
 				oldAlienCopyPlayerDataFrom( self, player )
 			end		
 		end)
@@ -158,9 +161,9 @@ if Server then
 	local oldAlienSpectatorCopyPlayerDataFrom
 	oldAlienSpectatorCopyPlayerDataFrom = Class_ReplaceMethod( "AlienSpectator", "CopyPlayerDataFrom",
 		function (self, player)
-			oldAlienSpectatorCopyPlayerDataFrom( self, player )
 			-- always copy when going from live alien to alien spectator
-			CopyPlayerDataForReadyRoom( self, player )
+			oldAlienSpectatorCopyPlayerDataFrom( self, player )
+			Alien.CopyPlayerDataForReadyRoomFrom( self, player )
 		end)
 
 end
