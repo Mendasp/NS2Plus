@@ -7,20 +7,20 @@ Script.Load( "lua/Weapons/Alien/ReadyRoomLeap.lua" )
 Script.Load( "lua/Weapons/Alien/ReadyRoomBlink.lua" )
 	
 	
-local oldBuildTechData = BuildTechData
-function BuildTechData() 
-	local techData = oldBuildTechData()
-	
-	techData[#techData + 1] = 
+local oldLookupTechId = LookupTechId
+local oldLookupTechData = LookupTechData
+
+local function AddNS2PlusTechChanges()
+	kTechData[#kTechData+1] = 
 	{
 		[kTechDataId] = kTechId.ReadyRoomEmbryo,
 		[kTechDataMapName] = ReadyRoomEmbryo.kMapName,
 		[kTechDataDisplayName] = "READY_ROOM_EMBRYO",
-		[kTechDataModel] = Embryo.kModelName,
-		[kTechDataMaxExtents] = Vector(Embryo.kXExtents, Embryo.kYExtents, Embryo.kZExtents)
+		[kTechDataModel] = MarineVariantMixin.kModelNames["male"]["green"],
+		[kTechDataMaxExtents] = Vector(Player.kXZExtents, Player.kYExtents, Player.kXZExtents)
 	}
 	
-	techData[#techData + 1] = 
+	kTechData[#kTechData+1] = 
 	{
 		[kTechDataId] = kTechId.ReadyRoomExo,
 		[kTechDataMapName] = ReadyRoomExo.kMapName,
@@ -28,7 +28,19 @@ function BuildTechData()
 		[kTechDataMaxExtents] = Vector(Exo.kXZExtents, Exo.kYExtents, Exo.kXZExtents),
 	}
 	
-	return techData
+	LookupTechId = oldLookupTechId
+	LookupTechData = oldLookupTechData
+end
+
+function LookupTechId(...)
+	local techId = oldLookupTechId(...)
+	AddNS2PlusTechChanges()
+	return techId
+end
+function LookupTechData(...)
+	local data = oldLookupTechData(...)
+	AddNS2PlusTechChanges()
+	return data
 end
 
 
