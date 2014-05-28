@@ -2,7 +2,18 @@ local updateCheckInterval = CHUDServerOptions["modupdatercheckinterval"].current
 local lastTimeChecked = Shared.GetTime() - updateCheckInterval
 local mapChangeNeeded = false
 local modsTable = {}
+local updatedMods = {}
 local DisableUpdater = false
+
+local function CHUDDisplayModUpdateMessage()
+	SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+	local modsStringList = "Mods updated:"
+	local i = 0
+	for index, value in pairs(updatedMods) do
+		modsStringList = modsStringList .. " " .. value .. "."
+	end
+	SendCHUDMessage(modsStringList)
+end
 
 // Don't use this updater if the server is already using the Shine one
 if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
@@ -19,19 +30,21 @@ function CHUDParseModInfo(modInfo)
 		local response = modInfo["response"]
 		if response and response["result"] == 1 then
 			for _, res in pairs(response["publishedfiledetails"]) do
-				if res["result"] == 1 and not mapChangeNeeded then
+				if res["result"] == 1 then
 					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
 						AddCHUDTagBitmask(CHUDTagBitmask["mcr"])
 						mapChangeNeeded = true
 						// Repeat the mod update message
 						updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60
-						if not DisableUpdater then
-							SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
-						end
+						updatedMods[res["publishedfileid"]] = res["title"]
 					end
 					
 					modsTable[res["publishedfileid"]] = res["time_updated"]
 				end
+			end
+			
+			if not DisableUpdater and mapChangeNeeded then
+				CHUDDisplayModUpdateMessage()
 			end
 		end
 	end
@@ -65,7 +78,7 @@ function CHUDModUpdater()
 		if mapChangeNeeded then
 			// If we set the reminder to 0, don't show this message anymore.
 			if updateCheckInterval > 0 and not DisableUpdater then
-				SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+				CHUDDisplayModUpdateMessage()
 			end
 		else	
 			local params = {}

@@ -1,3 +1,15 @@
+local kBlipColorType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipColorType", 		{ LocateRecurse = true } )
+local kStaticBlipsLayer = GetUpValue( GUIMinimap.Initialize,   "kStaticBlipsLayer", 	{ LocateRecurse = true } )
+local kBlipSize 		= GetUpValue( GUIMinimap.SetBlipScale, "kBlipSize", 			{ LocateRecurse = true } )
+local kBlipSizeType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipSizeType", 		{ LocateRecurse = true } )
+local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ LocateRecurse = true } )
+
+
+AppendToEnum( kBlipColorType, "White" )
+AppendToEnum( kBlipSizeType, "BoneWall" )
+kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.White, kBlipSizeType.BoneWall, kStaticBlipsLayer }
+
+
 Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 	function(self)
 		local player = Client.GetLocalPlayer()
@@ -71,6 +83,10 @@ function(self)
 	ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendMarine =
 		ConditionalValue(friends, kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
 
+	-- Add a white blipcolor for full-color icons
+	for blipTeam, _ in ipairs(kMinimapBlipTeam) do
+		self.blipColorTable[blipTeam][kBlipColorType.White] = Color(1, 1, 1, 1)
+    end
 	
 	minimapScript = self
 end)
@@ -186,19 +202,6 @@ originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
 
 
 -- Bone Wall size change
-local kBlipColorType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipColorType", 		{ LocateRecurse = true } )
-local kStaticBlipsLayer = GetUpValue( GUIMinimap.Initialize,   "kStaticBlipsLayer", 	{ LocateRecurse = true } )
-local kBlipSize 		= GetUpValue( GUIMinimap.SetBlipScale, "kBlipSize", 			{ LocateRecurse = true } )
-
-local kBlipSizeType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipSizeType", 		{ LocateRecurse = true } )
-AppendToEnum( kBlipSizeType, "BoneWall" )
-
-local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ LocateRecurse = true } )
-kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.MAC, kBlipSizeType.BoneWall, kStaticBlipsLayer }
-if rawget(kMinimapBlipType, "TunnelExit") then
-	kBlipInfo[kMinimapBlipType.TunnelEntrance] = { kBlipColorType.MAC, kBlipSizeType.Normal, kStaticBlipsLayer }
-end
-
 local oldSetBlipScale 
 oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
 	function( self, blipScale )

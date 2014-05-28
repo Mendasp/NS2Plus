@@ -1,4 +1,12 @@
-local _renderMask       = 0x8
+local originalMineOnCreate
+originalMineOnCreate = Class_ReplaceMethod("Mine", "OnCreate",
+	function(self)
+		originalMineOnCreate(self)
+		
+		InitMixin(self, MarineOutlineMixin)
+	end)
+
+local _renderMask       = 0x40
 local _invRenderMask    = bit.bnot(_renderMask)
 local _maxDistance      = 30
 local _maxDistance_Commander = 60

@@ -11,6 +11,7 @@ if Server then
 			
 			local endTrace = self:GetOrigin()
 			
+<<<<<<< HEAD
 			local trace = Shared.TraceCapsule( startTrace, endTrace, Grenade.kDetonateRadius,  0, CollisionRep.Damage, PhysicsMask.PredictedProjectileGroup, EntityFilterOne(self) )
 			
 			if trace.fraction ~= 1 then
@@ -19,5 +20,19 @@ if Server then
 					self:Detonate( trace.entity )
 				end
 			end		
+=======
+			local controller = self.projectileController
+            local oldEnough = controller and ( controller.minLifeTime + controller.creationTime <= Shared.GetTime() )
+			if oldEnough then
+				local trace = Shared.TraceCapsule( startTrace, endTrace, Grenade.kDetonateRadius,  0, CollisionRep.Damage, PhysicsMask.PredictedProjectileGroup, EntityFilterOne(self) )
+				
+				if trace.fraction ~= 1 then
+					if GetAreEnemies(self, trace.entity) then
+						self:SetOrigin( trace.endPoint )
+						self:Detonate( trace.entity )
+					end
+				end		
+			end
+>>>>>>> origin/dev
 		end)
 end

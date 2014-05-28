@@ -4,12 +4,33 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+
+- 28/05/2014 (Build 265):
+	- You can now sort by column in the mods window.
+	- Fixed bug where Last life stats would show up as "nan%" sometimes.
+	- Dropped marine weapons are outlined for the marine commander and spectators.
+	- Spectators can see deployed mines highlighted with a blue outline, and the outline will turn yellow if the mine has been parasited.
+	- Fixed invisible collision/hitboxes for the following models:
+		- refinery_tram_door1.model
+		- refinery_tram_door2.model
+		- docking_loadingdoor_closed.model
+		- docking_loadingdoor_closed_var.model
+		- refinery_gantrycrane.model
+		- biodome_elevator.model
+		- biodome_wallmods_01_corner_in_90_01.model
+		- biodome_wallmods_01_corner_in_90_02.model
+	- Integrated 'Ready Room Special' mod (Thanks remi.D!)
+
+- 22/05/2014 (Build 265):
+	- Added new BoneWall icon for the minimap (Thanks remi.D!)
+	- Mod updater now shows a list of the mods that have been updated.
+
 - 21/05/2014 (Build 265):
 	- Ammo, medpacks and catpacks now ignore the vertical element for pickup by marines. This should mitigate some of the problems commanders have with weird geometry in levels blocking their drops. (Thanks kmg!)
 	- Added Bonewall minimap icon. (Thanks kmg, remi.D!)
 	- Shift Echo now updates the buttons faster when trying to echo upgrade chambers, and updates immediately after the shift is echoed to a new location (Thanks remi.D!)
 	- Fixed Grenade collision radius to be more representative of the visual model -- proximity detonation radius is unchanged (Thanks remi.D!)
-	- Fix drifters trying to build structures they can't and fake-building them forever (Thanks remi.D!)
+	- Fixed drifters trying to build structures they can't and fake-building them forever (Thanks remi.D!)
 	- Bonewalls now show range before dropping.
 	- Fixed bug where the Unique Shotgun Hits setting would affect Flamethrower damage numbers sometimes.
 	- Minimap connectors display as a line when there's only 2 PGs.
@@ -44,28 +65,6 @@ Latest changes
 	- Made weapons that were actively picked up get swapped to (pistols, mines). (Thanks remi.D!)
 	- Added option to prevent shotgun damage numbers from accumulating. Available in the HUD tab. (Thanks remi.D!)
 	- Added option to speed up damage number accumulation. Available in the HUD tab. (Thanks remi.D!)
-
-- 09/05/2014 (Build 265):
-	- Added pickup expire bar. You can now see how much time left you have to pick up things on the ground. Default is off. Available in the Misc. tab.
-	- Fixed lights staying red if the power node was under attack (infestation). (Thanks remi.D!)
-
-- 08/05/2014 (Build 265):
-	- When Autopickup is enabled Welders, Mines and Pistols will no longer show a pickup hint when running over them. (Thanks remi.D)
-	- Autopickup will now pick up a weapon more quickly if it was not the last weapon you dropped. (Thanks remi.D)
-	- Fixed autopickup better weapons getting stuck in a loop of weapon switching sometimes. (Thanks remi.D)
-	- Fixed commander selection bug that made buildings selected with hotgroups not respond properly sometimes.
-	
-- 07/05/2014 (Build 265):
-	- Added "impulse" command to trigger voice overs without using the request menu. (Thanks remi.D!)
-	- Added showing number of connecting players to the scoreboard. (Thanks remi.D!)
-	- Added showing if a marine has a jetpack to the scoreboard. (Thanks Wyzcrack and remi.D!)
-	- Fixed scoreboard not showing spectators to players on teams. (Thanks Wyzcrack and remi.D!)
-	- Extra checks in main menu functionality so it doesn't break on mod updates.
-	- Commanders can now see building ranges before dropping them.
-	- Added Lerk deaths to Insight alerts.
-	- Added hints to option inputs.
-	- Added autopickup better primary weapon option (default off). Available in Misc. tab.
-	- Reset autopickup options so they default to off.
 
 =================
 Credits/Thanks to

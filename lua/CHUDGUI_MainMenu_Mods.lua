@@ -15,25 +15,52 @@ local kModStateNames =
         unavailable = "UNAVAILABLE",
         available = "AVAILABLE",
     }
-local asdf
+
 function GUIMainMenu:RefreshModsList()
     Client.RefreshModList()
 end
 
 local kGetModsURL = "http://steamcommunity.com/workshop/browse?appid=4920"
 
+local gLastSortType = 0
+local gSortReversed = false
+local sorted = false
+
+// 1 = NAME, 2 = STATE, 3 = SUBSCRIBED, 4 = ACTIVE
+function GUIMainMenu:SortModsBy(field)
+    if gLastSortType == field then
+        gSortReversed = not gSortReversed
+    else
+        gSortReversed = false
+    end
+    
+    gLastSortType = field
+    
+    table.sort(self.modsTable.tableData, (function(a, b)
+        if not gSortReversed then
+            return string.lower(a[field]) > string.lower(b[field])
+        else
+            return string.lower(a[field]) < string.lower(b[field])
+        end
+    end))
+    for i, modEntry in pairs(self.modsTable.tableData) do
+        self.displayedMods[modEntry.row.s].idx = i
+    end
+    self.modsTable:RenderTable()
+end
+
 function GUIMainMenu:CreateModsWindow()
 
     self.modsWindow = self:CreateWindow()
     self.modsWindow:DisableCloseButton()
-	self.modsWindow:ResetSlideBar()
+    self.modsWindow:ResetSlideBar()
     self:SetupWindow(self.modsWindow, "MODS")
     self.modsWindow:GetContentBox():SetCSSClass("mod_list")
     
     local back = CreateMenuElement(self.modsWindow, "MenuButton")
     back:SetCSSClass("back")
     back:SetText("BACK")
-    back:AddEventCallbacks({ OnClick = function() self.modsWindow:SetIsVisible(false) end })
+    back:AddEventCallbacks({ OnClick = function() self.modsWindow:SetIsVisible(false) sorted = false end })
     
     local getMods = CreateMenuElement(self.modsWindow, "MenuButton")
     getMods:SetCSSClass("getmods")
@@ -63,6 +90,15 @@ function GUIMainMenu:CreateModsWindow()
     
     self.modsRowNames = CreateMenuElement(self.modsWindow, "Table")
     self.modsTable = CreateMenuElement(self.modsWindow:GetContentBox(), "Table")
+    
+    local entryCallbacks = {
+        { OnClick = function() self:SortModsBy(1) end },
+        { OnClick = function() self:SortModsBy(2) end },
+        { OnClick = function() self:SortModsBy(3) end },
+        { OnClick = function() self:SortModsBy(4) end },
+    }
+   
+    self.modsRowNames:SetEntryCallbacks(entryCallbacks)
 
     local columnClassNames =
     {
@@ -145,8 +181,6 @@ function GUIMainMenu:CreateModsWindow()
     
 end
 
-local sorted = false
-
 function GUIMainMenu:UpdateModsWindow(self)
     
     local reload = false
@@ -183,11 +217,11 @@ function GUIMainMenu:UpdateModsWindow(self)
             reload = true
             
             if s > #self.displayedMods then
-
+            
                 table.insert(self.displayedMods, { index = s, currentStatus = currentStatus })
                 self.modsTable:AddRow({ name, stateString, subscribed, active }, s)
-				self.modsTable.tableData[s].row.s = s
-				self.displayedMods[#self.displayedMods].idx = s
+                self.modsTable.tableData[s].row.s = s
+                self.displayedMods[#self.displayedMods].idx = s
                 
             else
                 
@@ -201,27 +235,28 @@ function GUIMainMenu:UpdateModsWindow(self)
     end
 
     if reload then
-		self.modsTable:Sort()
+        self.modsTable:Sort()
     end
-
-	if not sorted then
-		table.sort(self.modsTable.tableData, (function(a, b)
-			if a[4] == b[4] then
-				if a[3] == b[3] then
-					return string.lower(a[1]) < string.lower(b[1])
-				else
-					return a[3] > b[3]
-				end
-			else
-				return a[4] > b[4]
-			end
-		end))
-		for i, modEntry in pairs(self.modsTable.tableData) do
-			self.displayedMods[modEntry.row.s].idx = i
-		end
-		self.modsTable:RenderTable()
-		
-		sorted = true
-	end
+    
+    // Sort after opening the menu
+    if not sorted then
+        table.sort(self.modsTable.tableData, (function(a, b)
+            if a[4] == b[4] then
+                if a[3] == b[3] then
+                    return string.lower(a[1]) < string.lower(b[1])
+                else
+                    return a[3] > b[3]
+                end
+            else
+                return a[4] > b[4]
+            end
+        end))
+        for i, modEntry in pairs(self.modsTable.tableData) do
+            self.displayedMods[modEntry.row.s].idx = i
+        end
+        self.modsTable:RenderTable()
+        
+        sorted = true
+    end
    
 end

@@ -235,8 +235,6 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 			self.lastNotificationUpdate = Client.GetTime()
 		end
 		
-		self.inventoryDisplay:SetIsVisible(mingui)
-
 		if not rtcount then
 			self.resourceDisplay.rtCount:SetIsVisible(false)
 			self.resourceDisplay.pResDescription:SetText(string.format("%s (%d %s)",

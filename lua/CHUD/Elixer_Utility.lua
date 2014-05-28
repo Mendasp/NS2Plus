@@ -4,14 +4,13 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.3;
+local version = 1.5;
 
-if not Elixer or Elixer.Version ~= version then
-	Shared.Message( "[Elixer] Loading Utility Scripts v."..string.format("%.1f",version) );
-end
-
-Elixer = Elixer or { Debug = false; Module = { [version] = {} }; }
-
+Elixer = Elixer or {}
+Elixer.Debug = Elixer.Debug or false  
+Elixer.Module = Elixer.Module or {}
+Elixer.Module[1.4] = Elixer.Module[1.4] or {} -- Backwards Compatibility
+Elixer.Module[1.3] = Elixer.Module[1.3] or {} -- Backwards Compatibility
 
 local function DPrint( string )
 	if Elixer.Debug then
@@ -22,6 +21,7 @@ end
 
 function Elixer.UseVersion( version ) 
 	if Elixer.Version ~= version then
+		assert( Elixer.Module and Elixer.Module[version], "Elixer Utility v."..string.format("%.1f",version).." could not be found." )
 		Shared.Message( "[Elixer] Using Utility Scripts v."..string.format("%.1f",version) );
 		if Elixer.Version and Elixer.Module and Elixer.Module[Elixer.Version] then
 			for k,v in pairs( Elixer.Module[Elixer.Version] ) do
@@ -35,7 +35,16 @@ function Elixer.UseVersion( version )
 	end
 end
 
-local ELIXER = Elixer.Module[version];
+-- Already loaded, just apply the loaded version
+if Elixer.Module[version] then
+	DPrint( "[Elixer] Skipped Loading Utility Scripts v."..string.format("%.1f",version) )
+	Elixer.UseVersion( version )
+	return
+end
+
+Shared.Message( "[Elixer] Loading Utility Scripts v."..string.format("%.1f",version) );
+
+local ELIXER = {}
 
 function ELIXER.Class_AddMethod( className, methodName, method )
 	if _G[className][methodName] and _G[className][methodName] ~= method then
@@ -171,10 +180,18 @@ function ELIXER.ReplaceUpValue( func, localname, newval, options )
 	debug.setupvalue( func, i, newval )
 end;
 
-function ELIXER.AppendToEnum( tbl, key )	
+function ELIXER.AppendToEnum( tbl, key )
+	if rawget(tbl,key) ~= nil then
+		return
+	end
+	
 	local maxVal = 0
-	if rawget( tbl, 'Max' ) then
+	if tbl == kTechId then
 		maxVal = tbl.Max - 1
+		if maxVal == kTechIdMax then
+			error( "Appending another value to the TechId enum would exceed network precision constraints" )
+		end
+		rawset( tbl, rawget( tbl, maxVal+2 ), nil )
 		rawset( tbl, 'Max', maxVal+2 )
 		rawset( tbl, maxVal+2, 'Max' )
 	else
@@ -187,23 +204,9 @@ function ELIXER.AppendToEnum( tbl, key )
 	
 	rawset( tbl, key, maxVal+1 )
 	rawset( tbl, maxVal+1, key )
+	
 end
 
-
+Elixer.Module[version] = ELIXER
 ELIXER = nil
 Elixer.UseVersion( version );
-
---[[
-Elixer.Module[version] =
-{
-	Class_AddMethod = Class_AddMethod;
-	upvalues = upvalues;
-	PrintUpValues = PrintUpValues;
-	GetUpValue = GetUpValue;
-	LocateUpValue = LocateUpValue;
-	GetUpValues = GetUpValues;
-	SetUpValues = SetUpValues;
-	CopyUpValues = CopyUpValues;
-	ReplaceUpValue = ReplaceUpValue;
-}
-]]--

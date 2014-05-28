@@ -1,5 +1,5 @@
 Script.Load("lua/CHUD/Elixer_Utility.lua")
-Elixer.UseVersion( 1.3 ) 
+Elixer.UseVersion( 1.5 ) 
 
 local kCHUDStatsMessage =
 {
@@ -31,6 +31,8 @@ Script.Load("lua/Shared/CHUD_LayMines.lua")
 Script.Load("lua/Shared/CHUD_AmmoPack.lua")
 Script.Load("lua/Shared/CHUD_Grenade.lua")
 Script.Load("lua/Shared/CHUD_BoneWall.lua")
+
+Script.Load("lua/Shared/CHUD_ReadyRoom.lua")
 
 CHUDTagBitmask = {
 	mcr = 0x1,
