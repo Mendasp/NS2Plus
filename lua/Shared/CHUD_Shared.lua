@@ -1,5 +1,5 @@
 Script.Load("lua/CHUD/Elixer_Utility.lua")
-Elixer.UseVersion( 1.4 ) 
+Elixer.UseVersion( 1.5 ) 
 
 local kCHUDStatsMessage =
 {

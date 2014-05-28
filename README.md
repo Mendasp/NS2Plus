@@ -10,7 +10,8 @@ Latest changes
 - 28/05/2014 (Build 265):
 	- You can now sort by column in the mods window.
 	- Fixed bug where Last life stats would show up as "nan%" sometimes.
-	- Dropped marine weapons and deployed mines are now outlined for spectators.
+	- Dropped marine weapons are outlined for the marine commander and spectators.
+	- Spectators can see deployed mines highlighted with a blue outline, and the outline will turn yellow if the mine has been parasited.
 	- Fixed invisible collision/hitboxes for the following models:
 		- refinery_tram_door1.model
 		- refinery_tram_door2.model

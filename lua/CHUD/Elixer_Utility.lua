@@ -4,14 +4,13 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.4;
+local version = 1.5;
 
-if not Elixer or Elixer.Version ~= version then
-	Shared.Message( "[Elixer] Loading Utility Scripts v."..string.format("%.1f",version) );
-end
-
-Elixer = Elixer or { Debug = false; Module = { [version] = {} }; }
-
+Elixer = Elixer or {}
+Elixer.Debug = Elixer.Debug or false  
+Elixer.Module = Elixer.Module or {}
+Elixer.Module[1.4] = Elixer.Module[1.4] or {} -- Backwards Compatibility
+Elixer.Module[1.3] = Elixer.Module[1.3] or {} -- Backwards Compatibility
 
 local function DPrint( string )
 	if Elixer.Debug then
@@ -36,7 +35,16 @@ function Elixer.UseVersion( version )
 	end
 end
 
-local ELIXER = Elixer.Module[version];
+-- Already loaded, just apply the loaded version
+if Elixer.Module[version] then
+	DPrint( "[Elixer] Skipped Loading Utility Scripts v."..string.format("%.1f",version) )
+	Elixer.UseVersion( version )
+	return
+end
+
+Shared.Message( "[Elixer] Loading Utility Scripts v."..string.format("%.1f",version) );
+
+local ELIXER = {}
 
 function ELIXER.Class_AddMethod( className, methodName, method )
 	if _G[className][methodName] and _G[className][methodName] ~= method then
@@ -183,6 +191,7 @@ function ELIXER.AppendToEnum( tbl, key )
 		if maxVal == kTechIdMax then
 			error( "Appending another value to the TechId enum would exceed network precision constraints" )
 		end
+		rawset( tbl, rawget( tbl, maxVal+2 ), nil )
 		rawset( tbl, 'Max', maxVal+2 )
 		rawset( tbl, maxVal+2, 'Max' )
 	else
@@ -198,6 +207,6 @@ function ELIXER.AppendToEnum( tbl, key )
 	
 end
 
-
+Elixer.Module[version] = ELIXER
 ELIXER = nil
 Elixer.UseVersion( version );
