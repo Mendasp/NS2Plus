@@ -6,8 +6,8 @@
 //
 // ========= For more information, visit us at http://www.unknownworlds.com =====================
 
-
-kTechId = enum {
+local kTechIdTable = 
+{
     
     'None', 'PingLocation',
     
@@ -199,15 +199,25 @@ kTechId = enum {
     // Maximum index
     'Max'
     
-    }
+}
+
+// Increase techNode network precision if more needed
+kTechIdMax  = math.pow( 2, math.ceil( math.log( #kTechIdTable )/math.log(2) ) ) - 1 -- use all the bits
+   
+for i=#kTechIdTable+1, kTechIdMax do
+	kTechIdTable[i] = 'unused'..i
+end
+
+
+
+kTechId = enum( kTechIdTable )
     
 function StringToTechId(string)
     return rawget(kTechId, string) or kTechId.None
 end     
 
-// Increase techNode network precision if more needed
-kTechIdMax  = math.pow( 2, math.ceil( math.log(kTechId.Max)/math.log(2) ) ) - 1 -- use all the bits
-    
+
+   
 // Tech types
 kTechType = enum({ 'Invalid', 'Order', 'Research', 'Upgrade', 'Action', 'Buy', 'Build', 'EnergyBuild', 'Manufacture', 'Activation', 'Menu', 'EnergyManufacture', 'PlasmaManufacture', 'Special', 'Passive' })
 
