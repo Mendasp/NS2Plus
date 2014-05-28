@@ -22,7 +22,12 @@ end
 function ReadyRoomExo:PerformEject()
 	if Server and self:GetIsAlive() then
         
- 		self:TriggerEffects("death", { classname = self:GetClassName(), effecthostcoords = Coords.GetTranslation(self:GetOrigin()) })
+		local exosuit = CreateEntity(Exosuit.kMapName, self:GetOrigin(), self:GetTeamNumber())
+		exosuit:SetLayout(self.layout)
+		exosuit:SetCoords(self:GetCoords())
+		exosuit:SetExoVariant(self:GetVariant())		
+		exosuit:TriggerEffects("death")
+		DestroyEntity(exosuit)
 		
 		local marine = self:Replace(self.prevPlayerMapName or Marine.kMapName, nil, nil, self:GetOrigin() + Vector(0, 0.2, 0) )					
 		marine.onGround = false
