@@ -1,4 +1,4 @@
-Elixer.UseVersion( 1.5 ) 
+Elixer.UseVersion( kCHUDElixerVersion ) 
 Script.Load("lua/CHUD_GUIScripts/GUIInsight_PlayerFrames.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIAlienHUD.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIMarineHUD.lua")
