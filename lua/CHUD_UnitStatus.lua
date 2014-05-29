@@ -154,7 +154,7 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			IsParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited(),
 		}
 		
-		if self:isa("InfantryPortal") then
+		if self:isa("InfantryPortal") and self.timeSpinStarted then
 			if self.queuedPlayerId ~= Entity.invalidId then			
 				local playerName = ""
 				for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
