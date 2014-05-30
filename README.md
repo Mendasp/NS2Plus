@@ -6,6 +6,8 @@ Latest changes
 ==============
 
 - /05/2014 (Build 265):
+	- Made it so commanders can't see weapon outlines unless they are on the ground
+	- Lerk Bite has its own obituary icon
 	- Leap should work in RR post-game (Thanks remi.D!)
 	
 - 28/05/2014 (Build 265):
