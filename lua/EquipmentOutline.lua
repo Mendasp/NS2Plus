@@ -94,8 +94,8 @@ function EquipmentOutline_UpdateModel(forEntity)
     local player = Client.GetLocalPlayer()
     
     // Check if player can pickup this item or if player is a spectator
-	local highlightDroppedWeapon = player ~= nil and player:GetTeamNumber() == kSpectatorIndex and Client.GetOutlinePlayers() and forEntity:isa("Weapon") and forEntity.weaponWorldState == true
-    local visible = (player ~= nil and (forEntity:GetIsValidRecipient(player) or player:isa("MarineCommander"))) or highlightDroppedWeapon
+	local highlightDroppedWeapon = player ~= nil and ((player:GetTeamNumber() == kSpectatorIndex and Client.GetOutlinePlayers()) or player:isa("MarineCommander")) and forEntity:isa("Weapon") and forEntity.weaponWorldState == true
+    local visible = (player ~= nil and forEntity:GetIsValidRecipient(player)) or highlightDroppedWeapon
     local model = HasMixin(forEntity, "Model") and forEntity:GetRenderModel() or nil
     
 	if forEntity:isa("WeaponAmmoPack") then
