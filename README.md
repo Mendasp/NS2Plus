@@ -7,12 +7,10 @@ Latest changes
 - 31/05/2014 (Build 265):
 	- The kill feed now highlights your enemy player kills.
 	- Fixed bug where respawn cheat command wouldn't work for aliens.
-
-- /05/2014 (Build 265):
 	- Made it so commanders can't see weapon outlines unless they are on the ground
 	- Lerk Bite has its own obituary icon
 	- Leap should work in RR post-game (Thanks remi.D!)
-	
+
 - 28/05/2014 (Build 265):
 	- You can now sort by column in the mods window.
 	- Fixed bug where Last life stats would show up as "nan%" sometimes.
