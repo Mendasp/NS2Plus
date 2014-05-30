@@ -161,11 +161,10 @@ if Server then
 		end)
 
 
-	local oldAlienSpectatorCopyPlayerDataFrom
-	oldAlienSpectatorCopyPlayerDataFrom = Class_ReplaceMethod( "AlienSpectator", "CopyPlayerDataFrom",
+	Class_AddMethod( "AlienSpectator", "CopyPlayerDataFrom",
 		function (self, player)
 			-- always copy when going from live alien to alien spectator
-			oldAlienSpectatorCopyPlayerDataFrom( self, player )
+			Player.CopyPlayerDataFrom( self, player )
 			Alien.CopyPlayerDataForReadyRoomFrom( self, player )
 		end)
 		
