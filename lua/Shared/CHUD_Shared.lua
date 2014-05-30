@@ -1,4 +1,4 @@
-kCHUDElixerVersion = 1.6
+kCHUDElixerVersion = 1.7
 Script.Load("lua/CHUD/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 

@@ -4,7 +4,7 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.6;
+local version = 1.7;
 
 Elixer = Elixer or {}
 Elixer.Debug = Elixer.Debug or false  
@@ -16,13 +16,13 @@ local function EPrint( fmt, ... )
 	local domain = Server and "Server" or Predict and "Predict" or Client and "Client" or "Unknown" 
 	Shared.Message( string.format( "[Elixer (%s)] "..tostring(fmt), domain, ... ) )
 end
-local function DPrint( fmt, ... ) if Elixer.Debug then EPrint( fmt, ... ) end end
+local function EPrintDebug( fmt, ... ) if Elixer.Debug then EPrint( fmt, ... ) end end
 
 
 
 if Elixer.Module[version] then
 	-- Already loaded, just apply the loaded version
-	DPrint( "[Elixer] Skipped Loading Utility Scripts v.%.1f",version )
+	EPrintDebug( "[Elixer] Skipped Loading Utility Scripts v.%.1f",version )
 	Elixer.UseVersion( version )
 	return
 end
@@ -68,6 +68,7 @@ end
 local ELIXER = {}
 
 ELIXER.EPrint = EPrint
+ELIXER.EPrintDebug = EPrintDebug
 
 function ELIXER.Class_AddMethod( className, methodName, method )
 	if _G[className][methodName] and _G[className][methodName] ~= method then
@@ -123,7 +124,7 @@ end;
 function ELIXER.LocateUpValue( func, upname, options )
 	for i,name,val in upvalues( func ) do
 		if name == upname then
-			DPrint( "LocateUpValue found "..upname )
+			EPrintDebug( "LocateUpValue found "..upname )
 			return func,val,i
 		end
 	end
@@ -133,7 +134,7 @@ function ELIXER.LocateUpValue( func, upname, options )
 			if type( innerfunc ) == "function" then
 				local r = { LocateUpValue( innerfunc, upname, options ) }
 				if #r > 0 then
-					DPrint( "\ttrace: "..name )
+					EPrintDebug( "\ttrace: "..name )
 					return unpack( r )
 				end
 			end
@@ -157,16 +158,16 @@ end;
 
 function ELIXER.SetUpValues( func, source )
 
-	DPrint( "Setting upvalue for "..tostring(func) )
+	EPrintDebug( "Setting upvalue for "..tostring(func) )
 
 	for i,name,val in upvalues( func ) do
 		if source[name] then
 			if val == nil then
-				DPrint( "Setting upvalue "..name.." to "..tostring(source[name]) )
+				EPrintDebug( "Setting upvalue "..name.." to "..tostring(source[name]) )
 				assert( val == nil )
 				debug.setupvalue( func, i, source[name] )
 			else
-				DPrint( "Upvalue "..name.." already overwritten by new function" )
+				EPrintDebug( "Upvalue "..name.." already overwritten by new function" )
 			end
 			source[name] = nil
 		end
@@ -174,7 +175,7 @@ function ELIXER.SetUpValues( func, source )
 
 	for name,v in pairs( source ) do
 		if v then
-			DPrint( "Upvalue "..name.." was not ported to new function. Was this intentional?" )
+			EPrintDebug( "Upvalue "..name.." was not ported to new function. Was this intentional?" )
 		end
 	end
 
@@ -192,7 +193,7 @@ end;
 function ELIXER.ReplaceUpValue( func, localname, newval, options )
 	local val,i;
 
-	DPrint( "Replacing upvalue "..localname )
+	EPrintDebug( "Replacing upvalue "..localname )
 
 	func, val, i = LocateUpValue( func, localname, options );
 
@@ -246,6 +247,23 @@ function ELIXER.list ( ... )
 		t[i] = tostring(argv[i])
 	end
 	return table.concat( t, ", " )
+end
+
+
+local set_mt = { __index = function() return false; end }
+function ELIXER.set( tbl )
+	local ret = {}
+	for i,v in next,tbl do ret[v] = true end
+	return setmetatable( ret, set_mt )
+end
+
+
+function ELIXER.EPrintCallHook( class, name )
+	local old
+	old = Class_ReplaceMethod( class, name, function(...) 
+		EPrint( "%s.%s(%s) Called", class, name, list(...) )
+		return old(...) 
+	end)
 end
 
 
