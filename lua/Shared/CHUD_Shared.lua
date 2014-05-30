@@ -32,6 +32,7 @@ Script.Load("lua/Shared/CHUD_LayMines.lua")
 Script.Load("lua/Shared/CHUD_AmmoPack.lua")
 Script.Load("lua/Shared/CHUD_Grenade.lua")
 Script.Load("lua/Shared/CHUD_BoneWall.lua")
+Script.Load("lua/Shared/CHUD_LerkBite.lua")
 
 Script.Load("lua/Shared/CHUD_ReadyRoom.lua")
 
