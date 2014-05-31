@@ -16,6 +16,7 @@ Script.Load("lua/Server/CHUD_PickupExpire.lua")
 Script.Load("lua/Server/CHUD_DropPack.lua")
 Script.Load("lua/Server/CHUD_Shift.lua")
 Script.Load("lua/Server/CHUD_Drifter.lua")
+Script.Load("lua/Server/CHUD_BleedOutAttribution.lua")
 
 local oldBadgesActive = false
 // Warning about outdated mod
