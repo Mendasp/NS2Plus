@@ -148,6 +148,9 @@ if Server then
 				-- always copy when going from live alien to ready room
 				Player.CopyPlayerDataFrom(self, player)
 				Alien.CopyPlayerDataForReadyRoomFrom( self, player )
+			--elseif self:GetTeamNumber() ~= kNeutralTeamType and player:GetTeamNumber() == kNeutralTeamType
+			--	-- don't copy data from an Alien while entering the game
+			--	Player.CopyPlayerDataFrom(self, player)
 			elseif player:isa("AlienSpectator") then		
 				-- don't copy data from an AlienSpectator to live alien if not going to the RR
 				Player.CopyPlayerDataFrom(self, player)
@@ -158,12 +161,23 @@ if Server then
 		end)
 
 
-	local oldAlienSpectatorCopyPlayerDataFrom
-	oldAlienSpectatorCopyPlayerDataFrom = Class_ReplaceMethod( "AlienSpectator", "CopyPlayerDataFrom",
+	Class_AddMethod( "AlienSpectator", "CopyPlayerDataFrom",
 		function (self, player)
 			-- always copy when going from live alien to alien spectator
-			oldAlienSpectatorCopyPlayerDataFrom( self, player )
+			Player.CopyPlayerDataFrom( self, player )
 			Alien.CopyPlayerDataForReadyRoomFrom( self, player )
 		end)
+		
+	
+	local oldAlienReset
+	oldAlienReset = Class_ReplaceMethod( "Alien", "Reset",
+		function(self)
+			if self:GetTeamNumber() == kNeutralTeamType then
+				Player.Reset( self )	
+			else
+				oldAlienReset( self )
+			end
+		end)
+	
 
 end

@@ -4,7 +4,7 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.5;
+local version = 1.6;
 
 Elixer = Elixer or {}
 Elixer.Debug = Elixer.Debug or false  
@@ -12,39 +12,62 @@ Elixer.Module = Elixer.Module or {}
 Elixer.Module[1.4] = Elixer.Module[1.4] or {} -- Backwards Compatibility
 Elixer.Module[1.3] = Elixer.Module[1.3] or {} -- Backwards Compatibility
 
-local function DPrint( string )
-	if Elixer.Debug then
-		Shared.Message( string )
-	end
+local function EPrint( fmt, ... )
+	local domain = Server and "Server" or Predict and "Predict" or Client and "Client" or "Unknown" 
+	Shared.Message( string.format( "[Elixer (%s)] "..tostring(fmt), domain, ... ) )
 end
+local function DPrint( fmt, ... ) if Elixer.Debug then EPrint( fmt, ... ) end end
 
 
-function Elixer.UseVersion( version ) 
-	if Elixer.Version ~= version then
-		assert( Elixer.Module and Elixer.Module[version], "Elixer Utility v."..string.format("%.1f",version).." could not be found." )
-		Shared.Message( "[Elixer] Using Utility Scripts v."..string.format("%.1f",version) );
-		if Elixer.Version and Elixer.Module and Elixer.Module[Elixer.Version] then
-			for k,v in pairs( Elixer.Module[Elixer.Version] ) do
-				_G[k] = nil;
-			end
-		end
-		for k,v in pairs( Elixer.Module[version] ) do
-			_G[k] = v;
-		end
-		Elixer.Version = version;
-	end
-end
 
--- Already loaded, just apply the loaded version
 if Elixer.Module[version] then
-	DPrint( "[Elixer] Skipped Loading Utility Scripts v."..string.format("%.1f",version) )
+	-- Already loaded, just apply the loaded version
+	DPrint( "[Elixer] Skipped Loading Utility Scripts v.%.1f",version )
 	Elixer.UseVersion( version )
 	return
 end
 
-Shared.Message( "[Elixer] Loading Utility Scripts v."..string.format("%.1f",version) );
 
+EPrint( "Loading Utility Scripts v.%.1f", version )
+
+
+-- Replace UseVersion func table if this is a newer version
+if type( Elixer.UseVersion ) ~= "table" or Elixer.UseVersion.Version < version then
+		
+	-- Create read-only func table
+	local readonly = 
+		{ 
+			UseVersion = setmetatable( { Version = version }, 
+			{ 
+				__call = 
+					function( t, version )
+						if Elixer.Version ~= version then
+							assert( Elixer.Module and Elixer.Module[version], string.format( "Elixer Utility v.%.1f could not be found.", version ) )
+							EPrint( "Using Utility Scripts v.%.1f", version )
+							if Elixer.Version and Elixer.Module and Elixer.Module[Elixer.Version] then
+								for k,v in pairs( Elixer.Module[Elixer.Version] ) do
+									_G[k] = nil;
+								end
+							end
+							for k,v in pairs( Elixer.Module[version] ) do
+								_G[k] = v;
+							end
+							Elixer.Version = version;
+						end
+					end;
+			})
+		}
+
+	-- Prevent overwrites from older versions of Elixer
+	setmetatable( Elixer, { __index = readonly; __newindex = function( t, k, v ) if rawget( readonly, k ) == nil then rawset(t,k,v) end end } )
+					
+end
+
+
+-- Begin loading functions for this version
 local ELIXER = {}
+
+ELIXER.EPrint = EPrint
 
 function ELIXER.Class_AddMethod( className, methodName, method )
 	if _G[className][methodName] and _G[className][methodName] ~= method then
@@ -86,7 +109,7 @@ function ELIXER.PrintUpValues( func )
 		vals = vals and vals..", "..name or name
 	end
 
-	Shared.Message( "Upvalues for "..tostring(func)..": local "..vals );
+	EPrint( "Upvalues for "..tostring(func)..": local "..vals );
 
 end;
 
@@ -180,6 +203,7 @@ function ELIXER.ReplaceUpValue( func, localname, newval, options )
 	debug.setupvalue( func, i, newval )
 end;
 
+
 function ELIXER.AppendToEnum( tbl, key )
 	if rawget(tbl,key) ~= nil then
 		return
@@ -207,6 +231,23 @@ function ELIXER.AppendToEnum( tbl, key )
 	
 end
 
-Elixer.Module[version] = ELIXER
-ELIXER = nil
+
+function ELIXER.list ( ... )
+	local argv = {...}
+	local argc = 0
+	for i,v in pairs( {...} ) do
+		if argc < i then
+			argc = i
+		end
+	end
+	
+	local t = {}
+	for i=1,argc do
+		t[i] = tostring(argv[i])
+	end
+	return table.concat( t, ", " )
+end
+
+
+Elixer.Module[version], ELIXER = ELIXER, nil
 Elixer.UseVersion( version );

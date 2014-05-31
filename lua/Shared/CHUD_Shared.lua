@@ -1,5 +1,6 @@
+kCHUDElixerVersion = 1.6
 Script.Load("lua/CHUD/Elixer_Utility.lua")
-Elixer.UseVersion( 1.5 ) 
+Elixer.UseVersion( kCHUDElixerVersion ) 
 
 local kCHUDStatsMessage =
 {
@@ -31,6 +32,7 @@ Script.Load("lua/Shared/CHUD_LayMines.lua")
 Script.Load("lua/Shared/CHUD_AmmoPack.lua")
 Script.Load("lua/Shared/CHUD_Grenade.lua")
 Script.Load("lua/Shared/CHUD_BoneWall.lua")
+Script.Load("lua/Shared/CHUD_LerkBite.lua")
 
 Script.Load("lua/Shared/CHUD_ReadyRoom.lua")
 

@@ -4,6 +4,13 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 31/05/2014 (Build 265):
+	- When a structure bleeds out the kill feed will show the killer as whoever hit it last (Thanks remi.D!)
+	- The kill feed now highlights your player kills.
+	- Fixed bug where respawn cheat command wouldn't work for aliens.
+	- Made it so commanders can't see weapon outlines unless they are on the ground
+	- Lerk Bite has its own obituary icon
+	- Leap should work in RR post-game (Thanks remi.D!)
 
 - 28/05/2014 (Build 265):
 	- You can now sort by column in the mods window.
@@ -45,26 +52,6 @@ Latest changes
 	- Crosshair damage indicator now only shows up if we're hitting enemies.
 	- Fixed NS2 bug where damage numbers wouldn't show the damage for the killing blow.
 	- Fixed "Unknown" player info in server browser. Big, gigantic thanks to Person8880 (Shine author) for the fix.
-
-- 13/05/2014 (Build 265):
-	- Enabled weapon specific ammo models for dropped weapons.
-	- Ammo for dropped weapons now follow the parent weapon. They also have outlines now.
-	- Added new option for Phase Gate lines. Default/Static arrows/Animated lines/Animated arrows. Available in HUD tab.
-	- Fixed bug where the Faster damage numbers option would not get applied after map load.
-	- Replaced Small damage numbers option with Damage numbers scale option. The scale goes between 50% and 100%.
-
-- 10/05/2014 (Build 265):
-	- Changed pickup expire bar options. You can now toggle between Disabled/Equipment Only/All pickupables. Available in Misc. tab.
-	- Added option to disable click selecting for Marine players (only Marine Commander). You can still do marquee selection. Available in Misc. tab.
-	- You can now make the minimap key act as a toggle. Available in the Misc. tab.
-	- Added marquee selection for enemy units. If the marquee selection contains units from both teams it will default to your team's units.
-	- Fixed bug where some elements of the Marine UI would remain on screen after death.
-	- Changed last life stats helper text to use the normal graphics for showing key binds with their actions.
-	- Added assists/score popup color selection. Available in the HUD tab.
-	- Mines now still show their pickup icon even if already holding mines. (Thanks remi.D!)
-	- Made weapons that were actively picked up get swapped to (pistols, mines). (Thanks remi.D!)
-	- Added option to prevent shotgun damage numbers from accumulating. Available in the HUD tab. (Thanks remi.D!)
-	- Added option to speed up damage number accumulation. Available in the HUD tab. (Thanks remi.D!)
 
 =================
 Credits/Thanks to
