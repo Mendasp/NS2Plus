@@ -6,7 +6,7 @@ Latest changes
 ==============
 - 31/05/2014 (Build 265):
 	- When a structure bleeds out the kill feed will show the killer as whoever hit it last (Thanks remi.D!)
-	- The kill feed now highlights your enemy player kills.
+	- The kill feed now highlights your player kills.
 	- Fixed bug where respawn cheat command wouldn't work for aliens.
 	- Made it so commanders can't see weapon outlines unless they are on the ground
 	- Lerk Bite has its own obituary icon
