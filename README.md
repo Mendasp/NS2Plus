@@ -5,7 +5,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - 31/05/2014 (Build 265):
-	- The last person to hurt an alien structure will now be attributed with the kill if it bleeds out (Thanks remi.D!)
+	- When a structure bleeds out the kill feed will show the killer as whoever hit it last (Thanks remi.D!)
 	- The kill feed now highlights your enemy player kills.
 	- Fixed bug where respawn cheat command wouldn't work for aliens.
 	- Made it so commanders can't see weapon outlines unless they are on the ground
