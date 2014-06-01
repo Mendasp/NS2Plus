@@ -488,6 +488,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "hud",
 				valueType = "bool",
+                sort = "D2",
 			},
 			friends = {
 				name    = "CHUD_Friends",
@@ -505,6 +506,7 @@ CHUDOptions =
 					ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendMarine =
 						ConditionalValue(friends, kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
 				end,
+                sort = "D3",
 			}, 
 			kda = {
 				name    = "CHUD_KDA",
@@ -517,6 +519,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "bool",
 				applyFunction = function() CHUDRestartScripts({ "GUIScoreboard" }) end,
+                sort = "D4",
 			},
 			rtcount = {
 				name    = "CHUD_RTcount",
@@ -527,7 +530,8 @@ CHUDOptions =
 				callback = CHUDSaveMenuSettings,
 				defaultValue = true,
 				category = "hud",
-				valueType = "bool"
+				valueType = "bool",
+                sort = "D5",
 			},
 			uplvl = {
 				name    = "CHUD_UpgradeLevel",
@@ -545,7 +549,20 @@ CHUDOptions =
 						script:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
 					end
 				end,
+				sort = "D6",
 			}, 
+			killfeedhighlight = {
+				name    = "CHUD_KillFeedHighlight",
+				label   = "Killfeed highlight",
+				tooltip = "Highlights your player kills in the killfeed.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 1,
+				category = "hud",
+				valueType = "int",
+				sort = "D7",
+			},
 			
 			
 			hitsounds = {

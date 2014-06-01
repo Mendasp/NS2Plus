@@ -60,7 +60,14 @@ local pickupableNetworkVars =
 	expireTime = "time (by 0.1)",
 }
 
+local catpackNetworkVars =
+{
+	catpackboost = "boolean",
+}
+
 Class_Reload("PlayerInfoEntity", playerInfoNetworkVars)
 Class_Reload("Embryo", embryoNetworkVars)
 Class_Reload("Weapon", pickupableNetworkVars)
 Class_Reload("DropPack", pickupableNetworkVars)
+Class_Reload("Marine", catpackNetworkVars)
+Class_Reload("Exo", catpackNetworkVars)

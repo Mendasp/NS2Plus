@@ -11,67 +11,68 @@ MarineOutlineMixin.type = "MarineOutline"
 
 MarineOutlineMixin.expectedMixins =
 {
-    Model = "For copying bonecoords and drawing model in view model render zone.",
+	Model = "For copying bonecoords and drawing model in view model render zone.",
 }
 
-function MarineOutlineMixin:__initmixin()
+	function MarineOutlineMixin:__initmixin()
 
-    if Client then
-        self.marineOutlineVisible = false
-		self.isParasited = false
-    end
+	if Client then
+		self.marineOutlineVisible = false
+	end
 
-end
+	end
 
 if Client then
 
-    function MarineOutlineMixin:OnDestroy()
+	function MarineOutlineMixin:OnDestroy()
 
-		local isParasited = ConditionalValue(self.isParasited, 3, 0)
-        if self.marineOutlineVisible then
-            local model = self:GetRenderModel()
-            if model ~= nil then
-                EquipmentOutline_RemoveModel( model, isParasited )
-            end
-        end
-        
-    end
+		if self.marineOutlineVisible then
+			local model = self:GetRenderModel()
+			if model ~= nil then
+				EquipmentOutline_RemoveModel( model )
+			end
+		end
+		
+	end
 
-    function MarineOutlineMixin:OnUpdate(deltaTime)   
+	function MarineOutlineMixin:OnUpdate(deltaTime)
 
-        local player = Client.GetLocalPlayer()
-        
-        local model = self:GetRenderModel()
-        if model ~= nil then 
-        
-            local outlineModel = Client.GetLocalClientTeamNumber() == kSpectatorIndex and Client.GetOutlinePlayers()
+		local player = Client.GetLocalPlayer()
+		
+		local model = self:GetRenderModel()
+		if model ~= nil then 
+		
+			local outlineModel = (Client.GetLocalClientTeamNumber() == kSpectatorIndex and Client.GetOutlinePlayers()) or (player:isa("MarineCommander") and self.catpackboost)
 
-			if outlineModel and (HasMixin(self, "ParasiteAble") and self.isParasited ~= self:GetIsParasited()) and self.marineOutlineVisible then
-				if self:GetIsParasited() then
-					EquipmentOutline_RemoveModel( model, 0 )
+			if outlineModel and self.marineOutlineVisible then
+				if self.catpackboost then
+					EquipmentOutline_RemoveModel( model )
+					EquipmentOutline_AddModel( model, 1 )
+				elseif HasMixin(self, "ParasiteAble") and self:GetIsParasited() then
+					EquipmentOutline_RemoveModel( model )
 					EquipmentOutline_AddModel( model, 3 )
 				else
-					EquipmentOutline_RemoveModel( model, 3 )
-					EquipmentOutline_AddModel( model, 0 )
+					EquipmentOutline_RemoveModel( model )
+					EquipmentOutline_AddModel( model )
 				end
 			end
 			
-			self.isParasited = ConditionalValue(HasMixin(self, "ParasiteAble") and self:GetIsParasited(), 3, 0)
+			local outlineColor = ConditionalValue(self.catpackboost, 1, ConditionalValue(HasMixin(self, "ParasiteAble") and self:GetIsParasited(), 3, 0))
 			
-            if outlineModel and not self.marineOutlineVisible then
+			if outlineModel and not self.marineOutlineVisible then
 
-				EquipmentOutline_AddModel( model, self.isParasited )
-                self.marineOutlineVisible = true 
-            
-            elseif self.marineOutlineVisible and not outlineModel then
-            
-                EquipmentOutline_RemoveModel( model, self.isParasited )
-                self.marineOutlineVisible = false
-            
-            end
-        
-        end
-            
-    end
+				EquipmentOutline_AddModel( model, outlineColor )
+				self.marineOutlineVisible = true 
+			
+			elseif self.marineOutlineVisible and not outlineModel then
+			
+				EquipmentOutline_RemoveModel( model )
+				self.marineOutlineVisible = false
+			
+			end
+		
+		end
+
+	end
 
 end

@@ -111,17 +111,17 @@ function EquipmentOutline_UpdateModel(forEntity)
 		end
 	end
 	
-    // Update the visibility status.
-    if model and visible ~= model.equipmentVisible then    
-        if visible then
-            EquipmentOutline_AddModel(model,weaponclass)
-        else
-            EquipmentOutline_RemoveModel(model)
-        end
-        model.equipmentVisible = visible
-        
-    end
-    
+	// Update the visibility status.
+	if model and visible ~= model.equipmentVisible then    
+		if visible then
+			EquipmentOutline_AddModel(model,weaponclass)
+		else
+			EquipmentOutline_RemoveModel(model)
+		end
+		model.equipmentVisible = visible
+		
+	end
+
 end
 
 // For debugging.

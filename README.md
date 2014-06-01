@@ -5,7 +5,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - /06/2014 (Build 265):
-	- Added red border to kill feed highlight.
+	- Added red border to kill feed highlight. You can toggle it off in the HUD tab.
+	- Killfeed icons now show with proper scaling.
+	- Players now show a purple outline when they're using a catpack for both the Marine Commander and spectators.
 
 - 31/05/2014 (Build 265):
 	- When a structure bleeds out the kill feed will show the killer as whoever hit it last. (Thanks remi.D!)
