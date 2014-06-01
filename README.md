@@ -4,13 +4,18 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 01/06/2014 (Build 265):
+	- Added red border to kill feed highlight. You can toggle it off in the HUD tab.
+	- Killfeed icons now show with proper scaling.
+	- Players now show a purple outline when they're using a catpack for both the Marine Commander and spectators.
+
 - 31/05/2014 (Build 265):
-	- When a structure bleeds out the kill feed will show the killer as whoever hit it last (Thanks remi.D!)
+	- When a structure bleeds out the kill feed will show the killer as whoever hit it last. (Thanks remi.D!)
 	- The kill feed now highlights your player kills.
 	- Fixed bug where respawn cheat command wouldn't work for aliens.
-	- Made it so commanders can't see weapon outlines unless they are on the ground
-	- Lerk Bite has its own obituary icon
-	- Leap should work in RR post-game (Thanks remi.D!)
+	- Made it so commanders can't see weapon outlines unless they are on the ground.
+	- Lerk Bite has its own obituary icon.
+	- Leap should work in RR post-game. (Thanks remi.D!)
 
 - 28/05/2014 (Build 265):
 	- You can now sort by column in the mods window.
@@ -26,7 +31,7 @@ Latest changes
 		- biodome_elevator.model
 		- biodome_wallmods_01_corner_in_90_01.model
 		- biodome_wallmods_01_corner_in_90_02.model
-	- Integrated 'Ready Room Special' mod (Thanks remi.D!)
+	- Integrated 'Ready Room Special' mod. (Thanks remi.D!)
 
 - 22/05/2014 (Build 265):
 	- Added new BoneWall icon for the minimap (Thanks remi.D!)
@@ -35,9 +40,9 @@ Latest changes
 - 21/05/2014 (Build 265):
 	- Ammo, medpacks and catpacks now ignore the vertical element for pickup by marines. This should mitigate some of the problems commanders have with weird geometry in levels blocking their drops. (Thanks kmg!)
 	- Added Bonewall minimap icon. (Thanks kmg, remi.D!)
-	- Shift Echo now updates the buttons faster when trying to echo upgrade chambers, and updates immediately after the shift is echoed to a new location (Thanks remi.D!)
-	- Fixed Grenade collision radius to be more representative of the visual model -- proximity detonation radius is unchanged (Thanks remi.D!)
-	- Fixed drifters trying to build structures they can't and fake-building them forever (Thanks remi.D!)
+	- Shift Echo now updates the buttons faster when trying to echo upgrade chambers, and updates immediately after the shift is echoed to a new location. (Thanks remi.D!)
+	- Fixed Grenade collision radius to be more representative of the visual model -- proximity detonation radius is unchanged. (Thanks remi.D!)
+	- Fixed drifters trying to build structures they can't and fake-building them forever. (Thanks remi.D!)
 	- Bonewalls now show range before dropping.
 	- Fixed bug where the Unique Shotgun Hits setting would affect Flamethrower damage numbers sometimes.
 	- Minimap connectors display as a line when there's only 2 PGs.

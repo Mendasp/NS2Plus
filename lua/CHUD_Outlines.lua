@@ -14,64 +14,64 @@ local _enabled          = true
 
 function HiveVisionExtra_Initialize()
 
-    HiveVisionExtra_camera = Client.CreateRenderCamera()
-    HiveVisionExtra_camera:SetTargetTexture("*hive_vision_extra", true)
-    HiveVisionExtra_camera:SetRenderMask( _renderMask )
-    HiveVisionExtra_camera:SetIsVisible( false )
-    HiveVisionExtra_camera:SetCullingMode( RenderCamera.CullingMode_Frustum )
-    HiveVisionExtra_camera:SetRenderSetup( "shaders/Mask.render_setup" )
-    
-    HiveVisionExtra_screenEffect = Client.CreateScreenEffect("shaders/HiveVisionExtra.screenfx")
-    HiveVisionExtra_screenEffect:SetActive(false)    
-    
+	HiveVisionExtra_camera = Client.CreateRenderCamera()
+	HiveVisionExtra_camera:SetTargetTexture("*hive_vision_extra", true)
+	HiveVisionExtra_camera:SetRenderMask( _renderMask )
+	HiveVisionExtra_camera:SetIsVisible( false )
+	HiveVisionExtra_camera:SetCullingMode( RenderCamera.CullingMode_Frustum )
+	HiveVisionExtra_camera:SetRenderSetup( "shaders/Mask.render_setup" )
+
+	HiveVisionExtra_screenEffect = Client.CreateScreenEffect("shaders/HiveVisionExtra.screenfx")
+	HiveVisionExtra_screenEffect:SetActive(false)    
+
 end
 
 function HiveVisionExtra_Shutdown()
 
-    Client.DestroyRenderCamera(HiveVisionExtra_camera)
-    HiveVisionExtra_camera = nil
-    
-    Client.DestroyScreenEffect(HiveVisionExtra_screenEffect)
-    HiveVisionExtra_screenEffect = nil
-    
+	Client.DestroyRenderCamera(HiveVisionExtra_camera)
+	HiveVisionExtra_camera = nil
+
+	Client.DestroyScreenEffect(HiveVisionExtra_screenEffect)
+	HiveVisionExtra_screenEffect = nil
+
 end
 
 /** Enables or disabls the hive vision effect. When the effect is not needed it should 
  * be disabled to boost performance. */
 function HiveVisionExtra_SetEnabled(enabled)
 
-    HiveVisionExtra_camera:SetIsVisible(enabled and _enabled)
-    HiveVisionExtra_screenEffect:SetActive(enabled and _enabled) 
-   
+	HiveVisionExtra_camera:SetIsVisible(enabled and _enabled)
+	HiveVisionExtra_screenEffect:SetActive(enabled and _enabled) 
+
 end
 
 /** Must be called prior to rendering */
 function HiveVisionExtra_SyncCamera(camera, forCommander)
 
-    local distance = ConditionalValue(forCommander, _maxDistance_Commander, _maxDistance)
+	local distance = ConditionalValue(forCommander, _maxDistance_Commander, _maxDistance)
 
-    HiveVisionExtra_camera:SetCoords( camera:GetCoords() )
-    HiveVisionExtra_camera:SetFov( camera:GetFov() )
-    HiveVisionExtra_camera:SetFarPlane( distance + 1 )
-    HiveVisionExtra_screenEffect:SetParameter("time", Shared.GetTime())
-    HiveVisionExtra_screenEffect:SetParameter("maxDistance", distance)
-   
+	HiveVisionExtra_camera:SetCoords( camera:GetCoords() )
+	HiveVisionExtra_camera:SetFov( camera:GetFov() )
+	HiveVisionExtra_camera:SetFarPlane( distance + 1 )
+	HiveVisionExtra_screenEffect:SetParameter("time", Shared.GetTime())
+	HiveVisionExtra_screenEffect:SetParameter("maxDistance", distance)
+
 end
 
 /** Adds a model to the hive vision */
 function HiveVisionExtra_AddModel(model)
 
-    local renderMask = model:GetRenderMask()
-    model:SetRenderMask( bit.bor(renderMask, _renderMask) )
-    
+	local renderMask = model:GetRenderMask()
+	model:SetRenderMask( bit.bor(renderMask, _renderMask) )
+
 end
 
 /** Removes a model from the hive vision */
 function HiveVisionExtra_RemoveModel(model)
 
-    local renderMask = model:GetRenderMask()
-    model:SetRenderMask( bit.band(renderMask, _invRenderMask) )
-    
+	local renderMask = model:GetRenderMask()
+	model:SetRenderMask( bit.band(renderMask, _invRenderMask) )
+
 end
 
 function InitCHUDOutlines()
@@ -79,9 +79,9 @@ function InitCHUDOutlines()
 end
 
 function UpdateCHUDOutlines()
-    local player = Client.GetLocalPlayer()
-    // If we have a player, use them to setup the camera. 
-    if player ~= nil then
+	local player = Client.GetLocalPlayer()
+	// If we have a player, use them to setup the camera. 
+	if player ~= nil then
 		local outlinePlayers = Client.GetOutlinePlayers() and Client.GetLocalClientTeamNumber() == kSpectatorIndex
 
 		HiveVisionExtra_SetEnabled( GetIsAlienUnit(player) or outlinePlayers )
