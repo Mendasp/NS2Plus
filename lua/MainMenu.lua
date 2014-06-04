@@ -278,13 +278,10 @@ function MainMenu_Open()
 
 				if name == "NS2+" and active == "YES" then
 					local browser = io.open("lua/CHUD_ServerBrowserMain.lua", "r")
-					local mods = io.open("lua/CHUDGUI_MainMenu_Mods.lua", "r")
-					if browser and mods then
+					if browser then
 						Script.Load("lua/Class.lua")
 						Script.Load("lua/CHUD_ServerBrowserMain.lua")
-						Script.Load("lua/CHUDGUI_MainMenu_Mods.lua")
 						io.close(browser)
-						io.close(mods)
 						Shared.Message("NS2+ Main Menu mods loaded.")
 					else
 						Shared.Message("NS2+ has been updated or is not available, not loading main menu mods. A restart will be required when the update is installed (you can do it from the mods menu).")

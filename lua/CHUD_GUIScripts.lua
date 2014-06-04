@@ -1,5 +1,5 @@
 Elixer.UseVersion( kCHUDElixerVersion ) 
-Script.Load("lua/CHUD_GUIScripts/GUIInsight_PlayerFrames.lua")
+
 Script.Load("lua/CHUD_GUIScripts/GUIAlienHUD.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIMarineHUD.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIExoHUD.lua")
@@ -18,10 +18,8 @@ Script.Load("lua/CHUD_GUIScripts/GUISensorBlips.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIPickups.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIGameEnd.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIScoreboard.lua")
-Script.Load("lua/CHUD_GUIScripts/GUIVoiceChat.lua")
 Script.Load("lua/CHUD_GUIScripts/GUINotifications.lua")
 Script.Load("lua/CHUD_GUIScripts/GUIDeathMessages.lua")
 
 // I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/CHUD_GUIScripts/GhostModel.lua")
-Script.Load("lua/CHUD_GUIScripts/CystGhostModel.lua")

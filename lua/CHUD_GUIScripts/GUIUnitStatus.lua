@@ -38,9 +38,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 									
 					blipData.IsParasited = CHUDBlipData.IsParasited
 					blipData.IsSteamFriend = CHUDBlipData.IsSteamFriend
-					if CHUDBlipData.MarineWeapon then
-						blipData.MarineWeapon = CHUDBlipData.MarineWeapon
-					elseif CHUDBlipData.EvolvePercentage then
+					if CHUDBlipData.EvolvePercentage then
 						blipData.AbilityFraction = CHUDBlipData.EvolvePercentage
 					end
 				end
@@ -126,14 +124,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 				if updateBlip.smokeyBackground then
 					updateBlip.smokeyBackground:SetIsVisible(blipData.HealthFraction ~= 0 and not CHUDGetOption("mingui"))
 				end
-				
-				local kAmmoColors = {
-					["rifle"] = Color(0,1,1,1), // teal
-					["shotgun"] = Color(0,1,0,1), // green
-					["flamethrower"] = Color(1,1,0,1), // yellow
-					["grenadelauncher"] = Color(1,0,1,1), // magenta
-				}
-				
+							
 				if blipData.AbilityFraction > 0 and not updateBlip.AbilityBarBg then
 				
 					AddAbilityBar(updateBlip)
@@ -145,11 +136,7 @@ originalUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 					updateBlip.AbilityBar = nil
 					
 				end
-				
-				if blipData.AbilityFraction > 0 and blipData.MarineWeapon then
-					updateBlip.AbilityBar:SetColor(kAmmoColors[blipData.MarineWeapon])
-				end
-				
+							
 				if updateBlip.AbilityBarBg and CHUDBlipData and CHUDBlipData.EvolvePercentage and not isEnemy then
 
 					if not CHUDGetOption("minnps") or player:isa("Commander") then
