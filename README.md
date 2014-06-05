@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /06/2014 (Build 266):
+- 05/06/2014 (Build 266):
 	- Added more characters to the Insight player names font.
 	- Compatiblity with Build 266.
 
