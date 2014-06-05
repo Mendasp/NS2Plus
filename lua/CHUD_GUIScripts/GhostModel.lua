@@ -5,13 +5,7 @@ local kCircleModelAlien = PrecacheAsset("models/misc/circle/circle_alien.model")
 
 // I think this is a very honest function name, I'd trust it with my wallet, kids, dog and car keys
 function GhostModel:MaybeInitCircleModel()
-	if not self.circleRangeModel then
-		local player = Client.GetLocalPlayer()
-		local kCircleModelName = ConditionalValue(player:isa("MarineCommander"), kCircleModelMarine, kCircleModelAlien)
-		
-		self.circleRangeModel = Client.CreateRenderModel(RenderScene.Zone_Default)
-		self.circleRangeModel:SetModel(kCircleModelName)
-		
+	if not self.circleEnergyModel then	
 		// Second ring just for the shift, so always alien
 		self.circleEnergyModel = Client.CreateRenderModel(RenderScene.Zone_Default)
 		self.circleEnergyModel:SetModel(kCircleModelAlien)
@@ -28,11 +22,6 @@ local oldGhostModelDestroy = GhostModel.Destroy
 function GhostModel:Destroy()
 	oldGhostModelDestroy(self)
 	
-	if self.circleRangeModel then
-		Client.DestroyRenderModel(self.circleRangeModel)
-		self.circleRangeModel = nil
-	end
-	
 	if self.circleEnergyModel then
 		Client.DestroyRenderModel(self.circleEnergyModel)
 		self.circleEnergyModel = nil
@@ -47,15 +36,11 @@ function GhostModel:SetIsVisible(isVisible)
 	
 	self:MaybeInitCircleModel()
 	
-	self.circleRangeModel:SetIsVisible(isVisible)
 	self.circleEnergyModel:SetIsVisible(false)
 	
 	if player and player.currentTechId then
-		// Handle the cyst on its own file, with this generic method it won't always align with the last cyst in the chain
-		if player.currentTechId == kTechId.Cyst then
-			self.circleRangeModel:SetIsVisible(false)
 		// Show a second circle for the shift energize radius
-		elseif player.currentTechId == kTechId.Shift then
+		if player.currentTechId == kTechId.Shift then
 			self.circleEnergyModel:SetIsVisible(isVisible)
 		end
 	end
@@ -81,11 +66,7 @@ function GhostModel:Update()
 				energizeCoords.origin.y = energizeCoords.origin.y+0.01
 				self.circleEnergyModel:SetCoords(energizeCoords)
 			end
-		
-			modelCoords:Scale(radius*2)
-			modelCoords.origin.y = modelCoords.origin.y+0.01
-			
-			self.circleRangeModel:SetCoords(modelCoords)
+
 		end
 	end
 	

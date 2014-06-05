@@ -44,12 +44,6 @@ CHUDTagBitmask = {
 	deathstats = 0x0,
 }
 
-local playerInfoNetworkVars =
-{
-	extraTech = "string (128)",
-	isParasited = "boolean",
-}
-
 local embryoNetworkVars =
 {
 	evolvePercentage = "float",
@@ -65,7 +59,6 @@ local catpackNetworkVars =
 	catpackboost = "boolean",
 }
 
-Class_Reload("PlayerInfoEntity", playerInfoNetworkVars)
 Class_Reload("Embryo", embryoNetworkVars)
 Class_Reload("Weapon", pickupableNetworkVars)
 Class_Reload("DropPack", pickupableNetworkVars)

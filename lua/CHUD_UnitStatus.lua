@@ -148,7 +148,6 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			Percentage = self:GetHealthScalar()*100,
 			Health = self:GetHealth(),
 			Armor = self:GetArmor(),
-			MarineWeapon = marineWeapon,
 			Hint = hint,
 			IsSteamFriend = (self:isa("Player") and self:GetIsSteamFriend() or false) and CHUDGetOption("friends"),
 			IsParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited(),

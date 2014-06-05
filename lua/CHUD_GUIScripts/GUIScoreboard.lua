@@ -63,15 +63,11 @@ function(self, updateTeam)
 			player["Deaths"]:SetPosition(temp)
 		end
 		
-		// Fix spectator status not showing up when on a team
-		if teamNumber == kTeamReadyRoom then
-			player["Status"]:SetText( playerRecord.Status )
-		end
-		
 		// Show if holding JP
-		if isVisibleTeam and teamNumber == kTeam1Index then			
-			if playerRecord.hasJP then
-				if playerRecord.Status ~= "" then
+		if isVisibleTeam and teamNumber == kTeam1Index then
+			local currentTech = GetTechIdsFromBitMask(playerRecord.Tech)
+			if table.contains(currentTech, kTechId.Jetpack) then
+				if playerRecord.Status ~= "" and playerRecord.Status ~= " " then
 					player["Status"]:SetText(string.format("%s/JP", playerRecord.Status == "Flamethrower" and "Flame" or playerRecord.Status))
 				else
 					player["Status"]:SetText("JP")
@@ -111,23 +107,3 @@ local function NewCreateTeamBackground( self, teamNumber )
 	return ret
 end
 ReplaceUpValue( GUIScoreboard.Initialize, "CreateTeamBackground", NewCreateTeamBackground )
-
-
-local function UpdatePlayerRecords2()
-    for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
-		
-		local playerRecord = Scoreboard_GetPlayerRecord(playerInfo.clientId)
-		playerRecord.hasJP = nil
-		
-		if playerInfo.status ~= kPlayerStatus.Exo then
-			for val in string.gmatch(playerInfo.extraTech, "%S+") do
-				if val == tostring(kTechId.Jetpack) then
-					playerRecord.hasJP = true			
-					break
-				end
-			end
-		end
-	end
-end
-
-Event.Hook("UpdateClient", UpdatePlayerRecords2)

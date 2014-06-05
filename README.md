@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 05/06/2014 (Build 266):
+	- Added more characters to the Insight player names font.
+	- Compatiblity with Build 266.
+
 - 01/06/2014 (Build 265):
 	- Added red border to kill feed highlight. You can toggle it off in the HUD tab.
 	- Killfeed icons now show with proper scaling.
