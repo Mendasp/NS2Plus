@@ -5,6 +5,8 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - /06/2014 (Build 266):
+	- Fixed Server Script Error regarding stats.
+	- Included CDT badges.
 	- Reduced network bandwidth for stat damage messages (Thanks remi.D!)
 	- Added slider to change how long the damage numbers stay on screen (Thanks remi.D!)
 	- Added option to include overkill damage in damager numbers (Thanks remi.D!)
