@@ -5,13 +5,6 @@ CHUD_sdmg = 0
 CHUD_hits = 0
 CHUD_misses = 0
 
-// Weapons that contribute to accuracy
-local trackacc =
-{
-	kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
-	kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
-	kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
-}
 
 function OnCHUDDamage( damageTable )
 	
@@ -25,7 +18,7 @@ function OnCHUDDamage( damageTable )
 	end
 	
 	AddAttackStat(weapon, true, target, damage, isPlayer)
-	if isPlayer and target and not target:isa("Embryo") and table.contains(trackacc, weapon) then
+	if isPlayer and target and not target:isa("Embryo") and kCHUDStatsTrackAccLookup[weapon] then
 		cLastHitTime = Shared.GetTime()
 		cNumHits = cNumHits+1
 	end	
@@ -64,7 +57,7 @@ function ShowClientStats(endRound)
 				local onoshits = 0
 				local acc_message
 				
-				if wStats["lifeform"]["onos"] ~= nil and table.contains(trackacc, wStats["weapon"]) then
+				if wStats["lifeform"]["onos"] ~= nil and kCHUDStatsTrackAccLookup[wStats["weapon"]] then
 					onoshits = wStats["lifeform"]["onos"]
 					onoshitssum = onoshitssum + onoshits
 				end
@@ -83,7 +76,7 @@ function ShowClientStats(endRound)
 				end
 				
 				Shared.Message(wStats["weaponName"])
-				if table.contains(trackacc, wStats["weapon"]) then
+				if kCHUDStatsTrackAccLookup[wStats["weapon"]] then
 					Shared.Message(acc_message)
 				end
 				Shared.Message(string.format("Player damage: %d / Structure Damage: %d", math.ceil(wStats["pdmg"]), math.ceil(wStats["sdmg"])))
@@ -91,7 +84,7 @@ function ShowClientStats(endRound)
 				sdmgsum = sdmgsum + wStats["sdmg"]
 				Shared.Message("-----------------------")
 			end
-			if table.contains(trackacc, wStats["weapon"]) then
+			if kCHUDStatsTrackAccLookup[wStats["weapon"]] then
 				hitssum = hitssum + wStats["hits"]
 				missessum = missessum + wStats["misses"]
 			end

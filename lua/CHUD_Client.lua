@@ -1,4 +1,13 @@
 Script.Load("lua/Shared/CHUD_Shared.lua")
+
+kCHUDStatsTrackAccLookup =
+	set {
+		kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
+		kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
+		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
+	}
+	
+
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_MainMenu.lua")
 Script.Load("lua/CHUD_Settings.lua")
