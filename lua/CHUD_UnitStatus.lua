@@ -96,6 +96,8 @@ if ModLoader_GetModInfo("CompMod") then
 end
 
 
+local validUnitHintWeapons = set { "rifle", "shotgun", "flamethrower", "grenadelauncher" }
+			
 // This is a 5/10 hack according to Dragon
 // I love it, I'd give it a 7 at least.
 originalGetUnitHint = UnitStatusMixin.GetUnitHint
@@ -116,9 +118,8 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 		local marineWeapon
 		
 		if self:isa("Player") and self:isa("Marine") and HasMixin(self, "WeaponOwner") then
-			local validWeapons = { "rifle", "shotgun", "flamethrower", "grenadelauncher" }
 			local primaryWeapon = self:GetWeaponInHUDSlot(1)
-			if primaryWeapon and primaryWeapon:isa("ClipWeapon") and table.contains(validWeapons, primaryWeapon:GetMapName()) then
+			if primaryWeapon and primaryWeapon:isa("ClipWeapon") and validUnitHintWeapons[primaryWeapon:GetMapName()] then
 				marineWeapon = primaryWeapon:GetMapName()
 			end
 		end
