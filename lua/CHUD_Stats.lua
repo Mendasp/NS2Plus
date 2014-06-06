@@ -13,18 +13,22 @@ local trackacc =
 	kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
 }
 
-function OnCHUDDamage(statsTable)
-
-	local isPlayer = statsTable.isPlayer
-	local weapon = statsTable.weapon
-	local target = Shared.GetEntity(statsTable.targetId)
-	local damage = statsTable.damage
-		
+function OnCHUDDamage( damageTable )
+	
+	local target,damage,hitpos = ParseDamageMessage( damageTable )
+	local isPlayer,weapon,overkill = damageTable.isPlayer, damageTable.weapon, damageTable.overkill
+	
+	-- Make damage markers and such
+	if target then
+		local amount = CHUDGetOption("overkilldamagenumbers") and overkill or damage
+		Client.AddWorldMessage(kWorldTextMessageType.Damage, amount, hitpos, target:GetId())
+	end
+	
 	AddAttackStat(weapon, true, target, damage, isPlayer)
 	if isPlayer and target and not target:isa("Embryo") and table.contains(trackacc, weapon) then
 		cLastHitTime = Shared.GetTime()
 		cNumHits = cNumHits+1
-	end
+	end	
 end
 
 function OnCommandResetStats()
@@ -360,4 +364,4 @@ originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "OnTag",
 
 Event.Hook("Console_resetstats", OnCommandResetStats)
 Event.Hook("LocalPlayerChanged", CheckPlayerTeam)
-Client.HookNetworkMessage("CHUDStats", OnCHUDDamage)
+Client.HookNetworkMessage("CHUDDamage", OnCHUDDamage)

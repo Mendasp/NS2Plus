@@ -84,10 +84,11 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
             worldMessage.position = position        
             worldMessage.creationTime = time
             worldMessage.entityId = entityId
-            worldMessage.animationFraction = 0
+            worldMessage.animationFraction = 0			
             worldMessage.lifeTime = ConditionalValue(kWorldTextMessageType.CommanderError == messageType, kCommanderErrorMessageLifeTime, kWorldMessageLifeTime)
-           
+			
 			if messageType == kWorldTextMessageType.Damage then
+				worldMessage.lifeTime = CHUDGetOption("damagenumbertime")
 				worldMessage.canAccumulate = true
 			end
 			

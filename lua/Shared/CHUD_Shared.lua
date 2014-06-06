@@ -2,12 +2,26 @@ kCHUDElixerVersion = 1.6
 Script.Load("lua/CHUD/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
-local kCHUDStatsMessage =
+function BuildCHUDDamageMessage( target, amount, hitpos, weapon, overkill )
+	
+	local t = BuildDamageMessage( target, amount, hitpos )
+	t.isPlayer = target:isa("Player")
+	t.weapon = weapon
+	t.overkill = overkill
+	return t
+	
+end
+
+local kCHUDDamageMessage =
 {
-	isPlayer = "boolean",
-	weapon = "enum kTechId",
-	targetId = "entityid",
-	damage = "float",
+    posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+    posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+    posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+    targetId = "entityid",
+    isPlayer = "boolean",
+	amount = "float",
+	overkill = "float",
+	weapon = "enum kTechId",	
 }
 
 local kCHUDOptionMessage =
@@ -21,7 +35,7 @@ local kCHUDAutopickupMessage =
 	autoPickupBetter = "boolean",
 }
 
-Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
+Shared.RegisterNetworkMessage( "CHUDDamage", kCHUDDamageMessage )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 
