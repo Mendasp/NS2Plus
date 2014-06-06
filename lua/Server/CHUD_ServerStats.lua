@@ -2,18 +2,6 @@ local originaldmgmixin = DamageMixin.DoDamage
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 	local weapon
 	
-	// Save target health before the hit
-	local oldTargetHealth = 0
-	local oldTargetArmor = 0
-	
-	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
-		oldTargetHealth = target:GetHealth()
-		oldTargetArmor = target:GetArmor()
-	end
-	
-	// Save the result of the original so it updates all values
-	local killedFromDamage = originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
-	
 	if self:isa("Player") then
 		attacker = self
 	elseif self:GetParent() and self:GetParent():isa("Player") then
@@ -54,8 +42,20 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 		end
 		//Print(weapon .. " " .. self:GetMapName())
 	else
-		return killedFromDamage
+		return originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	end
+	
+	// Save target health before the hit
+	local oldTargetHealth = 0
+	local oldTargetArmor = 0
+	
+	if target and HasMixin(target, "Live") and damage > 0 and GetAreEnemies(attacker, target) then
+		oldTargetHealth = target:GetHealth()
+		oldTargetArmor = target:GetArmor()
+	end
+	
+	// Save the result of the original so it updates all values
+	local killedFromDamage = originaldmgmixin(self, damage, target, point, direction, surface, altMode, showtracer)
 	
 	// Secondary attack on alien weapons (lerk spikes, gorge healspray)
 	if (self.secondaryAttacking or self.shootingSpikes) and attacker:isa("Alien") then
