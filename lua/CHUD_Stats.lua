@@ -6,24 +6,35 @@ CHUD_hits = 0
 CHUD_misses = 0
 
 
+function OnCHUDDamageStat( damageTable )
+	
+	OnCHUDDamage( damageTable )
+	
+	-- Record Stats, Play Hit Sounds
+	local target,damage,hitpos = ParseDamageMessage( damageTable )
+	local isPlayer,weapon,hitcount = damageTable.isPlayer, damageTable.weapon, damageTable.hitcount
+	
+	assert( kCHUDStatsTrackAccLookup[weapon] ) -- this should be getting checked serverside
+	
+	for i=1,hitcount do
+		AddAttackStat(weapon, true, target, damage / hitcount, isPlayer)
+	end
+	if isPlayer and target and not target:isa("Embryo") then
+		cLastHitTime = Shared.GetTime()
+		cNumHits = cNumHits+hitcount
+	end	
+end
+
 function OnCHUDDamage( damageTable )
 	
 	local target,damage,hitpos = ParseDamageMessage( damageTable )
-	local isPlayer,weapon,overkill,hitcount = damageTable.isPlayer, damageTable.weapon, damageTable.overkill, damageTable.hitcount
+	local overkill = damageTable.overkill
 	
 	-- Make damage markers and such
 	if target and damage > 0 then
 		local amount = CHUDGetOption("overkilldamagenumbers") and overkill or damage
 		Client.AddWorldMessage(kWorldTextMessageType.Damage, amount, hitpos, target:GetId())
 	end
-	
-	for i=1,hitcount do
-		AddAttackStat(weapon, true, target, damage / hitcount, isPlayer)
-	end
-	if isPlayer and target and not target:isa("Embryo") and kCHUDStatsTrackAccLookup[weapon] then
-		cLastHitTime = Shared.GetTime()
-		cNumHits = cNumHits+hitcount
-	end	
 end
 
 function OnCommandResetStats()
@@ -360,3 +371,4 @@ originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "OnTag",
 Event.Hook("Console_resetstats", OnCommandResetStats)
 Event.Hook("LocalPlayerChanged", CheckPlayerTeam)
 Client.HookNetworkMessage("CHUDDamage", OnCHUDDamage)
+Client.HookNetworkMessage("CHUDDamageStat", OnCHUDDamageStat)

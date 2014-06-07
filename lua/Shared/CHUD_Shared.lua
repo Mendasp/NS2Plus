@@ -2,30 +2,41 @@ kCHUDElixerVersion = 1.7
 Script.Load("lua/CHUD/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
-function BuildCHUDDamageMessage( target, amount, hitpos, weapon, overkill )
-	
-	local t = BuildDamageMessage( target, amount, hitpos )
-	t.isPlayer = target:isa("Player")
-	t.weapon = weapon
-	t.overkill = overkill
-	t.hitcount = 1
-	return t
-	
-end
+
+kCHUDStatsTrackAccLookup =
+	set {
+		kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
+		kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
+		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
+	}
+
+
 
 local kCHUDDamageMessage =
 {
-    posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-    posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-    posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-    targetId = "entityid",
+	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	targetId = "entityid",
 	amount = "float",
-    isPlayer = "boolean",
-	weapon = "enum kTechId",
-	overkill = "float",	
-	hitcount = "integer (1 to 32)",
+	overkill = "float",
 }
 
+
+local kCHUDDamageStatMessage =
+{
+	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	targetId = "entityid",
+	amount = "float",
+	overkill = "float",	
+	isPlayer = "boolean",
+	weapon = "enum kTechId",
+	hitcount = "integer (1 to 32)",
+}	
+	
+	
 local kCHUDOptionMessage =
 {
 	disabledOption = "string (32)"
@@ -37,7 +48,22 @@ local kCHUDAutopickupMessage =
 	autoPickupBetter = "boolean",
 }
 
+function BuildCHUDDamageMessage( target, amount, hitpos, overkill )
+	local t = BuildDamageMessage( target, amount, hitpos )
+	t.overkill = overkill
+	return t
+end
+
+function BuildCHUDDamageStatMessage( target, amount, hitpos, overkill, weapon )
+	local t = BuildCHUDDamageMessage( target, amount, hitpos, overkill )
+	t.isPlayer = target:isa("Player")
+	t.weapon = weapon
+	t.hitcount = 1	
+	return t
+end
+
 Shared.RegisterNetworkMessage( "CHUDDamage", kCHUDDamageMessage )
+Shared.RegisterNetworkMessage( "CHUDDamageStat", kCHUDDamageStatMessage )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 

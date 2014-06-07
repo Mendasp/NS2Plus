@@ -1,59 +1,63 @@
 local mapnameToWeaponStatsLookup =
 {
-	[Spit.kMapName] = kTechId.Spit;
-	[Grenade.kMapName] = kTechId.GrenadeLauncher;
-	[Flame.kMapName] = kTechId.Flamethrower;
-	[ClusterGrenade.kMapName] = kTechId.ClusterGrenade;
-	[ClusterFragment.kMapName] = kTechId.ClusterGrenade;
-	[NerveGasCloud.kMapName] = kTechId.GasGrenade;
-	[PulseGrenade.kMapName] = kTechId.PulseGrenadeProjectile;
-	[SporeCloud.kMapName] = kTechId.Spores;
-	[Shockwave.kMapName] = kTechId.Stomp;
-	[DotMarker.kMapName] = kTechId.BileBomb;
-	[WhipBomb.kMapName] = kTechId.Whip;
+	[Spit.kMapName] = kTechId.Spit,
+	[Grenade.kMapName] = kTechId.GrenadeLauncher,
+	[Flame.kMapName] = kTechId.Flamethrower,
+	[ClusterGrenade.kMapName] = kTechId.ClusterGrenade,
+	[ClusterFragment.kMapName] = kTechId.ClusterGrenade,
+	[NerveGasCloud.kMapName] = kTechId.GasGrenade,
+	[PulseGrenade.kMapName] = kTechId.PulseGrenadeProjectile,
+	[SporeCloud.kMapName] = kTechId.Spores,
+	[Shockwave.kMapName] = kTechId.Stomp,
+	[DotMarker.kMapName] = kTechId.BileBomb,
+	[WhipBomb.kMapName] = kTechId.Whip,
 }
 
 local dmgMsgQ = {}
 
-function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable )
+function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable, only_accum )
 	-- Try to accumulate
 	local msg
 	for i=1,#dmgMsgQ do
+		
 		msg = dmgMsgQ[i]
-		
-		
-		local weaponMatch = name ~= "CHUDDamage" or msg.data.weapon == data.weapon
 			
 		if  msg.name == name and 
 			msg.target == target and 
+			msg.reliable == reliable and
 			msg.data.targetId == data.targetId and
-			( name ~= "CHUDDamage" or msg.data.weapon == data.weapon ) 
+			( name ~= "CHUDDamageStat" or msg.data.weapon == data.weapon ) 
 		then
 			msg.data.posx = data.posx
 			msg.data.posy = data.posy
 			msg.data.posz = data.posz
 			msg.data.amount = msg.data.amount + data.amount
+			msg.data.overkill = msg.data.overkill + data.overkill
 			
-			if name == "CHUDDamage" then
-				msg.data.overkill = msg.data.overkill + data.overkill
+			if name == "CHUDDamageStat" then
 				msg.data.hitcount = math.min( msg.data.hitcount + 1, 32 )
-			--	msg.saved = ( msg.saved or 0 ) + 18 -- difference from not accumulating the CHUDDamage
-			--	msg.saved = ( msg.saved or 3 ) + 21 -- difference from not combining Damage and CHUDStats ( old damage message was 12 bytes, old chudstats was 9 bytes. chuddamage is 18 bytes )
+				--msg.saved = ( msg.saved or 0 ) + 18
 			else
-			--	msg.saved = ( msg.saved or 0 ) + 12 
+				--msg.saved = ( msg.saved or 0 ) + 16 
 			end
 			
 			return
 		end
+		
 	end
 	
-	dmgMsgQ[#dmgMsgQ+1] = 
-	{
-		target = target;
-		name = name;
-		data = data;
-		reliable = reliable;
-	}
+	-- Nothing to accumulate, add new to queue
+	if not only_accum then		
+		dmgMsgQ[#dmgMsgQ+1] = 
+		{
+			target = target;
+			name = name;
+			data = data;
+			reliable = reliable;
+		}
+	else
+	--	EPrint( "Skipping event '%s' saved %d bytes", name, 16 )
+	end
 end
 
 function CHUD_CHUDDamageMessage_Dispatch()
@@ -158,20 +162,20 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 
 						local amount = (target:GetIsAlive() or killedFromDamage) and damageDone or 0
 						local overkill = healthUsed + armorUsed * 2
-						local msg = BuildCHUDDamageMessage( target, amount, point, weapon, overkill )
+						
+						if kCHUDStatsTrackAccLookup[weapon] then
+							local msg = BuildCHUDDamageStatMessage( target, amount, point, overkill, weapon )
+							CHUD_CHUDDamageMessage_Queue( attacker, "CHUDDamageStat", msg, true )	
+						else
+							local msg = BuildCHUDDamageMessage( target, amount, point, overkill )
+							CHUD_CHUDDamageMessage_Queue( attacker, "CHUDDamage", msg, true, amount == 0 )	
+						end	
 
-						CHUD_CHUDDamageMessage_Queue( attacker, "CHUDDamage", msg, true )		
+						local msg = BuildCHUDDamageMessage( target, amount, point, overkill )
+						for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do				
 
-						if (target:GetIsAlive() or killedFromDamage) and damageDone > 0 then
-
-							local msg = BuildDamageMessage( target, amount, point )
-
-							for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do				
-
-								if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
-									CHUD_CHUDDamageMessage_Queue( spectator, "Damage", msg, false )
-								end
-
+							if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
+								CHUD_CHUDDamageMessage_Queue( spectator, "CHUDDamage", msg, false, amount == 0 )
 							end
 
 						end
