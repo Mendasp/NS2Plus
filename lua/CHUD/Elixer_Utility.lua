@@ -4,7 +4,7 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.7;
+local version = 1.71;
 
 Elixer = Elixer or {}
 Elixer.Debug = Elixer.Debug or false  
@@ -261,7 +261,8 @@ end
 function ELIXER.EPrintCallHook( class, name )
 	local old
 	old = Class_ReplaceMethod( class, name, function(...) 
-		EPrint( "%s.%s(%s) Called", class, name, list(...) )
+		EPrint( "%s.%s(%s) Called\n%s", class, name, list(...), debug.traceback() )
+		
 		return old(...) 
 	end)
 end
