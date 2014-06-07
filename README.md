@@ -10,6 +10,7 @@ Latest changes
 	- Reduced network bandwidth spikes for stat damage messages, and shotgun damage events (Thanks remi.D!)
 	- Added slider to change how long the damage numbers stay on screen (Thanks remi.D!)
 	- Added option to include overkill damage in damager numbers (Thanks remi.D!)	
+	- Added damage numbers to lerk poison (Thanks remi.D!)
 	
 - 05/06/2014 (Build 266):
 	- Added more characters to the Insight player names font.

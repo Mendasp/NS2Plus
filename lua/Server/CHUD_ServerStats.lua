@@ -32,13 +32,15 @@ function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable, only_accum 
 			msg.data.posy = data.posy
 			msg.data.posz = data.posz
 			msg.data.amount = msg.data.amount + data.amount
-			msg.data.overkill = msg.data.overkill + data.overkill
-			
-			if name == "CHUDDamageStat" then
+			if name == "CHUDDamage" then
+				msg.data.overkill = msg.data.overkill + data.overkill
+			--	msg.saved = ( msg.saved or 0 ) + 16 
+			elseif name == "CHUDDamageStat" then
+				msg.data.overkill = msg.data.overkill + data.overkill
 				msg.data.hitcount = math.min( msg.data.hitcount + 1, 32 )
-				--msg.saved = ( msg.saved or 0 ) + 18
+			--	msg.saved = ( msg.saved or 0 ) + 18
 			else
-				--msg.saved = ( msg.saved or 0 ) + 16 
+			--	msg.saved = ( msg.saved or 0 ) + 12
 			end
 			
 			return
@@ -492,3 +494,58 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		end
 		
 	end)
+
+
+-- Make FireMixin use the message accumulation stuff
+local oldFireOnUpdate = FireMixin.OnUpdate
+function FireMixin:OnUpdate(deltaTime)
+	oldSendNetworkMessage = Server.SendNetworkMessage
+	Server.SendNetworkMessage = 
+		function ( target, name, data, reliable )
+			data.overkill = data.amount
+			CHUD_CHUDDamageMessage_Queue( target, "CHUDDamage", data, reliable )
+		end
+	oldFireOnUpdate( self, deltaTime )
+	Server.SendNetworkMessage = oldSendNetworkMessage
+end
+local oldFireOnProcessMove = FireMixin.OnProcessMove
+function FireMixin:OnProcessMove(deltaTime)
+	oldSendNetworkMessage = Server.SendNetworkMessage
+	Server.SendNetworkMessage = 
+		function ( target, name, data, reliable )
+			data.overkill = data.amount
+			CHUD_CHUDDamageMessage_Queue( target, "CHUDDamage", data, reliable )
+		end
+	oldFireOnProcessMove( self, deltaTime )
+	Server.SendNetworkMessage = oldSendNetworkMessage
+end
+
+-- Make poison show damage numbers	
+local oldMarineOnProcessMove = Marine.OnProcessMove
+function Marine:OnProcessMove(input)
+	local oldDeductHealth = self.DeductHealth 
+	self.DeductHealth =  
+		function ( self, damage, attacker, doer, healthOnly )
+				
+			oldDeductHealth( self, damage, attacker, doer, healthOnly )
+			
+			if attacker then
+				local msg = BuildCHUDDamageMessage(self, damage, self:GetOrigin(), damage)
+				CHUD_CHUDDamageMessage_Queue(attacker, "CHUDDamage", msg, true )
+				
+				for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do
+				
+					if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
+						CHUD_CHUDDamageMessage_Queue(spectator, "CHUDDamage", msg, false )
+					end
+					
+				end
+			end
+			
+		end
+
+	oldMarineOnProcessMove( self, input )
+	
+	self.DeductHealth = oldDeductHealth
+	
+end
