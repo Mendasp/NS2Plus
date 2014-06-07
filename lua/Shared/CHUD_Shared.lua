@@ -8,6 +8,7 @@ function BuildCHUDDamageMessage( target, amount, hitpos, weapon, overkill )
 	t.isPlayer = target:isa("Player")
 	t.weapon = weapon
 	t.overkill = overkill
+	t.hitcount = 1
 	return t
 	
 end
@@ -18,10 +19,11 @@ local kCHUDDamageMessage =
     posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
     posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
     targetId = "entityid",
-    isPlayer = "boolean",
 	amount = "float",
-	overkill = "float",
-	weapon = "enum kTechId",	
+    isPlayer = "boolean",
+	weapon = "enum kTechId",
+	overkill = "float",	
+	hitcount = "integer (1 to 32)",
 }
 
 local kCHUDOptionMessage =

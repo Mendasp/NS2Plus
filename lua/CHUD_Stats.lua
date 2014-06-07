@@ -9,7 +9,7 @@ CHUD_misses = 0
 function OnCHUDDamage( damageTable )
 	
 	local target,damage,hitpos = ParseDamageMessage( damageTable )
-	local isPlayer,weapon,overkill = damageTable.isPlayer, damageTable.weapon, damageTable.overkill
+	local isPlayer,weapon,overkill,hitcount = damageTable.isPlayer, damageTable.weapon, damageTable.overkill, damageTable.hitcount
 	
 	-- Make damage markers and such
 	if target then
@@ -20,7 +20,7 @@ function OnCHUDDamage( damageTable )
 	AddAttackStat(weapon, true, target, damage, isPlayer)
 	if isPlayer and target and not target:isa("Embryo") and kCHUDStatsTrackAccLookup[weapon] then
 		cLastHitTime = Shared.GetTime()
-		cNumHits = cNumHits+1
+		cNumHits = cNumHits+hitcount
 	end	
 end
 

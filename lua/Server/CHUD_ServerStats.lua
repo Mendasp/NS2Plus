@@ -13,6 +13,50 @@ local mapnameToWeaponStatsLookup =
 	[WhipBomb.kMapName] = kTechId.Whip;
 }
 
+local dmgMsgQ = {}
+
+function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable )
+	-- Try to accumulate
+	local msg
+	for i=1,#dmgMsgQ do
+		msg = dmgMsgQ[i]
+		
+		if msg.target == target and msg.data.targetId == data.targetId then
+			msg.data.posx = data.posx
+			msg.data.posy = data.posy
+			msg.data.posz = data.posz
+			msg.data.amount = msg.data.amount + data.amount
+			msg.data.overkill = msg.data.overkill + data.overkill
+			msg.data.hitcount = math.min( msg.data.hitcount + 1, 32 )
+						
+			-- msg.saved = ( msg.saved or 0 ) + 18 -- difference from not accumulating the CHUDDamage
+			--msg.saved = ( msg.saved or 3 ) + 21 -- difference from not combining Damage and CHUDStats ( old damage message was 12 bytes, old chudstats was 9 bytes. chuddamage is 18 bytes )
+			
+			return
+		end
+	end
+	
+	dmgMsgQ[#dmgMsgQ+1] = 
+	{
+		target = target;
+		data = data;
+	}
+end
+
+function CHUD_CHUDDamageMessage_Dispatch()
+	local msg
+	for i=1,#dmgMsgQ do
+		msg = dmgMsgQ[i]
+		Server.SendNetworkMessage( msg.target, "CHUDDamage", msg.data, true )
+		--if msg.saved then
+		--	EPrint( "Accumulated event saved %d bytes", msg.saved )
+		--end
+	end
+	dmgMsgQ = {}
+end	
+
+Event.Hook("UpdateServer", CHUD_CHUDDamageMessage_Dispatch)
+
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 	
     // No prediction if the Client is spectating another player.
@@ -102,7 +146,8 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 						local amount = (target:GetIsAlive() or killedFromDamage) and damageDone or 0
 						local overkill = healthUsed + armorUsed * 2
 						local msg = BuildCHUDDamageMessage( target, amount, point, weapon, overkill )
-						Server.SendNetworkMessage( attacker, "CHUDDamage", msg, true )		
+						
+						CHUD_CHUDDamageMessage_Queue( attacker, "CHUDDamage", msg, true )		
 						
 						if (target:GetIsAlive() or killedFromDamage) and damageDone > 0 then
 							
