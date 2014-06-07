@@ -185,6 +185,9 @@ function AddAttackStat(wTechId, wasHit, target, damageDealt, isPlayer)
 		// This shows up as "Swipe Blink", just "Swipe"
 		elseif wTechId == kTechId.Swipe then
 			weaponname = "Swipe"
+		// Use spaces!
+		elseif wTechId == kTechId.DropHeavyMachineGun then
+			weaponname = "Heavy Machine Gun"
 		end
 		
 		if index == nil then

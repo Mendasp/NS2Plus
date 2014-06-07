@@ -4,15 +4,18 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /06/2014 (Build 266):
+- 07/06/2014 (Build 266):
+	- Reduced network bandwidth cost for NS2+ stat damage messages. (Thanks remi.D!)
+	- Reduced 300+ byte network spike for good shotgun hits. (Thanks remi.D!)
+	- Fixed unnecessary 540 to 720+ byte bandwidth spike every second for alien team tech tree. (Thanks remi.D!)
+	- Added slider to change how long the damage numbers stay on screen. (Thanks remi.D!)
+	- Added option to include overkill damage in damager numbers. (Thanks remi.D!)
+	- Added damage numbers to lerk poison. (Thanks remi.D!)
+	- Added support for the HMG in NS2b.
+	
+- 06/06/2014 (Build 266):
 	- Fixed Server Script Error regarding stats.
 	- Included CDT badges.
-	- Reduced network bandwidth cost for NS2+ stat damage messages (Thanks remi.D!)
-	- Reduced 300+ byte network spike for good shotgun hits (Thanks remi.D!)
-	- Fixed unnecessary 540 to 720+ byte bandwidth spike every second for alien team tech tree (Thanks remi.D!)
-	- Added slider to change how long the damage numbers stay on screen (Thanks remi.D!)
-	- Added option to include overkill damage in damager numbers (Thanks remi.D!)	
-	- Added damage numbers to lerk poison (Thanks remi.D!)
 	
 - 05/06/2014 (Build 266):
 	- Added more characters to the Insight player names font.

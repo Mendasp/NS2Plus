@@ -10,6 +10,10 @@ kCHUDStatsTrackAccLookup =
 		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
 	}
 
+// CompMod v3 compat.
+if rawget( kTechId, "DropHeavyMachineGun" ) then
+	kCHUDStatsTrackAccLookup[kTechId.DropHeavyMachineGun] = true
+end
 
 
 local kCHUDDamageMessage =
