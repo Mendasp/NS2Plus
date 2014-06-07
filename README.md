@@ -7,7 +7,9 @@ Latest changes
 - /06/2014 (Build 266):
 	- Fixed Server Script Error regarding stats.
 	- Included CDT badges.
-	- Reduced network bandwidth spikes for stat damage messages, and shotgun damage events (Thanks remi.D!)
+	- Reduced network bandwidth cost for NS2+ stat damage messages (Thanks remi.D!)
+	- Reduced 300+ byte network spike for good shotgun hits (Thanks remi.D!)
+	- Fixed unnecessary 540 to 720+ byte bandwidth spike every second for alien team tech tree (Thanks remi.D!)
 	- Added slider to change how long the damage numbers stay on screen (Thanks remi.D!)
 	- Added option to include overkill damage in damager numbers (Thanks remi.D!)	
 	- Added damage numbers to lerk poison (Thanks remi.D!)
