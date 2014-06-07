@@ -1,15 +1,46 @@
-kCHUDElixerVersion = 1.6
+kCHUDElixerVersion = 1.71
 Script.Load("lua/CHUD/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
-local kCHUDStatsMessage =
+
+kCHUDStatsTrackAccLookup =
+	set {
+		kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
+		kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
+		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
+	}
+
+// CompMod v3 compat.
+if rawget( kTechId, "DropHeavyMachineGun" ) then
+	kCHUDStatsTrackAccLookup[kTechId.DropHeavyMachineGun] = true
+end
+
+
+local kCHUDDamageMessage =
 {
-	isPlayer = "boolean",
-	weapon = "enum kTechId",
+	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	targetId = "entityid",
-	damage = "float",
+	amount = "float",
+	overkill = "float",
 }
 
+
+local kCHUDDamageStatMessage =
+{
+	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
+	targetId = "entityid",
+	amount = "float",
+	overkill = "float",	
+	isPlayer = "boolean",
+	weapon = "enum kTechId",
+	hitcount = "integer (1 to 32)",
+}	
+	
+	
 local kCHUDOptionMessage =
 {
 	disabledOption = "string (32)"
@@ -21,7 +52,22 @@ local kCHUDAutopickupMessage =
 	autoPickupBetter = "boolean",
 }
 
-Shared.RegisterNetworkMessage( "CHUDStats", kCHUDStatsMessage )
+function BuildCHUDDamageMessage( target, amount, hitpos, overkill )
+	local t = BuildDamageMessage( target, amount, hitpos )
+	t.overkill = overkill
+	return t
+end
+
+function BuildCHUDDamageStatMessage( target, amount, hitpos, overkill, weapon )
+	local t = BuildCHUDDamageMessage( target, amount, hitpos, overkill )
+	t.isPlayer = target:isa("Player")
+	t.weapon = weapon
+	t.hitcount = 1	
+	return t
+end
+
+Shared.RegisterNetworkMessage( "CHUDDamage", kCHUDDamageMessage )
+Shared.RegisterNetworkMessage( "CHUDDamageStat", kCHUDDamageStatMessage )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 

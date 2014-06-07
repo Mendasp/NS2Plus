@@ -5,25 +5,35 @@ CHUD_sdmg = 0
 CHUD_hits = 0
 CHUD_misses = 0
 
-// Weapons that contribute to accuracy
-local trackacc =
-{
-	kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
-	kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
-	kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
-}
 
-function OnCHUDDamage(statsTable)
-
-	local isPlayer = statsTable.isPlayer
-	local weapon = statsTable.weapon
-	local target = Shared.GetEntity(statsTable.targetId)
-	local damage = statsTable.damage
-		
-	AddAttackStat(weapon, true, target, damage, isPlayer)
-	if isPlayer and target and not target:isa("Embryo") and table.contains(trackacc, weapon) then
+function OnCHUDDamageStat( damageTable )
+	
+	OnCHUDDamage( damageTable )
+	
+	-- Record Stats, Play Hit Sounds
+	local target,damage,hitpos = ParseDamageMessage( damageTable )
+	local isPlayer,weapon,hitcount = damageTable.isPlayer, damageTable.weapon, damageTable.hitcount
+	
+	assert( kCHUDStatsTrackAccLookup[weapon] ) -- this should be getting checked serverside
+	
+	for i=1,hitcount do
+		AddAttackStat(weapon, true, target, damage / hitcount, isPlayer)
+	end
+	if isPlayer and target and not target:isa("Embryo") then
 		cLastHitTime = Shared.GetTime()
-		cNumHits = cNumHits+1
+		cNumHits = cNumHits+hitcount
+	end	
+end
+
+function OnCHUDDamage( damageTable )
+	
+	local target,damage,hitpos = ParseDamageMessage( damageTable )
+	local overkill = damageTable.overkill
+	
+	-- Make damage markers and such
+	if target and damage > 0 then
+		local amount = CHUDGetOption("overkilldamagenumbers") and overkill or damage
+		Client.AddWorldMessage(kWorldTextMessageType.Damage, amount, hitpos, target:GetId())
 	end
 end
 
@@ -60,7 +70,7 @@ function ShowClientStats(endRound)
 				local onoshits = 0
 				local acc_message
 				
-				if wStats["lifeform"]["onos"] ~= nil and table.contains(trackacc, wStats["weapon"]) then
+				if wStats["lifeform"]["onos"] ~= nil and kCHUDStatsTrackAccLookup[wStats["weapon"]] then
 					onoshits = wStats["lifeform"]["onos"]
 					onoshitssum = onoshitssum + onoshits
 				end
@@ -79,7 +89,7 @@ function ShowClientStats(endRound)
 				end
 				
 				Shared.Message(wStats["weaponName"])
-				if table.contains(trackacc, wStats["weapon"]) then
+				if kCHUDStatsTrackAccLookup[wStats["weapon"]] then
 					Shared.Message(acc_message)
 				end
 				Shared.Message(string.format("Player damage: %d / Structure Damage: %d", math.ceil(wStats["pdmg"]), math.ceil(wStats["sdmg"])))
@@ -87,7 +97,7 @@ function ShowClientStats(endRound)
 				sdmgsum = sdmgsum + wStats["sdmg"]
 				Shared.Message("-----------------------")
 			end
-			if table.contains(trackacc, wStats["weapon"]) then
+			if kCHUDStatsTrackAccLookup[wStats["weapon"]] then
 				hitssum = hitssum + wStats["hits"]
 				missessum = missessum + wStats["misses"]
 			end
@@ -175,6 +185,9 @@ function AddAttackStat(wTechId, wasHit, target, damageDealt, isPlayer)
 		// This shows up as "Swipe Blink", just "Swipe"
 		elseif wTechId == kTechId.Swipe then
 			weaponname = "Swipe"
+		// Use spaces!
+		elseif wTechId == kTechId.DropHeavyMachineGun then
+			weaponname = "Heavy Machine Gun"
 		end
 		
 		if index == nil then
@@ -360,4 +373,5 @@ originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "OnTag",
 
 Event.Hook("Console_resetstats", OnCommandResetStats)
 Event.Hook("LocalPlayerChanged", CheckPlayerTeam)
-Client.HookNetworkMessage("CHUDStats", OnCHUDDamage)
+Client.HookNetworkMessage("CHUDDamage", OnCHUDDamage)
+Client.HookNetworkMessage("CHUDDamageStat", OnCHUDDamageStat)

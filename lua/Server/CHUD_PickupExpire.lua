@@ -14,7 +14,7 @@ originalWeaponSetWorldState = Class_ReplaceMethod( "Weapon", "SetWeaponWorldStat
 	
 	end)
 	
-local commDrops = { "ammopack", "medpack", "catpack" }
+local commDrops = set { "ammopack", "medpack", "catpack" }
 local originalDropPackOnInit
 originalDropPackOnInit = Class_ReplaceMethod( "DropPack", "OnInitialized",
 	function(self)
@@ -25,7 +25,7 @@ originalDropPackOnInit = Class_ReplaceMethod( "DropPack", "OnInitialized",
 		
 		local mapName = self:GetMapName()
 		
-		if table.contains(commDrops, mapName) then
+		if commDrops[mapName] then
 			CHUDCommStats[CHUDMarineComm][mapName].misses = CHUDCommStats[CHUDMarineComm][mapName].misses + 1
 		end
 	

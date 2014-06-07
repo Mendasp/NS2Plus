@@ -1,4 +1,5 @@
 Script.Load("lua/Shared/CHUD_Shared.lua")
+
 Script.Load("lua/CHUD_Particles.lua")
 Script.Load("lua/CHUD_MainMenu.lua")
 Script.Load("lua/CHUD_Settings.lua")
@@ -84,10 +85,11 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
             worldMessage.position = position        
             worldMessage.creationTime = time
             worldMessage.entityId = entityId
-            worldMessage.animationFraction = 0
+            worldMessage.animationFraction = 0			
             worldMessage.lifeTime = ConditionalValue(kWorldTextMessageType.CommanderError == messageType, kCommanderErrorMessageLifeTime, kWorldMessageLifeTime)
-           
+			
 			if messageType == kWorldTextMessageType.Damage then
+				worldMessage.lifeTime = CHUDGetOption("damagenumbertime")
 				worldMessage.canAccumulate = true
 			end
 			

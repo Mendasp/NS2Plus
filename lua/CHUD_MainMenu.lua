@@ -1,81 +1,26 @@
 local mainMenu
 
-function CHUDHitIndicatorSlider()
-	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local key = "hitindicator"
-		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local minValue = CHUDGetOptionParam(key, "minValue") or 0
-		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-		local value = (mainMenu.CHUDOptionElements.CHUD_HitIndicator:GetValue() * (maxValue - minValue) + minValue) * multiplier
-		CHUDSetOption(key, value)
+function MakeCHUDSliderCallback( elemId, key )
+	return function()
+		if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+			local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
+			local minValue = CHUDGetOptionParam(key, "minValue") or 0
+			local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+			local elem = mainMenu.CHUDOptionElements[elemId]
+			local value = (elem:GetValue() * (maxValue - minValue) + minValue) * multiplier
+			CHUDSetOption(key, value)
+		end
 	end
 end
+CHUDHitIndicatorSlider = MakeCHUDSliderCallback( "CHUD_HitIndicator", "hitindicator" )
+CHUDLocationSlider = MakeCHUDSliderCallback( "CHUD_LocationAlpha", "locationalpha" )
+CHUDMinimapSlider = MakeCHUDSliderCallback( "CHUD_MinimapAlpha", "minimapalpha" )
+CHUDHitsoundsSlider = MakeCHUDSliderCallback( "CHUD_HitsoundsVolume", "hitsounds_vol" )
+CHUDFlashAtmosSlider = MakeCHUDSliderCallback( "CHUD_FlashAtmos", "flashatmos" )
+CHUDMapAtmosSlider = MakeCHUDSliderCallback( "CHUD_MapAtmos", "mapatmos" )
+CHUDDMGScaleSlider = MakeCHUDSliderCallback( "CHUD_DMGScale", "dmgscale" )
+CHUDDMGTimeSlider = MakeCHUDSliderCallback( "CHUD_DamageNumberTime", "damagenumbertime" )
 
-function CHUDLocationSlider()
-	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local key = "locationalpha"
-		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local minValue = CHUDGetOptionParam(key, "minValue") or 0
-		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-		local value = (mainMenu.CHUDOptionElements.CHUD_LocationAlpha:GetValue() * (maxValue - minValue) + minValue) * multiplier
-		CHUDSetOption(key, value)
-	end
-end
-
-function CHUDMinimapSlider()
-	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local key = "minimapalpha"
-		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local minValue = CHUDGetOptionParam(key, "minValue") or 0
-		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-		local value = (mainMenu.CHUDOptionElements.CHUD_MinimapAlpha:GetValue() * (maxValue - minValue) + minValue) * multiplier
-		CHUDSetOption(key, value)
-	end
-end
-
-function CHUDHitsoundsSlider()
-	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local key = "hitsounds_vol"
-		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local minValue = CHUDGetOptionParam(key, "minValue") or 0
-		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-		local value = (mainMenu.CHUDOptionElements.CHUD_HitsoundsVolume:GetValue() * (maxValue - minValue) + minValue) * multiplier
-		CHUDSetOption(key, value)
-	end
-end
-
-function CHUDFlashAtmosSlider()
-	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local key = "flashatmos"
-		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local minValue = CHUDGetOptionParam(key, "minValue") or 0
-		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-		local value = (mainMenu.CHUDOptionElements.CHUD_FlashAtmos:GetValue() * (maxValue - minValue) + minValue) * multiplier
-		CHUDSetOption(key, value)
-	end
-end
-
-function CHUDMapAtmosSlider()
-	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local key = "mapatmos"
-		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local minValue = CHUDGetOptionParam(key, "minValue") or 0
-		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-		local value = (mainMenu.CHUDOptionElements.CHUD_MapAtmos:GetValue() * (maxValue - minValue) + minValue) * multiplier
-		CHUDSetOption(key, value)
-	end
-end
-
-function CHUDDMGScaleSlider()
-	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		local key = "dmgscale"
-		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-		local minValue = CHUDGetOptionParam(key, "minValue") or 0
-		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-		local value = (mainMenu.CHUDOptionElements.CHUD_DMGScale:GetValue() * (maxValue - minValue) + minValue) * multiplier
-		CHUDSetOption(key, value)
-	end
-end
 
 function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then

@@ -19,18 +19,10 @@ local function CHUDGetStatsString()
 	
 	local statsString = ""
 	
-	// Weapons that contribute to accuracy
-	local trackacc =
-	{
-		kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
-		kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
-		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
-	}
-	
 	if #CHUDStats > 0 then
 		
 		for i, wStats in pairs(CHUDStats) do
-			if table.contains(trackacc, wStats["weapon"]) then
+			if kCHUDStatsTrackAccLookup[wStats["weapon"]] then
 				hitssum = hitssum + wStats["hits"]
 				missessum = missessum + wStats["misses"]
 			end

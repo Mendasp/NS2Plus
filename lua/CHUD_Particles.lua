@@ -9,7 +9,8 @@ local cinematicsRemoved = false
 local ambientsValuesCache = { }
 local ambientsRemoved = false
 
-local BlockedProps = { 	"models/props/veil/veil_hologram_01.model", 
+local BlockedProps = set { 	
+						"models/props/veil/veil_hologram_01.model", 
 						"models/props/veil/veil_holosign_01_nanogrid.model", 
 						"models/props/veil/veil_hologram_01_scanlines.model",
 						"models/props/biodome/biodome_bamboo_crown_01_01.model",
@@ -38,7 +39,8 @@ local BlockedProps = { 	"models/props/veil/veil_hologram_01.model",
 						"models/props/descent/descent_hologram_planet_03.model",
 						"models/props/descent/descent_hologram_spacestation_01.model"
 					}
-local blockedCinematics = {	"cinematics/marine/structures/death_large.cinematic",
+local blockedCinematics = set {	
+							"cinematics/marine/structures/death_large.cinematic",
 							"cinematics/marine/structures/death_small.cinematic",
 							"cinematics/marine/sentry/death.cinematic",
 							"cinematics/marine/infantryportal/death.cinematic",
@@ -98,7 +100,8 @@ local blockedCinematics = {	"cinematics/marine/structures/death_large.cinematic"
 							"cinematics/alien/fade/blink_view.cinematic",
 						}
 							
-local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
+local replacedCinematics = set {
+							"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/alien/cyst/enzymecloud_large.cinematic",
 							"cinematics/alien/nutrientmist.cinematic",
 							"cinematics/alien/nutrientmist_hive.cinematic",
@@ -117,7 +120,8 @@ local replacedCinematics = {"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/alien/tracer_residue.cinematic",
 						}
 
-mapCinematicNames = {	"cinematics/environment/biodome/flying_papers.cinematic",
+mapCinematicNames = set {	
+						"cinematics/environment/biodome/flying_papers.cinematic",
 						"cinematics/environment/biodome/leaves_folliage_01.cinematic",
 						"cinematics/environment/biodome/mosquitos_glow.cinematic",
 						"cinematics/environment/biodome/sand_storm.cinematic",
@@ -167,7 +171,7 @@ mapCinematicNames = {	"cinematics/environment/biodome/flying_papers.cinematic",
 							
 // Precache all the new cinematics
 PrecacheAsset("chud_cinematics/blank.cinematic")
-for i, cinematic in pairs(replacedCinematics) do
+for cinematic,_ in pairs(replacedCinematics) do
 	PrecacheAsset(cinematic)
 end
 
@@ -177,9 +181,9 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 		//Print(cinematicName)
 		if Client.fullyLoaded then
 			if CHUDGetOption("particles") then
-				if table.contains(replacedCinematics, cinematicName) then
+				if replacedCinematics[cinematicName] then
 					originalSetCinematic(self, "chud_" .. cinematicName)
-				elseif table.contains(blockedCinematics, cinematicName) then
+				elseif blockedCinematics[cinematicName] then
 					originalSetCinematic(self, "chud_cinematics/blank.cinematic")
 				// Easier than doing this in like 10 folders
 				elseif string.find(cinematicName, "ricochetMinigun.cinematic") then
@@ -197,7 +201,7 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 )
 
 function CacheCinematics(className, groupName, values)
-	if className == "cinematic" and table.contains(mapCinematicNames, values.cinematicName) then
+	if className == "cinematic" and mapCinematicNames[values.cinematicName] then
 		table.insert(cinematicsCache, Client.cinematics[#Client.cinematics])
 		if not Client.fullyLoaded then
 			table.insert(cinematicsValuesCache, {className = className, groupName = groupName, values = values})
@@ -236,7 +240,7 @@ function CreateCinematic(className, groupName, values)
 		cinematic.className = className
 		cinematic.coords = coords
 		
-		if className == "cinematic" and table.contains(mapCinematicNames, values.cinematicName) then
+		if className == "cinematic" and mapCinematicNames[values.cinematicName] then
 			table.insert(cinematicsCache, cinematic)
 		end
 	end
@@ -259,7 +263,7 @@ local originalLoadMapEntity = LoadMapEntity
 function LoadMapEntity(className, groupName, values)
 	local success = originalLoadMapEntity(className, groupName, values)
 	if success then
-		if className == "prop_static" and table.contains(BlockedProps, values.model) then
+		if className == "prop_static" and BlockedProps[values.model] then
 			table.insert(PropCache, Client.propList[#Client.propList])
 			if not Client.fullyLoaded then
 				table.insert(PropValuesCache, {className = className, groupName = groupName, values = values})
@@ -272,7 +276,7 @@ end
 
 function RemovePropDynamics()
 	for _, entity in ientitylist(Shared.GetEntitiesWithClassname("PropDynamic")) do
-		if table.contains (BlockedProps, entity:GetModelName()) and not CHUDGetOption("mapparticles") then
+		if BlockedProps[entity:GetModelName()] and not CHUDGetOption("mapparticles") then
 			entity:SetModel(nil)
 		end
 	end

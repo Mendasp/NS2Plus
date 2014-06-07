@@ -416,6 +416,32 @@ CHUDOptions =
 					end,
 				sort = "C6",
 			},
+			overkilldamagenumbers = {
+				name    = "CHUD_OverkillDamageNumbers",
+				label   = "Overkill damage numbers",
+				tooltip = "Makes damage numbers show all damage, including overkill",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "hud",
+				valueType = "bool",
+				sort = "C6b",
+			},
+			damagenumbertime = 
+			{
+				name    = "CHUD_DamageNumberTime",
+				label   = "Damage number fade time",
+				tooltip = "Controls how long damage numbers are on screen.",
+				type    = "slider",
+				sliderCallback = CHUDDMGTimeSlider,
+				defaultValue = kWorldMessageLifeTime,
+				minValue = 0,
+				maxValue = 3,
+				category = "hud",
+				valueType = "float",
+				sort = "C6c"
+			},
 			hitindicator = { 
 				name    = "CHUD_HitIndicator",
 				label   = "Hit indicator fade time",
