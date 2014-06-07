@@ -1,5 +1,7 @@
-cLastHitTime = nil
-cNumHits = 0
+local hitsounds = {}
+hitsounds[0] = ""
+hitsounds[1] = "-mid"
+hitsounds[2] = "-hi"
 
 for _, sound in pairs(CHUDGetOptionVals("hitsounds")) do
 	Client.PrecacheLocalSound(sound)
@@ -9,31 +11,17 @@ for _, sound in pairs(CHUDGetOptionVals("hitsounds")) do
 	Client.PrecacheLocalSound(sound .. "-hi-h")
 end
 
-function PlayHitsounds()
-
-	if cLastHitTime and Shared.GetTime() - cLastHitTime > 0.005 and cNumHits > 0 then
-		if CHUDGetOption("hitsounds") > 0 and not Client.GetLocalPlayer():isa("Commander") then
-			local soundEffectName = CHUDGetOptionAssocVal("hitsounds")
-			
-			if cNumHits >= 6 and cNumHits <= 13 then
-				soundEffectName = soundEffectName .. "-mid"
-				if CHUDGetOption("hitsounds_pitch") == 1 then
-					soundEffectName = soundEffectName .. "-h"
-				end
-			elseif cNumHits > 13 then
-				soundEffectName = soundEffectName .. "-hi"
-				if CHUDGetOption("hitsounds_pitch") == 1 then
-					soundEffectName = soundEffectName .. "-h"
-				end
-			end
+function PlayHitsound(hitsound)
+	
+	if hitsounds[hitsound] then
+		local soundEffectName = CHUDGetOptionAssocVal("hitsounds")
 		
-			StartSoundEffect(soundEffectName, CHUDGetOption("hitsounds_vol"))
+		soundEffectName = soundEffectName .. hitsounds[hitsound]
+		if CHUDGetOption("hitsounds_pitch") == 1 then
+			soundEffectName = soundEffectName .. "-h"
 		end
-		
-		cNumHits = 0
-		cLastHitTime = Shared.GetTime()
+	
+		StartSoundEffect(soundEffectName, CHUDGetOption("hitsounds_vol"))
 	end
 	
 end
-
-Event.Hook("UpdateRender", PlayHitsounds)
