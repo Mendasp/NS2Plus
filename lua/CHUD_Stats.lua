@@ -17,7 +17,9 @@ function OnCHUDDamage( damageTable )
 		Client.AddWorldMessage(kWorldTextMessageType.Damage, amount, hitpos, target:GetId())
 	end
 	
-	AddAttackStat(weapon, true, target, damage, isPlayer)
+	for i=1,hitcount do
+		AddAttackStat(weapon, true, target, damage / hitcount, isPlayer)
+	end
 	if isPlayer and target and not target:isa("Embryo") and kCHUDStatsTrackAccLookup[weapon] then
 		cLastHitTime = Shared.GetTime()
 		cNumHits = cNumHits+hitcount

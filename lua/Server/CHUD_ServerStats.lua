@@ -21,7 +21,14 @@ function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable )
 	for i=1,#dmgMsgQ do
 		msg = dmgMsgQ[i]
 		
-		if msg.name == name and msg.target == target and msg.data.targetId == data.targetId then
+		
+		local weaponMatch = name ~= "CHUDDamage" or msg.data.weapon == data.weapon
+			
+		if  msg.name == name and 
+			msg.target == target and 
+			msg.data.targetId == data.targetId and
+			( name ~= "CHUDDamage" or msg.data.weapon == data.weapon ) 
+		then
 			msg.data.posx = data.posx
 			msg.data.posy = data.posy
 			msg.data.posz = data.posz
