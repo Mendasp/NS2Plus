@@ -12,8 +12,8 @@ function OnCHUDDamage( damageTable )
 	local isPlayer,weapon,overkill,hitcount = damageTable.isPlayer, damageTable.weapon, damageTable.overkill, damageTable.hitcount
 	
 	-- Make damage markers and such
-	if target then
-		local amount = CHUDGetOption("overkilldamagenumbers") and overkill or damage
+	local amount = CHUDGetOption("overkilldamagenumbers") and overkill or damage
+	if target and amount > 0 then
 		Client.AddWorldMessage(kWorldTextMessageType.Damage, amount, hitpos, target:GetId())
 	end
 	
