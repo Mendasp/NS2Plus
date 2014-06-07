@@ -21,16 +21,20 @@ function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable )
 	for i=1,#dmgMsgQ do
 		msg = dmgMsgQ[i]
 		
-		if msg.target == target and msg.data.targetId == data.targetId then
+		if msg.name == name and msg.target == target and msg.data.targetId == data.targetId then
 			msg.data.posx = data.posx
 			msg.data.posy = data.posy
 			msg.data.posz = data.posz
 			msg.data.amount = msg.data.amount + data.amount
-			msg.data.overkill = msg.data.overkill + data.overkill
-			msg.data.hitcount = math.min( msg.data.hitcount + 1, 32 )
-						
-			-- msg.saved = ( msg.saved or 0 ) + 18 -- difference from not accumulating the CHUDDamage
-			--msg.saved = ( msg.saved or 3 ) + 21 -- difference from not combining Damage and CHUDStats ( old damage message was 12 bytes, old chudstats was 9 bytes. chuddamage is 18 bytes )
+			
+			if name == "CHUDDamage" then
+				msg.data.overkill = msg.data.overkill + data.overkill
+				msg.data.hitcount = math.min( msg.data.hitcount + 1, 32 )
+			--	msg.saved = ( msg.saved or 0 ) + 18 -- difference from not accumulating the CHUDDamage
+			--	msg.saved = ( msg.saved or 3 ) + 21 -- difference from not combining Damage and CHUDStats ( old damage message was 12 bytes, old chudstats was 9 bytes. chuddamage is 18 bytes )
+			else
+			--	msg.saved = ( msg.saved or 0 ) + 12 
+			end
 			
 			return
 		end
@@ -39,7 +43,9 @@ function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable )
 	dmgMsgQ[#dmgMsgQ+1] = 
 	{
 		target = target;
+		name = name;
 		data = data;
+		reliable = reliable;
 	}
 end
 
@@ -47,10 +53,10 @@ function CHUD_CHUDDamageMessage_Dispatch()
 	local msg
 	for i=1,#dmgMsgQ do
 		msg = dmgMsgQ[i]
-		Server.SendNetworkMessage( msg.target, "CHUDDamage", msg.data, true )
-		--if msg.saved then
-		--	EPrint( "Accumulated event saved %d bytes", msg.saved )
-		--end
+		Server.SendNetworkMessage( msg.target, msg.name, msg.data, msg.reliable )
+		if msg.saved then
+		--	EPrint( "Accumulating event '%s' saved %d bytes", msg.name, msg.saved )
+		end
 	end
 	dmgMsgQ = {}
 end	
@@ -156,7 +162,7 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 							for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do				
 							
 								if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
-									Server.SendNetworkMessage(spectator, "Damage", msg, false)
+									CHUD_CHUDDamageMessage_Queue( spectator, "Damage", msg, false )
 								end
 								
 							end
