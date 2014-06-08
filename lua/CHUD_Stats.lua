@@ -203,7 +203,7 @@ function AddAttackStat(wTechId, wasHit, target, damageDealt, isPlayer)
 		elseif wTechId == kTechId.Swipe then
 			weaponname = "Swipe"
 		// Use spaces!
-		elseif rawget( kTechId, "DropHeavyMachineGun" ) and wTechId == kTechId.DropHeavyMachineGun then
+		elseif rawget( kTechId, "HeavyMachineGun" ) and wTechId == kTechId.HeavyMachineGun then
 			weaponname = "Heavy Machine Gun"
 		end
 		

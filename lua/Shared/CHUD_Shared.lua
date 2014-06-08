@@ -11,8 +11,8 @@ kCHUDStatsTrackAccLookup =
 	}
 
 // CompMod v3 compat.
-if rawget( kTechId, "DropHeavyMachineGun" ) then
-	kCHUDStatsTrackAccLookup[kTechId.DropHeavyMachineGun] = true
+if rawget( kTechId, "HeavyMachineGun" ) then
+	kCHUDStatsTrackAccLookup[kTechId.HeavyMachineGun] = true
 end
 
 

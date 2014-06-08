@@ -11,8 +11,8 @@ Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",
 		local pickupPriority = { [kTechId.Flamethrower] = 1, [kTechId.GrenadeLauncher] = 2, [kTechId.Shotgun] = 3 }
 		
 		// CompMod v3 compat.
-		if rawget( kTechId, "DropHeavyMachineGun" ) then
-			pickupPriority[kTechId.DropHeavyMachineGun] = 3
+		if rawget( kTechId, "HeavyMachineGun" ) then
+			pickupPriority[kTechId.HeavyMachineGun] = 3
 		end
 		
 		local currentWeapon = self:GetWeaponInHUDSlot(1)
