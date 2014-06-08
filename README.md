@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 08/06/2014 (Build 266):
+	- Added variable hitsounds for the Railgun depending on the damage done.
+	- Removed the outline from first person spectator.
+	- Fixed hitsounds for people using the High pitch modifier.
+
 - 07/06/2014 (Build 266):
 	- Reduced network bandwidth cost for NS2+ stat damage messages. (Thanks remi.D!)
 	- Reduced 300+ byte network spike for good shotgun hits. (Thanks remi.D!)

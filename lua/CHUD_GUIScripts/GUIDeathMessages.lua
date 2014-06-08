@@ -109,12 +109,12 @@ Class_ReplaceMethod("GUIDeathMessages", "AddMessage",
 		end
 		
 		local player = Client.GetLocalPlayer()
-		local alpha = ConditionalValue(player and player:GetName() == killerName and targetIsPlayer and CHUDGetOption("killfeedhighlight") > 0, 1, 0)
+		local alpha = ConditionalValue(player and Client.GetIsControllingPlayer() and player:GetName() == killerName and targetIsPlayer and CHUDGetOption("killfeedhighlight") > 0, 1, 0)
 		
 		insertMessage["BackgroundWidth"] = textWidth + GUIScale(iconWidth/2)
 		insertMessage["Background"]:SetSize(Vector(insertMessage["BackgroundWidth"], kBackgroundHeight, 0))
 		insertMessage["Background"]:SetAnchor(GUIItem.Right, GUIItem.Top)
-			insertMessage["BackgroundXOffset"] = -textWidth - (iconWidth/2) - GUIScale(kScreenOffset) - kScreenOffsetX
+		insertMessage["BackgroundXOffset"] = -textWidth - (iconWidth/2) - GUIScale(kScreenOffset) - kScreenOffsetX
 		insertMessage["Background"]:SetPosition(Vector(insertMessage["BackgroundXOffset"], 0, 0))
 		insertMessage["Background"]:SetColor(Color(1, 1, 1, alpha))
 		insertMessage["Background"]:SetTexture(kKillHighlight)

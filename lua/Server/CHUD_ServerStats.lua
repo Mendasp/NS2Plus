@@ -497,30 +497,95 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 
 
 -- Make FireMixin use the message accumulation stuff
-local oldFireOnUpdate = FireMixin.OnUpdate
-function FireMixin:OnUpdate(deltaTime)
-	oldSendNetworkMessage = Server.SendNetworkMessage
-	Server.SendNetworkMessage = 
-		function ( target, name, data, reliable )
-			data.overkill = data.amount
-			CHUD_CHUDDamageMessage_Queue( target, "CHUDDamage", data, reliable )
-		end
-	oldFireOnUpdate( self, deltaTime )
-	Server.SendNetworkMessage = oldSendNetworkMessage
-end
-local oldFireOnProcessMove = FireMixin.OnProcessMove
-function FireMixin:OnProcessMove(deltaTime)
-	oldSendNetworkMessage = Server.SendNetworkMessage
-	Server.SendNetworkMessage = 
-		function ( target, name, data, reliable )
-			data.overkill = data.amount
-			CHUD_CHUDDamageMessage_Queue( target, "CHUDDamage", data, reliable )
-		end
-	oldFireOnProcessMove( self, deltaTime )
-	Server.SendNetworkMessage = oldSendNetworkMessage
+
+function LiveMixin:DeductHealth(damage, attacker, doer, healthOnly, armorOnly, preventAlert)
+
+    local armorUsed = 0
+    local healthUsed = damage
+    
+    if self.healthIgnored or armorOnly then
+    
+        armorUsed = damage
+        healthUsed = 0
+        
+    elseif not healthOnly then
+    
+        armorUsed = math.min(self:GetArmor() * kHealthPointsPerArmor, (damage * kBaseArmorUseFraction) / kHealthPointsPerArmor )
+        healthUsed = healthUsed - armorUsed
+        
+    end
+
+    local engagePoint = HasMixin(self, "Target") and self:GetEngagementPoint() or self:GetOrigin()
+    return self:TakeDamage(damage, attacker, doer, engagePoint, nil, armorUsed, healthUsed, kDamageType.Normal, preventAlert)
+    
 end
 
+
+local kBurnUpdateRate
+local function NewFireMixinSharedUpdate(self, deltaTime)
+
+    if Client then
+        UpdateFireMaterial(self)
+        self:_UpdateClientFireEffects()
+    end
+
+    if not self:GetIsOnFire() then
+        return
+    end
+    
+    if Server then
+    
+        if self:GetIsAlive() and (not self.timeLastFireDamageUpdate or self.timeLastFireDamageUpdate + kBurnUpdateRate <= Shared.GetTime()) then
+    
+            local damageOverTime = kBurnUpdateRate * kBurnDamagePerSecond
+            if self.GetIsFlameAble and self:GetIsFlameAble() then
+                damageOverTime = damageOverTime * kFlameableMultiplier
+            end
+            
+            local attacker = nil
+            if self.fireAttackerId ~= Entity.invalidId then
+                attacker = Shared.GetEntity(self.fireAttackerId)
+            end
+
+            local doer = nil
+            if self.fireDoerId ~= Entity.invalidId then
+                doer = Shared.GetEntity(self.fireDoerId)
+            end
+            
+            local killedFromDamage, damageDone = self:DeductHealth(damageOverTime, attacker, doer)
+
+            if attacker then
+            
+                local msg = BuildCHUDDamageMessage(self, damageDone, self:GetOrigin(), damageOverTime)
+                CHUD_CHUDDamageMessage_Queue(attacker, "CHUDDamage", msg, false)
+                
+                for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do
+                
+                    if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
+                        CHUD_CHUDDamageMessage_Queue(spectator, "CHUDDamage", msg, false)
+                    end
+                    
+                end
+            
+            end
+            
+            self.timeLastFireDamageUpdate = Shared.GetTime()
+            
+        end
+        
+        // See if we put ourselves out
+        if Shared.GetTime() - self.timeBurnInit > kFlamethrowerBurnDuration then
+            self:SetGameEffectMask(kGameEffect.OnFire, false)
+        end
+        
+    end
+    
+end
+ReplaceUpValue( FireMixin.OnUpdate, "SharedUpdate", NewFireMixinSharedUpdate, { LocateRecurse = true; CopyUpValues = true; } )
+
+
 -- Make poison show damage numbers	
+
 local oldMarineOnProcessMove = Marine.OnProcessMove
 function Marine:OnProcessMove(input)
 	local oldDeductHealth = self.DeductHealth 

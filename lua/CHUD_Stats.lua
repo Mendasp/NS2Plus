@@ -19,10 +19,27 @@ function OnCHUDDamageStat( damageTable )
 	for i=1,hitcount do
 		AddAttackStat(weapon, true, target, damage / hitcount, isPlayer)
 	end
-	if isPlayer and target and not target:isa("Embryo") then
-		cLastHitTime = Shared.GetTime()
-		cNumHits = cNumHits+hitcount
-	end	
+	if isPlayer and target and not target:isa("Embryo") and CHUDGetOption("hitsounds") > 0 and not Client.GetLocalPlayer():isa("Commander") then
+		// Lazy!!!!!!
+		// 0 = normal/low, 1 = mid, 2 = high
+		local hitsound = 0
+		
+		if weapon == kTechId.Shotgun then
+			if hitcount >= 6 and hitcount <= 13 then
+				hitsound = 1
+			elseif hitcount > 13 then
+				hitsound = 2
+			end
+		elseif weapon == kTechId.Railgun then
+			if damage >= 75 and damage <= 150 then
+				hitsound = 1
+			elseif damage > 150 then
+				hitsound = 2
+			end
+		end
+		
+		PlayHitsound(hitsound)
+	end
 end
 
 function OnCHUDDamage( damageTable )
@@ -186,7 +203,7 @@ function AddAttackStat(wTechId, wasHit, target, damageDealt, isPlayer)
 		elseif wTechId == kTechId.Swipe then
 			weaponname = "Swipe"
 		// Use spaces!
-		elseif rawget( kTechId, "DropHeavyMachineGun" ) and wTechId == kTechId.DropHeavyMachineGun then
+		elseif rawget( kTechId, "HeavyMachineGun" ) and wTechId == kTechId.HeavyMachineGun then
 			weaponname = "Heavy Machine Gun"
 		end
 		
