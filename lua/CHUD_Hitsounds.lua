@@ -17,7 +17,7 @@ function PlayHitsound(hitsound)
 		local soundEffectName = CHUDGetOptionAssocVal("hitsounds")
 		
 		soundEffectName = soundEffectName .. hitsounds[hitsound]
-		if CHUDGetOption("hitsounds_pitch") == 1 then
+		if CHUDGetOption("hitsounds_pitch") == 1 and hitsound > 0 then
 			soundEffectName = soundEffectName .. "-h"
 		end
 	
