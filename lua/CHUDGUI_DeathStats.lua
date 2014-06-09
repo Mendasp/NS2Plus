@@ -37,6 +37,13 @@ local function CHUDGetStatsString()
 			end
 		end
 		
+		// Debug! Print all data in console so we can figure out what the hell is going on
+		if lastacc < 0 or lastacc > 100 then
+			Shared.Message("Accuracy outside reasonable range, let's take a look at the info!")
+			Shared.Message(string.format("hitssum = %d - CHUD_hits: = %d - missessum = %d - CHUD_misses = %d\nlasthit = %d - lastmiss = %d - lastacc = %d", hitssum, CHUD_hits, missessum, CHUD_misses, hitssum-CHUD_hits, missessum-CHUD_misses, lastacc))
+			CHUD_DebugStats(true)
+		end
+		
 		CHUD_hits = hitssum
 		CHUD_misses = missessum
 		
