@@ -585,6 +585,13 @@ ReplaceUpValue( FireMixin.OnUpdate, "SharedUpdate", NewFireMixinSharedUpdate, { 
 
 
 -- Make poison show damage numbers	
+local oldPlayerOnProcessMove
+oldPlayerOnProcessMove = Class_ReplaceMethod( "Player", "OnProcessMove",
+	function( self, input )
+		oldPlayerOnProcessMove( self, input )
+		CHUD_CHUDDamageMessage_Dispatch()
+	end)
+
 
 local oldMarineOnProcessMove = Marine.OnProcessMove
 function Marine:OnProcessMove(input)
