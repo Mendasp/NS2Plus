@@ -1,11 +1,3 @@
-// ======= Copyright (c) 2003-2013, Unknown Worlds Entertainment, Inc. All rights reserved. =====
-//
-// lua\menu\CHUDGUI_MenuNews.lua
-//
-//    Created by:   Brian Cronin (brianc@unknownworlds.com)
-//
-// ========= For more information, visit us at http://www.unknownworlds.com =====================
-
 local widthFraction = 0.4
 local newsAspect = 1.05/1
 local kTextureName = "*chudmenu_news"

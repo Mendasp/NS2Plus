@@ -70,7 +70,7 @@ local menuLinks = { }
 originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 	function(self)
 	
-		LoadCSSFile("lua/chud.css")
+		LoadCSSFile("lua/CHUD/Client/chud.css")
 
 		mainMenu = self
 		local optionsNr
@@ -178,7 +178,7 @@ function MainMenu_OnOpenMenu()
 	end
 	
 	if not mainMenu.CHUDNewsScript then
-		mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("CHUDGUI_MenuNews")
+		mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("CHUD/Client/CHUDGUI_MenuNews")
 	else
 		// Solves issue where the news were visible when you click options and then spam escape
 		// This hides the news script properly

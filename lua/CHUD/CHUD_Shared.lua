@@ -71,16 +71,16 @@ Shared.RegisterNetworkMessage( "CHUDDamageStat", kCHUDDamageStatMessage )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 
-Script.Load("lua/Shared/CHUD_Utility.lua")
-Script.Load("lua/Shared/CHUD_Autopickup.lua")
-Script.Load("lua/Shared/CHUD_CommanderSelection.lua")
-Script.Load("lua/Shared/CHUD_LayMines.lua")
-Script.Load("lua/Shared/CHUD_AmmoPack.lua")
-Script.Load("lua/Shared/CHUD_Grenade.lua")
-Script.Load("lua/Shared/CHUD_BoneWall.lua")
-Script.Load("lua/Shared/CHUD_LerkBite.lua")
+Script.Load("lua/CHUD/Shared/CHUD_Utility.lua")
+Script.Load("lua/CHUD/Shared/CHUD_Autopickup.lua")
+Script.Load("lua/CHUD/Shared/CHUD_CommanderSelection.lua")
+Script.Load("lua/CHUD/Shared/CHUD_LayMines.lua")
+Script.Load("lua/CHUD/Shared/CHUD_AmmoPack.lua")
+Script.Load("lua/CHUD/Shared/CHUD_Grenade.lua")
+Script.Load("lua/CHUD/Shared/CHUD_BoneWall.lua")
+Script.Load("lua/CHUD/Shared/CHUD_LerkBite.lua")
 
-Script.Load("lua/Shared/CHUD_ReadyRoom.lua")
+Script.Load("lua/CHUD/Shared/CHUD_ReadyRoom.lua")
 
 CHUDTagBitmask = {
 	mcr = 0x1,
