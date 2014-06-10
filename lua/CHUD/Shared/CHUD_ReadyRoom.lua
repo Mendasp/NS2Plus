@@ -116,9 +116,9 @@ if Server then
 			
 			// need to set embryos to ready room players, otherwise they wont be able to move
 			if mapName == Embryo.kMapName then
-				return ReadyRoomEmbryo.kMapName
+				mapName = ReadyRoomEmbryo.kMapName
 			elseif mapName == Exo.kMapName then
-				return ReadyRoomExo.kMapName
+				mapName = ReadyRoomExo.kMapName
 			end
 			
 			return mapName
