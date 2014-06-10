@@ -78,6 +78,10 @@ Event.Hook("UpdateServer", CHUD_CHUDDamageMessage_Dispatch)
 
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 
+	if Shine then
+		Shine.Hook.Call( "OnDamageDealt", self, damage, target, point, direction, surface, altMode, showtracer )
+	end
+	
 	// No prediction if the Client is spectating another player.
 	if Client and not Client.GetIsControllingPlayer() then
 		return false
