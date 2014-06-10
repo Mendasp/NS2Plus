@@ -94,17 +94,33 @@ if Server then
 		end)
 	
 	
-	local oldGetRespawnMapName
-	oldGetRespawnMapName = Class_ReplaceMethod( "ReadyRoomTeam", "GetRespawnMapName",
+	Class_ReplaceMethod( "ReadyRoomTeam", "GetRespawnMapName",
 		function( self, player )
-			local mapName = player.kMapName 
+			
+			local mapName = player.kMapName    
+			
+			if mapName == nil then
+				mapName = ReadyRoomPlayer.kMapName
+			end
+			
+			// Use previous life form if dead or in commander chair
+			if (mapName == MarineCommander.kMapName) 
+			   or (mapName == AlienCommander.kMapName) 
+			   or (mapName == Spectator.kMapName) 
+			   or (mapName == AlienSpectator.kMapName) 
+			   or (mapName ==  MarineSpectator.kMapName) then 
+			
+				mapName = player:GetPreviousMapName()
+				
+			end
+			
+			// need to set embryos to ready room players, otherwise they wont be able to move
 			if mapName == Embryo.kMapName then
 				return ReadyRoomEmbryo.kMapName
 			elseif mapName == Exo.kMapName then
 				return ReadyRoomExo.kMapName
-			else
-				return oldGetRespawnMapName( self, player )
 			end
+			
 		end)
 	
 	
@@ -161,7 +177,7 @@ if Server then
 		end)
 
 
-	Class_AddMethod( "AlienSpectator", "CopyPlayerDataFrom",
+	Class_ReplaceMethod( "AlienSpectator", "CopyPlayerDataFrom",
 		function (self, player)
 			-- always copy when going from live alien to alien spectator
 			Player.CopyPlayerDataFrom( self, player )
