@@ -26,7 +26,7 @@ function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable, only_accum 
 			msg.target == target and 
 			msg.reliable == reliable and
 			msg.data.targetId == data.targetId and
-			( name ~= "CHUDDamageStat" or msg.data.weapon == data.weapon ) 
+			( name ~= "CHUDDamage2" or msg.data.mode == data.mode ) 
 		then
 			msg.data.posx = data.posx
 			msg.data.posy = data.posy
@@ -35,9 +35,9 @@ function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable, only_accum 
 			if name == "CHUDDamage" then
 				msg.data.overkill = msg.data.overkill + data.overkill
 			--	msg.saved = ( msg.saved or 0 ) + 16 
-			elseif name == "CHUDDamageStat" then
+			elseif name == "CHUDDamage2" then
 				msg.data.overkill = msg.data.overkill + data.overkill
-				msg.data.hitcount = math.min( msg.data.hitcount + 1, 32 )
+				msg.data.hitcount = math.min( msg.data.hitcount + 1, kCHUDDamage2MessageMaxHitCount )
 			--	msg.saved = ( msg.saved or 0 ) + 18
 			else
 			--	msg.saved = ( msg.saved or 0 ) + 12
@@ -170,8 +170,8 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 						local overkill = healthUsed + armorUsed * 2
 						
 						if kCHUDStatsTrackAccLookup[weapon] then
-							local msg = BuildCHUDDamageStatMessage( target, amount, point, overkill, weapon )
-							CHUD_CHUDDamageMessage_Queue( attacker, "CHUDDamageStat", msg, true )	
+							local msg = BuildCHUDDamage2Message( target, amount, point, overkill, weapon )
+							CHUD_CHUDDamageMessage_Queue( attacker, "CHUDDamage2", msg, true )	
 						else
 							local msg = BuildCHUDDamageMessage( target, amount, point, overkill )
 							CHUD_CHUDDamageMessage_Queue( attacker, "CHUDDamage", msg, true, amount == 0 )	
