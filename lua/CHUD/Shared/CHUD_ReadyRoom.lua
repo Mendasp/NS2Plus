@@ -121,6 +121,8 @@ if Server then
 				return ReadyRoomExo.kMapName
 			end
 			
+			return mapName
+			
 		end)
 	
 	
