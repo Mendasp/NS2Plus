@@ -1,1 +1,0 @@
-Script.Load("lua/Shared/CHUD_Shared.lua")
