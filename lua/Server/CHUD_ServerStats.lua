@@ -78,6 +78,10 @@ Event.Hook("UpdateServer", CHUD_CHUDDamageMessage_Dispatch)
 
 function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
 
+	if Shine then
+		Shine.Hook.Call( "OnDamageDealt", self, damage, target, point, direction, surface, altMode, showtracer )
+	end
+	
 	// No prediction if the Client is spectating another player.
 	if Client and not Client.GetIsControllingPlayer() then
 		return false
@@ -585,6 +589,13 @@ ReplaceUpValue( FireMixin.OnUpdate, "SharedUpdate", NewFireMixinSharedUpdate, { 
 
 
 -- Make poison show damage numbers	
+local oldPlayerOnProcessMove
+oldPlayerOnProcessMove = Class_ReplaceMethod( "Player", "OnProcessMove",
+	function( self, input )
+		oldPlayerOnProcessMove( self, input )
+		CHUD_CHUDDamageMessage_Dispatch()
+	end)
+
 
 local oldMarineOnProcessMove = Marine.OnProcessMove
 function Marine:OnProcessMove(input)

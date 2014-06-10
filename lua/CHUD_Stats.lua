@@ -248,8 +248,8 @@ function AddAttackStat(wTechId, wasHit, target, damageDealt, isPlayer)
 	end
 end
 
-function CHUD_DebugStats()
-	if Shared.GetCheatsEnabled() then
+function CHUD_DebugStats(force)
+	if Shared.GetCheatsEnabled() or force then
 		/*AddAttackStat("rifle", true, target, damage)
 		AddAttackStat("rifle", true, target, damage)
 		AddAttackStat("rifle", false, target, damage)
