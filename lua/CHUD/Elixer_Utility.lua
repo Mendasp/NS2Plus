@@ -4,7 +4,7 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.71;
+local version = 1.72;
 
 Elixer = Elixer or {}
 Elixer.Debug = Elixer.Debug or false  
@@ -22,13 +22,13 @@ local function EPrintDebug( fmt, ... ) if Elixer.Debug then EPrint( fmt, ... ) e
 
 if Elixer.Module[version] then
 	-- Already loaded, just apply the loaded version
-	EPrintDebug( "[Elixer] Skipped Loading Utility Scripts v.%.1f",version )
+	EPrintDebug( "[Elixer] Skipped Loading Utility Scripts v.%.2f",version )
 	Elixer.UseVersion( version )
 	return
 end
 
 
-EPrint( "Loading Utility Scripts v.%.1f", version )
+EPrint( "Loading Utility Scripts v.%.2f", version )
 
 
 -- Replace UseVersion func table if this is a newer version
@@ -42,8 +42,8 @@ if type( Elixer.UseVersion ) ~= "table" or Elixer.UseVersion.Version < version t
 				__call = 
 					function( t, version )
 						if Elixer.Version ~= version then
-							assert( Elixer.Module and Elixer.Module[version], string.format( "Elixer Utility v.%.1f could not be found.", version ) )
-							EPrint( "Using Utility Scripts v.%.1f", version )
+							assert( Elixer.Module and Elixer.Module[version], string.format( "Elixer Utility v.%.2f could not be found.", version ) )
+							EPrint( "Using Utility Scripts v.%.2f", version )
 							if Elixer.Version and Elixer.Module and Elixer.Module[Elixer.Version] then
 								for k,v in pairs( Elixer.Module[Elixer.Version] ) do
 									_G[k] = nil;
@@ -71,10 +71,8 @@ ELIXER.EPrint = EPrint
 ELIXER.EPrintDebug = EPrintDebug
 
 function ELIXER.Class_AddMethod( className, methodName, method )
-	if _G[className][methodName] and _G[className][methodName] ~= method then
-		return
-	end
-
+	assert( _G[className][methodName] == nil or _G[className][methodName] == method, "Attempting to add new method when class already has one -- use Class_ReplaceMethod instead" )
+	
 	_G[className][methodName] = method
 
 	local classes = Script.GetDerivedClasses(className)
