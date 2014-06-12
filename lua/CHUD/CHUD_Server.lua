@@ -3,7 +3,6 @@ Script.Load("lua/CHUD/CHUD_Shared.lua")
 // Clear tags on map restart
 SetCHUDTagBitmask(0)
 
-Script.Load("lua/CHUD/Server/CHUD_AlienTeam.lua")
 Script.Load("lua/CHUD/Server/CHUD_ServerSettings.lua")
 Script.Load("lua/CHUD/Server/CHUD_ModUpdater.lua")
 Script.Load("lua/CHUD/Server/CHUD_HiveStats.lua")
