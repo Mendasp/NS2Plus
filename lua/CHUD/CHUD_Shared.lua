@@ -41,7 +41,15 @@ local kCHUDDamage2Message =
 	mode = "enum kHitsoundMode"
 }	
 	
-	
+
+local kCHUDDeathStatsMessage =
+{
+	lastAcc = "integer (0 to 100)",
+	currentAcc = "integer (0 to 100)",
+	pdmg = "float (0 to 500000 by 0.01)",
+	sdmg = "float (0 to 500000 by 0.01)",
+}
+
 local kCHUDOptionMessage =
 {
 	disabledOption = "string (32)"
@@ -74,6 +82,7 @@ Shared.RegisterNetworkMessage( "CHUDDamage", kCHUDDamageMessage )
 Shared.RegisterNetworkMessage( "CHUDDamage2", kCHUDDamage2Message )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
+Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 
 Script.Load("lua/CHUD/Shared/CHUD_Utility.lua")
 Script.Load("lua/CHUD/Shared/CHUD_Autopickup.lua")
