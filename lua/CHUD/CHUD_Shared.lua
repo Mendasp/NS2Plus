@@ -22,25 +22,34 @@ local kCHUDDamageMessage =
 	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	targetId = "entityid",
-	amount = "float",
-	overkill = "float",
+	amount = "integer (1 to 1000)",
+	overkill = "integer (1 to 1000)",
 }
 
 
-local kCHUDDamageStatMessage =
+kHitsoundMode = enum { 'Hitcount', 'Overkill' }
+kCHUDDamage2MessageMaxHitCount = 13
+local kCHUDDamage2Message =
 {
 	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	targetId = "entityid",
-	amount = "float",
-	overkill = "float",	
-	isPlayer = "boolean",
-	weapon = "enum kTechId",
-	hitcount = "integer (1 to 32)",
+	amount = "integer (1 to 1000)",
+	overkill = "integer (1 to 1000)",
+	hitcount = string.format( "integer (1 to %d)", kCHUDDamage2MessageMaxHitCount ),
+	mode = "enum kHitsoundMode"
 }	
 	
-	
+
+local kCHUDDeathStatsMessage =
+{
+	lastAcc = "integer (0 to 100)",
+	currentAcc = "integer (0 to 100)",
+	pdmg = "float (0 to 500000 by 0.01)",
+	sdmg = "float (0 to 500000 by 0.01)",
+}
+
 local kCHUDOptionMessage =
 {
 	disabledOption = "string (32)"
@@ -58,18 +67,22 @@ function BuildCHUDDamageMessage( target, amount, hitpos, overkill )
 	return t
 end
 
-function BuildCHUDDamageStatMessage( target, amount, hitpos, overkill, weapon )
+function BuildCHUDDamage2Message( target, amount, hitpos, overkill, weapon )
 	local t = BuildCHUDDamageMessage( target, amount, hitpos, overkill )
-	t.isPlayer = target:isa("Player")
-	t.weapon = weapon
 	t.hitcount = 1	
+	if weapon == kTechId.Railgun then
+		t.mode = kHitsoundMode.Overkill
+	else
+		t.mode = kHitsoundMode.Hitcount
+	end
 	return t
 end
 
 Shared.RegisterNetworkMessage( "CHUDDamage", kCHUDDamageMessage )
-Shared.RegisterNetworkMessage( "CHUDDamageStat", kCHUDDamageStatMessage )
+Shared.RegisterNetworkMessage( "CHUDDamage2", kCHUDDamage2Message )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
+Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 
 Script.Load("lua/CHUD/Shared/CHUD_Utility.lua")
 Script.Load("lua/CHUD/Shared/CHUD_Autopickup.lua")
