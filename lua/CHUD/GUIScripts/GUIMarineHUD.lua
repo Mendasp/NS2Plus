@@ -9,12 +9,6 @@ Class_AddMethod( "GUIMarineHUD", "CHUDRepositionGUI",
 		// Position of toggleable elements
 		local y = 30
 		
-		if self.CHUDLocationText then
-			self.CHUDLocationText:SetUniformScale(self.scale)
-			self.CHUDLocationText:SetScale(GetScaledVector()*1.2)
-			self.CHUDLocationText:SetPosition(Vector(75, y+11, 0))
-		end
-			
 		if minimap then
 			y = y + 300
 		end
@@ -52,29 +46,12 @@ originalMarineInit = Class_ReplaceMethod( "GUIMarineHUD", "Initialize",
 function(self)
 	originalMarineInit(self)
 	
-	// Make the location text non-stupid
-	self.locationText:SetIsVisible(false)
-	
-    self.CHUDLocationText = self:CreateAnimatedTextItem()
-    self.CHUDLocationText:SetFontName(GUIMarineHUD.kTextFontName)
-    self.CHUDLocationText:SetTextAlignmentX(GUIItem.Align_Min)
-    self.CHUDLocationText:SetTextAlignmentY(GUIItem.Align_Min)
-    self.CHUDLocationText:SetAnchor(GUIItem.Left, GUIItem.Top)
-    self.CHUDLocationText:SetLayer(kGUILayerPlayerHUDForeground2)
-    self.CHUDLocationText:SetColor(kBrightColor)
-    self.CHUDLocationText:SetFontIsBold(true)
-	self.background:AddChild(self.CHUDLocationText)
-	
 	self.gameTime = self:CreateAnimatedTextItem()
     self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 	self.gameTime:SetFontIsBold(true)
     self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
     self.gameTime:SetColor(kBrightColor)
 	self.background:AddChild(self.gameTime)
-	
-	// Initialize location and power so they show up correctly
-	self.lastLocationText = ""
-	self.lastPowerState = 0
 	
 	// Reversed the setting since when it's enabled it hides stuff...
 	// It makes sense to me at least, didn't like seeing so much negativity
@@ -122,8 +99,6 @@ originalResetMinimap = Class_ReplaceMethod( "GUIMarineHUD", "ResetMinimap",
 function(self)
 	originalResetMinimap(self)
 
-	self.minimapPower:SetPosition(Vector(0, -34, 0))
-	
 	local setting = not CHUDGetOption("mingui")
 	
 	self.minimapBackground:SetColor(Color(1,1,1,ConditionalValue((setting),1,0)))
@@ -139,9 +114,6 @@ originalSetHUDMap = Class_ReplaceMethod( "GUIMarineHUD", "SetHUDMapEnabled",
 function(self, enabled)
 	local minimap = CHUDGetOption("minimap")
 	originalSetHUDMap(self, minimap)
-	if self.CHUDLocationText then
-		self.CHUDLocationText:SetIsVisible(minimap)
-	end
 end)
 
 local originalShowNewArmorLevel		
@@ -211,14 +183,6 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local gametime = CHUDGetOption("gametime")
 		local hpbar = CHUDGetOption("hpbar")
 
-		// Non-stupid location text!
-		local locationName = ConditionalValue(PlayerUI_GetLocationName(), string.upper(PlayerUI_GetLocationName()), "")
-			
-		if self.lastLocationText ~= locationName and self.CHUDLocationText then
-			self.CHUDLocationText:SetText(locationName)
-			self.lastLocationText = locationName
-		end
-		
 		originalMarineHUDUpdate(self, deltaTime)
 		
 		if self.gameTime then
@@ -313,9 +277,7 @@ originalMarineUninit = Class_ReplaceMethod( "GUIMarineHUD", "Uninitialize",
 function(self)
 	originalMarineUninit(self)
 	
-	GUI.DestroyItem(self.CHUDLocationText)
 	GUI.DestroyItem(self.gameTime)
-	self.CHUDLocationText = nil
 	self.gameTime = nil
 	self.commanderNameIsAnimating = nil
 	self.lastCommanderName = nil
