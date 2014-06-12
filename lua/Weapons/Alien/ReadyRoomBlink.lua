@@ -47,7 +47,7 @@ function ReadyRoomBlink:GetBlinkAllowed()
 end
 
 function ReadyRoomBlink:GetViewModelName()
-	return ""
+    return ""
 end
 
 Shared.LinkClassToMap("ReadyRoomBlink", ReadyRoomBlink.kMapName, networkVars)

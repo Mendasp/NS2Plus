@@ -26,8 +26,8 @@ function ReadyRoomLeap:OnCreate()
     Ability.OnCreate(self)
     
     InitMixin(self, LeapMixin)
-    
-	self.GetHasSecondary = self.GetHasSecondaryOverride
+
+    self.GetHasSecondary = self.GetHasSecondaryOverride
     self.primaryAttacking = false
     self.secondaryAttacking = false
 
@@ -52,7 +52,7 @@ function ReadyRoomLeap:GetHasSecondaryOverride(player)
 end
 
 function ReadyRoomLeap:GetViewModelName()
-	return ""
+    return ""
 end
 
 

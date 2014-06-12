@@ -80,8 +80,6 @@ Script.Load("lua/CHUD/Shared/CHUD_Grenade.lua")
 Script.Load("lua/CHUD/Shared/CHUD_BoneWall.lua")
 Script.Load("lua/CHUD/Shared/CHUD_LerkBite.lua")
 
-Script.Load("lua/CHUD/Shared/CHUD_ReadyRoom.lua")
-
 CHUDTagBitmask = {
 	mcr = 0x1,
 	ambient = 0x2,
