@@ -46,18 +46,6 @@ function(self, updateTeam)
 			player["Deaths"]:SetPosition(temp)
 		end
 		
-		// Show if holding JP
-		if isVisibleTeam and teamNumber == kTeam1Index then
-			local currentTech = GetTechIdsFromBitMask(playerRecord.Tech)
-			if table.contains(currentTech, kTechId.Jetpack) then
-				if playerRecord.Status ~= "" and playerRecord.Status ~= " " then
-					player["Status"]:SetText(string.format("%s/JP", playerRecord.Status == "Flamethrower" and "Flame" or playerRecord.Status))
-				else
-					player["Status"]:SetText("JP")
-				end
-			end
-		end
-		
 		currentPlayerIndex = currentPlayerIndex + 1
 	end
 end)
