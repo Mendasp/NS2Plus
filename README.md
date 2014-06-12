@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 12/06/2014 (Build 266):
+	- Revamped stats system.
+	- Fixed vanilla bug where Shotguns and Exo Miniguns didn't shoot through soft targets.
+
 - 08/06/2014 (Build 266):
 	- Added variable hitsounds for the Railgun depending on the damage done.
 	- Removed the outline from first person spectator.
