@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 13/06/2014 (Build 266):
+	- Fixed shotgun not being tracked by stats (whoops!).
+	- Fixed nan% when only hitting an Onos in an entire game (when does this ever happen?).
+
 - 12/06/2014 (Build 266):
 	- Revamped stats system.
 	- Fixed vanilla bug where Shotguns and Exo Miniguns didn't shoot through soft targets.

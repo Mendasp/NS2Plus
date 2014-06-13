@@ -554,7 +554,9 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					
 					if wStats.hits > 0 or wStats.misses > 0 then
 						accuracy = wStats.hits/(wStats.hits+wStats.misses)*100
-						accuracyOnos = (wStats.hits-wStats.onosHits)/((wStats.hits-wStats.onosHits)+wStats.misses)*100
+						if wStats.hits ~= wStats.onosHits then
+							accuracyOnos = (wStats.hits-wStats.onosHits)/((wStats.hits-wStats.onosHits)+wStats.misses)*100
+						end
 					end
 					
 					local weaponName
@@ -589,7 +591,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				CHUDServerAdminPrint(client, "-----------------------")
 				if overallHits > 0 or overallMisses > 0 then
 					overallAccuracy = overallHits/(overallHits+overallMisses)*100
-					if overallOnosHits > 0 then
+					if overallOnosHits > 0 and overallHits ~= overallOnosHits then
 						overallOnosAccuracy = (overallHits-overallOnosHits)/((overallHits-overallOnosHits)+overallMisses)*100
 					end
 				end
@@ -600,6 +602,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				end
 				CHUDServerAdminPrint(client, string.format("Total player damage: %d", stats.pdmg))
 				CHUDServerAdminPrint(client, string.format("Total structure damage: %d", stats.sdmg))
+				CHUDServerAdminPrint(client, "-----------------------")
 			end
 			
 			// Commander stats
@@ -910,6 +913,108 @@ originalClipWeaponFirePrimary = Class_ReplaceMethod( "ClipWeapon", "FirePrimary"
 			
 		end
 	end)
+
+local originalShotgunFirePrimary, kSpreadVectors, kStartOffset, kBulletSize
+originalShotgunFirePrimary = Class_ReplaceMethod( "Shotgun", "FirePrimary",
+	function(self, player)
+		local viewAngles = player:GetViewAngles()
+		viewAngles.roll = NetworkRandom() * math.pi * 2
+
+		local shootCoords = viewAngles:GetCoords()
+
+		// Filter ourself out of the trace so that we don't hit ourselves.
+		local filter = EntityFilterTwo(player, self)
+		local range = self:GetRange()
+		
+		if GetIsVortexed(player) then
+			range = 5
+		end
+		
+		local numberBullets = self:GetBulletsPerShot()
+		local startPoint = player:GetEyePos()
+		
+		self:TriggerEffects("shotgun_attack_sound")
+		self:TriggerEffects("shotgun_attack")
+		
+		for bullet = 1, math.min(numberBullets, #kSpreadVectors) do
+		
+			if not kSpreadVectors[bullet] then
+				break
+			end    
+		
+			local spreadDirection = shootCoords:TransformVector(kSpreadVectors[bullet])
+
+			local endPoint = startPoint + spreadDirection * range
+			startPoint = player:GetEyePos() + shootCoords.xAxis * kSpreadVectors[bullet].x * kStartOffset + shootCoords.yAxis * kSpreadVectors[bullet].y * kStartOffset
+			
+			local targets, trace, hitPoints = GetBulletTargets(startPoint, endPoint, spreadDirection, kBulletSize, filter)
+			
+			local damage = 0
+
+			/*
+			// Check prediction
+			local values = GetPredictionValues(startPoint, endPoint, trace)
+			if not CheckPredictionData( string.format("attack%d", bullet), true, values ) then
+				Server.PlayPrivateSound(player, "sound/NS2.fev/marine/voiceovers/game_start", player, 1.0, Vector(0, 0, 0))
+			end
+			*/
+				
+			local direction = (trace.endPoint - startPoint):GetUnit()
+			local hitOffset = direction * kHitEffectOffset
+			local impactPoint = trace.endPoint - hitOffset
+			local effectFrequency = self:GetTracerEffectFrequency()
+			local showTracer = bullet % effectFrequency == 0
+			
+			local numTargets = #targets
+			
+			if numTargets == 0 then
+				self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, trace.surface, showTracer)
+				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
+				if steamId then
+					AddAccuracyStat(steamId, self:GetTechId(), false, nil)
+				end
+			end
+			
+			if Client and showTracer then
+				TriggerFirstPersonTracer(self, impactPoint)
+			end
+
+			local isPlayer = false
+			local statsTarget = nil
+
+			for i = 1, numTargets do
+
+				local target = targets[i]
+				local hitPoint = hitPoints[i]
+				
+				if target and target:isa("Player") then
+					isPlayer = true
+					// In theory ClipWeapon can only hit a single player target at a time
+					statsTarget = target
+				end
+
+				self:ApplyBulletGameplayEffects(player, target, hitPoint - hitOffset, direction, kShotgunDamage, "", showTracer and i == numTargets)
+				
+				local client = Server and player:GetClient() or Client
+				if not Shared.GetIsRunningPrediction() and client.hitRegEnabled then
+					RegisterHitEvent(player, bullet, startPoint, trace, damage)
+				end
+			
+			end
+			
+			// Drifters, buildings and teammates don't count towards accuracy as hits or misses
+			if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
+				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
+				if steamId then
+					AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"))
+				end
+			end
+			
+		end
+		
+		TEST_EVENT("Shotgun primary attack")
+	end)
+CopyUpValues( Shotgun.FirePrimary, originalShotgunFirePrimary )
 	
 local originalRiflebuttAttack, kButtRange
 originalRiflebuttAttack = Class_ReplaceMethod( "Rifle", "PerformMeleeAttack",
