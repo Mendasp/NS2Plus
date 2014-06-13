@@ -43,32 +43,20 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
 			
 		local updatedExisting = false
 		
-		if messageType == kWorldTextMessageType.Damage then
+		if messageType == kWorldTextMessageType.Damage and entityId ~= nil and entityId ~= Entity.invalidId then
 		
 			for _, currentWorldMessage in ipairs(Client.worldMessages) do
 			
-				if currentWorldMessage.messageType == messageType and currentWorldMessage.entityId == entityId and entityId ~= nil and entityId ~= Entity.invalidId then
+				if currentWorldMessage.messageType == messageType and currentWorldMessage.entityId == entityId and currentWorldMessage.canAccumulate then
+
+					currentWorldMessage.creationTime = time
+					currentWorldMessage.position = position
+					currentWorldMessage.previousNumber = tonumber(currentWorldMessage.message)
+					currentWorldMessage.message = currentWorldMessage.message + message
+					currentWorldMessage.minimumAnimationFraction = kWorldDamageRepeatAnimationScalar
 					
-					// When you have a flamethrower this creates new messages when the ground is in flames too
-					// Let's just check that we have a shotgun active
-					local player = Client.GetLocalPlayer()
-					local weapon = player and player:GetActiveWeapon()
-					local diff = weapon and weapon:isa("Shotgun") and CHUDGetOption( "uniqueshotgunhits" ) and time - currentWorldMessage.creationTime
-					
-					if diff and diff < 0.001 then
-						currentWorldMessage.canAccumulate = false
-					end
-					
-					if diff and diff < 0.001 or currentWorldMessage.canAccumulate then
-						currentWorldMessage.creationTime = time
-						currentWorldMessage.position = position
-						currentWorldMessage.previousNumber = tonumber(currentWorldMessage.message)
-						currentWorldMessage.message = currentWorldMessage.message + message
-						currentWorldMessage.minimumAnimationFraction = kWorldDamageRepeatAnimationScalar
-						
-						updatedExisting = true
-						break
-					end
+					updatedExisting = true
+					break
 					
 				end
 				
@@ -89,8 +77,17 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
 			worldMessage.lifeTime = ConditionalValue(kWorldTextMessageType.CommanderError == messageType, kCommanderErrorMessageLifeTime, kWorldMessageLifeTime)
 			
 			if messageType == kWorldTextMessageType.Damage then
+				
 				worldMessage.lifeTime = CHUDGetOption("damagenumbertime")
-				worldMessage.canAccumulate = true
+				
+				local player = Client.GetLocalPlayer()
+				local weapon = player and player:GetActiveWeapon()
+				if weapon and weapon:isa("Shotgun") and CHUDGetOption( "uniqueshotgunhits" ) then
+					worldMessage.canAccumulate = false
+				else
+					worldMessage.canAccumulate = true
+				end
+					
 			end
 			
 			if messageType == kWorldTextMessageType.CommanderError then
