@@ -22,8 +22,8 @@ local kCHUDDamageMessage =
 	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	targetId = "entityid",
-	amount = "integer (1 to 1000)",
-	overkill = "integer (1 to 1000)",
+	amount = "integer (0 to 1000)",
+	overkill = "integer (0 to 1000)",
 }
 
 
@@ -35,8 +35,8 @@ local kCHUDDamage2Message =
 	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	targetId = "entityid",
-	amount = "integer (1 to 1000)",
-	overkill = "integer (1 to 1000)",
+	amount = "integer (0 to 1000)",
+	overkill = "integer (0 to 1000)",
 	hitcount = string.format( "integer (1 to %d)", kCHUDDamage2MessageMaxHitCount ),
 	mode = "enum kHitsoundMode"
 }	
@@ -62,6 +62,9 @@ local kCHUDAutopickupMessage =
 }
 
 function BuildCHUDDamageMessage( target, amount, hitpos, overkill )
+	amount = math.min( math.max( amount, 0 ), 1000 )
+	overkill = math.min( math.max( overkill, 0 ), 1000 )
+	
 	local t = BuildDamageMessage( target, amount, hitpos )
 	t.overkill = overkill
 	return t
