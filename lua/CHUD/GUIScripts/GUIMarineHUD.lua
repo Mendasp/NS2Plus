@@ -114,6 +114,7 @@ originalSetHUDMap = Class_ReplaceMethod( "GUIMarineHUD", "SetHUDMapEnabled",
 function(self, enabled)
 	local minimap = CHUDGetOption("minimap")
 	originalSetHUDMap(self, minimap)
+	self.locationText:SetIsVisible(minimap)
 end)
 
 local originalShowNewArmorLevel		
