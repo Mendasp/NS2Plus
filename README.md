@@ -7,6 +7,8 @@ Latest changes
 - 13/06/2014 (Build 266):
 	- Fixed shotgun not being tracked by stats (whoops!).
 	- Fixed nan% when only hitting an Onos in an entire game (when does this ever happen?).
+	- Fixed Spikes being tracked as part of Bite/Umbra/Spores.
+	- The kill feed now scales with resolution.
 
 - 12/06/2014 (Build 266):
 	- Revamped stats system.

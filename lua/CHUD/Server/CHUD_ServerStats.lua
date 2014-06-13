@@ -563,7 +563,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					
 					// The server can't use Locale.ResolveString so just put the first letter in uppercase and hope for the best
 					if wTechId > 1 then
-						weaponName = LookupTechData(wTechId, kTechDataMapName):gsub("^%l", string.upper)
+						local techdataName = LookupTechData(wTechId, kTechDataMapName) or string.lower(LookupTechData(wTechId, kTechDataDisplayName))
+						weaponName = techdataName:gsub("^%l", string.upper)
 					else
 						weaponName = "Others"
 					end
@@ -1453,7 +1454,7 @@ local function NewFireSpikes(self)
 			if (trace.entity and trace.entity:isa("Player") and GetAreEnemies(self:GetParent(), trace.entity)) then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), true, trace.entity and trace.entity:isa("Onos"))
+					AddAccuracyStat(steamId, self:GetSecondaryTechId(), true, trace.entity and trace.entity:isa("Onos"))
 				end
 			end
 			
@@ -1464,7 +1465,7 @@ local function NewFireSpikes(self)
 		if not trace.entity then
 			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 			if steamId then
-				AddAccuracyStat(steamId, self:GetTechId(), false, nil)
+				AddAccuracyStat(steamId, self:GetSecondaryTechId(), false, nil)
 			end
 		end
 		
