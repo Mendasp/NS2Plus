@@ -7,6 +7,7 @@ Latest changes
 - /06/2014 (Build 266):
 	- Added red outline for the CompMod v3 HMG
 	- Yet another adjustment to the kill feed size.
+	- Stats now get reset for players swapping teams mid-game.
 
 - 13/06/2014 (Build 266):
 	- Fixed shotgun not being tracked by stats (whoops!).

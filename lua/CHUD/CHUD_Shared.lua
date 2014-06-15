@@ -50,6 +50,12 @@ local kCHUDDeathStatsMessage =
 	sdmg = "float (0 to 500000 by 0.01)",
 }
 
+local kCHUDEndStatsMessage =
+{
+	wTechId = "enum kTechId",
+	accuracy = "integer (0 to 100)",
+}
+
 local kCHUDOptionMessage =
 {
 	disabledOption = "string (32)"

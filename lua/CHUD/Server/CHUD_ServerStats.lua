@@ -17,11 +17,12 @@ local dmgMsgQ = {}
 local CHUDClientStats = {}
 
 // Function name 2 stronk
-local function MaybeInitCHUDClientStats(steamId, wTechId)
-	if not CHUDClientStats[steamId] then
+local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
+	if not CHUDClientStats[steamId] or (teamNumber ~= nil and CHUDClientStats[steamId].teamNumber ~= teamNumber) then
 		CHUDClientStats[steamId] = {}
 		CHUDClientStats[steamId].pdmg = 0
 		CHUDClientStats[steamId].sdmg = 0
+		CHUDClientStats[steamId].teamNumber = teamNumber
 		CHUDClientStats[steamId]["last"] = {}
 		CHUDClientStats[steamId]["last"].pdmg = 0
 		CHUDClientStats[steamId]["last"].sdmg = 0
@@ -48,9 +49,9 @@ local function ResetCHUDLastLifeStats(steamId)
 	CHUDClientStats[steamId]["last"].misses = 0
 end
 
-local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos)
+local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 	if GetGamerules():GetGameStarted() then
-		MaybeInitCHUDClientStats(steamId, wTechId)
+		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
 		local stat = CHUDClientStats[steamId]["weapons"][wTechId]
 		local lastStat = CHUDClientStats[steamId]["last"]
@@ -873,7 +874,7 @@ originalClipWeaponFirePrimary = Class_ReplaceMethod( "ClipWeapon", "FirePrimary"
 				self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, trace.surface, showTracer)
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), false, nil)
+					AddAccuracyStat(steamId, self:GetTechId(), false, nil, self:GetParent():GetTeamNumber())
 				end
 			end
 			
@@ -908,7 +909,7 @@ originalClipWeaponFirePrimary = Class_ReplaceMethod( "ClipWeapon", "FirePrimary"
 			if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"))
+					AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"), self:GetParent():GetTeamNumber())
 				end
 			end
 			
@@ -972,7 +973,7 @@ originalShotgunFirePrimary = Class_ReplaceMethod( "Shotgun", "FirePrimary",
 				self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, trace.surface, showTracer)
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), false, nil)
+					AddAccuracyStat(steamId, self:GetTechId(), false, nil, self:GetParent():GetTeamNumber())
 				end
 			end
 			
@@ -1007,7 +1008,7 @@ originalShotgunFirePrimary = Class_ReplaceMethod( "Shotgun", "FirePrimary",
 			if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"))
+					AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"), self:GetParent():GetTeamNumber())
 				end
 			end
 			
@@ -1027,7 +1028,7 @@ originalRiflebuttAttack = Class_ReplaceMethod( "Rifle", "PerformMeleeAttack",
 		if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 			if steamId then
-				AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+				AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 			end
 		end
 	end)
@@ -1045,7 +1046,7 @@ originalAxeOnTag = Class_ReplaceMethod( "Axe", "OnTag",
 				if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 					end
 				end
 			end
@@ -1065,7 +1066,7 @@ originalClawOnTag = Class_ReplaceMethod( "Claw", "OnTag",
 				if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 					end
 				end
 			end
@@ -1120,7 +1121,7 @@ originalMinigunOnTag = Class_ReplaceMethod( "Minigun", "OnTag",
 					self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, trace.surface, showTracer)
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), false, nil)
+						AddAccuracyStat(steamId, self:GetTechId(), false, nil, self:GetParent():GetTeamNumber())
 					end
 				end
 				
@@ -1155,7 +1156,7 @@ originalMinigunOnTag = Class_ReplaceMethod( "Minigun", "OnTag",
 				if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"))
+						AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"), self:GetParent():GetTeamNumber())
 					end
 				end
 				
@@ -1222,7 +1223,7 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 		if #hitEntities == 0 or (#hitEntities > 0 and isPlayer) then
 			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 			if steamId then
-				AddAccuracyStat(steamId, self:GetTechId(), #hitEntities > 0, playerTargets == 1 and foundOnos)
+				AddAccuracyStat(steamId, self:GetTechId(), #hitEntities > 0, playerTargets == 1 and foundOnos, self:GetParent():GetTeamNumber())
 			end
 		end
 		
@@ -1254,7 +1255,7 @@ originalBiteOnTag = Class_ReplaceMethod( "BiteLeap", "OnTag",
 				if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 					end
 				end
 				
@@ -1296,7 +1297,7 @@ originalGoreAttack = Class_ReplaceMethod( "Gore", "Attack",
 		if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 			if steamId then
-				AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+				AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 			end
 		end
 
@@ -1324,7 +1325,7 @@ originalLerkBiteOnTag = Class_ReplaceMethod( "LerkBite", "OnTag",
 				if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 					end
 				end
 				
@@ -1388,7 +1389,7 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack"
 				if (hitObject and hitObject:isa("Player") and GetAreEnemies(self:GetParent(), hitObject)) then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), true, hitObject and hitObject:isa("Onos"))
+						AddAccuracyStat(steamId, self:GetTechId(), true, hitObject and hitObject:isa("Onos"), self:GetParent():GetTeamNumber())
 					end
 				end
 				
@@ -1399,7 +1400,7 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack"
 			if not trace.entity then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), false, nil)
+					AddAccuracyStat(steamId, self:GetTechId(), false, nil, self:GetParent():GetTeamNumber())
 				end
 			end
 			
@@ -1454,7 +1455,7 @@ local function NewFireSpikes(self)
 			if (trace.entity and trace.entity:isa("Player") and GetAreEnemies(self:GetParent(), trace.entity)) then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetSecondaryTechId(), true, trace.entity and trace.entity:isa("Onos"))
+					AddAccuracyStat(steamId, self:GetSecondaryTechId(), true, trace.entity and trace.entity:isa("Onos"), self:GetParent():GetTeamNumber())
 				end
 			end
 			
@@ -1465,7 +1466,7 @@ local function NewFireSpikes(self)
 		if not trace.entity then
 			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 			if steamId then
-				AddAccuracyStat(steamId, self:GetSecondaryTechId(), false, nil)
+				AddAccuracyStat(steamId, self:GetSecondaryTechId(), false, nil, self:GetParent():GetTeamNumber())
 			end
 		end
 		
@@ -1489,7 +1490,7 @@ originalStabOnTag = Class_ReplaceMethod( "StabBlink", "OnTag",
 				if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+						AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 					end
 				end
 			
@@ -1511,7 +1512,7 @@ originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "PerformMeleeAttack",
 			if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"))
+					AddAccuracyStat(steamId, self:GetTechId(), target ~= nil, target and target:isa("Onos"), self:GetParent():GetTeamNumber())
 				end
 			end
 		end
