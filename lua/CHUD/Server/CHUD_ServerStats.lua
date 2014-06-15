@@ -102,12 +102,12 @@ function CHUD_CHUDDamageMessage_Queue( target, name, data, reliable, only_accum 
 			msg.data.posx = data.posx
 			msg.data.posy = data.posy
 			msg.data.posz = data.posz
-			msg.data.amount = msg.data.amount + data.amount
+			msg.data.amount = math.min( msg.data.amount + data.amount, kCHUDDamageMaxDamage )
 			if name == "CHUDDamage" then
-				msg.data.overkill = msg.data.overkill + data.overkill
+				msg.data.overkill = math.min( msg.data.overkill + data.overkill, kCHUDDamageMaxDamage )
 			--	msg.saved = ( msg.saved or 0 ) + 16 
 			elseif name == "CHUDDamage2" then
-				msg.data.overkill = msg.data.overkill + data.overkill
+				msg.data.overkill = math.min( msg.data.overkill + data.overkill, kCHUDDamageMaxDamage )
 				msg.data.hitcount = math.min( msg.data.hitcount + 1, kCHUDDamage2MessageMaxHitCount )
 			--	msg.saved = ( msg.saved or 0 ) + 18
 			else

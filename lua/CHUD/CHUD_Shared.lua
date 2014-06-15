@@ -16,27 +16,28 @@ if rawget( kTechId, "HeavyMachineGun" ) then
 end
 
 
+kHitsoundMode = enum { 'Hitcount', 'Overkill' }
+kCHUDDamageMaxDamage = 4095
+kCHUDDamage2MessageMaxHitCount = 13
+
 local kCHUDDamageMessage =
 {
 	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	targetId = "entityid",
-	amount = "integer (0 to 1000)",
-	overkill = "integer (0 to 1000)",
+	amount = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
+	overkill = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
 }
 
-
-kHitsoundMode = enum { 'Hitcount', 'Overkill' }
-kCHUDDamage2MessageMaxHitCount = 13
 local kCHUDDamage2Message =
 {
 	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
 	targetId = "entityid",
-	amount = "integer (0 to 1000)",
-	overkill = "integer (0 to 1000)",
+	amount = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
+	overkill = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
 	hitcount = string.format( "integer (1 to %d)", kCHUDDamage2MessageMaxHitCount ),
 	mode = "enum kHitsoundMode"
 }	
@@ -75,8 +76,8 @@ local kCHUDAutopickupMessage =
 }
 
 function BuildCHUDDamageMessage( target, amount, hitpos, overkill )
-	amount = math.min( math.max( amount, 0 ), 1000 )
-	overkill = math.min( math.max( overkill, 0 ), 1000 )
+	amount = math.min( math.max( amount, 0 ), kCHUDDamageMaxDamage )
+	overkill = math.min( math.max( overkill, 0 ), kCHUDDamageMaxDamage )
 	
 	local t = BuildDamageMessage( target, amount, hitpos )
 	t.overkill = overkill
