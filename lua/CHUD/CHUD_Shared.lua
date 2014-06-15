@@ -50,10 +50,17 @@ local kCHUDDeathStatsMessage =
 	sdmg = "float (0 to 500000 by 0.01)",
 }
 
-local kCHUDEndStatsMessage =
+local kCHUDEndStatsWeaponMessage =
 {
 	wTechId = "enum kTechId",
 	accuracy = "integer (0 to 100)",
+}
+
+local kCHUDEndStatsOverallMessage =
+{
+	accuracy = "integer (0 to 100)",
+	pdmg = "float (0 to 500000 by 0.01)",
+	sdmg = "float (0 to 500000 by 0.01)",
 }
 
 local kCHUDOptionMessage =
