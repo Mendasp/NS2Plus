@@ -14,6 +14,7 @@ Script.Load("lua/CHUD/Client/CHUD_Stats.lua")
 Script.Load("lua/CHUD/Client/CHUD_ServerBrowser.lua")
 Script.Load("lua/CHUD/Client/CHUD_Sounds.lua")
 Script.Load("lua/CHUD/Client/CHUD_Hitsounds.lua")
+Script.Load("lua/CHUD/Client/CHUD_EquipmentOutline.lua")
 Script.Load("lua/CHUD/Client/CHUD_Outlines.lua")
 
 function AnnounceCHUD()
