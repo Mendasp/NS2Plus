@@ -10,12 +10,12 @@
 
 class 'GUIDeathMessages' (GUIAnimatedScript)
 
-local kBackgroundHeight = GUIScale(48)
 local kKillHighlight = PrecacheAsset("ui/killfeed_highlight.dds")
 local kKillLeftBorderCoords = { 0, 0, 15, 64 }
 local kKillMiddleBorderCoords = { 16, 0, 112, 64 }
 local kKillRightBorderCoords = { 113, 0, 128, 64 }
 local kFontName = "fonts/AgencyFB_small.fnt"
+local kBackgroundHeight = GUIScale(32)
 local kScreenOffset = GUIScale(40)
 local kScreenOffsetX = GUIScale(38)
 
@@ -28,7 +28,7 @@ function GUIDeathMessages:Initialize()
     GUIAnimatedScript.Initialize(self)
     
     local screenHeight = Client.GetScreenHeight()
-    self.scale = ConditionalValue(screenHeight < 720, 1, screenHeight / kBaseScreenHeight)
+    self.scale = 1
 
     self.messages = { }
     self.reuseMessages = { }
@@ -39,7 +39,6 @@ function GUIDeathMessages:Reset()
     
     GUIAnimatedScript.Reset(self)
     
-    // On resolution change just destroy everything, it will be cleaner
     for i, message in ipairs(self.messages) do
         GUI.DestroyItem(message["Background"])
     end
@@ -50,6 +49,16 @@ function GUIDeathMessages:Reset()
     end
     self.reuseMessages = { }
     
+end
+
+function GUIDeathMessages:OnResolutionChanged(oldX, oldY, newX, newY)
+
+    self:Reset()
+
+    kBackgroundHeight = GUIScale(32)
+    kScreenOffset = GUIScale(40)
+    kScreenOffsetX = GUIScale(38)
+
 end
 
 function GUIDeathMessages:Uninitialize()
