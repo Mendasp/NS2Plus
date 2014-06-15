@@ -1076,98 +1076,95 @@ originalClawOnTag = Class_ReplaceMethod( "Claw", "OnTag",
 	end)
 CopyUpValues( Claw.OnTag, originalClawOnTag )
 
-local originalMinigunOnTag, kMinigunSpread, kMinigunRange, kBulletSize
-originalMinigunOnTag = Class_ReplaceMethod( "Minigun", "OnTag",
-	function(self, tagName)
-		if (tagName == "l_shoot" or tagName == "r_shoot") then
-			local player = self:GetParent()
+local kMinigunSpread, kMinigunRange, kBulletSize
+local function NewMinigunShoot(self, leftSide)
+	
+		local player = self:GetParent()
+		
+		// We can get a shoot tag even when the clip is empty if the frame rate is low
+		// and the animation loops before we have time to change the state.
+		if self.minigunAttacking and player then
+		
+			if Server and not self.spinSound:GetIsPlaying() then
+				self.spinSound:Start()
+			end    
+		
+			local viewAngles = player:GetViewAngles()
+			local shootCoords = viewAngles:GetCoords()
 			
-			// We can get a shoot tag even when the clip is empty if the frame rate is low
-			// and the animation loops before we have time to change the state.
-			if self.minigunAttacking and player then
+			// Filter ourself out of the trace so that we don't hit ourselves.
+			local filter = EntityFilterTwo(player, self)
+			local startPoint = player:GetEyePos()
 			
-				if Server and not self.spinSound:GetIsPlaying() then
-					self.spinSound:Start()
-				end    
+			local spreadDirection = CalculateSpread(shootCoords, kMinigunSpread, NetworkRandom)
 			
-				local viewAngles = player:GetViewAngles()
-				local shootCoords = viewAngles:GetCoords()
-				
-				// Filter ourself out of the trace so that we don't hit ourselves.
-				local filter = EntityFilterTwo(player, self)
-				local startPoint = player:GetEyePos()
-				
-				local spreadDirection = CalculateSpread(shootCoords, kMinigunSpread, NetworkRandom)
-				
-				local range = kMinigunRange
-				if GetIsVortexed(player) then
-					range = 5
-				end
-				
-				local endPoint = startPoint + spreadDirection * range
-				
-				local targets, trace, hitPoints = GetBulletTargets(startPoint, endPoint, spreadDirection, kBulletSize, filter) 
-				
-				local direction = (trace.endPoint - startPoint):GetUnit()
-				local hitOffset = direction * kHitEffectOffset
-				local impactPoint = trace.endPoint - hitOffset
-				local surfaceName = trace.surface
-				local effectFrequency = self:GetTracerEffectFrequency()
-				local showTracer = ConditionalValue(GetIsVortexed(player), false, math.random() < effectFrequency)
-				
-				local numTargets = #targets
-				
-				if numTargets == 0 then
-					self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, trace.surface, showTracer)
-					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
-					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), false, nil, self:GetParent():GetTeamNumber())
-					end
-				end
-				
-				if Client and showTracer then
-					TriggerFirstPersonTracer(self, trace.endPoint)
-				end
-				
-				local isPlayer = false
-				local statsTarget = nil
-				
-				for i = 1, numTargets do
-
-					local target = targets[i]
-					local hitPoint = hitPoints[i]
-					
-					if target and target:isa("Player") then
-						isPlayer = true
-						// In theory ClipWeapon can only hit a single player target at a time
-						statsTarget = target
-					end
-
-					self:ApplyBulletGameplayEffects(player, target, hitPoint - hitOffset, direction, kMinigunDamage, "", showTracer and i == numTargets)
-					
-					local client = Server and player:GetClient() or Client
-					if not Shared.GetIsRunningPrediction() and client.hitRegEnabled then
-						RegisterHitEvent(player, bullet, startPoint, trace, damage)
-					end
-				
-				end
-
-				// Drifters, buildings and teammates don't count towards accuracy as hits or misses
-				if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
-					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
-					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"), self:GetParent():GetTeamNumber())
-					end
-				end
-				
-				self.shooting = true
-				
+			local range = kMinigunRange
+			if GetIsVortexed(player) then
+				range = 5
 			end
-		else
-			originalMinigunOnTag(self, tagName)
+			
+			local endPoint = startPoint + spreadDirection * range
+			
+			local targets, trace, hitPoints = GetBulletTargets(startPoint, endPoint, spreadDirection, kBulletSize, filter) 
+			
+			local direction = (trace.endPoint - startPoint):GetUnit()
+			local hitOffset = direction * kHitEffectOffset
+			local impactPoint = trace.endPoint - hitOffset
+			local surfaceName = trace.surface
+			local effectFrequency = self:GetTracerEffectFrequency()
+			local showTracer = ConditionalValue(GetIsVortexed(player), false, math.random() < effectFrequency)
+			
+			local numTargets = #targets
+			
+			if numTargets == 0 then
+				self:ApplyBulletGameplayEffects(player, nil, impactPoint, direction, 0, trace.surface, showTracer)
+				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
+				if steamId then
+					AddAccuracyStat(steamId, self:GetTechId(), false, nil, self:GetParent():GetTeamNumber())
+				end
+			end
+			
+			if Client and showTracer then
+				TriggerFirstPersonTracer(self, trace.endPoint)
+			end
+			
+			local isPlayer = false
+			local statsTarget = nil
+			
+			for i = 1, numTargets do
+
+				local target = targets[i]
+				local hitPoint = hitPoints[i]
+				
+				if target and target:isa("Player") then
+					isPlayer = true
+					// In theory ClipWeapon can only hit a single player target at a time
+					statsTarget = target
+				end
+
+				self:ApplyBulletGameplayEffects(player, target, hitPoint - hitOffset, direction, kMinigunDamage, "", showTracer and i == numTargets)
+				
+				local client = Server and player:GetClient() or Client
+				if not Shared.GetIsRunningPrediction() and client.hitRegEnabled then
+					RegisterHitEvent(player, bullet, startPoint, trace, damage)
+				end
+			
+			end
+
+			// Drifters, buildings and teammates don't count towards accuracy as hits or misses
+			if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
+				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
+				if steamId then
+					AddAccuracyStat(steamId, self:GetTechId(), true, statsTarget and statsTarget:isa("Onos"), self:GetParent():GetTeamNumber())
+				end
+			end
+			
+			self.shooting = true
+			
 		end
-	end)
-CopyUpValues( Minigun.OnTag, GetUpValue( originalMinigunOnTag, "Shoot" ) )
+		
+end
+ReplaceUpValue(Minigun.OnTag, "Shoot", NewMinigunShoot, { LocateRecurse = true; CopyUpValues = true; })
 
 local kChargeTime, kBulletSize
 local function NewExecuteShot(self, startPoint, endPoint, player)
