@@ -5,7 +5,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - 15/06/2014 (Build 266):
-	- Added red outline for the CompMod v3 HMG
+	- Added red outline for the CompMod v3 HMG.
 	- Yet another adjustment to the kill feed size.
 	- Stats now get reset for players swapping teams mid-game.
 
