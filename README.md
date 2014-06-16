@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 16/06/2014 (Build 266):
+	- Changed IP and Armory hitboxes so the arms don't block bullets.
+	- Fixed bug where the full shot hitsound was playing the medium one.
+	
 - 15/06/2014 (Build 266):
 	- Added red outline for the CompMod v3 HMG.
 	- Yet another adjustment to the kill feed size.
