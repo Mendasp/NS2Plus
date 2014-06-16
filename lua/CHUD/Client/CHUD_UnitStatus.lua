@@ -152,27 +152,7 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			Hint = hint,
 			IsSteamFriend = (self:isa("Player") and self:GetIsSteamFriend() or false) and CHUDGetOption("friends"),
 			IsParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited(),
-		}
-		
-		if self:isa("InfantryPortal") and self.timeSpinStarted then
-			if self.queuedPlayerId ~= Entity.invalidId then			
-				local playerName = ""
-				for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
-					if playerInfo.playerId == self.queuedPlayerId then
-						playerName = playerInfo.playerName
-						break
-					end
-				end
-				
-				hintTable.IsSpawning = true
-				hintTable.PlayerName = playerName
-				hintTable.SpawnFraction = Clamp((Shared.GetTime() - self.timeSpinStarted) / kMarineRespawnTime, 0, 1)			
-			end
-		elseif self:isa("Embryo") then
-			hintTable.EvolvePercentage = self.evolvePercentage / 100
-		elseif self:isa("Egg") and self.researchProgress > 0 and self.researchProgress < 1 then
-			hintTable.EvolvePercentage = self.researchProgress
-		end
+		}		
 		
 		return hintTable
 	end
