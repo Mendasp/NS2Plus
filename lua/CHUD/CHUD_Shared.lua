@@ -18,7 +18,7 @@ end
 
 kHitsoundMode = enum { 'Hitcount', 'Overkill' }
 kCHUDDamageMaxDamage = 4095
-kCHUDDamage2MessageMaxHitCount = 13
+kCHUDDamage2MessageMaxHitCount = 14
 
 local kCHUDDamageMessage =
 {
