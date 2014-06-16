@@ -238,7 +238,7 @@ function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode
 					if GetAreEnemies( attacker, target ) then
 						
 						local steamId = GetSteamIdForClientIndex(attacker:GetClientIndex())
-						if steamId then
+						if steamId and (target:isa("Hallucination") or target.isHallucination) then
 							AddDamageStat(steamId, damageDone or 0, target:isa("Player"))
 						end
 
