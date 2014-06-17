@@ -28,7 +28,7 @@ function GUIDeathMessages:Initialize()
     GUIAnimatedScript.Initialize(self)
     
     local screenHeight = Client.GetScreenHeight()
-    self.scale = 1
+    self.scale = CHUDGetOption("killfeedscale")
 
     self.messages = { }
     self.reuseMessages = { }
