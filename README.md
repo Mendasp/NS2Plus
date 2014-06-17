@@ -5,7 +5,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - 17/06/2014
-	- Made Shotgun lights show number of shells loaded (Thanks remi.D!)
+	- Shotgun lights now show number of shells loaded (Thanks remi.D!)
+	- Gestating teammates will show what type of egg they are (Thanks remi.D!)
+	- Phase Gates will always show their destination (Thanks remi.D!)
+	- Gorge tunnels will always show their destination (Thanks remi.D!)
+	- Gorge tunnels will show who dropped it if you look at it (Thanks remi.D!)
 	
 - 16/06/2014 (Build 266):
 	- Changed IP and Armory hitboxes so the arms don't block bullets.
