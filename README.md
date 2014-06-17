@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 17/06/2014
+	- Made Shotgun lights show number of shells loaded (Thanks remi.D!)
+	
 - 16/06/2014 (Build 266):
 	- Changed IP and Armory hitboxes so the arms don't block bullets.
 	- Fixed bug where the full shot hitsound was playing the medium one.

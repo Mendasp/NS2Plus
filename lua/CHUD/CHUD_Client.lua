@@ -107,3 +107,22 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
 	end
 	
 end
+
+local oldOnUpdateRender
+oldOnUpdateRender = Class_ReplaceMethod( "Shotgun", "OnUpdateRender",
+	function( self )
+		
+		oldOnUpdateRender( self )
+		
+		local parent = self:GetParent()
+		if parent and parent:GetIsLocalPlayer() then		
+			local viewModel = parent:GetViewModelEntity()
+			if viewModel and viewModel:GetRenderModel() then
+			
+				viewModel:InstanceMaterials()
+				viewModel:GetRenderModel():SetMaterialParameter("ammo", self:GetClip() )
+				
+			end
+		end
+		
+	end)
