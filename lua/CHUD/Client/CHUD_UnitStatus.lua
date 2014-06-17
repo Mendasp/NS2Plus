@@ -154,6 +154,28 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			IsParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited(),
 		}		
 		
+		if not GetAreEnemies(player, self) then
+			if self:isa("TunnelEntrance") or self:isa("TunnelExit") or self:isa("PhaseGate") then
+				local location = Shared.GetEntity(self.destLocationId)
+				if location then
+					hintTable.Destination = location:GetName()
+				end
+			end
+			if self:isa("TunnelEntrance") or self:isa("TunnelExit") then
+				if self.ownerId ~= Entity.invalidId then
+					for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
+						if playerInfo.playerId == self.ownerId then
+							hintTable.TunnelOwner = playerInfo.playerName
+							break
+						end
+					end
+				end
+			end
+			if self:isa("Embryo") then
+				local eggTechId = rawget( kTechId, kTechId[ self.gestationTypeTechId ].."Egg" )
+				hintTable.EvolveClass = eggTechId and GetDisplayNameForTechId(eggTechId) 
+			end
+		end
 		return hintTable
 	end
 	

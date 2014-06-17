@@ -8,14 +8,37 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 		CHUDBlipData = blipData.Hint
 		blipData.Hint = CHUDBlipData.Hint
 	end
+	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)	
+	local isCrosshairTarget = blipData.IsCrossHairTarget 
 	
 	local showHints = showHints
 	if CHUDGetOption("minnps") then
 		showHints = false
+	elseif CHUDBlipData then
+		-- Show evolve class of friendly players
+		if CHUDBlipData.EvolveClass ~= nil then
+			blipData.Hint = CHUDBlipData.EvolveClass
+			showHints = true
+		end
+		
+		-- Show only destination name when not looking at the tunnel
+		if CHUDBlipData.Destination and not isCrosshairTarget then
+			blipData.Name = CHUDBlipData.Destination
+			blipData.ForceName = true 
+			blipData.IsPlayer = true
+		end
+		
+		-- Show tunnel owner when looking at it
+		if CHUDBlipData.TunnelOwner then
+			blipData.Hint = CHUDBlipData.TunnelOwner
+			showHints = true
+		end		
 	end
+	
 
-	OldUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, showHints, playerTeamType )			
-			
+	OldUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, showHints, playerTeamType )		
+	
+		
 	-- Hide Background
 	if CHUDGetOption("mingui") or CHUDGetOption("minnps") then
 		updateBlip.statusBg:SetTexture(kTransparentTexture)		
@@ -34,14 +57,11 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 		
 		if CHUDBlipData and not player:isa("Commander") and updateBlip.NameText:GetIsVisible() then	
 			
-			local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)	
-			local isCrosshairTarget = blipData.IsCrossHairTarget 
-		
 			if blipData.SpawnFraction ~= nil and not isEnemy and not blipData.IsCrossHairTarget then
 				updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.SpawnerName, blipData.SpawnFraction*100))
 				updateBlip.HintText:SetIsVisible(false)
 			else
-				if blipData.EvolvePercentage ~= nil and not isEnemy and ( blipData.IsPlayer or blipData.IsCrossHairTarget  ) then
+				if blipData.EvolvePercentage ~= nil and not isEnemy and ( blipData.IsPlayer or blipData.IsCrossHairTarget ) then
 					updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.Description, blipData.EvolvePercentage*100))
 				else
 					updateBlip.NameText:SetText(CHUDBlipData.Description)
