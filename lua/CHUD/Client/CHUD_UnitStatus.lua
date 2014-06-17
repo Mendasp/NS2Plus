@@ -172,8 +172,14 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 				end
 			end
 			if self:isa("Embryo") then
-				local eggTechId = rawget( kTechId, kTechId[ self.gestationTypeTechId ].."Egg" )
-				hintTable.EvolveClass = eggTechId and GetDisplayNameForTechId(eggTechId) 
+				if CHUDGetOption("minnps") and not player:isa("Commander") then
+					if self.gestationTypeTechId ~= kTechId.Skulk then
+						hintTable.EvolveClass = GetDisplayNameForTechId(self.gestationTypeTechId)
+					end
+				else
+					local eggTechId = rawget( kTechId, kTechId[ self.gestationTypeTechId ].."Egg" )
+					hintTable.EvolveClass = eggTechId and GetDisplayNameForTechId(eggTechId)
+				end
 			end
 		end
 		return hintTable

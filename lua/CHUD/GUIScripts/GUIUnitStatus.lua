@@ -10,19 +10,23 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 	end
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)	
 	local isCrosshairTarget = blipData.IsCrossHairTarget 
+	local player = Client.GetLocalPlayer()	
+	
+	local minnps = CHUDGetOption("minnps") and not player:isa("Commander")
 	
 	local showHints = showHints
-	if CHUDGetOption("minnps") then
+	
+	if minnps then
 		showHints = false
 	elseif CHUDBlipData then
 		-- Show evolve class of friendly players
-		if CHUDBlipData.EvolveClass ~= nil then
+		if CHUDBlipData.EvolveClass ~= nil and not player:isa("Commander") then
 			blipData.Hint = CHUDBlipData.EvolveClass
 			showHints = true
 		end
 		
 		-- Show only destination name when not looking at the tunnel
-		if CHUDBlipData.Destination and not isCrosshairTarget then
+		if CHUDBlipData.Destination and not isCrosshairTarget and not player:isa("Commander") then
 			blipData.Name = CHUDBlipData.Destination
 			blipData.ForceName = true 
 			blipData.IsPlayer = true
@@ -40,7 +44,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 	
 		
 	-- Hide Background
-	if CHUDGetOption("mingui") or CHUDGetOption("minnps") then
+	if CHUDGetOption("mingui") or minnps then
 		updateBlip.statusBg:SetTexture(kTransparentTexture)		
 		if updateBlip.BorderMask then
             updateBlip.BorderMask:SetIsVisible(false)
@@ -51,11 +55,8 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 	end
 	
 	-- Minimal Nameplates
-	if CHUDGetOption("minnps") then
-			
-		local player = Client.GetLocalPlayer()	
-		
-		if CHUDBlipData and not player:isa("Commander") and updateBlip.NameText:GetIsVisible() then	
+	if minnps then
+		if CHUDBlipData and updateBlip.NameText:GetIsVisible() then	
 			
 			if blipData.SpawnFraction ~= nil and not isEnemy and not blipData.IsCrossHairTarget then
 				updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.SpawnerName, blipData.SpawnFraction*100))
