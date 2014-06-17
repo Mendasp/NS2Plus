@@ -1,0 +1,39 @@
+<shader>
+	
+	<inputs>
+		<input name="albedoMap" type="texture" address="wrap" />
+		<input name="emissiveMap" type="texture" address="wrap" srgb="true"/>
+		<input name="highlight" type="float">1.0</input>
+		<input name="ammo" type="float">6.0</input>
+	</inputs>
+	
+	<code>
+	<![CDATA[
+		void MaterialShader(in Material_Input input, inout Material material)
+		{
+			float lightIdx = 1 + floor( input.texCoord.x * 3.0 ) + 3.0 * floor( input.texCoord.y * 2 );
+			float2 texCoord = input.texCoord;
+			texCoord.y = texCoord.y / 2.0;
+			
+			if ( lightIdx > ammo )
+			{
+				texCoord.y = texCoord.y + 0.5;
+				material.albedo 	= tex2D(albedoMap, texCoord).rgb;
+				material.emissive   = float4(0,0,0,0);
+			}
+			else
+			{
+				material.albedo 	= tex2D(albedoMap, texCoord).rgb;
+				material.emissive   = tex2D(emissiveMap, texCoord).rgb;
+			}
+			
+			float highlightId   = highlight;
+			material.tsNormal 	= float3(1,1,2);
+			material.specular	= float3(0,0,0);
+			material.gloss		= 1;
+			material.id = 1*highlightId;    // for alien vision				
+		}
+	]]>		
+	</code>
+
+</shader>
