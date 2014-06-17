@@ -576,7 +576,24 @@ CHUDOptions =
 					end
 				end,
 				sort = "D6",
-			}, 
+			},
+			killfeedscale = {
+				name    = "CHUD_KillFeedScale",
+				label   = "Killfeed scale",
+				tooltip = "Lets you scale the killfeed.",
+				type    = "slider",
+				sliderCallback = CHUDKillFeedScaleSlider,
+				defaultValue = 1,
+				minValue = 1,
+				maxValue = 2,
+				multiplier = 100,
+				category = "hud",
+				valueType = "float",
+				applyFunction = function()
+					CHUDRestartScripts({ "GUIDeathMessages" })
+				end,
+				sort = "D7",
+			},
 			killfeedhighlight = {
 				name    = "CHUD_KillFeedHighlight",
 				label   = "Killfeed highlight",
@@ -587,7 +604,7 @@ CHUDOptions =
 				defaultValue = 1,
 				category = "hud",
 				valueType = "int",
-				sort = "D7",
+				sort = "D8",
 			},
 			
 			

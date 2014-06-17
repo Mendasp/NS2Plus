@@ -20,6 +20,7 @@ CHUDFlashAtmosSlider = MakeCHUDSliderCallback( "CHUD_FlashAtmos", "flashatmos" )
 CHUDMapAtmosSlider = MakeCHUDSliderCallback( "CHUD_MapAtmos", "mapatmos" )
 CHUDDMGScaleSlider = MakeCHUDSliderCallback( "CHUD_DMGScale", "dmgscale" )
 CHUDDMGTimeSlider = MakeCHUDSliderCallback( "CHUD_DamageNumberTime", "damagenumbertime" )
+CHUDKillFeedScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedScale", "killfeedscale" )
 
 
 function CHUDSaveMenuSettings()
