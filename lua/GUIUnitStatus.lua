@@ -430,6 +430,7 @@ local function UpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot
     if isCrosshairTarget then
         healthFraction = blipData.HealthFraction
         armorFraction = blipData.ArmorFraction
+        abilityFraction = blipData.AbilityFraction
         statusFraction = blipData.StatusFraction
         alpha = 1
     end
