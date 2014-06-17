@@ -62,7 +62,10 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 				updateBlip.HintText:SetIsVisible(false)
 			else
 				if blipData.EvolvePercentage ~= nil and not isEnemy and ( blipData.IsPlayer or blipData.IsCrossHairTarget ) then
-					updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.Description, blipData.EvolvePercentage*100))
+					updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.Name, blipData.EvolvePercentage*100))
+					if CHUDBlipData.EvolveClass ~= nil then
+						blipData.Hint = blipData.Hint .. " - " .. CHUDBlipData.EvolveClass
+					end
 				else
 					updateBlip.NameText:SetText(CHUDBlipData.Description)
 				end
@@ -73,6 +76,10 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 
 			updateBlip.HealthBarBg:SetIsVisible(false)
 			updateBlip.ArmorBarBg:SetIsVisible(false)
+			if updateBlip.AbilityBarBg then
+				updateBlip.AbilityBarBg:SetIsVisible(false)
+			end
+			
 		end
 	end
 	
