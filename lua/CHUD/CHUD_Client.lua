@@ -108,21 +108,35 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
 	
 end
 
+local debugLights = false
 local oldOnUpdateRender
 oldOnUpdateRender = Class_ReplaceMethod( "Shotgun", "OnUpdateRender",
 	function( self )
-		
+
 		oldOnUpdateRender( self )
-		
+
 		local parent = self:GetParent()
 		if parent and parent:GetIsLocalPlayer() then		
 			local viewModel = parent:GetViewModelEntity()
 			if viewModel and viewModel:GetRenderModel() then
-			
+				local clip = self:GetClip()
+				local time = Shared.GetTime()
+				if self.newClip ~= clip then
+					self.newClip = clip
+					if debugLights then
+						EPrint( "%f : %d", time, clip )
+					end
+				end
+				
 				viewModel:InstanceMaterials()
 				viewModel:GetRenderModel():SetMaterialParameter("ammo", self:GetClip() )
 				
 			end
 		end
-		
+
+end)
+
+Event.Hook( "Console_debugshotgunlights", function()
+		debugLights = not debugLights
+		EPrint( "Shotgun debugging is %s", debugLights and "ON" or "OFF" )
 	end)
