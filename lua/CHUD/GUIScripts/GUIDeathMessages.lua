@@ -179,7 +179,7 @@ function GUIDeathMessages:AddMessage(killerColor, killerName, targetColor, targe
     insertMessage["Killer"]:SetColor(ColorIntToColor(killerColor))
     insertMessage["Killer"]:SetText(killerName)
     insertMessage["Killer"]:SetUniformScale(self.scale)
-    insertMessage["Killer"]:SetScale(GetScaledVector())
+    insertMessage["Killer"]:SetScale(GetScaledVector()*self.scale)
     
     if insertMessage["Weapon"] == nil then
         insertMessage["Weapon"] = self:CreateAnimatedGraphicItem()
@@ -208,10 +208,10 @@ function GUIDeathMessages:AddMessage(killerColor, killerName, targetColor, targe
     insertMessage["Target"]:SetColor(ColorIntToColor(targetColor))
     insertMessage["Target"]:SetText(targetName)
     insertMessage["Target"]:SetUniformScale(self.scale)
-    insertMessage["Target"]:SetScale(GetScaledVector())
+    insertMessage["Target"]:SetScale(GetScaledVector()*self.scale)
     
-    local killerTextWidth = GUIScale(insertMessage["Killer"]:GetTextWidth(killerName))
-    local targetTextWidth = GUIScale(insertMessage["Target"]:GetTextWidth(targetName))
+    local killerTextWidth = GUIScale(insertMessage["Killer"]:GetTextWidth(killerName))*self.scale
+    local targetTextWidth = GUIScale(insertMessage["Target"]:GetTextWidth(targetName))*self.scale
     local textWidth = killerTextWidth + targetTextWidth
     
     insertMessage["Weapon"]:SetPosition(Vector(killerTextWidth, -scaledIconHeight / 2, 0))
