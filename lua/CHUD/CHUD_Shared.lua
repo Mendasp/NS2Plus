@@ -55,11 +55,13 @@ local kCHUDEndStatsWeaponMessage =
 {
 	wTechId = "enum kTechId",
 	accuracy = "integer (0 to 100)",
+	accuracyOnos = "integer (-1 to 100)",
 }
 
 local kCHUDEndStatsOverallMessage =
 {
 	accuracy = "integer (0 to 100)",
+	accuracyOnos = "integer (-1 to 100)",
 	pdmg = "float (0 to 500000 by 0.01)",
 	sdmg = "float (0 to 500000 by 0.01)",
 }
@@ -100,6 +102,8 @@ Shared.RegisterNetworkMessage( "CHUDDamage2", kCHUDDamage2Message )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
+Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
+Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
 
 Script.Load("lua/CHUD/Shared/CHUD_Utility.lua")
 Script.Load("lua/CHUD/Shared/CHUD_Autopickup.lua")

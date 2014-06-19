@@ -33,6 +33,7 @@ AddClientUIScriptForClass("Spectator", "CHUD/Client/CHUDGUI_DeathStats")
 
 AddClientUIScriptForClass("Marine", "CHUD/Client/CHUDGUI_ClassicAmmo")
 
+AddClientUIScriptForTeam("all", "CHUD/Client/CHUDGUI_EndStats")
 
 function Client.AddWorldMessage(messageType, message, position, entityId)
 
