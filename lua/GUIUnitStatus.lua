@@ -409,7 +409,7 @@ function AddAbilityBar(blipItem)
 
 end
 
-local function UpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, showHints, playerTeamType )
+local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 
     local teamType = blipData.TeamType
     local isEnemy = false
@@ -435,10 +435,16 @@ local function UpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot
         alpha = 1
     end
 
-    if blipData.SpawnFraction ~= nil and not isEnemy and not isCrosshairTarget then
+    if blipData.SpawnFraction ~= nil and not isEnemy then
         // Show spawn progress
-        blipNameText = blipData.SpawnerName
-        healthFraction = math.max(0.01, blipData.SpawnFraction ) // always show at least 1% so there is a black bar
+        if isCrosshairTarget then
+            blipData.Hint = "RESPAWNING: "..blipData.SpawnerName
+            showHints = true
+        else
+            blipNameText = blipData.SpawnerName
+            showHints = false
+        end
+        abilityFraction = math.max(0.01, blipData.SpawnFraction ) // always show at least 1% so there is a black bar
         alpha = 1
     end
 
@@ -635,6 +641,7 @@ local function UpdateUnitStatusList(self, activeBlips, deltaTime)
         
     end
     
+    local localPlayerIsCommander = Client.GetLocalPlayer() and Client.GetLocalPlayer():isa("Commander")
     local baseResearchRot = (Shared.GetTime() % GUIUnitStatus.kResearchRotationDuration) / GUIUnitStatus.kResearchRotationDuration
     local showHints = Client.GetOptionBoolean("showHints", true) == true
     local playerTeamType = PlayerUI_GetTeamType()
@@ -643,7 +650,7 @@ local function UpdateUnitStatusList(self, activeBlips, deltaTime)
     local currentIndex = 1
     for i = 1, #self.activeBlipList do
         
-        UpdateUnitStatusBlip( self, activeBlips[i], self.activeBlipList[i], baseResearchRot, showHints, playerTeamType )
+        UpdateUnitStatusBlip( self, activeBlips[i], self.activeBlipList[i], localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
         
     end
 

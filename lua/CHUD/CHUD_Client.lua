@@ -122,15 +122,15 @@ oldOnUpdateRender = Class_ReplaceMethod( "Shotgun", "OnUpdateRender",
 			if viewModel and viewModel:GetRenderModel() then
 				local clip = self:GetClip()
 				local time = Shared.GetTime()
-				if self.newClip ~= clip then
-					self.newClip = clip
-					if debugLights then
-						EPrint( "%f : %d", time, clip )
-					end
+				if self.lightCount ~= clip and 
+					not self.lightChangeTime or self.lightChangeTime + 0.15 < time 
+				then
+					self.lightCount = clip
+					self.lightChangeTime = time
 				end
 				
 				viewModel:InstanceMaterials()
-				viewModel:GetRenderModel():SetMaterialParameter("ammo", self:GetClip() )
+				viewModel:GetRenderModel():SetMaterialParameter("ammo", self.lightCount )
 				
 			end
 		end
