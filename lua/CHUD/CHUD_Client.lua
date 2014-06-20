@@ -33,6 +33,7 @@ AddClientUIScriptForClass("Spectator", "CHUD/Client/CHUDGUI_DeathStats")
 
 AddClientUIScriptForClass("Marine", "CHUD/Client/CHUDGUI_ClassicAmmo")
 
+AddClientUIScriptForTeam("all", "CHUD/Client/CHUDGUI_EndStats")
 
 function Client.AddWorldMessage(messageType, message, position, entityId)
 
@@ -108,21 +109,53 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
 	
 end
 
+local debugLights = false
 local oldOnUpdateRender
 oldOnUpdateRender = Class_ReplaceMethod( "Shotgun", "OnUpdateRender",
 	function( self )
-		
+
 		oldOnUpdateRender( self )
-		
+
 		local parent = self:GetParent()
 		if parent and parent:GetIsLocalPlayer() then		
 			local viewModel = parent:GetViewModelEntity()
 			if viewModel and viewModel:GetRenderModel() then
-			
+				local clip = self:GetClip()
+				local time = Shared.GetTime()
+				if self.newClip ~= clip then
+					self.newClip = clip
+					if debugLights then
+						EPrint( "%f : %d", time, clip )
+					end
+				end
+				
 				viewModel:InstanceMaterials()
 				viewModel:GetRenderModel():SetMaterialParameter("ammo", self:GetClip() )
 				
 			end
 		end
-		
+
+end)
+
+local oldBadgesGetBadgeTextures = Badges_GetBadgeTextures
+function Badges_GetBadgeTextures( clientId, usecase )
+	local badges = oldBadgesGetBadgeTextures( clientId, usecase )
+	if usecase == "scoreboard" then
+		local steamid = GetSteamIdForClientIndex( clientId )
+		if steamid == 49009641 then
+			-- remi.D
+			badges[#badges+1] = "ui/badges/community_dev_20.dds"
+			badges[#badges+1] = "ui/badges/ns2plus_dev_20.dds"
+		end
+		if steamid == 39843 then
+			-- mendasp
+			badges[#badges+1] = "ui/badges/ns2plus_dev_20.dds"
+		end
+	end
+	return badges
+end
+ 
+Event.Hook( "Console_debugshotgunlights", function()
+		debugLights = not debugLights
+		EPrint( "Shotgun debugging is %s", debugLights and "ON" or "OFF" )
 	end)

@@ -535,62 +535,34 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				local stats = CHUDClientStats[playerInfo.steamId]
 				
 				local overallAccuracy = 0
-				local overallOnosAccuracy = 0
+				local overallOnosAccuracy = -1
 				local overallHits = 0
 				local overallMisses = 0
 				local overallOnosHits = 0
 
-				CHUDServerAdminPrint(client, "-----------------------")
-				CHUDServerAdminPrint(client, "Stats for this round")
-				CHUDServerAdminPrint(client, "-----------------------")
-				
-				local accuracy = 0
-				local accuracyOnos = 0
-				local acc_message
-				
 				for wTechId, wStats in pairs(stats["weapons"]) do
+					local accuracy = 0
+					local accuracyOnos = ConditionalValue(wStats.onosHits == 0, -1, 0)
+					
 					overallHits = overallHits + wStats.hits
 					overallMisses = overallMisses + wStats.misses
 					overallOnosHits = overallOnosHits + wStats.onosHits
 					
 					if wStats.hits > 0 or wStats.misses > 0 then
 						accuracy = wStats.hits/(wStats.hits+wStats.misses)*100
-						if wStats.hits ~= wStats.onosHits then
+						if wStats.onosHits > 0 and wStats.hits ~= wStats.onosHits then
 							accuracyOnos = (wStats.hits-wStats.onosHits)/((wStats.hits-wStats.onosHits)+wStats.misses)*100
 						end
 					end
 					
-					local weaponName
+					local msg = {}
+					msg.wTechId = wTechId
+					msg.accuracy = accuracy
+					msg.accuracyOnos = accuracyOnos
 					
-					// The server can't use Locale.ResolveString so just put the first letter in uppercase and hope for the best
-					if wTechId > 1 then
-						local techdataName = LookupTechData(wTechId, kTechDataMapName) or string.lower(LookupTechData(wTechId, kTechDataDisplayName))
-						weaponName = techdataName:gsub("^%l", string.upper)
-					else
-						weaponName = "Others"
-					end
-					
-					// Lerk's bite is called "Bite", just like the skulk bite, so clarify this
-					if wTechId == kTechId.LerkBite then
-						weaponName = "Lerk Bite"
-					// This shows up as "Swipe Blink", just "Swipe"
-					elseif wTechId == kTechId.Swipe then
-						weaponName = "Swipe"
-					// Use spaces!
-					elseif rawget( kTechId, "HeavyMachineGun" ) and wTechId == kTechId.HeavyMachineGun then
-						weaponName = "Heavy Machine Gun"
-					end
-					
-					acc_message = string.format("%s accuracy: %.2f%%", weaponName, accuracy)
-					
-					if wStats.onosHits > 0 then
-						acc_message = acc_message .. string.format(" / Without Onos hits: %.2f%%", accuracyOnos)
-					end
-					
-					CHUDServerAdminPrint(client, acc_message)
+					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
 				end
 				
-				CHUDServerAdminPrint(client, "-----------------------")
 				if overallHits > 0 or overallMisses > 0 then
 					overallAccuracy = overallHits/(overallHits+overallMisses)*100
 					if overallOnosHits > 0 and overallHits ~= overallOnosHits then
@@ -598,13 +570,13 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					end
 				end
 				
-				CHUDServerAdminPrint(client, string.format("Overall accuracy: %.2f%%", overallAccuracy))
-				if overallOnosHits > 0 then
-					CHUDServerAdminPrint(client, string.format("Without Onos hits: %.2f%%", overallOnosAccuracy))
-				end
-				CHUDServerAdminPrint(client, string.format("Total player damage: %d", stats.pdmg))
-				CHUDServerAdminPrint(client, string.format("Total structure damage: %d", stats.sdmg))
-				CHUDServerAdminPrint(client, "-----------------------")
+				local msg = {}
+				msg.accuracy = overallAccuracy
+				msg.accuracyOnos = overallOnosAccuracy
+				msg.pdmg = stats.pdmg
+				msg.sdmg = stats.sdmg
+				
+				Server.SendNetworkMessage(client, "CHUDEndStatsOverall", msg, true)
 			end
 			
 			// Commander stats
