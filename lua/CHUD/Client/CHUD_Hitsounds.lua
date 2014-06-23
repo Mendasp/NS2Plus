@@ -11,8 +11,8 @@ for _, sound in pairs(CHUDGetOptionVals("hitsounds")) do
 	Client.PrecacheLocalSound(sound .. "-hi-h")
 end
 
-function PlayHitsound(hitsound)
-	
+function HitSounds_PlayHitsound( i )
+	local hitsound = i - 1
 	if hitsounds[hitsound] then
 		local soundEffectName = CHUDGetOptionAssocVal("hitsounds")
 		
@@ -23,5 +23,4 @@ function PlayHitsound(hitsound)
 	
 		StartSoundEffect(soundEffectName, CHUDGetOption("hitsounds_vol"))
 	end
-	
 end

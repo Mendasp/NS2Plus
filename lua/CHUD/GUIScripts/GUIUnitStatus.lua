@@ -1,7 +1,7 @@
 
 local parent, OldUpdateUnitStatusBlip = LocateUpValue( GUIUnitStatus.Update, "UpdateUnitStatusBlip", { LocateRecurse = true } )
 
-function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, showHints, playerTeamType )
+function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
 	local CHUDBlipData
 	if type(blipData.Hint) == "table" then
@@ -12,7 +12,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 	local isCrosshairTarget = blipData.IsCrossHairTarget 
 	local player = Client.GetLocalPlayer()	
 	
-	local minnps = CHUDGetOption("minnps") and not player:isa("Commander")
+	local minnps = CHUDGetOption("minnps") and not localPlayerIsCommander
 	
 	local showHints = showHints
 	
@@ -20,13 +20,13 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 		showHints = false
 	elseif CHUDBlipData then
 		-- Show evolve class of friendly players
-		if CHUDBlipData.EvolveClass ~= nil and not player:isa("Commander") then
+		if CHUDBlipData.EvolveClass ~= nil and not localPlayerIsCommander then
 			blipData.Hint = CHUDBlipData.EvolveClass
 			showHints = true
 		end
 		
 		-- Show only destination name when not looking at the tunnel
-		if CHUDBlipData.Destination and not isCrosshairTarget and not player:isa("Commander") then
+		if CHUDBlipData.Destination and not isCrosshairTarget and not localPlayerIsCommander then
 			blipData.Name = CHUDBlipData.Destination
 			blipData.ForceName = true 
 			blipData.IsPlayer = true
@@ -40,7 +40,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, s
 	end
 	
 
-	OldUpdateUnitStatusBlip( self, blipData, updateBlip, baseResearchRot, showHints, playerTeamType )		
+	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )		
 	
 		
 	-- Hide Background
