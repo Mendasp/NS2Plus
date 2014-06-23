@@ -1,0 +1,368 @@
+-- Remove with 267
+
+Script.Load( "lua/HitSounds.lua" )
+
+Shared.RegisterNetworkMessage( "CHUDGameEnd", { win = "integer (0 to 2)" } )
+
+kGameEndCheckInterval = 0.75
+kDrawGameWindow = 1.25
+
+if Client then
+	AddClientUIScriptForTeam("all","GUIGameEnd")
+end
+	
+if Server then
+	Class_AddMethod( "Spit", "GetWeaponTechId",
+		function()
+			return kTechId.Spit
+		end)
+
+	local oldPlayerOnProcessMove
+	oldPlayerOnProcessMove = Class_ReplaceMethod( "Player", "OnProcessMove",
+		function( self, input )
+			oldPlayerOnProcessMove( self, input )
+			
+			if Server then
+				HitSound_DispatchHits()
+			end
+		end)
+    
+    function NS2Gamerules:CheckGameEnd()
+        
+        if self:GetGameStarted() and self.timeGameEnded == nil and not Shared.GetCheatsEnabled() and not self.preventGameEnd then
+            
+            local time = Shared.GetTime()
+            if not self.timeNextGameEndCheck or self.timeNextGameEndCheck < time then
+                
+                local team1Lost = self.team1Lost or self.team1:GetHasTeamLost()
+                local team2Lost = self.team2Lost or self.team2:GetHasTeamLost()
+                
+                -- Check for auto-concede if neither team lost.
+                if not team1Lost and not team2Lost then
+                    team1Lost, team2Lost = CheckAutoConcede(self)
+                end
+                
+                if team2Lost and team1Lost then
+                    
+                    -- It's a draw, end immediately
+                    self:EndGame( kNeutralTeamType )
+                    
+                elseif self.team2Lost then
+                    
+                    -- Still no draw after kDrawGameWindow, count the win
+                    self:EndGame( self.team1:GetTeamType() )
+                    
+                elseif self.team1Lost then
+                    
+                    -- Still no draw after kDrawGameWindow, count the win
+                    self:EndGame( self.team2:GetTeamType() )
+                
+                elseif team1Lost or team2Lost then
+                    
+                    -- Check for draw in kDrawGameWindow seconds
+                    self.team1Lost = team1Lost
+                    self.team2Lost = team2Lost
+                    self.timeNextGameEndCheck = time + kDrawGameWindow
+                    
+                else
+                    
+                    -- No victor yet, keep checking every kGameEndCheckInterval
+                    self.timeNextGameEndCheck = time + kGameEndCheckInterval
+                    
+                end
+
+            end
+        end
+    end
+
+    function NS2Gamerules:EndGame(winningTeamType)
+    
+        if self:GetGameState() == kGameState.Started then
+        
+            if self.autoTeamBalanceEnabled then
+                TEST_EVENT("Auto-team balance, game ended")
+            end
+            
+            local winningTeam
+
+            if winningTeamType == self.team1:GetTeamType() then
+
+                self:SetGameState(kGameState.Team1Won)
+                PostGameViz("Marines Win!")
+
+                winningTeam = self.team1
+                
+            elseif winningTeamType == self.team2:GetTeamType() then
+
+                self:SetGameState(kGameState.Team2Won)
+                PostGameViz("Aliens Win!")
+                
+                winningTeam = self.team2
+
+            else
+
+                self:SetGameState(kGameState.Draw)
+                PostGameViz("Draw Game!")
+
+            end
+            
+            Server.SendNetworkMessage( "CHUDGameEnd", { win = winningTeamType }, true)
+            
+            self.team1:ClearRespawnQueue()
+            self.team2:ClearRespawnQueue()
+
+            // Clear out Draw Game window handling
+            self.team1Lost = nil
+            self.team2Lost = nil
+            
+            // Automatically end any performance logging when the round has ended.
+            Shared.ConsoleCommand("p_endlog")
+
+            if winningTeam then
+                self.sponitor:OnEndMatch(winningTeam)
+                self.playerRanking:EndGame(winningTeam)
+            end
+            TournamentModeOnGameEnd()
+
+        end
+        
+    end
+	
+	function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
+
+		if Shine then
+			Shine.Hook.Call( "OnDamageDealt", self, damage, target, point, direction, surface, altMode, showtracer )
+		end
+
+		// No prediction if the Client is spectating another player.
+		if Client and not Client.GetIsControllingPlayer() then
+			return false
+		end
+		
+		local killedFromDamage = false
+		local doer = self
+
+		// attacker is always a player, doer is 'self'
+		local attacker = nil
+		local weapon = nil
+		local parentVortexed = false
+		
+		if target and target:isa("Ragdoll") then
+			return false
+		end
+			
+		if self:isa("Player") then
+			attacker = self
+		else
+
+			if self:GetParent() and self:GetParent():isa("Player") then
+				attacker = self:GetParent()
+				parentVortexed = GetIsVortexed(attacker)
+				
+				if attacker:isa("Alien") and ( self.secondaryAttacking or self.shootingSpikes) then
+					weapon = attacker:GetActiveWeapon():GetSecondaryTechId()
+				else
+					weapon = self:GetTechId()
+				end
+				
+			elseif HasMixin(self, "Owner") and self:GetOwner() and self:GetOwner():isa("Player") then
+				
+				attacker = self:GetOwner()
+				
+				if self.GetWeaponTechId then
+					weapon = self:GetWeaponTechId()
+				end
+			end
+
+		end
+
+		if not attacker then
+			attacker = doer
+		end
+
+		if attacker then
+		
+			// Get damage type from source
+			local damageType = kDamageType.Normal
+			if self.GetDamageType then
+				damageType = self:GetDamageType()
+			elseif HasMixin(self, "Tech") then
+				damageType = LookupTechData(self:GetTechId(), kTechDataDamageType, kDamageType.Normal)
+			end
+			
+			local armorUsed = 0
+			local healthUsed = 0
+			local damageDone = 0
+			
+			if target and HasMixin(target, "Live") and damage > 0 then  
+
+				damage, armorUsed, healthUsed = GetDamageByType(target, attacker, doer, damage, damageType, point)
+
+				// check once the damage
+				if not direction then
+					direction = Vector(0, 0, 1)
+				end
+				
+				killedFromDamage, damageDone = target:TakeDamage(damage, attacker, doer, point, direction, armorUsed, healthUsed, damageType)
+				
+				if damage > 0 then    
+									
+					// Many types of damage events are server-only, such as grenades.
+					// Send the player a message so they get feedback about what damage they've done.
+					// We use messages to handle multiple-hits per frame, such as splash damage from grenades.
+					if Server and attacker:isa("Player") then
+					
+						if GetAreEnemies( attacker, target ) then                        
+							
+							local amount = (target:GetIsAlive() or killedFromDamage) and damageDone or 0 // actual damage done
+							local overkill = healthUsed + armorUsed * 2 // the full amount of potential damage, including overkill
+							
+							if HitSound_IsEnabledForWeapon( weapon ) then
+								// Damage message will be sent at the end of OnProcessMove by the HitSound system
+								HitSound_RecordHit( attacker, target, amount, point, overkill, weapon )                            
+							else
+								SendDamageMessage( attacker, target, amount, point, overkill )
+							end
+						
+						end
+						
+						// This makes the cross hair turn red. Show it when hitting enemies only
+						if (not doer.GetShowHitIndicator or doer:GetShowHitIndicator()) and GetAreEnemies(attacker, target) then
+							attacker.giveDamageTime = Shared.GetTime()
+						end
+						
+					end
+					
+					if self.OnDamageDone then
+						self:OnDamageDone(doer, target)
+					end
+
+					if attacker and attacker.OnDamageDone then
+						attacker:OnDamageDone(doer, target)
+					end
+					
+				end
+
+			end
+			
+			// trigger damage effects (damage, deflect) with correct surface
+			if surface ~= "none" then
+			
+				local armorMultiplier = ConditionalValue(damageType == kDamageType.Light, 4, 2)
+				armorMultiplier = ConditionalValue(damageType == kDamageType.Heavy, 1, armorMultiplier)
+			
+				local playArmorEffect = armorUsed * armorMultiplier > healthUsed
+				
+				if parentVortexed or GetIsVortexed(self) or GetIsVortexed(target) then            
+					surface = "ethereal"
+					
+				elseif HasMixin(target, "NanoShieldAble") and target:GetIsNanoShielded() then    
+					surface = "nanoshield"
+					
+				elseif HasMixin(target, "Fire") and target:GetIsOnFire() then
+					surface = "flame"
+					
+				elseif not target then
+				
+					if GetIsPointOnInfestation(point) then
+						surface = "infestation"
+					end
+					
+					if not surface or surface == "" then
+						surface = "metal"
+					end
+				
+				elseif not surface or surface == "" then
+				
+					surface = GetIsAlienUnit(target) and "organic" or "metal"
+
+					// define metal_thin, rock, or other
+					if target.GetSurfaceOverride then
+						surface = target:GetSurfaceOverride(damageDone) or surface
+						
+						if surface == "none" then
+							return killedFromDamage
+						end
+						
+					elseif GetAreEnemies(self, target) then
+
+						if target:isa("Alien") then
+							surface = "organic"
+						elseif target:isa("Marine") then
+							surface = "flesh"
+						else
+						
+							if HasMixin(target, "Team") then
+							
+								if target:GetTeamType() == kAlienTeamType then
+									surface = "organic"
+								else
+									surface = "metal"
+								end
+								
+							end
+						
+						end
+
+					end
+
+				end
+				
+				// send to all players in range, except to attacking player, he will predict the hit effect
+				if Server then
+				
+					if GetShouldSendHitEffect() then
+									
+						local directionVectorIndex = 1
+						if direction then
+							directionVectorIndex = GetIndexFromVector(direction)
+						end
+						
+						local message = BuildHitEffectMessage(point, doer, surface, target, showtracer, altMode, damage, directionVectorIndex)
+						
+						local toPlayers = GetEntitiesWithinRange("Player", point, kHitEffectRelevancyDistance)                    
+						for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do
+						
+							if table.contains(toPlayers, Server.GetOwner(spectator):GetSpectatingPlayer()) then
+								table.insertunique(toPlayers, spectator)
+							end
+							
+						end
+						
+						-- No need to send to the attacker if this is a child of the attacker.
+						-- Children such as weapons are simulated on the Client as well so they will
+						-- already see the hit effect.
+						if attacker and self:GetParent() == attacker then
+							table.removevalue(toPlayers, attacker)
+						end
+						
+						for _, player in ipairs(toPlayers) do
+							Server.SendNetworkMessage(player, "HitEffect", message, false) 
+						end
+					
+					end
+
+				elseif Client then
+				
+					HandleHitEffect(point, doer, surface, target, showtracer, altMode, damage, direction)
+					
+					// If we are far away from our target, trigger a private sound so we can hear we hit something
+					if target then
+					
+						if (point - attacker:GetOrigin()):GetLength() > 5 then
+							attacker:TriggerEffects("hit_effect_local")
+						end
+						
+					end
+					
+				end
+				
+			end
+			
+		end
+		
+		return killedFromDamage
+		
+	end
+	
+end

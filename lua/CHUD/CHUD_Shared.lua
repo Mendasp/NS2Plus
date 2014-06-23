@@ -2,6 +2,8 @@ kCHUDElixerVersion = 1.72
 Script.Load("lua/CHUD/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
+-- Remove with 267
+Script.Load("lua/CHUD/CHUD_Shared266.lua")
 
 kCHUDStatsTrackAccLookup =
 	set {
@@ -29,19 +31,6 @@ local kCHUDDamageMessage =
 	amount = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
 	overkill = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
 }
-
-local kCHUDDamage2Message =
-{
-	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-	targetId = "entityid",
-	amount = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
-	overkill = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
-	hitcount = string.format( "integer (1 to %d)", kCHUDDamage2MessageMaxHitCount ),
-	mode = "enum kHitsoundMode"
-}	
-	
 
 local kCHUDDeathStatsMessage =
 {
@@ -78,27 +67,24 @@ local kCHUDAutopickupMessage =
 }
 
 function BuildCHUDDamageMessage( target, amount, hitpos, overkill )
-	amount = math.min( math.max( amount, 0 ), kCHUDDamageMaxDamage )
-	overkill = math.min( math.max( overkill, 0 ), kCHUDDamageMaxDamage )
 	
-	local t = BuildDamageMessage( target, amount, hitpos )
-	t.overkill = overkill
-	return t
+    local t = {}
+    t.posx = hitpos.x
+    t.posy = hitpos.y
+    t.posz = hitpos.z
+    t.amount = math.min( math.max( amount, 0 ), 4095 )
+	t.overkill = math.min( math.max( overkill, 0 ), kCHUDDamageMaxDamage )
+    t.targetId = (target and target:GetId()) or Entity.invalidId
+    return t
+	
 end
 
-function BuildCHUDDamage2Message( target, amount, hitpos, overkill, weapon )
-	local t = BuildCHUDDamageMessage( target, amount, hitpos, overkill )
-	t.hitcount = 1	
-	if weapon == kTechId.Railgun then
-		t.mode = kHitsoundMode.Overkill
-	else
-		t.mode = kHitsoundMode.Hitcount
-	end
-	return t
+function ParseCHUDDamageMessage(message)
+    local position = Vector(message.posx, message.posy, message.posz)
+    return Shared.GetEntity(message.targetId), message.amount, position, message.overkill
 end
 
 Shared.RegisterNetworkMessage( "CHUDDamage", kCHUDDamageMessage )
-Shared.RegisterNetworkMessage( "CHUDDamage2", kCHUDDamage2Message )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
