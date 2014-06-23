@@ -184,19 +184,30 @@ if Server then
                 TEST_EVENT("Auto-team balance, game ended")
             end
             
+            if type( winningTeamType ) ~= "number" then
+                if type( winningTeamType ) == "userdata" and winningTeamType.GetTeamType then
+                    EPrint( "NS2Gamerules:EndGame called with team entity instead of team type")
+                    winningTeamType = winningTeamType:GetTeamType()
+                else
+                    EPrint( "NS2Gamerules:EndGame called with invalid argument")
+                end
+            end
+                
             local winningTeam
-
-            if winningTeamType == self.team1:GetTeamType() then
+            
+            if winningTeamType == kMarineTeamType then
 
                 self:SetGameState(kGameState.Team1Won)
                 PostGameViz("Marines Win!")
+                Shared.Message("Marines Win!")
 
                 winningTeam = self.team1
                 
-            elseif winningTeamType == self.team2:GetTeamType() then
+            elseif winningTeamType == kAlienTeamType then
 
                 self:SetGameState(kGameState.Team2Won)
                 PostGameViz("Aliens Win!")
+                Shared.Message("Aliens Win!")
                 
                 winningTeam = self.team2
 
@@ -204,7 +215,8 @@ if Server then
 
                 self:SetGameState(kGameState.Draw)
                 PostGameViz("Draw Game!")
-
+                Shared.Message("Draw Game!")
+                
 			end
 		
 			EPrint( "Marine loss reason: %s", tostring( self.team1.loseReason ) )
