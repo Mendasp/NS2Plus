@@ -86,6 +86,48 @@ if Server then
         
     end
 	
+	Class_ReplaceMethod( "PlayingTeam", "GetHasTeamLost", 
+		function( self )
+
+		if GetGamerules():GetGameStarted() and not Shared.GetCheatsEnabled() then
+		
+			// Team can't respawn or last Command Station or Hive destroyed
+			local activePlayers = self:GetHasActivePlayers()
+			local abilityToRespawn = self:GetHasAbilityToRespawn()
+			local numAliveCommandStructures = self:GetNumAliveCommandStructures()
+			
+			if  (not activePlayers and not abilityToRespawn) or
+				(numAliveCommandStructures == 0) or
+				(self:GetNumPlayers() == 0) or 
+				self:GetHasConceded() then
+				
+				local reasons = {}
+				if (not activePlayers and not abilityToRespawn) then
+					reasons[#reasons+1] = "Can't spawn"
+				end
+				if (numAliveCommandStructures == 0) then
+					reasons[#reasons+1] = "No command structure"
+				end
+				if (self:GetNumPlayers() == 0) then
+					reasons[#reasons+1] = "No players"
+				end
+				if (self:GetHasConceded()) then
+					reasons[#reasons+1] = "Gave up"
+				end
+				self.loseReason = string.format( "%s [%f]", table.concat( reasons, ", " ), Shared.GetTime() )
+				
+				return true
+				
+			end
+			
+		end
+		
+		self.loseReason = nil
+		
+		return false
+		
+	end)
+
     function NS2Gamerules:CheckGameEnd()
         
         if self:GetGameStarted() and self.timeGameEnded == nil and not Shared.GetCheatsEnabled() and not self.preventGameEnd then
@@ -163,7 +205,10 @@ if Server then
                 self:SetGameState(kGameState.Draw)
                 PostGameViz("Draw Game!")
 
-            end
+			end
+		
+			EPrint( "Marine loss reason: %s", tostring( self.team1.loseReason ) )
+			EPrint( "Alien loss reason: %s", tostring( self.team2.loseReason ) )
             
             Server.SendNetworkMessage( "CHUDGameEnd", { win = winningTeamType }, true)
             
