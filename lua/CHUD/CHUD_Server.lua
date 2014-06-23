@@ -32,4 +32,17 @@ local function SendModsWarning(client)
 	end
 end
 
+if rawget( kTechId, "HeavyMachineGun" ) then
+	
+	local oldHitSoundIsEnabledForWeapon = HitSound_IsEnabledForWeapon
+	function HitSound_IsEnabledForWeapon( techId )
+		if techId == kTechId.HeavyMachineGun then
+			return true
+		end
+		
+		return oldHitSoundIsEnabledForWeapon( techId )
+	end
+
+end
+
 Event.Hook("ClientConnect", SendModsWarning)
