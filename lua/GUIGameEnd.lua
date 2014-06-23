@@ -115,12 +115,6 @@ function GUIGameEnd:SetGameEnded(playerWon, playerDraw, playerTeamType )
     end
     self.messageText:SetText(messageString)
 
-    local entityList = Shared.GetEntitiesWithClassname("GameInfo")
-    if entityList:GetSize() > 0 then
-        local gameInfo = entityList:GetEntityAtIndex(0)		
-        gameInfo.prevTimeLength = math.max( 0, math.floor(Shared.GetTime()) - gameInfo:GetStartTime() )
-    end
-
 end
 
 local function OnGameEnd(message)
@@ -143,6 +137,12 @@ local function OnGameEnd(message)
             Client.PlayMusic("sound/NS2.fev/loss")
         end
 
+    end
+
+    local entityList = Shared.GetEntitiesWithClassname("GameInfo")
+    if entityList:GetSize() > 0 then
+        local gameInfo = entityList:GetEntityAtIndex(0)		
+        gameInfo.prevTimeLength = math.max( 0, math.floor(Shared.GetTime()) - gameInfo:GetStartTime() )
     end
 
     // Automatically end any performance logging when the round is done.
