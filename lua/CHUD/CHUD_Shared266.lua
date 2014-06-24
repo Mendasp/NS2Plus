@@ -29,6 +29,7 @@ if Server then
     
     local function CheckAutoConcede(self)
 
+        PROFILE("NS2Gamerules:CheckAutoConcede")
         // This is an optional end condition based on the teams being unbalanced.
         local endGameOnUnbalancedAmount = Server.GetConfigSetting("end_round_on_team_unbalance")
         if endGameOnUnbalancedAmount and endGameOnUnbalancedAmount > 0 then
@@ -89,44 +90,45 @@ if Server then
 	Class_ReplaceMethod( "PlayingTeam", "GetHasTeamLost", 
 		function( self )
 
-		if GetGamerules():GetGameStarted() and not Shared.GetCheatsEnabled() then
-		
-			// Team can't respawn or last Command Station or Hive destroyed
-			local activePlayers = self:GetHasActivePlayers()
-			local abilityToRespawn = self:GetHasAbilityToRespawn()
-			local numAliveCommandStructures = self:GetNumAliveCommandStructures()
-			
-			if  (not activePlayers and not abilityToRespawn) or
-				(numAliveCommandStructures == 0) or
-				(self:GetNumPlayers() == 0) or 
-				self:GetHasConceded() then
-				
-				local reasons = {}
-				if (not activePlayers and not abilityToRespawn) then
-					reasons[#reasons+1] = "Can't spawn"
-				end
-				if (numAliveCommandStructures == 0) then
-					reasons[#reasons+1] = "No command structure"
-				end
-				if (self:GetNumPlayers() == 0) then
-					reasons[#reasons+1] = "No players"
-				end
-				if (self:GetHasConceded()) then
-					reasons[#reasons+1] = "Gave up"
-				end
-				self.loseReason = string.format( "%s [%f]", table.concat( reasons, ", " ), Shared.GetTime() )
-				
-				return true
-				
-			end
-			
-		end
-		
-		self.loseReason = nil
-		
-		return false
-		
-	end)
+            PROFILE("PlayingTeam:GetHasTeamLost")
+            if GetGamerules():GetGameStarted() and not Shared.GetCheatsEnabled() then
+            
+                // Team can't respawn or last Command Station or Hive destroyed
+                local activePlayers = self:GetHasActivePlayers()
+                local abilityToRespawn = self:GetHasAbilityToRespawn()
+                local numAliveCommandStructures = self:GetNumAliveCommandStructures()
+                
+                if  (not activePlayers and not abilityToRespawn) or
+                    (numAliveCommandStructures == 0) or
+                    (self:GetNumPlayers() == 0) or 
+                    self:GetHasConceded() then
+                    
+                    local reasons = {}
+                    if (not activePlayers and not abilityToRespawn) then
+                        reasons[#reasons+1] = "Can't spawn"
+                    end
+                    if (numAliveCommandStructures == 0) then
+                        reasons[#reasons+1] = "No command structure"
+                    end
+                    if (self:GetNumPlayers() == 0) then
+                        reasons[#reasons+1] = "No players"
+                    end
+                    if (self:GetHasConceded()) then
+                        reasons[#reasons+1] = "Gave up"
+                    end
+                    self.loseReason = string.format( "%s [%f]", table.concat( reasons, ", " ), Shared.GetTime() )
+                    
+                    return true
+                    
+                end
+                
+            end
+            
+            self.loseReason = nil
+            
+            return false
+            
+        end)
 
     function NS2Gamerules:CheckGameEnd()
         
@@ -135,6 +137,8 @@ if Server then
             local time = Shared.GetTime()
             if not self.timeNextGameEndCheck or self.timeNextGameEndCheck < time then
                 
+                PROFILE("NS2Gamerules:CheckGameEnd")
+        
                 local team1Lost = self.team1Lost or self.team1:GetHasTeamLost()
                 local team2Lost = self.team2Lost or self.team2:GetHasTeamLost()
                 
@@ -146,17 +150,17 @@ if Server then
                 if team2Lost and team1Lost then
                     
                     -- It's a draw, end immediately
-                    self:EndGame( kNeutralTeamType )
+                    self:EndGame( nil )
                     
                 elseif self.team2Lost then
                     
                     -- Still no draw after kDrawGameWindow, count the win
-                    self:EndGame( self.team1:GetTeamType() )
+                    self:EndGame( self.team1 )
                     
                 elseif self.team1Lost then
                     
                     -- Still no draw after kDrawGameWindow, count the win
-                    self:EndGame( self.team2:GetTeamType() )
+                    self:EndGame( self.team2 )
                 
                 elseif team1Lost or team2Lost then
                     
@@ -176,7 +180,7 @@ if Server then
         end
     end
 
-    function NS2Gamerules:EndGame(winningTeamType)
+    function NS2Gamerules:EndGame(winningTeam)
     
         if self:GetGameState() == kGameState.Started then
         
@@ -184,32 +188,19 @@ if Server then
                 TEST_EVENT("Auto-team balance, game ended")
             end
             
-            if type( winningTeamType ) ~= "number" then
-                if type( winningTeamType ) == "userdata" and winningTeamType.GetTeamType then
-                    EPrint( "NS2Gamerules:EndGame called with team entity instead of team type")
-                    winningTeamType = winningTeamType:GetTeamType()
-                else
-                    EPrint( "NS2Gamerules:EndGame called with invalid argument")
-                end
-            end
-                
-            local winningTeam
+            winningTeamType = winningTeam and winningTeam:GetTeamType() or kNeutralTeamType
             
             if winningTeamType == kMarineTeamType then
 
                 self:SetGameState(kGameState.Team1Won)
                 PostGameViz("Marines Win!")
                 Shared.Message("Marines Win!")
-
-                winningTeam = self.team1
                 
             elseif winningTeamType == kAlienTeamType then
 
                 self:SetGameState(kGameState.Team2Won)
                 PostGameViz("Aliens Win!")
                 Shared.Message("Aliens Win!")
-                
-                winningTeam = self.team2
 
             else
 
@@ -217,10 +208,10 @@ if Server then
                 PostGameViz("Draw Game!")
                 Shared.Message("Draw Game!")
                 
-			end
-		
-			EPrint( "Marine loss reason: %s", tostring( self.team1.loseReason ) )
-			EPrint( "Alien loss reason: %s", tostring( self.team2.loseReason ) )
+            end
+        
+            EPrint( "Marine loss reason: %s", tostring( self.team1.loseReason ) )
+            EPrint( "Alien loss reason: %s", tostring( self.team2.loseReason ) )
             
             Server.SendNetworkMessage( "CHUDGameEnd", { win = winningTeamType }, true)
             

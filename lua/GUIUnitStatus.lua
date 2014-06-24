@@ -410,7 +410,9 @@ function AddAbilityBar(blipItem)
 end
 
 local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
-
+    
+    PROFILE("GUIUnitStatus:UpdateUnitStatusBlip")
+    
     local teamType = blipData.TeamType
     local isEnemy = false
     local isCrosshairTarget = blipData.IsCrossHairTarget 
