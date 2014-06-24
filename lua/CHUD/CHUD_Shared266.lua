@@ -4,8 +4,8 @@ Script.Load( "lua/HitSounds.lua" )
 
 Shared.RegisterNetworkMessage( "CHUDGameEnd", { win = "integer (0 to 2)" } )
 
-kGameEndCheckInterval = 0.75
-kDrawGameWindow = 1.25
+kGameEndAutoConcedeCheckInterval = 0.75
+kDrawGameWindow = 0.75
 
 if Client then
 	AddClientUIScriptForTeam("all","GUIGameEnd")
@@ -131,53 +131,69 @@ if Server then
         end)
 
     function NS2Gamerules:CheckGameEnd()
+
+        PROFILE("NS2Gamerules:CheckGameEnd")
         
         if self:GetGameStarted() and self.timeGameEnded == nil and not Shared.GetCheatsEnabled() and not self.preventGameEnd then
-            
+
             local time = Shared.GetTime()
-            if not self.timeNextGameEndCheck or self.timeNextGameEndCheck < time then
-                
-                PROFILE("NS2Gamerules:CheckGameEnd")
-        
+            if not self.timeDrawWindowEnds or time < self.timeDrawWindowEnds then
+
                 local team1Lost = self.team1Lost or self.team1:GetHasTeamLost()
                 local team2Lost = self.team2Lost or self.team2:GetHasTeamLost()
-                
-                -- Check for auto-concede if neither team lost.
-                if not team1Lost and not team2Lost then
-                    team1Lost, team2Lost = CheckAutoConcede(self)
-                end
-                
-                if team2Lost and team1Lost then
+
+                if team1Lost or team2Lost then
+            
+                    -- After a team has entered a loss condition, they can not recover
+                    self.team1Lost = team1Lost
+                    self.team2Lost = team2Lost
+
+                    -- Continue checking for a draw for kDrawGameWindow seconds
+                    if not self.timeDrawWindowEnds then
+                        EPrint( "DrawWindowOpen" )
+                        self.timeDrawWindowEnds = time + kDrawGameWindow
+                    end
                     
-                    -- It's a draw, end immediately
+                else
+                    -- Check for auto-concede if neither team lost.
+                    if not self.timeNextAutoConcedeCheck or self.timeNextAutoConcedeCheck < time then
+                        
+                        team1Lost, team2Lost = CheckAutoConcede(self)
+                        if team1Lost then
+                            self:EndGame( self.team1 )
+                        elseif team2Lost then
+                            self:EndGame( self.team2 )
+                        end
+                        
+                        self.timeNextAutoConcedeCheck = time + kGameEndAutoConcedeCheckInterval
+                    end
+                    
+                end
+
+            else
+
+                        EPrint( "DrawWindowClosed" )
+                if self.team2Lost and self.team1Lost then
+                    
+                    -- It's a draw
                     self:EndGame( nil )
                     
                 elseif self.team2Lost then
-                    
+
                     -- Still no draw after kDrawGameWindow, count the win
                     self:EndGame( self.team1 )
-                    
+
                 elseif self.team1Lost then
-                    
+
                     -- Still no draw after kDrawGameWindow, count the win
                     self:EndGame( self.team2 )
-                
-                elseif team1Lost or team2Lost then
-                    
-                    -- Check for draw in kDrawGameWindow seconds
-                    self.team1Lost = team1Lost
-                    self.team2Lost = team2Lost
-                    self.timeNextGameEndCheck = time + kDrawGameWindow
-                    
-                else
-                    
-                    -- No victor yet, keep checking every kGameEndCheckInterval
-                    self.timeNextGameEndCheck = time + kGameEndCheckInterval
                     
                 end
 
             end
+
         end
+
     end
 
     function NS2Gamerules:EndGame(winningTeam)
@@ -221,6 +237,7 @@ if Server then
             // Clear out Draw Game window handling
             self.team1Lost = nil
             self.team2Lost = nil
+            self.timeDrawWindowEnds = nil
             
             // Automatically end any performance logging when the round has ended.
             Shared.ConsoleCommand("p_endlog")
