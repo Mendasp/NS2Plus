@@ -27,11 +27,12 @@ GUIUnitStatus.kBlackTexture = "ui/black_dot.dds"
 local kStatusBgTexture = { [kMarineTeamType] = "ui/unitstatus_marine.dds", [kAlienTeamType] = "ui/unitstatus_alien.dds", [kNeutralTeamType] = "ui/unitstatus_neutral.dds" }
 local kStatusFontColor = { [kMarineTeamType] = Color(kMarineTeamColorFloat), [kAlienTeamType] = Color(kAlienTeamColorFloat), [kNeutralTeamType] = Color(1,1,1,1) }
 
-GUIUnitStatus.kStatusBgSize = GUIScale( Vector(168, 80, 0) )
+local kStatusBgSizeUnscaled =  Vector(168, 80, 0)
+GUIUnitStatus.kStatusBgSize = GUIScale( kStatusBgSizeUnscaled )
 GUIUnitStatus.kStatusBgNoHintSize = GUIScale( Vector(168, 66, 0) )
 
 GUIUnitStatus.kStatusBgOffset= GUIScale( Vector(0, -16, 0) )
-GUIUnitStatus.kStatusBackgroundPixelCoords = { 256, 896 , 256 + 178, 896 + 53}
+GUIUnitStatus.kStatusBackgroundPixelCoords = { 259, 896 , 259 + 174, 896 + 53}
 
 GUIUnitStatus.kUnpoweredColor = Color(1,0.2,0.2,1)
 GUIUnitStatus.kEnemyColor = Color(1,0.3,0.3,1)
@@ -72,7 +73,7 @@ local kWelderIconPos = GUIScale(Vector(0, -24, 0))
 
 local kBorderCoords = { 256, 256, 256 + 512, 256 + 128 }
 local kBorderMaskPixelCoords = { 256, 384, 256 + 512, 384 + 512 }
-local kBorderMaskCircleRadius = GUIScale(130)
+local kBorderMaskCircleRadius = GUIScale(145)
 
 local kHealthBarWidth = GUIScale(130)
 local kHealthBarHeight = GUIScale(8)
@@ -93,6 +94,8 @@ local kAmmoBarColors =
     [kTechId.Flamethrower] = Color(1,1,0,1),     // yellow
     [kTechId.GrenadeLauncher] = Color(1,0,1,1),  // magenta
 }
+
+local kAbilityBarColor = Color(0.65, 0.65, 0.65, 1)
 
 local function GetUnitStatusTextureCoordinates(unitStatus)
 
@@ -312,7 +315,7 @@ local function CreateBlipItem(self)
     newBlip.HintText:SetTextAlignmentX(GUIItem.Align_Center)
     newBlip.HintText:SetTextAlignmentY(GUIItem.Align_Min)
     newBlip.HintText:SetScale(GUIUnitStatus.kFontScaleSmall)
-    newBlip.HintText:SetPosition(GUIScale(Vector(0, 28, 0)))
+    newBlip.HintText:SetPosition(GUIScale(Vector(0, 31, 0)))
     
     if self.fullHUD then
     
@@ -398,7 +401,7 @@ function AddAbilityBar(blipItem)
     blipItem.AbilityBarBg:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
     
     blipItem.AbilityBar = GUIManager:CreateGraphicItem()
-    blipItem.AbilityBar:SetColor(Color(0.65, 0.65, 0.65, 1))
+    blipItem.AbilityBar:SetColor(kAbilityBarColor)
     blipItem.AbilityBar:SetSize(Vector(kArmorBarWidth, kArmorBarHeight *2, 0))
     blipItem.AbilityBar:SetTexture("ui/unitstatus_neutral.dds")
     blipItem.AbilityBar:SetTexturePixelCoordinates(unpack(GUIUnitStatus.kUnitStatusBarTexCoords))
@@ -440,7 +443,11 @@ local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCo
     if blipData.SpawnFraction ~= nil and not isEnemy then
         // Show spawn progress
         if isCrosshairTarget then
-            blipData.Hint = "RESPAWNING: "..blipData.SpawnerName
+            if showHints then
+                blipData.Hint = "RESPAWNING: "..blipData.SpawnerName
+            else
+                blipData.Hint = blipData.SpawnerName
+            end
             showHints = true
         else
             blipNameText = blipData.SpawnerName
@@ -539,6 +546,8 @@ local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCo
             local ammoBarColor = blipData.PrimaryWeapon and kAmmoBarColors[blipData.PrimaryWeapon]
             if ammoBarColor then
                 updateBlip.AbilityBar:SetColor(ammoBarColor)
+            else
+                updateBlip.AbilityBar:SetColor(kAbilityBarColor)
             end
         else
             updateBlip.AbilityBarBg:SetIsVisible( false )
@@ -557,9 +566,18 @@ local function UpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCo
         updateBlip.HintText:SetText(blipData.Hint)
         updateBlip.HintText:SetColor(textColor)
 
-        updateBlip.statusBg:SetSize(GUIUnitStatus.kStatusBgSize)
+        local bgsize = GUIUnitStatus.kStatusBgSize
+        local hintTextWidth = GUIScale( updateBlip.HintText:GetTextWidth(blipData.Hint) ) + 8
+        if kStatusBgSizeUnscaled.x < hintTextWidth then
+            bgsize = Vector( kStatusBgSizeUnscaled )
+            bgsize.x = hintTextWidth
+            bgsize = GUIScale( bgsize )
+        end
+        
+        updateBlip.statusBg:SetSize(bgsize)
+        updateBlip.statusBg:SetPosition(blipData.HealthBarPosition - bgsize * .5 )
         if updateBlip.Border then
-            updateBlip.Border:SetSize(GUIUnitStatus.kStatusBgSize)
+            updateBlip.Border:SetSize(bgsize)
         end
     else
         updateBlip.HintText:SetIsVisible(false)
