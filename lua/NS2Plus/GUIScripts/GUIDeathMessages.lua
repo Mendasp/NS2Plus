@@ -240,19 +240,23 @@ function GUIDeathMessages:AddMessage(killerColor, killerName, targetColor, targe
     local player = Client.GetLocalPlayer()
     local alpha = ConditionalValue(player and Client.GetIsControllingPlayer() and player:GetName() == killerName and targetIsPlayer and killerColor ~= targetColor and CHUDGetOption("killfeedhighlight") > 0, 1, 0)
     
+    local backgroundColor = ColorIntToColor(killerColor)
+    backgroundColor.a = alpha
     insertMessage["BackgroundWidth"] = textWidth + scaledIconWidth
     insertMessage["Background"]:SetSize(Vector(insertMessage["BackgroundWidth"], kBackgroundHeight, 0))
     insertMessage["Background"]:SetAnchor(GUIItem.Right, GUIItem.Top)
     insertMessage["BackgroundXOffset"] = -textWidth - scaledIconWidth - kScreenOffset - kScreenOffsetX
     insertMessage["Background"]:SetPosition(Vector(insertMessage["BackgroundXOffset"], 0, 0))
-    insertMessage["Background"]:SetColor(Color(1, 1, 1, alpha))
+    insertMessage["Background"]:SetColor(backgroundColor)
     insertMessage["Background"]:SetTexture(kKillHighlight)
     insertMessage["Background"]:SetTexturePixelCoordinates(unpack(kKillMiddleBorderCoords))
+    insertMessage["Background"].left:SetColor(backgroundColor)
     insertMessage["Background"].left:SetTexture(kKillHighlight)
     insertMessage["Background"].left:SetTexturePixelCoordinates(unpack(kKillLeftBorderCoords))
     insertMessage["Background"].left:SetSize(Vector(GUIScale(8), kBackgroundHeight, 0))
     insertMessage["Background"].left:SetInheritsParentAlpha(true)
     insertMessage["Background"].left:SetPosition(Vector(-GUIScale(8), 0, 0))
+    insertMessage["Background"].right:SetColor(backgroundColor)
     insertMessage["Background"].right:SetTexture(kKillHighlight)
     insertMessage["Background"].right:SetTexturePixelCoordinates(unpack(kKillRightBorderCoords))
     insertMessage["Background"].right:SetSize(Vector(GUIScale(8), kBackgroundHeight, 0))
