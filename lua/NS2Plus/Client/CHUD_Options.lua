@@ -594,6 +594,23 @@ CHUDOptions =
 				end,
 				sort = "D7",
 			},
+			killfeediconscale = {
+				name    = "CHUD_KillFeedIconScale",
+				label   = "Killfeed icon scale",
+				tooltip = "Lets you scale the size of the icons in the killfeed.",
+				type    = "slider",
+				sliderCallback = CHUDKillFeedIconScaleSlider,
+				defaultValue = 1,
+				minValue = 1,
+				maxValue = 2,
+				multiplier = 100,
+				category = "hud",
+				valueType = "float",
+				applyFunction = function()
+					CHUDRestartScripts({ "GUIDeathMessages" })
+				end,
+				sort = "D8",
+			},
 			killfeedhighlight = {
 				name    = "CHUD_KillFeedHighlight",
 				label   = "Killfeed highlight",
@@ -604,7 +621,7 @@ CHUDOptions =
 				defaultValue = 1,
 				category = "hud",
 				valueType = "int",
-				sort = "D8",
+				sort = "D9",
 			},
 			
 			

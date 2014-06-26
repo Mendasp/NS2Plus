@@ -277,10 +277,10 @@ function MainMenu_Open()
 				local state = Client.GetModState(s)
 
 				if name == "NS2+" and active == "YES" then
-					local browser = io.open("lua/CHUD/Client/CHUD_ServerBrowserMain.lua", "r")
+					local browser = io.open("lua/NS2Plus/Client/CHUD_ServerBrowserMain.lua", "r")
 					if browser then
 						Script.Load("lua/Class.lua")
-						Script.Load("lua/CHUD/Client/CHUD_ServerBrowserMain.lua")
+						Script.Load("lua/NS2Plus/Client/CHUD_ServerBrowserMain.lua")
 						io.close(browser)
 						Shared.Message("NS2+ Main Menu mods loaded.")
 					else

@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 26/06/2014
+	- Added option for bigger killfeed icons.
+
 - 20/06/2014
 	- Text in the killfeed now scales too with the scaling option.
 	- Endgame stats now appear in the Readyroom instead of console and uses the same key as Death stats.

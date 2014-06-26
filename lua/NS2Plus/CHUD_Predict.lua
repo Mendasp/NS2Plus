@@ -1,0 +1,1 @@
+Script.Load("lua/NS2Plus/CHUD_Shared.lua")
