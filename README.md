@@ -6,6 +6,7 @@ Latest changes
 ==============
 - 26/06/2014
 	- Added option for bigger killfeed icons.
+	- Made the border of the killfeed the color of the team you're in.
 	- Adjusted scale of inventory icons.
 
 - 20/06/2014
