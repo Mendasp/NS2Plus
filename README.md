@@ -6,6 +6,7 @@ Latest changes
 ==============
 - 26/06/2014
 	- Added option for bigger killfeed icons.
+	- Adjusted scale of inventory icons.
 
 - 20/06/2014
 	- Text in the killfeed now scales too with the scaling option.
