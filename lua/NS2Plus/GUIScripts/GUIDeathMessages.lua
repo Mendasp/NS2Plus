@@ -32,6 +32,8 @@ function GUIDeathMessages:Initialize()
 
     self.messages = { }
     self.reuseMessages = { }
+	
+	kBackgroundHeight = GUIScale(32*CHUDGetOption("killfeediconscale"))
     
 end
 
@@ -55,7 +57,7 @@ function GUIDeathMessages:OnResolutionChanged(oldX, oldY, newX, newY)
 
     self:Reset()
 
-    kBackgroundHeight = GUIScale(32)
+    kBackgroundHeight = GUIScale(32*CHUDGetOption("killfeediconscale"))
     kScreenOffset = GUIScale(40)
     kScreenOffsetX = GUIScale(38)
 

@@ -21,6 +21,7 @@ CHUDMapAtmosSlider = MakeCHUDSliderCallback( "CHUD_MapAtmos", "mapatmos" )
 CHUDDMGScaleSlider = MakeCHUDSliderCallback( "CHUD_DMGScale", "dmgscale" )
 CHUDDMGTimeSlider = MakeCHUDSliderCallback( "CHUD_DamageNumberTime", "damagenumbertime" )
 CHUDKillFeedScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedScale", "killfeedscale" )
+CHUDKillFeedIconScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedIconScale", "killfeediconscale" )
 
 
 function CHUDSaveMenuSettings()
@@ -71,7 +72,7 @@ local menuLinks = { }
 originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
 	function(self)
 	
-		LoadCSSFile("lua/CHUD/Client/chud.css")
+		LoadCSSFile("lua/NS2Plus/Client/chud.css")
 
 		mainMenu = self
 		local optionsNr
@@ -179,7 +180,7 @@ function MainMenu_OnOpenMenu()
 	end
 	
 	if not mainMenu.CHUDNewsScript then
-		mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("CHUD/Client/CHUDGUI_MenuNews")
+		mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_MenuNews")
 	else
 		// Solves issue where the news were visible when you click options and then spam escape
 		// This hides the news script properly
@@ -417,7 +418,8 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					input:SetValue(((input_display:GetValue() / multiplier) - minValue) / (maxValue - minValue))
 				end
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
-					input_display:SetValue(ToString(string.sub((input:GetValue() * (maxValue - minValue) + minValue) * multiplier,0, 4)))
+					local value = (input:GetValue() * (maxValue - minValue) + minValue) * multiplier
+					input_display:SetValue(ToString(string.sub(value, 0, ConditionalValue(value > 100, 5, 4))))
 				end
 			
 			end,
@@ -427,7 +429,8 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				end
 				
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
-					input_display:SetValue(ToString(string.sub((input:GetValue() * (maxValue - minValue) + minValue) * multiplier,0, 4)))
+					local value = (input:GetValue() * (maxValue - minValue) + minValue) * multiplier
+					input_display:SetValue(ToString(string.sub(value, 0, ConditionalValue(value > 100, 5, 4))))
 				end
 			end,
 			})
@@ -437,7 +440,8 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
                     {OnSlide =
                         function(value, interest)
                             option.sliderCallback(mainMenu)
-							input_display:SetValue(ToString(string.sub((input:GetValue() * (maxValue - minValue) + minValue) * multiplier,0, 4)))
+							local value = (input:GetValue() * (maxValue - minValue) + minValue) * multiplier
+							input_display:SetValue(ToString(string.sub(value, 0, ConditionalValue(value > 100, 5, 4))))
                         end
                     }, SLIDE_HORIZONTAL)
             end

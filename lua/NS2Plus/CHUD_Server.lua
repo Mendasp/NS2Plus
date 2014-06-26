@@ -1,20 +1,20 @@
-Script.Load("lua/CHUD/CHUD_Shared.lua")
+Script.Load("lua/NS2Plus/CHUD_Shared.lua")
 
 // Clear tags on map restart
 SetCHUDTagBitmask(0)
 
-Script.Load("lua/CHUD/Server/CHUD_AlienTeam.lua")
-Script.Load("lua/CHUD/Server/CHUD_ServerSettings.lua")
-Script.Load("lua/CHUD/Server/CHUD_ModUpdater.lua")
-Script.Load("lua/CHUD/Server/CHUD_HiveStats.lua")
-Script.Load("lua/CHUD/Server/CHUD_Respawn.lua")
-Script.Load("lua/CHUD/Server/CHUD_ServerStats.lua")
-Script.Load("lua/CHUD/Server/CHUD_ClientOptions.lua")
-Script.Load("lua/CHUD/Server/CHUD_PickupExpire.lua")
-Script.Load("lua/CHUD/Server/CHUD_DropPack.lua")
-Script.Load("lua/CHUD/Server/CHUD_Shift.lua")
-Script.Load("lua/CHUD/Server/CHUD_Drifter.lua")
-Script.Load("lua/CHUD/Server/CHUD_BleedOutAttribution.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_AlienTeam.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_ServerSettings.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_ModUpdater.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_HiveStats.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_Respawn.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_ServerStats.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_ClientOptions.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_PickupExpire.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_DropPack.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_Shift.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_Drifter.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_BleedOutAttribution.lua")
 
 local oldBadgesActive = false
 // Warning about outdated mod

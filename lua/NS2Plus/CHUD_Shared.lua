@@ -1,9 +1,9 @@
 kCHUDElixerVersion = 1.72
-Script.Load("lua/CHUD/Elixer_Utility.lua")
+Script.Load("lua/NS2Plus/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
 -- Remove with 267
-Script.Load("lua/CHUD/CHUD_Shared266.lua")
+Script.Load("lua/NS2Plus/CHUD_Shared266.lua")
 
 kCHUDStatsTrackAccLookup =
 	set {
@@ -91,16 +91,16 @@ Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
 
-Script.Load("lua/CHUD/Shared/CHUD_Utility.lua")
-Script.Load("lua/CHUD/Shared/CHUD_Autopickup.lua")
-Script.Load("lua/CHUD/Shared/CHUD_CommanderSelection.lua")
-Script.Load("lua/CHUD/Shared/CHUD_LayMines.lua")
-Script.Load("lua/CHUD/Shared/CHUD_AmmoPack.lua")
-Script.Load("lua/CHUD/Shared/CHUD_Grenade.lua")
-Script.Load("lua/CHUD/Shared/CHUD_BoneWall.lua")
-Script.Load("lua/CHUD/Shared/CHUD_LerkBite.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_AmmoPack.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_Grenade.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_BoneWall.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_LerkBite.lua")
 
-Script.Load("lua/CHUD/Shared/CHUD_ReadyRoom.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_ReadyRoom.lua")
 
 CHUDTagBitmask = {
 	mcr = 0x1,
