@@ -65,56 +65,18 @@ originalMenuCreateOptions = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionsFo
 		form:SetHeight(#options*50)
 		return form
 	end)
-	
-local menuLinks = { }
-originalInitMainMenu = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
-	function(self)
-	
-		LoadCSSFile("lua/CHUD/Client/chud.css")
 
+originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks", function(self)
 		mainMenu = self
-		local optionsNr
-		// Override CreateMainLink so we can get a table with menu entries
-		// When we have a table with main menu entries we can sort it ourselves
-		// Seems like the positions are 70px apart looking at the CSS, so we can do this in code!
-		originalCreateMainLink = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLink",
-			function(self, text, className, linkNum)
-				if className == "options_ingame" then
-					optionsNr = linkNum
-				end
-				if optionsNr and optionsNr <= linkNum and text ~= "NS2+ OPTIONS" then
-					linkNum = tostring(tonumber(linkNum)+1)
-					if tonumber(linkNum) < 10 then
-						linkNum = "0" .. linkNum
-					end
-				end
-				local menuLink = originalCreateMainLink(self, text, className, linkNum)
-				menuLink.linkNr = tonumber(linkNum)-1
-				table.insert(menuLinks, menuLink)
-				return menuLink
-			end)
-
-		originalInitMainMenu(self)
-        self.CHUDOptionLink = self:CreateMainLink("NS2+ OPTIONS", "options_ingame", "06")
-        self.CHUDOptionLink:AddEventCallbacks(
-        {
-            OnClick = function(self)
-            
-                if not mainMenu.CHUDOptionWindow then
-					mainMenu:CreateCHUDOptionWindow()
-                end
-                mainMenu:TriggerOpenAnimation(mainMenu.CHUDOptionWindow)
-                mainMenu:HideMenu()
-                
-            end
-        })
-
-		for _, menuLink in pairs(menuLinks) do
-			menuLink:SetTopOffset(50+70*menuLink.linkNr)
+		local OnClick = function(self)            
+			if not self.scriptHandle.CHUDOptionWindow then
+				self.scriptHandle:CreateCHUDOptionWindow()
+			end
+			self.scriptHandle:TriggerOpenAnimation(self.scriptHandle.CHUDOptionWindow)
+			self.scriptHandle:HideMenu()	
 		end
-		
-		self.profileBackground:SetTopOffset(-70)
-		
+		self:AddMainLink( "NS2+ OPTIONS", 6, OnClick, 2)
+		originalCreateMainLinks(self)
 	end)
 	
 originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
@@ -122,45 +84,17 @@ originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
 		if self.CHUDNewsScript then
 			self.CHUDNewsScript:SetIsVisible(false)
 		end
-	
+
 		originalHideMenu(self)
-		
-		if self.CHUDOptionLink then
-			self.CHUDOptionLink:SetIsVisible(false)
-		end
 	end)
 	
 originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationCompleted",
 	function(self, animatedItem, animationName, itemHandle)
-		if animationName == "ANIMATE_LINK_BG" then
-			if self.CHUDOptionLink then
-				self.CHUDOptionLink:SetFrameCount(15, 1.6, AnimateLinear, "ANIMATE_LINK_BG")
-			end
-			
-		elseif animationName == "MAIN_MENU_MOVE" then
-			if self.menuBackground:HasCSSClass("menu_bg_show") then
-				if self.CHUDOptionLink then
-					self.CHUDOptionLink:SetIsVisible(true)
-				end
-				
-				if self.CHUDNewsScript then
-					self.CHUDNewsScript:SetIsVisible(true)
-				end
-				
-			end
+		if animationName == "MAIN_MENU_MOVE" and self.menuBackground:HasCSSClass("menu_bg_show") and self.CHUDNewsScript then
+			self.CHUDNewsScript:SetIsVisible(true)
 		end
 
 		originalMenuAnimations(self, animatedItem, animationName, itemHandle)
-	end)
-	
-originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionChanged",
-	function(self, oldX, oldY, newX, newY)
-		originalMainMenuResChange(self, oldX, oldY, newX, newY)
-		for _, menuLink in pairs(menuLinks) do
-			menuLink:SetTopOffset(50+70*menuLink.linkNr)
-		end
-		
-		self.profileBackground:SetTopOffset(-70)
 	end)
 
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
@@ -182,7 +116,7 @@ function MainMenu_OnOpenMenu()
 	else
 		// Solves issue where the news were visible when you click options and then spam escape
 		// This hides the news script properly
-		mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.resumeLink:GetIsVisible())
+		mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.Links[1]:GetIsVisible())
 	end
 
 end
