@@ -23,11 +23,12 @@ originalGUICommAlertsKeyEvent = Class_ReplaceMethod("GUICommanderAlerts", "SendK
 						end
 						numberMessages = numberMessages - 1
 					end
-				else
-					local latestMessage = self.messages[numberMessages]
-					AlertClicked(latestMessage)
-					return true
 				end
+				
+				// If we go through the queue and no players have requests, we go to the last alert
+				local latestMessage = self.messages[table.count(self.messages)]
+				AlertClicked(latestMessage)
+				return true
 				
 			elseif key == InputKey.MouseButton0 then
 			
