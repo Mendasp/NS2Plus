@@ -6,7 +6,7 @@ Latest changes
 ==============
 - 28/06/2014
 	- Added option to change the color of the killfeed higlight border. Available in the HUD tab.
-	- Added option to make Spacebar only respond to player requests as a Marine Commander. Available in the Misc. tab.
+	- Added option to make Spacebar only prioritize player requests as a Marine Commander. Available in the Misc. tab.
 
 - 26/06/2014
 	- Added option for bigger killfeed icons.
