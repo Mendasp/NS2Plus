@@ -240,8 +240,16 @@ function GUIDeathMessages:AddMessage(killerColor, killerName, targetColor, targe
     local player = Client.GetLocalPlayer()
     local alpha = ConditionalValue(player and Client.GetIsControllingPlayer() and player:GetName() == killerName and targetIsPlayer and killerColor ~= targetColor and CHUDGetOption("killfeedhighlight") > 0, 1, 0)
     
-    local backgroundColor = ColorIntToColor(killerColor)
-    backgroundColor.a = alpha
+    local backgroundColor
+	
+	if CHUDGetOption("killfeedcolor") > 0 then
+		backgroundColor = ColorIntToColor(CHUDGetOptionAssocVal("killfeedcolor"))
+	else
+		backgroundColor = ColorIntToColor(killerColor)
+	end
+	
+	backgroundColor.a = alpha
+	
     insertMessage["BackgroundWidth"] = textWidth + scaledIconWidth
     insertMessage["Background"]:SetSize(Vector(insertMessage["BackgroundWidth"], kBackgroundHeight, 0))
     insertMessage["Background"]:SetAnchor(GUIItem.Right, GUIItem.Top)

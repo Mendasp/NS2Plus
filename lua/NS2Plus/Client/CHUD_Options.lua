@@ -621,7 +621,26 @@ CHUDOptions =
 				defaultValue = 1,
 				category = "hud",
 				valueType = "int",
-				sort = "D9",
+				applyFunction = function()
+					CHUDRestartScripts({ "GUIDeathMessages" })
+				end,
+				sort = "D9a",
+			},
+			killfeedcolor = {
+				name    = "CHUD_KillFeedHighlightColor",
+				label   = "Killfeed highlight color",
+				tooltip = "Chooses the color of the highlight border for your kills in the killfeed.",
+				type    = "select",
+				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
+				valueTable = { 0x000000, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = function()
+					CHUDRestartScripts({ "GUIDeathMessages" })
+				end,
+				sort = "D9b",
 			},
 			
 			
@@ -831,5 +850,17 @@ CHUDOptions =
 				category = "comp",
 				valueType = "bool",
 				sort = "F2",
+			},
+			commqueue = { 
+				name    = "CHUD_CommQueue",
+				label   = "(Comm) Spacebar Alert Queue",
+				tooltip = "Allows the spacebar alert queue to only respond to player requests.",
+				type    = "select",
+				values  = { "Default", "Only Player Alerts" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "F3",
 			},
 }
