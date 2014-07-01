@@ -159,9 +159,11 @@ if Server then
                     if not self.timeNextAutoConcedeCheck or self.timeNextAutoConcedeCheck < time then
                         
                         team1Lost, team2Lost = CheckAutoConcede(self)
-                        if team1Lost then
+                        if team2Lost then
+                            self.team2.loseReason = "Auto concede"
                             self:EndGame( self.team1 )
-                        elseif team2Lost then
+                        elseif team1Lost then
+                            self.team1.loseReason = "Auto concede"
                             self:EndGame( self.team2 )
                         end
                         
