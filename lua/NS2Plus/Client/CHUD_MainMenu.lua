@@ -173,7 +173,7 @@ function MainMenu_OnOpenMenu()
 	mainMenu.scanLine:SetIsVisible(not CHUDGetOption("mingui"))
 	
 	if CHUDGetOption("mingui") then
-		mainMenu.mainWindow:SetBackgroundTexture("ui/blank.dds")
+		mainMenu.mainWindow:SetBackgroundTexture("ui/transparent.dds")
 	else
 		mainMenu.mainWindow:SetBackgroundTexture("ui/menu/grid.dds")
 		mainMenu.mainWindow:SetBackgroundRepeat(true)

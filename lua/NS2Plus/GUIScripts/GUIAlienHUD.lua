@@ -29,7 +29,7 @@ Class_AddMethod( "GUIAlienHUD", "CHUDRepositionGUI",
 		biomass.background:SetPosition(GUIScale(Vector(20, y, 0)))
 		biomass.smokeyBackground:SetPosition(GUIScale(Vector(-100, y-75, 0)))
 		
-		local biomassTexture = ConditionalValue(mingui, "ui/biomass_bar.dds", "ui/blank.dds")
+		local biomassTexture = ConditionalValue(mingui, "ui/biomass_bar.dds", "ui/transparent.dds")
 		
 		biomass.smokeyBackground:SetIsVisible(mingui)
 		biomass.background:SetTexture(biomassTexture)
@@ -63,7 +63,7 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self.gameTime:SetColor(kAlienTeamColorFloat)
 		
 		local kTextureNameCHUD = CHUDGetOptionAssocVal("alienbars")
-		local kBackgroundCHUD = ConditionalValue(mingui, PrecacheAsset("ui/alien_commander_bg_smoke.dds"), PrecacheAsset("ui/blank.dds"))
+		local kBackgroundCHUD = ConditionalValue(mingui, PrecacheAsset("ui/alien_commander_bg_smoke.dds"), PrecacheAsset("ui/transparent.dds"))
 		
 		// Backgrounds of health/energy
 		self.healthBall.dialBackground:SetAdditionalTexture("noise", kBackgroundCHUD)

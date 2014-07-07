@@ -8,7 +8,7 @@ Class_AddMethod( "GUIProgressBar", "ApplyCHUD",
 	function(self)
 		
 		local mingui = CHUDGetOption("mingui")
-		local texture = ConditionalValue(mingui, PrecacheAsset("ui/blank.dds"), kTextures[self.teamType])
+		local texture = ConditionalValue(mingui, PrecacheAsset("ui/transparent.dds"), kTextures[self.teamType])
 
 		self.progressBarBg:SetTexture(texture)
 		

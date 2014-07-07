@@ -90,8 +90,8 @@ originalGUIPickupsUpdate = Class_ReplaceMethod( "GUIPickups", "Update",
 					local pickupExpire = (CHUDGetOption("pickupexpire") > 0 and pickup:isa("Weapon")) or CHUDGetOption("pickupexpire") == 2
 					local freePickupGraphic = self:GetFreePickupGraphic()
 					freePickupGraphic:SetIsVisible(true)
-					freePickupGraphic.expireBarBg:SetIsVisible(timeLeft > -1 and pickupExpire)
-					freePickupGraphic.expireBar:SetIsVisible(timeLeft > -1 and pickupExpire)
+					freePickupGraphic.expireBarBg:SetIsVisible(timeLeft > 0 and pickupExpire)
+					freePickupGraphic.expireBar:SetIsVisible(timeLeft > 0 and pickupExpire)
 								   
 					local distance = pickup:GetDistanceSquared(localPlayer)
 					distance = distance / (kPickupsVisibleRange * kPickupsVisibleRange)

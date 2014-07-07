@@ -107,7 +107,7 @@ function(self)
 	self.statusDisplay.healthBar:SetIsVisible(hpbar)
 	self.statusDisplay.armorBar:SetIsVisible(hpbar)
 	
-	local texture = ConditionalValue(hpbar, PrecacheAsset("ui/marine_HUD_status.dds"), PrecacheAsset("ui/blank.dds"))
+	local texture = ConditionalValue(hpbar, PrecacheAsset("ui/marine_HUD_status.dds"), PrecacheAsset("ui/transparent.dds"))
 	self.statusDisplay.statusbackground:SetTexture(texture)
 	
 	self:CHUDRepositionGUI()
@@ -149,7 +149,7 @@ originalShowNewArmorLevel = Class_ReplaceMethod( "GUIMarineHUD", "ShowNewArmorLe
 function(self, armorLevel)
 	local uplvl = CHUDGetOption("uplvl")
 	if uplvl == 0 then
-		self.armorLevel:SetTexture("ui/blank.dds")
+		self.armorLevel:SetTexture("ui/transparent.dds")
 	elseif uplvl == 1 then
 		originalShowNewArmorLevel(self, armorLevel)
 		self.armorLevel:SetTexture(GUIMarineHUD.kUpgradesTexture)
@@ -167,7 +167,7 @@ originalShowNewWeaponLevel = Class_ReplaceMethod( "GUIMarineHUD", "ShowNewWeapon
 function(self, weaponLevel)
 	local uplvl = CHUDGetOption("uplvl")
 	if uplvl == 0 then
-		self.weaponLevel:SetTexture("ui/blank.dds")
+		self.weaponLevel:SetTexture("ui/transparent.dds")
 	elseif uplvl == 1 then
 		originalShowNewWeaponLevel(self, weaponLevel)
 		self.weaponLevel:SetTexture(GUIMarineHUD.kUpgradesTexture)
