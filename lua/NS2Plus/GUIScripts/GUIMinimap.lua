@@ -8,6 +8,7 @@ local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ Locat
 AppendToEnum( kBlipColorType, "White" )
 AppendToEnum( kBlipSizeType, "BoneWall" )
 kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.White, kBlipSizeType.BoneWall, kStaticBlipsLayer }
+kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.Normal, kStaticBlipsLayer, "SentryBattery" }
 
 
 Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
@@ -30,11 +31,11 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 			minimapButtons.techMapButton:SetPosition(Vector(buttonPos,0,0))
 			
 			if player:isa("MarineCommander") then
-				local frameTexture = ConditionalValue(mingui, "ui/marine_commander_textures.dds", "ui/blank.dds")
-				local buttonsTexture = ConditionalValue(mingui, GUICommanderButtonsMarines:GetBackgroundTextureName(), "ui/blank.dds")
-				local selectionTexture = ConditionalValue(mingui, GUISelectionPanel.kSelectionTextureMarines, "ui/blank.dds")
-				local logoutTexture = ConditionalValue(mingui, GUICommanderLogout.kLogoutMarineTextureName, "ui/blank.dds")
-				local tooltipTexture = ConditionalValue(mingui, GUICommanderTooltip.kMarineBackgroundTexture, "ui/blank.dds")
+				local frameTexture = ConditionalValue(mingui, "ui/marine_commander_textures.dds", "ui/transparent.dds")
+				local buttonsTexture = ConditionalValue(mingui, GUICommanderButtonsMarines:GetBackgroundTextureName(), "ui/transparent.dds")
+				local selectionTexture = ConditionalValue(mingui, GUISelectionPanel.kSelectionTextureMarines, "ui/transparent.dds")
+				local logoutTexture = ConditionalValue(mingui, GUICommanderLogout.kLogoutMarineTextureName, "ui/transparent.dds")
+				local tooltipTexture = ConditionalValue(mingui, GUICommanderTooltip.kMarineBackgroundTexture, "ui/transparent.dds")
 				
 				minimapFrame.minimapFrame:SetTexture(frameTexture)
 				minimapFrame.buttonsScript.background:SetTexture(buttonsTexture)
@@ -44,12 +45,12 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 				commanderTooltip.backgroundCenter:SetTexture(tooltipTexture)
 				commanderTooltip.backgroundBottom:SetTexture(tooltipTexture)
 			elseif player:isa("AlienCommander") then
-				local buttonsTexture = ConditionalValue(mingui, "ui/alien_commander_smkmask.dds", "ui/blank.dds")
-				local selectionTexture = ConditionalValue(mingui, "ui/alien_logout_smkmask.dds", "ui/blank.dds")
-				local smokeTexture = ConditionalValue(mingui, "ui/alien_minimap_smkmask.dds", "ui/blank.dds")
-				local resourceTexture = ConditionalValue(mingui, "ui/alien_ressources_smkmask.dds", "ui/blank.dds")
-				local logoutTexture = ConditionalValue(mingui, "ui/alien_logout_smkmask.dds", "ui/blank.dds")
-				local tooltipTexture = ConditionalValue(mingui, "ui/alien_logout_smkmask.dds", "ui/blank.dds")
+				local buttonsTexture = ConditionalValue(mingui, "ui/alien_commander_smkmask.dds", "ui/transparent.dds")
+				local selectionTexture = ConditionalValue(mingui, "ui/alien_logout_smkmask.dds", "ui/transparent.dds")
+				local smokeTexture = ConditionalValue(mingui, "ui/alien_minimap_smkmask.dds", "ui/transparent.dds")
+				local resourceTexture = ConditionalValue(mingui, "ui/alien_ressources_smkmask.dds", "ui/transparent.dds")
+				local logoutTexture = ConditionalValue(mingui, "ui/alien_logout_smkmask.dds", "ui/transparent.dds")
+				local tooltipTexture = ConditionalValue(mingui, "ui/alien_logout_smkmask.dds", "ui/transparent.dds")
 
 				minimapFrame.buttonsScript.smokeyBackground:SetTexture(buttonsTexture)
 				selectionPanelScript.smokeyBackground:SetTexture(selectionTexture)
@@ -59,7 +60,7 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 				commanderTooltip.smokeyBackground:SetTexture(tooltipTexture)
 				
 				local biomass = ClientUI.GetScript("GUIBioMassDisplay")
-				local biomassTexture = ConditionalValue(mingui, "ui/biomass_bar.dds", "ui/blank.dds")
+				local biomassTexture = ConditionalValue(mingui, "ui/biomass_bar.dds", "ui/transparent.dds")
 				
 				biomass.smokeyBackground:SetIsVisible(mingui)
 				biomass.background:SetTexture(biomassTexture)
@@ -224,3 +225,13 @@ oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
 		end
 		oldSetBlipScale( self, blipScale )
 	end)	
+
+local oldSetPlayerIconColor
+oldSetPlayerIconColor = Class_ReplaceMethod( "GUIMinimap", "SetPlayerIconColor",
+	function(self, color)
+		if CHUDGetOption("minimaparrowcolor") > 0 then
+			self.playerIconColor = ColorIntToColor(CHUDGetOptionAssocVal("minimaparrowcolor"))
+		else
+			oldSetPlayerIconColor(self, color)
+		end
+	end)

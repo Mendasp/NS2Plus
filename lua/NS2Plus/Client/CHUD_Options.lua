@@ -247,6 +247,20 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "E3",
 			},
+			maxdecallifetime = {
+				name    = "CHUD_MaxDecalLifeTime",
+				label   = "Max decal lifetime (minutes)",
+				tooltip = "Changes the maximum decal lifetime, you still have to set the slidebar to your liking in the vanilla options.",
+				type    = "slider",
+				sliderCallback = CHUDDecalSlider,
+				defaultValue = 1,
+				minValue = 0,
+				maxValue = 100,
+				multiplier = 1,
+				category = "func",
+				valueType = "float",
+				sort = "E4",
+			},
 			
 			
 			score = {
@@ -491,6 +505,28 @@ CHUDOptions =
 					OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDGetOption("locationalpha"))*255))
 				end,
 				sort = "C9",
+			},
+			minimaparrowcolor = { 
+				name    = "CHUD_MinimapArrowColor",
+				label   = "Minimap arrow color",
+				tooltip = "Sets the color of the arrow indicating your position in the minimap.",
+				type    = "select",
+				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
+				valueTable = { 0x0, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = function()
+					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
+					local playerIconColor = nil
+					if CHUDGetOption("minimaparrowcolor") > 0 then
+						playerIconColor = ColorIntToColor(CHUDGetOptionAssocVal("minimaparrowcolor"))
+					end
+					minimapScript:SetPlayerIconColor(playerIconColor)
+					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
+				end,
+				sort = "C9b",
 			},
 			pglines = { 
 				name    = "CHUD_MapConnectorLines",

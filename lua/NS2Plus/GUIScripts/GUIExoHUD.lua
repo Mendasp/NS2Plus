@@ -26,7 +26,7 @@ originalExoWeaponHolder = Class_ReplaceMethod( "ExoWeaponHolder", "OnUpdateRende
 			local viewModel = parent:GetViewModelEntity()
 			if viewModel and viewModel:GetRenderModel() then
 				if CHUDGetOption("mingui") then
-					viewModel:GetRenderModel():SetMaterialParameter("scanlinesMap", "ui/blank.dds")
+					viewModel:GetRenderModel():SetMaterialParameter("scanlinesMap", "ui/transparent.dds")
 				else
 					viewModel:GetRenderModel():SetMaterialParameter("scanlinesMap", "ui/exosuit_scanlines.dds")
 				end

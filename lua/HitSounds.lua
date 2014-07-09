@@ -1,3 +1,7 @@
+function Grenade:GetWeaponTechId()
+    return kTechId.GrenadeLauncher
+end
+
 
 local kHitSoundMessage =
 {
@@ -77,8 +81,9 @@ if Server then
 
     local hits = {}
     
-    local kHitSoundHighRailCharge = 0.9
-    local kHitSoundMidRailCharge = 0.5
+    // Percentages used for weapons with variable damage
+    local kHitSoundHigh = 0.9
+    local kHitSoundMid = 0.5
     
     local kHitSoundHighShotgunHitCount = 14
     local kHitSoundMidShotgunHitCount = 6
@@ -88,7 +93,7 @@ if Server then
     
     local kHitSoundEnabledForWeapon =
         set {
-            kTechId.Axe, kTechId.Welder, kTechId.Pistol, kTechId.Rifle, kTechId.Shotgun, kTechId.Flamethrower,
+            kTechId.Axe, kTechId.Welder, kTechId.Pistol, kTechId.Rifle, kTechId.Shotgun, kTechId.Flamethrower, kTechId.GrenadeLauncher,
             kTechId.Claw, kTechId.Minigun, kTechId.Railgun, 
             kTechId.Bite, kTechId.Parasite, kTechId.Xenocide, 
             kTechId.Spit, 
@@ -148,9 +153,17 @@ if Server then
                 if hit.weapon == kTechId.Railgun then
                     // Railgun hitsound is based on charge amount
                     local chargeAmount = ( ( hit.overkill / NS2Gamerules_GetUpgradedDamageScalar( attacker ) ) - kRailgunDamage ) / kRailgunChargeDamage
-                    if kHitSoundHighRailCharge <= chargeAmount then
+                    if kHitSoundHigh <= chargeAmount then
                         sound = 3
-                    elseif kHitSoundMidRailCharge <= chargeAmount then
+                    elseif kHitSoundMid <= chargeAmount then
+                        sound = 2
+                    end
+                elseif hit.weapon == kTechId.GrenadeLauncher then
+                    // Grenade Launcher is not affected by weapon upgrades
+                    local damageAmount = hit.overkill / kGrenadeLauncherGrenadeDamage
+                    if kHitSoundHigh <= damageAmount then
+                        sound = 3
+                    elseif kHitSoundMid <= damageAmount then
                         sound = 2
                     end
                 elseif hit.weapon == kTechId.Xenocide then

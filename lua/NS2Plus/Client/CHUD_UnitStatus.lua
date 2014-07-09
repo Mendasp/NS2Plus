@@ -61,41 +61,6 @@ function TunnelEntrance:GetUnitNameOverride(viewer)
 
 end
 
-// Compmod compatibility
-// FU Dragon
-if ModLoader_GetModInfo("CompMod") then
-	Script.Load("lua/TunnelExit.lua")
-	function TunnelExit:GetUnitNameOverride(viewer)
-
-		local function GetDestinationLocationName(self)
-
-			local location = Shared.GetEntity(self.destLocationId)
-			
-			if location then
-				return location:GetName()
-			end
-
-		end
-
-		local unitName = GetDisplayName(self)
-
-		if not GetAreEnemies(self, viewer) then
-			local destinationName = GetDestinationLocationName(self)        
-			if destinationName then
-				unitName = unitName .. " to " .. destinationName
-				if CHUDGetOption("minnps") then
-					unitName = destinationName
-				end
-			end
-			
-		end
-
-		return unitName
-
-	end
-end
-
-
 local validUnitHintWeapons = set { "rifle", "shotgun", "flamethrower", "grenadelauncher" }
 			
 // This is a 5/10 hack according to Dragon
@@ -110,7 +75,6 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 	end
 	
 	local player = Client.GetLocalPlayer()
-	
 	
 	if HasMixin(self, "Live") and (not self.GetShowHealthFor or self:GetShowHealthFor(player)) and CHUDHint then
 	
@@ -180,6 +144,9 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 					local eggTechId = rawget( kTechId, kTechId[ self.gestationTypeTechId ].."Egg" )
 					hintTable.EvolveClass = eggTechId and GetDisplayNameForTechId(eggTechId)
 				end
+			end
+			if self:isa("Player") and self:isa("Alien") and not self:isa("Hallucination") then
+				hintTable.EnergyFraction = self:GetEnergy() / self:GetMaxEnergy()
 			end
 		end
 		return hintTable

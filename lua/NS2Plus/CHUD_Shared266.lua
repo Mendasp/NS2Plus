@@ -87,49 +87,51 @@ if Server then
         
     end
 	
-	Class_ReplaceMethod( "PlayingTeam", "GetHasTeamLost", 
-		function( self )
+    if not CombatNS2Gamerules then
+        Class_ReplaceMethod( "PlayingTeam", "GetHasTeamLost", 
+            function( self )
 
-            PROFILE("PlayingTeam:GetHasTeamLost")
-            if GetGamerules():GetGameStarted() and not Shared.GetCheatsEnabled() then
-            
-                // Team can't respawn or last Command Station or Hive destroyed
-                local activePlayers = self:GetHasActivePlayers()
-                local abilityToRespawn = self:GetHasAbilityToRespawn()
-                local numAliveCommandStructures = self:GetNumAliveCommandStructures()
+                PROFILE("PlayingTeam:GetHasTeamLost")
+                if GetGamerules():GetGameStarted() and not Shared.GetCheatsEnabled() then
                 
-                if  (not activePlayers and not abilityToRespawn) or
-                    (numAliveCommandStructures == 0) or
-                    (self:GetNumPlayers() == 0) or 
-                    self:GetHasConceded() then
+                    // Team can't respawn or last Command Station or Hive destroyed
+                    local activePlayers = self:GetHasActivePlayers()
+                    local abilityToRespawn = self:GetHasAbilityToRespawn()
+                    local numAliveCommandStructures = self:GetNumAliveCommandStructures()
                     
-                    local reasons = {}
-                    if (not activePlayers and not abilityToRespawn) then
-                        reasons[#reasons+1] = "Can't spawn"
+                    if  (not activePlayers and not abilityToRespawn) or
+                        (numAliveCommandStructures == 0) or
+                        (self:GetNumPlayers() == 0) or 
+                        self:GetHasConceded() then
+                        
+                        local reasons = {}
+                        if (not activePlayers and not abilityToRespawn) then
+                            reasons[#reasons+1] = "Can't spawn"
+                        end
+                        if (numAliveCommandStructures == 0) then
+                            reasons[#reasons+1] = "No command structure"
+                        end
+                        if (self:GetNumPlayers() == 0) then
+                            reasons[#reasons+1] = "No players"
+                        end
+                        if (self:GetHasConceded()) then
+                            reasons[#reasons+1] = "Gave up"
+                        end
+                        self.loseReason = string.format( "%s [%f]", table.concat( reasons, ", " ), Shared.GetTime() )
+                        
+                        return true
+                        
                     end
-                    if (numAliveCommandStructures == 0) then
-                        reasons[#reasons+1] = "No command structure"
-                    end
-                    if (self:GetNumPlayers() == 0) then
-                        reasons[#reasons+1] = "No players"
-                    end
-                    if (self:GetHasConceded()) then
-                        reasons[#reasons+1] = "Gave up"
-                    end
-                    self.loseReason = string.format( "%s [%f]", table.concat( reasons, ", " ), Shared.GetTime() )
-                    
-                    return true
                     
                 end
                 
-            end
-            
-            self.loseReason = nil
-            
-            return false
-            
-        end)
-
+                self.loseReason = nil
+                
+                return false
+                
+            end)
+    end
+    
     function NS2Gamerules:CheckGameEnd()
 
         PROFILE("NS2Gamerules:CheckGameEnd")
@@ -159,9 +161,11 @@ if Server then
                     if not self.timeNextAutoConcedeCheck or self.timeNextAutoConcedeCheck < time then
                         
                         team1Lost, team2Lost = CheckAutoConcede(self)
-                        if team1Lost then
+                        if team2Lost then
+                            self.team2.loseReason = "Auto concede"
                             self:EndGame( self.team1 )
-                        elseif team2Lost then
+                        elseif team1Lost then
+                            self.team1.loseReason = "Auto concede"
                             self:EndGame( self.team2 )
                         end
                         
