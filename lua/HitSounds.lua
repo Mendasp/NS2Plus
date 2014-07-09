@@ -103,6 +103,8 @@ if Server then
     end
     
     function HitSound_RecordHit( attacker, target, amount, point, overkill, weapon )
+        target = (target and target:GetId()) or Entity.invalidId
+        
         local hit
         for i=1,#hits do
             hit = hits[i]
@@ -140,7 +142,7 @@ if Server then
         for i=1,#hits do
             hit = hits[i]
             attacker = hit.attacker
-            target = hit.target 
+            target = Shared.GetEntity(hit.target)
             
             if target and target:isa("Player") and not target:isa("Embryo") then
                 
@@ -178,7 +180,7 @@ if Server then
             end
             
             // Send the accumulated damage message
-            SendDamageMessage( attacker, hit.target, hit.amount, hit.point, hit.overkill )
+            SendDamageMessage( attacker, Shared.GetEntity(hit.target), hit.amount, hit.point, hit.overkill )
             
         end
         
