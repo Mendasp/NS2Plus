@@ -9,7 +9,8 @@ Latest changes
 	- Enabled hitsounds for Grenade Launcher.
 	- Made unsocketed/blueprint Power Nodes show up properly in the minimap.
 	- Added option to choose the color of the minimap arrow representing your position. Available in HUD tab.
-
+	- Alien Commanders can now see the energy of the players.
+	- Added high contrast for armor in Insight.
 - 28/06/2014
 	- Added option to change the color of the killfeed higlight border. Available in the HUD tab.
 	- Added option to make Spacebar prioritize player requests as a Marine Commander. Available in the Misc. tab.

@@ -76,7 +76,6 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 	
 	local player = Client.GetLocalPlayer()
 	
-	
 	if HasMixin(self, "Live") and (not self.GetShowHealthFor or self:GetShowHealthFor(player)) and CHUDHint then
 	
 		local description = self:GetUnitName(player)
@@ -145,6 +144,9 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 					local eggTechId = rawget( kTechId, kTechId[ self.gestationTypeTechId ].."Egg" )
 					hintTable.EvolveClass = eggTechId and GetDisplayNameForTechId(eggTechId)
 				end
+			end
+			if self:isa("Player") and self:isa("Alien") and not self:isa("Hallucination") then
+				hintTable.EnergyFraction = self:GetEnergy() / self:GetMaxEnergy()
 			end
 		end
 		return hintTable

@@ -36,7 +36,11 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		if CHUDBlipData.TunnelOwner then
 			blipData.Hint = CHUDBlipData.TunnelOwner
 			showHints = true
-		end		
+		end
+		
+		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
+			blipData.AbilityFraction = CHUDBlipData.EnergyFraction
+		end
 	end
 	
 
