@@ -7,7 +7,8 @@ Latest changes
 - /07/2014
 	- Added Lerk Bite icon.
 	- Enabled hitsounds for Grenade Launcher.
-	- Made unsocketed/blueprint Power Nodes show up properly in the minimap. 
+	- Made unsocketed/blueprint Power Nodes show up properly in the minimap.
+	- Added option to choose the color of the minimap arrow representing your position. Available in HUD tab.
 
 - 28/06/2014
 	- Added option to change the color of the killfeed higlight border. Available in the HUD tab.

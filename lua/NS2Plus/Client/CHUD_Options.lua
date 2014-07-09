@@ -492,6 +492,28 @@ CHUDOptions =
 				end,
 				sort = "C9",
 			},
+			minimaparrowcolor = { 
+				name    = "CHUD_MinimapArrowColor",
+				label   = "Minimap arrow color",
+				tooltip = "Sets the color of the arrow indicating your position in the minimap.",
+				type    = "select",
+				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
+				valueTable = { 0x0, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = function()
+					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
+					local playerIconColor = nil
+					if CHUDGetOption("minimaparrowcolor") > 0 then
+						playerIconColor = ColorIntToColor(CHUDGetOptionAssocVal("minimaparrowcolor"))
+					end
+					minimapScript:SetPlayerIconColor(playerIconColor)
+					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
+				end,
+				sort = "C9b",
+			},
 			pglines = { 
 				name    = "CHUD_MapConnectorLines",
 				label   = "Phase Gate Lines",

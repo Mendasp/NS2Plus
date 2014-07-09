@@ -225,3 +225,13 @@ oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
 		end
 		oldSetBlipScale( self, blipScale )
 	end)	
+
+local oldSetPlayerIconColor
+oldSetPlayerIconColor = Class_ReplaceMethod( "GUIMinimap", "SetPlayerIconColor",
+	function(self, color)
+		if CHUDGetOption("minimaparrowcolor") > 0 then
+			self.playerIconColor = ColorIntToColor(CHUDGetOptionAssocVal("minimaparrowcolor"))
+		else
+			oldSetPlayerIconColor(self, color)
+		end
+	end)
