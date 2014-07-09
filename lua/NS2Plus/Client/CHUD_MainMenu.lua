@@ -22,6 +22,7 @@ CHUDDMGScaleSlider = MakeCHUDSliderCallback( "CHUD_DMGScale", "dmgscale" )
 CHUDDMGTimeSlider = MakeCHUDSliderCallback( "CHUD_DamageNumberTime", "damagenumbertime" )
 CHUDKillFeedScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedScale", "killfeedscale" )
 CHUDKillFeedIconScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedIconScale", "killfeediconscale" )
+CHUDDecalSlider = MakeCHUDSliderCallback( "CHUD_MaxDecalLifeTime", "maxdecallifetime" )
 
 
 function CHUDSaveMenuSettings()

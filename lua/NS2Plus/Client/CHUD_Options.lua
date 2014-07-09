@@ -247,6 +247,20 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "E3",
 			},
+			maxdecallifetime = {
+				name    = "CHUD_MaxDecalLifeTime",
+				label   = "Max decal lifetime (minutes)",
+				tooltip = "Changes the maximum decal lifetime, you still have to set the slidebar to your liking in the vanilla options.",
+				type    = "slider",
+				sliderCallback = CHUDDecalSlider,
+				defaultValue = 1,
+				minValue = 0,
+				maxValue = 100,
+				multiplier = 1,
+				category = "func",
+				valueType = "float",
+				sort = "E4",
+			},
 			
 			
 			score = {
