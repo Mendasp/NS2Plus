@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /07/2014
+	- Added Lerk Bite icon.
+	- Enabled hitsounds for Grenade Launcher.
+	- Made unsocketed/blueprint Power Nodes show up properly in the minimap. 
+
 - 28/06/2014
 	- Added option to change the color of the killfeed higlight border. Available in the HUD tab.
 	- Added option to make Spacebar prioritize player requests as a Marine Commander. Available in the Misc. tab.
@@ -23,52 +28,6 @@ Latest changes
 	- Phase Gates and Gorge Tunnels will display their destination without aiming at them. This is disabled for Minimal Nameplates. (Thanks remi.D!)
 	- Gorge tunnels will show who dropped it if you look at it. This is disabled for Minimal Nameplates. (Thanks remi.D!)
 	- Added kill feed size option. Available in the HUD tab.
-	
-- 16/06/2014 (Build 266):
-	- Changed IP and Armory hitboxes so the arms don't block bullets.
-	- Fixed bug where the full shot hitsound was playing the medium one.
-	
-- 15/06/2014 (Build 266):
-	- Added red outline for the CompMod v3 HMG.
-	- Yet another adjustment to the kill feed size.
-	- Stats now get reset for players swapping teams mid-game.
-
-- 13/06/2014 (Build 266):
-	- Fixed shotgun not being tracked by stats (whoops!).
-	- Fixed nan% when only hitting an Onos in an entire game (when does this ever happen?).
-	- Fixed Spikes being tracked as part of Bite/Umbra/Spores.
-	- The kill feed now scales with resolution.
-
-- 12/06/2014 (Build 266):
-	- Revamped stats system.
-	- Fixed vanilla bug where Shotguns and Exo Miniguns didn't shoot through soft targets.
-
-- 08/06/2014 (Build 266):
-	- Added variable hitsounds for the Railgun depending on the damage done.
-	- Removed the outline from first person spectator.
-	- Fixed hitsounds for people using the High pitch modifier.
-
-- 07/06/2014 (Build 266):
-	- Reduced network bandwidth cost for NS2+ stat damage messages. (Thanks remi.D!)
-	- Reduced 300+ byte network spike for good shotgun hits. (Thanks remi.D!)
-	- Fixed unnecessary 540 to 720+ byte bandwidth spike every second for alien team tech tree. (Thanks remi.D!)
-	- Added slider to change how long the damage numbers stay on screen. (Thanks remi.D!)
-	- Added option to include overkill damage in damager numbers. (Thanks remi.D!)
-	- Added damage numbers to lerk poison. (Thanks remi.D!)
-	- Added support for the HMG in NS2b.
-	
-- 06/06/2014 (Build 266):
-	- Fixed Server Script Error regarding stats.
-	- Included CDT badges.
-	
-- 05/06/2014 (Build 266):
-	- Added more characters to the Insight player names font.
-	- Compatiblity with Build 266.
-
-- 01/06/2014 (Build 265):
-	- Added red border to kill feed highlight. You can toggle it off in the HUD tab.
-	- Killfeed icons now show with proper scaling.
-	- Players now show a purple outline when they're using a catpack for both the Marine Commander and spectators.
 
 =================
 Credits/Thanks to
