@@ -1,8 +1,3 @@
-function Grenade:GetWeaponTechId()
-    return kTechId.GrenadeLauncher
-end
-
-
 local kHitSoundMessage =
 {
     hitsound = "integer (1 to 3)",
