@@ -75,8 +75,8 @@ local oldSendDamageMessage = SendDamageMessage
 function SendDamageMessage( attacker, target, amount, point, overkill )
 		
 	local steamId = GetSteamIdForClientIndex(attacker:GetClientIndex())
-	if steamId and not (target:isa("Hallucination") or target.isHallucination) then
-		AddDamageStat(steamId, amount or 0, target:isa("Player"))
+	if steamId then
+		AddDamageStat(steamId, amount or 0, target and target:isa("Player") and not (target:isa("Hallucination") or target.isHallucination))
 	end
 	
 	
