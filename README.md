@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 10/07/2014
+	- Unsocketed power nodes are now grey.
+	- Made alien energy bar for Commanders the same color as it is in Insight.
+
 - 09/07/2014
 	- Added Lerk Bite icon.
 	- Enabled hitsounds for Grenade Launcher.

@@ -58,6 +58,11 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		end
 	end
 	
+	// Make the energy bar orange like in Insight
+	if CHUDBlipData and CHUDBlipData.EnergyFraction and localPlayerIsCommander then
+		updateBlip.AbilityBarBg:SetColor(Color(1,1,0,1))
+	end
+	
 	-- Minimal Nameplates
 	if minnps then
 		if CHUDBlipData and updateBlip.NameText:GetIsVisible() then	
