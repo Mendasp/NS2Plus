@@ -1,3 +1,4 @@
+AppendToEnum( kMinimapBlipType, "UnsocketedPowerPoint" )
 AppendToEnum( kMinimapBlipType, "BlueprintPowerPoint" )
 
 local originalGetMapBlipInfo = MapBlipMixin.GetMapBlipInfo
@@ -7,21 +8,36 @@ function MapBlipMixin:GetMapBlipInfo()
 			return self:OnGetMapBlipInfo()
 		end
 
-		local success = false
 		local blipType = kMinimapBlipType.Undefined
-		local blipTeam = -1
+		local blipTeam = self:GetTeamNumber()
 		local isAttacked = HasMixin(self, "Combat") and self:GetIsInCombat()
 		local isParasited = HasMixin(self, "ParasiteAble") and self:GetIsParasited()
 		
-		blipType = ConditionalValue( self:GetIsDisabled(), kMinimapBlipType.DestroyedPowerPoint, ConditionalValue(self:GetCanTakeDamageOverride(), kMinimapBlipType.PowerPoint, kMinimapBlipType.BlueprintPowerPoint))
-		blipTeam = self:GetTeamNumber()
-		
-		if blipType ~= 0 then
-			success = true
+		if self:GetIsDisabled() then
+			blipType = kMinimapBlipType.DestroyedPowerPoint
+		elseif self:GetCanTakeDamageOverride() then
+			blipType = kMinimapBlipType.PowerPoint
+		elseif self:GetIsSocketed() then
+			blipType = kMinimapBlipType.BlueprintPowerPoint
+		else
+			blipType = kMinimapBlipType.UnsocketedPowerPoint
 		end
 		
-		return success, blipType, blipTeam, isAttacked, isParasited
+		return true, blipType, blipTeam, isAttacked, isParasited
 	else
 		return originalGetMapBlipInfo(self)
 	end
+end
+
+if Server then
+	local originalPowerPointSetInternalPowerState
+	originalPowerPointSetInternalPowerState = Class_ReplaceMethod( "PowerPoint", "SetInternalPowerState",
+		function(self, powerState)
+			-- Mark the mapblip dirty when switching from unsocketed to socketed so we can see the change
+			if self.powerState == PowerPoint.kPowerState.unsocketed and powerState == PowerPoint.kPowerState.socketed then
+				self:MarkBlipDirty()
+			end
+			
+			originalPowerPointSetInternalPowerState(self, powerState)
+		end)
 end

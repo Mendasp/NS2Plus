@@ -8,6 +8,7 @@ local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ Locat
 AppendToEnum( kBlipColorType, "White" )
 AppendToEnum( kBlipSizeType, "BoneWall" )
 kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.White, kBlipSizeType.BoneWall, kStaticBlipsLayer }
+kBlipInfo[kMinimapBlipType.UnsocketedPowerPoint] = { kBlipColorType.White, kBlipSizeType.Normal, kStaticBlipsLayer, "SentryBattery" }
 kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.Normal, kStaticBlipsLayer, "SentryBattery" }
 
 
