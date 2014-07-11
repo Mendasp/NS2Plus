@@ -6,7 +6,7 @@ Latest changes
 ==============
 - 11/07/2014
 	- Fixed problem where going from overhead spectator to free cam would not apply the custom map atmospheric density.
-	- Added custom color for players in the minimap to easily tell apart players from buildings.
+	- Added custom color option for players in the minimap to easily tell apart players from buildings. Available in HUD tab.
 	- Made weapon ammo displays flash red with low ammo counts.
 	- Classic ammo flashes red with low ammo counts.
 	- Added custom minimap icons for the unsocketed/blueprint Power Nodes.
