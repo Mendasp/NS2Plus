@@ -34,7 +34,7 @@ if Server then
 	originalPowerPointSetInternalPowerState = Class_ReplaceMethod( "PowerPoint", "SetInternalPowerState",
 		function(self, powerState)
 			-- Mark the mapblip dirty when switching from unsocketed to socketed so we can see the change
-			if self.powerState == PowerPoint.kPowerState.unsocketed and powerState == PowerPoint.kPowerState.socketed then
+			if self.powerState == PowerPoint.kPowerState.unsocketed and powerState == PowerPoint.kPowerState.socketed and self.MarkBlipDirty then
 				self:MarkBlipDirty()
 			end
 			
