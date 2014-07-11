@@ -100,6 +100,7 @@ Script.Load("lua/NS2Plus/Shared/CHUD_Grenade.lua")
 Script.Load("lua/NS2Plus/Shared/CHUD_BoneWall.lua")
 Script.Load("lua/NS2Plus/Shared/CHUD_LerkBite.lua")
 Script.Load("lua/NS2Plus/Shared/CHUD_BlueprintPowerPoint.lua")
+Script.Load("lua/NS2Plus/Shared/CHUD_Autoreload.lua")
 
 Script.Load("lua/NS2Plus/Shared/CHUD_ReadyRoom.lua")
 
