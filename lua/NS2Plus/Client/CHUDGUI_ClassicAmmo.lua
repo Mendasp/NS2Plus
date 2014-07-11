@@ -11,7 +11,7 @@ function CHUDGUI_ClassicAmmo:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
-	self.scale =  Client.GetScreenHeight() / kBaseScreenHeight
+	self.scale = Client.GetScreenHeight() / kBaseScreenHeight
 	
 	self.ammoText = self:CreateAnimatedTextItem()
 	self.ammoText:SetFontName(kFontName)
@@ -23,6 +23,16 @@ function CHUDGUI_ClassicAmmo:Initialize()
 	self.ammoText:SetScale(GetScaledVector())
 	self.ammoText:SetPosition(kAmmoPos)
 	
+	self.lowAmmoOverlay = self:CreateAnimatedTextItem()
+	self.lowAmmoOverlay:SetFontName(kFontName)
+	self.lowAmmoOverlay:SetAnchor(GUIItem.Right, GUIItem.Bottom)    
+	self.lowAmmoOverlay:SetTextAlignmentX(GUIItem.Align_Min)    
+	self.lowAmmoOverlay:SetTextAlignmentY(GUIItem.Align_Center)    
+	self.lowAmmoOverlay:SetColor(kAmmoColor)
+	self.lowAmmoOverlay:SetUniformScale(self.scale)
+	self.lowAmmoOverlay:SetScale(GetScaledVector())
+	self.lowAmmoOverlay:SetPosition(kAmmoPos)
+	
 end
 
 function CHUDGUI_ClassicAmmo:Reset()
@@ -32,6 +42,10 @@ function CHUDGUI_ClassicAmmo:Reset()
 	self.ammoText:SetUniformScale(self.scale)
 	self.ammoText:SetScale(GetScaledVector())
 	self.ammoText:SetPosition(kAmmoPos)
+	
+	self.lowAmmoOverlay:SetUniformScale(self.scale)
+	self.lowAmmoOverlay:SetScale(GetScaledVector())
+	self.lowAmmoOverlay:SetPosition(kAmmoPos)
 	
 end
 
@@ -43,18 +57,29 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 	if player:GetActiveWeapon() and player:GetActiveWeapon():isa("ClipWeapon") and not player:isa("Exo") and CHUDGetOption("classicammo") then
 		local clipammo = ToString(PlayerUI_GetWeaponClip())
 		local ammo = ToString(PlayerUI_GetWeaponAmmo())
-		if clipammo == nil then clipammo = "--" end
-		if ammo == "0" then ammo = "--" end
+		if clipammo == nil then clipammo = "0" end
 		self.ammoText:SetText(clipammo .. " / " .. ammo)
 		self.ammoText:SetIsVisible(true)
-		if PlayerUI_GetWeaponClip() < PlayerUI_GetWeapon():GetClipSize() * 0.25 then
-			self.ammoText:SetColor(kLowAmmoColor)
-		else
-			self.ammoText:SetColor(kAmmoColor)
+		self.lowAmmoOverlay:SetText(clipammo .. " / " .. ammo)
+		self.lowAmmoOverlay:SetIsVisible(true)
+
+		local fraction = PlayerUI_GetWeaponClip() / PlayerUI_GetWeapon():GetClipSize()
+		local alpha = 0
+		local pulseSpeed = 5
+		
+		if fraction <= 0.4 then
+			
+			if fraction < 0.25 then pulseSpeed = 10 end
+			alpha = (math.sin(Shared.GetTime() * pulseSpeed) + 1) / 2
+			
+			if fraction == 0 then alpha = 1 end
 		end
+		
+		self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha))
 
 	else
 		self.ammoText:SetIsVisible(false)
+		self.lowAmmoOverlay:SetIsVisible(false)
 	end
 	
 end
@@ -65,5 +90,8 @@ function CHUDGUI_ClassicAmmo:Uninitialize()
 
 	self.ammoText:Destroy()
 	self.ammoText = nil
+	
+	self.lowAmmoOverlay:Destroy()
+	self.lowAmmoOverlay = nil
 	
 end

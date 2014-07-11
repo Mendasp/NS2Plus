@@ -39,7 +39,12 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		end
 		
 		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
-			blipData.AbilityFraction = CHUDBlipData.EnergyFraction
+			// If someone is already fucking with this, we fuck off
+			if blipData.AbilityFraction > 0 then
+				CHUDBlipData.EnergyFraction = nil
+			else
+				blipData.AbilityFraction = CHUDBlipData.EnergyFraction
+			end
 		end
 	end
 	
@@ -58,9 +63,9 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		end
 	end
 	
-	// Make the energy bar orange like in Insight
+	// Make the energy bar like in Insight
 	if CHUDBlipData and CHUDBlipData.EnergyFraction and localPlayerIsCommander then
-		updateBlip.AbilityBarBg:SetColor(Color(1,1,0,1))
+		updateBlip.AbilityBar:SetColor(Color(1,1,0,1))
 	end
 	
 	-- Minimal Nameplates
