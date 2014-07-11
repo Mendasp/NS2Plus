@@ -1,4 +1,6 @@
 AppendToEnum( kMinimapBlipType, "BoneWall" )
+AppendToEnum( kMinimapBlipType, "UnsocketedPowerPoint" )
+AppendToEnum( kMinimapBlipType, "BlueprintPowerPoint" )
 
 -- ClassToGrid is a map of class names to a grid position on the spritesheet
 -- ui/minimap_blip.dds and it's defined in NS2Utility.lua
@@ -10,6 +12,8 @@ function BuildClassToGrid()
 	-- our purposes okay, but if need be there's room to add another blip. not
 	-- sure what a BoneWall blip would look like anyway.
 	map["BoneWall"] = { 8, 3 }
+	map["UnsocketedPowerPoint"] = { 8, 8 }
+	map["BlueprintPowerPoint"] = { 4, 8 }
 	return map
 end
 
