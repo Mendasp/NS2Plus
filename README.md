@@ -6,7 +6,7 @@ Latest changes
 ==============
 - /07/2014
 	- Fixed problem where going from overhead spectator to free cam would not apply the custom map atmospheric density.
-	
+	- Added custom color for players in the minimap to easily tell apart players from buildings.
 
 - 10/07/2014
 	- Unsocketed power nodes are now grey.

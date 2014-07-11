@@ -191,6 +191,163 @@ local function NewDrawMinimapNames(self, shouldShowPlayerNames, clientIndex, spe
 end
 ReplaceUpValue( GUIMinimap.Update, "DrawMinimapNames", NewDrawMinimapNames, { CopyUpValues = true; LocateRecurse = true; } )
 
+local UpdateMinimapNames, kScanAnimDuration, PlotToMap, blipPos, blipRotation, DrawMinimapNames, kHallucinationColor, MinimapBlipTeamIsActive, PulseRed, PulseDarkRed
+local function NewUpdateStaticBlips(self, deltaTime)
+	
+	PROFILE("GUIMinimap:UpdateStaticBlips")
+	
+	local marinePlayers = set {
+		kMinimapBlipType.Marine, kMinimapBlipType.JetpackMarine, kMinimapBlipType.Exo
+	}
+	local alienPlayers = set {
+		kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
+	}
+	
+	local staticBlips = PlayerUI_GetStaticMapBlips()
+	local blipItemCount = 10
+	local numBlips = table.count(staticBlips) / blipItemCount
+	
+	local staticBlipItems = self.staticBlips
+	// Hide unused static blip items.
+	for i = numBlips + 1, self.inUseStaticBlipCount do
+		staticBlipItems[i]:SetIsVisible(false)
+	end
+	
+	// Create all of the blips we'll need.
+	for i = #staticBlipItems, numBlips do
+	
+		local addedBlip = GUIManager:CreateGraphicItem()
+		addedBlip:SetAnchor(GUIItem.Center, GUIItem.Middle)
+		addedBlip:SetLayer(kStaticBlipsLayer)
+		addedBlip:SetStencilFunc(self.stencilFunc)
+		addedBlip:SetTexture(self.iconFileName)
+		self.minimap:AddChild(addedBlip)
+		table.insert(staticBlipItems, addedBlip)
+		
+	end
+	
+	// Make sure all blips we'll need are visible.
+	for i = self.inUseStaticBlipCount + 1, numBlips do
+		staticBlipItems[i]:SetIsVisible(true)
+	end
+	
+	// Build Player Name Text elements	
+	largeMapIsVisible, shouldShowPlayerNames = UpdateMinimapNames(self)
+	local blipSize = self.blipSizeTable[kBlipSizeType.Normal]
+	
+	// Update scan blip size and color.    
+	do 
+		local scanAnimFraction = (Shared.GetTime() % kScanAnimDuration) / kScanAnimDuration        
+		local scanBlipScale = 1.0 + scanAnimFraction * 9.0 // size goes from 1.0 to 10.0
+		local scanAnimAlpha = 1 - scanAnimFraction
+		scanAnimAlpha = scanAnimAlpha * scanAnimAlpha
+		
+		self.scanColor.a = scanAnimAlpha
+		self.scanSize.x = blipSize.x * scanBlipScale // do not change blipSizeTable reference
+		self.scanSize.y = blipSize.y * scanBlipScale // do not change blipSizeTable reference
+	end
+	
+	local highlightPos, highlightTime = GetHighlightPosition()
+	if highlightTime then
+	
+		local createAnimFraction = 1 - Clamp((Shared.GetTime() - highlightTime) / 1.5, 0, 1)
+		local sizeAnim = (1 + math.sin(Shared.GetTime() * 6)) * 0.25 + 2
+	
+		local blipScale = createAnimFraction * 15 + sizeAnim
+
+		self.highlightWorldSize.x = blipSize.x * blipScale
+		self.highlightWorldSize.y = blipSize.y * blipScale
+		
+		self.highlightWorldColor.a = 0.7 + 0.2 * math.sin(Shared.GetTime() * 5) + createAnimFraction
+	
+	end
+	
+	local etherealGateAnimFraction = 0.25 + (1 + math.sin(Shared.GetTime() * 10)) * 0.5 * 0.75
+	self.etherealGateColor.a = etherealGateAnimFraction
+	
+	// spectating?
+	local spectating = Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex
+	local playerTeam = Client.GetLocalPlayer():GetTeamNumber()
+	
+	if playerTeam == kMarineTeamType then
+		playerTeam = kMinimapBlipTeam.Marine
+	elseif playerTeam == kAlienTeamType then
+		playerTeam = kMinimapBlipTeam.Alien
+	end
+	
+	// Update each blip.
+	local blipInfoTable, blipSizeTable, blipColorTable = self.blipInfoTable, self.blipSizeTable, self.blipColorTable
+	local currentIndex = 1
+	local GUIItemSetLayer = GUIItem.SetLayer
+	local GUIItemSetTexturePixelCoordinates = GUIItem.SetTexturePixelCoordinates
+	local GUIItemSetSize = GUIItem.SetSize
+	local GUIItemSetPosition = GUIItem.SetPosition
+	local GUIItemSetRotation = GUIItem.SetRotation
+	local GUIItemSetColor = GUIItem.SetColor
+	
+	local xPos, yPos, rotation, clientIndex, isParasited, blipType, blipTeam, underAttack, isSteamFriend, isHallucination, blip, blipInfo, blipSize, blipColor
+	for i = 1, numBlips do
+
+		xPos, yPos = PlotToMap(self, staticBlips[currentIndex], staticBlips[currentIndex + 1])
+		rotation = staticBlips[currentIndex + 2]
+		clientIndex = staticBlips[currentIndex + 3]
+		isParasited = staticBlips[currentIndex + 4]
+		blipType = staticBlips[currentIndex + 5]
+		blipTeam = staticBlips[currentIndex + 6]
+		underAttack = staticBlips[currentIndex + 7]
+		isSteamFriend = staticBlips[currentIndex + 8]
+		isHallucination = staticBlips[currentIndex + 9]
+
+		blip = staticBlipItems[i]
+		blipInfo = blipInfoTable[blipType]
+		blipSize = blipSizeTable[blipInfo[3]]
+		
+		blipColor = blipColorTable[blipTeam][blipInfo[2]]
+		
+		blipPos.x = xPos - blipSize.x * 0.5
+		blipPos.y = yPos - blipSize.y * 0.5
+		blipRotation.z = rotation
+		
+		GUIItemSetLayer(blip, blipInfo[4])
+		GUIItemSetTexturePixelCoordinates(blip, blipInfo[1]())
+		GUIItemSetSize(blip, blipSize)
+		GUIItemSetPosition(blip, blipPos)
+		GUIItemSetRotation(blip, blipRotation)
+		
+		if CHUDGetOption("playercolor_m") > 0 and marinePlayers[blipType] then
+			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_m"))
+		end
+		
+		if CHUDGetOption("playercolor_a") > 0 and alienPlayers[blipType] then
+			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_a"))
+		end
+		
+		if OnSameMinimapBlipTeam(playerTeam, blipTeam) or spectating then
+
+			DrawMinimapNames(self, shouldShowPlayerNames, clientIndex, spectating, blipTeam, xPos, blipPos.y, isParasited)
+
+			if isHallucination then
+				blipColor = kHallucinationColor
+			elseif underAttack then
+				if MinimapBlipTeamIsActive(blipTeam) then
+					blipColor = PulseRed(1.0)
+				else
+					blipColor = PulseDarkRed(blipColor)
+				end
+			end  
+
+		end
+		
+		GUIItemSetColor(blip, blipColor)
+		
+		currentIndex = currentIndex + blipItemCount
+		
+	end
+	self.inUseStaticBlipCount = numBlips
+	
+end
+ReplaceUpValue( GUIMinimap.Update, "UpdateStaticBlips", NewUpdateStaticBlips, { LocateRecurse = true; CopyUpValues = true; } )
+
 
 local originalMinimapSendKeyEvent
 originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
