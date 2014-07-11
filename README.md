@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /07/2014
+	- Fixed problem where going from overhead spectator to free cam would not apply the custom map atmospheric density.
+	
+
 - 10/07/2014
 	- Unsocketed power nodes are now grey.
 	- Made alien energy bar for Commanders the same color as it is in Insight.
