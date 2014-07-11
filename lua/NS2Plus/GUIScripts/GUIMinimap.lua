@@ -7,9 +7,10 @@ local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ Locat
 
 AppendToEnum( kBlipColorType, "White" )
 AppendToEnum( kBlipSizeType, "BoneWall" )
+AppendToEnum( kBlipSizeType, "UnpoweredPowerPoint" )
 kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.White, kBlipSizeType.BoneWall, kStaticBlipsLayer }
-kBlipInfo[kMinimapBlipType.UnsocketedPowerPoint] = { kBlipColorType.White, kBlipSizeType.Normal, kStaticBlipsLayer, "SentryBattery" }
-kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.Normal, kStaticBlipsLayer, "SentryBattery" }
+kBlipInfo[kMinimapBlipType.UnsocketedPowerPoint] = { kBlipColorType.White, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
+kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "BlueprintPowerPoint" }
 
 
 Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
@@ -202,6 +203,9 @@ local function NewUpdateStaticBlips(self, deltaTime)
 	local alienPlayers = set {
 		kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
 	}
+	local powerPoints = set {
+		kMinimapBlipType.BlueprintPowerPoint, kMinimapBlipType.UnsocketedPowerPoint, kMinimapBlipType.PowerPoint, kMinimapBlipType.DestroyedPowerPoint
+	}
 	
 	local staticBlips = PlayerUI_GetStaticMapBlips()
 	local blipItemCount = 10
@@ -312,7 +316,8 @@ local function NewUpdateStaticBlips(self, deltaTime)
 		GUIItemSetTexturePixelCoordinates(blip, blipInfo[1]())
 		GUIItemSetSize(blip, blipSize)
 		GUIItemSetPosition(blip, blipPos)
-		GUIItemSetRotation(blip, blipRotation)
+		
+		GUIItemSetRotation(blip, ConditionalValue(powerPoints[blipType], Vector(0, 0, 0), blipRotation))
 		
 		if CHUDGetOption("playercolor_m") > 0 and marinePlayers[blipType] then
 			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_m"))
@@ -380,6 +385,7 @@ oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
 		if blipScale ~= self.blipScale then				
 			local blipSize = Vector(kBlipSize, kBlipSize, 0)
 			self.blipSizeTable[kBlipSizeType.BoneWall] = blipSize * 1.5 * blipScale 
+			self.blipSizeTable[kBlipSizeType.UnpoweredPowerPoint] = blipSize * 0.5 * blipScale 
 		end
 		oldSetBlipScale( self, blipScale )
 	end)	
