@@ -9,6 +9,7 @@ Latest changes
 	- Added custom color for players in the minimap to easily tell apart players from buildings.
 	- Made weapon ammo displays flash red with low ammo counts.
 	- Classic ammo flashes red with low ammo counts.
+	- Added custom minimap icons for the unsocketed/blueprint Power Nodes.
 
 - 10/07/2014
 	- Unsocketed power nodes are now grey.
