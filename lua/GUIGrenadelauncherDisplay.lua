@@ -117,16 +117,15 @@ function GUIGrenadelauncherDisplay:Update(deltaTime)
     
     end
 
-	local fraction = self.weaponClip / self.maxClip
 	local alpha = 0
 	local pulseSpeed = 5
 	
-	if fraction <= 0.4 then
+	if self.weaponClip <= 2 then
 		
-		if fraction == 0 then
-			pulseSpeed = 25
-		elseif fraction < 0.25 then
+		if self.weaponClip == 1 then
 			pulseSpeed = 10
+		elseif fraction == 0 then
+			pulseSpeed = 25
 		end
 		
 		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2

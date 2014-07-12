@@ -10,7 +10,7 @@ AppendToEnum( kBlipSizeType, "BoneWall" )
 AppendToEnum( kBlipSizeType, "UnpoweredPowerPoint" )
 kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.White, kBlipSizeType.BoneWall, kStaticBlipsLayer }
 kBlipInfo[kMinimapBlipType.UnsocketedPowerPoint] = { kBlipColorType.White, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
-kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "BlueprintPowerPoint" }
+kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
 
 
 Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
@@ -385,7 +385,7 @@ oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
 		if blipScale ~= self.blipScale then				
 			local blipSize = Vector(kBlipSize, kBlipSize, 0)
 			self.blipSizeTable[kBlipSizeType.BoneWall] = blipSize * 1.5 * blipScale 
-			self.blipSizeTable[kBlipSizeType.UnpoweredPowerPoint] = blipSize * 0.5 * blipScale 
+			self.blipSizeTable[kBlipSizeType.UnpoweredPowerPoint] = blipSize * 0.45 * blipScale 
 		end
 		oldSetBlipScale( self, blipScale )
 	end)	
