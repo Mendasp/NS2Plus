@@ -18,6 +18,7 @@ Script.Load("lua/NS2Plus/Client/CHUD_EquipmentOutline.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Outlines.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Decals.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_WeaponTime.lua")
+Script.Load("lua/NS2Plus/Client/CHUD_Dissolve.lua")
 
 function AnnounceCHUD()
 	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")

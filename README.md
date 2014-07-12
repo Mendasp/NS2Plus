@@ -6,6 +6,7 @@ Latest changes
 ==============
 - /07/2014
 	- Made weapons reload automatically after shooting the last bullet.
+	- Added option to make ragdolls dissolve instantly. Available in Misc. tab.
 
 - 11/07/2014
 	- Fixed problem where going from overhead spectator to free cam would not apply the custom map atmospheric density.

@@ -889,6 +889,18 @@ CHUDOptions =
 				valueType = "int",
 				sort = "E3",
 			},
+			instantdissolve = { 
+				name    = "CHUD_InstantDissolve",
+				label   = "Ragdoll instant dissolve effect",
+				tooltip = "Makes the ragdoll start to disappear immediatly after kill.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "E4",
+			},
 			minimaptoggle = { 
 				name    = "CHUD_MinimapToggle",
 				label   = "Minimap key behavior",
