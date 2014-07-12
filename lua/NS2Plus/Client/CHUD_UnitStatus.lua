@@ -149,6 +149,15 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 				hintTable.EnergyFraction = self:GetEnergy() / self:GetMaxEnergy()
 			end
 		end
+		
+		if self:isa("Weapon") and self.weaponWorldState == true then
+			if player:isa("MarineCommander") then
+				hintTable.ExpireTime = self.expireTime
+			else
+				hintTable.IsVisible = false
+			end
+		end
+		
 		return hintTable
 	end
 	

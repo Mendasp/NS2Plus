@@ -7,9 +7,12 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	if type(blipData.Hint) == "table" then
 		CHUDBlipData = blipData.Hint
 		blipData.Hint = CHUDBlipData.Hint
+		if CHUDBlipData.IsVisible == false then
+			blipData.IsCrossHairTarget = false
+		end
 	end
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)	
-	local isCrosshairTarget = blipData.IsCrossHairTarget 
+	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()	
 	
 	local minnps = CHUDGetOption("minnps") and not localPlayerIsCommander
@@ -46,6 +49,12 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 				blipData.AbilityFraction = CHUDBlipData.EnergyFraction
 			end
 		end
+		
+		if CHUDBlipData.ExpireTime and CHUDBlipData.ExpireTime ~= 0 and localPlayerIsCommander then
+			blipData.IsCrossHairTarget = CHUDGetOption("pickupexpire") > 0
+			blipData.AbilityFraction = Clamp(math.abs(CHUDBlipData.ExpireTime - Shared.GetTime())/ConditionalValue(kWeaponStayTime, kWeaponStayTime, kItemStayTime), 0, 1)
+			blipData.Name = ""
+		end
 	end
 	
 
@@ -59,13 +68,23 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
             updateBlip.BorderMask:SetIsVisible(false)
 		end
 		if updateBlip.smokeyBackground then
-            updateBlip.smokeyBackground:SetIsVisible(false)
+			updateBlip.smokeyBackground:SetIsVisible(false)
 		end
 	end
 	
-	// Make the energy bar like in Insight
-	if CHUDBlipData and CHUDBlipData.EnergyFraction and localPlayerIsCommander then
-		updateBlip.AbilityBar:SetColor(Color(1,1,0,1))
+	if CHUDBlipData then
+	
+		// Make the energy bar like in Insight
+		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
+			updateBlip.AbilityBar:SetColor(Color(1,1,0,1))
+		end
+		
+		if CHUDBlipData.ExpireTime and updateBlip.AbilityBar and localPlayerIsCommander then
+			updateBlip.HealthBarBg:SetIsVisible(false)
+			updateBlip.ArmorBarBg:SetIsVisible(false)
+			updateBlip.AbilityBar:SetColor(Color(kMarineTeamColorFloat))
+		end
+	
 	end
 	
 	-- Minimal Nameplates

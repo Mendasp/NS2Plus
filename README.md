@@ -4,9 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /07/2014
+- 12/07/2014
 	- Made weapons reload automatically after shooting the last bullet.
 	- Added option to make ragdolls dissolve instantly. Available in Misc. tab.
+	- Added weapon expire bars for Commanders.
 
 - 11/07/2014
 	- Fixed problem where going from overhead spectator to free cam would not apply the custom map atmospheric density.
