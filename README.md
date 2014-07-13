@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /07/2014
+	- Made endgame stats appear as soon as they are received.
+	- Commander stats now show up with the other endgame stats.
+	- You can now check the endgame stats as long as a new game hasn't started or you're in the ReadyRoom.
+
 - 12/07/2014
 	- Made weapons reload automatically after shooting the last bullet.
 	- Added option to make ragdolls dissolve instantly. Available in Misc. tab.

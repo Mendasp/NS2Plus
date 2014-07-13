@@ -226,6 +226,46 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 			local client = Server.GetClientById(playerInfo.clientId)
 			
+			// Commander stats
+			if CHUDCommStats[playerInfo.steamId] and client then
+				local msg = {}
+				msg.medpackAccuracy = 0
+				msg.medpackResUsed = 0
+				msg.medpackResExpired = 0
+				msg.medpackEfficiency = 0
+				msg.medpackRefill = 0
+				msg.ammopackResUsed = 0
+				msg.ammopackResExpired = 0
+				msg.ammopackEfficiency = 0
+				msg.ammopackRefill = 0
+				msg.catpackResUsed = 0
+				msg.catpackResExpired = 0
+				msg.catpackEfficiency = 0
+				
+				for index, stats in pairs(CHUDCommStats[playerInfo.steamId]) do
+					if stats.hits > 0 or stats.misses > 0 then
+						if index == "medpack" then
+							msg.medpackAccuracy = (stats.hits/(stats.hits+stats.misses))*100 or 0
+							msg.medpackResUsed = stats.picks*kMedPackCost
+							msg.medpackResExpired = stats.misses*kMedPackCost
+							msg.medpackEfficiency = (stats.picks/(stats.picks+stats.misses))*100 or 0
+							msg.medpackRefill = stats.refilled
+						elseif index == "ammopack" then
+							msg.ammopackResUsed = stats.hits*kAmmoPackCost
+							msg.ammopackResExpired = stats.misses*kAmmoPackCost
+							msg.ammopackEfficiency = (stats.hits/(stats.hits+stats.misses))*100 or 0
+							msg.ammopackRefill = stats.refilled
+						elseif index == "catpack" then
+							msg.catpackResUsed = stats.hits*kCatPackCost
+							msg.catpackResExpired = stats.misses*kCatPackCost
+							msg.catpackEfficiency = (stats.hits/(stats.hits+stats.misses))*100 or 0
+						end
+					end
+				end
+				
+				Server.SendNetworkMessage(client, "CHUDMarineCommStats", msg, true)
+			end
+			
 			// Player stats
 			if CHUDClientStats[playerInfo.steamId] and client then
 				local stats = CHUDClientStats[playerInfo.steamId]
@@ -273,42 +313,6 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				msg.sdmg = stats.sdmg
 				
 				Server.SendNetworkMessage(client, "CHUDEndStatsOverall", msg, true)
-			end
-			
-			// Commander stats
-			if CHUDCommStats[playerInfo.steamId] and client then
-				for index, stats in pairs(CHUDCommStats[playerInfo.steamId]) do
-					if stats.hits > 0 or stats.misses > 0 then
-						CHUDServerAdminPrint(client, "-------------------------------------")
-						CHUDServerAdminPrint(client, string.upper(index) .. " STATS")
-						CHUDServerAdminPrint(client, "-------------------------------------")
-						
-						local refilledtext
-						local cost = 0
-						
-						if index == "medpack" then
-							local accuracy = (stats.hits/(stats.hits+stats.misses))*100 or 0
-							CHUDServerAdminPrint(client, string.format("Accuracy: %.2f%%", accuracy))
-							refilledtext = "Amount healed: "
-							cost = kMedPackCost
-						elseif index == "ammopack" then
-							refilledtext = "Bullets refilled: "
-							cost = kAmmoPackCost
-						elseif index == "catpack" then
-							cost = kCatPackCost
-						end
-						
-						if refilledtext then
-							CHUDServerAdminPrint(client, refilledtext .. stats.refilled)
-						end
-						
-						local hits = ConditionalValue(index == "medpack", stats.picks, stats.hits)
-						local efficiency = (hits/(hits+stats.misses))*100 or 0
-						CHUDServerAdminPrint(client, "Res spent on used " .. index .. "s: " .. hits*cost)
-						CHUDServerAdminPrint(client, "Res spent on expired " .. index .. "s: " .. stats.misses*cost)
-						CHUDServerAdminPrint(client, string.format("Res efficiency: %.2f%%", efficiency))
-					end
-				end
 			end
 		
 		end

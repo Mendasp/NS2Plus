@@ -105,13 +105,18 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 	else
 		CHUDStatsVisible = false
 	end
+	
+	if CHUDEndStatsVisible then
+		self.titleBackground:SetIsVisible(false)
+		self.actionIconGUI:Hide()
+	end
 
 end
 
 function CHUDGUI_DeathStats:SendKeyEvent(key, down)
 
 	// Force show when request menu is open
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible then
 		self.titleBackground:SetIsVisible(down)
 		self.requestVisible = down
 		self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(down and self.statsText:GetText() ~= "", 1, 0)))

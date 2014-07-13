@@ -34,25 +34,41 @@ local kCHUDDamageMessage =
 
 local kCHUDDeathStatsMessage =
 {
-	lastAcc = "integer (0 to 100)",
-	currentAcc = "integer (0 to 100)",
-	pdmg = "float (0 to 500000 by 0.01)",
-	sdmg = "float (0 to 500000 by 0.01)",
+	lastAcc = "float (0 to 100 by 0.01)",
+	currentAcc = "float (0 to 100 by 0.01)",
+	pdmg = "float (0 to 524288 by 0.01)",
+	sdmg = "float (0 to 524288 by 0.01)",
 }
 
 local kCHUDEndStatsWeaponMessage =
 {
 	wTechId = "enum kTechId",
-	accuracy = "integer (0 to 100)",
-	accuracyOnos = "integer (-1 to 100)",
+	accuracy = "float (0 to 100 by 0.01)",
+	accuracyOnos = "float (-1 to 100 by 0.01)",
 }
 
 local kCHUDEndStatsOverallMessage =
 {
-	accuracy = "integer (0 to 100)",
-	accuracyOnos = "integer (-1 to 100)",
-	pdmg = "float (0 to 500000 by 0.01)",
-	sdmg = "float (0 to 500000 by 0.01)",
+	accuracy = "float (0 to 100 by 0.01)",
+	accuracyOnos = "float (-1 to 100 by 0.01)",
+	pdmg = "float (0 to 524288 by 0.01)",
+	sdmg = "float (0 to 524288 by 0.01)",
+}
+
+local kCHUDMarineCommStatsMessage =
+{
+	medpackAccuracy = "float (0 to 100 by 0.01)",
+	medpackResUsed = "integer (0 to 65536)",
+	medpackResExpired = "integer (0 to 65536)",
+	medpackEfficiency = "float (0 to 100 by 0.01)",
+	medpackRefill = "integer (0 to 262144)",
+	ammopackResUsed = "integer (0 to 65536)",
+	ammopackResExpired = "integer (0 to 65536)",
+	ammopackEfficiency = "float (0 to 100 by 0.01)",
+	ammopackRefill = "integer (0 to 262144)",
+	catpackResUsed = "integer (0 to 65536)",
+	catpackResExpired = "integer (0 to 65536)",
+	catpackEfficiency = "float (0 to 100 by 0.01)",
 }
 
 local kCHUDOptionMessage =
@@ -90,6 +106,7 @@ Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
+Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
 
 Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
 Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
