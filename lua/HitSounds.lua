@@ -103,6 +103,7 @@ if Server then
     end
     
     function HitSound_RecordHit( attacker, target, amount, point, overkill, weapon )
+        attacker = (attacker and attacker:GetId()) or Entity.invalidId
         target = (target and target:GetId()) or Entity.invalidId
         
         local hit
@@ -138,13 +139,13 @@ if Server then
         local hitsounds = {}
         local xenocounts = {}
         
-        local hit,sound,attacker
+        local hit,sound,attacker,target
         for i=1,#hits do
             hit = hits[i]
-            attacker = hit.attacker
+            attacker = Shared.GetEntity(hit.attacker)
             target = Shared.GetEntity(hit.target)
             
-            if target and target:isa("Player") and not target:isa("Embryo") then
+            if attacker and target and target:isa("Player") and not target:isa("Embryo") then
                 
                 sound = 1
                 if hit.weapon == kTechId.Railgun then
@@ -180,7 +181,7 @@ if Server then
             end
             
             // Send the accumulated damage message
-            SendDamageMessage( attacker, Shared.GetEntity(hit.target), hit.amount, hit.point, hit.overkill )
+            SendDamageMessage( attacker, target, hit.amount, hit.point, hit.overkill )
             
         end
         
