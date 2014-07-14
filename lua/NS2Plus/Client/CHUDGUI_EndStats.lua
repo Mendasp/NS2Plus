@@ -14,9 +14,7 @@ local hasText = false
 local kTitleFontName = "fonts/AgencyFB_medium.fnt"
 local kStatsFontName = "fonts/AgencyFB_small.fnt"
 local kTopOffset = GUIScale(32)
-local kFontScale = GUIScale(Vector(1, 1, 0))
 local kTitleBackgroundTexture = "ui/objective_banner_marine.dds"
-local kTitleBackgroundSize = GUIScale(Vector(210, 45, 0))
 
 function CHUDGUI_EndStats:Initialize()
 
@@ -24,14 +22,13 @@ function CHUDGUI_EndStats:Initialize()
 
 	self.titleBackground = self:CreateAnimatedGraphicItem()
 	self.titleBackground:SetTexture(kTitleBackgroundTexture)
-	self.titleBackground:SetIsScaling(false)
+	self.titleBackground:SetTexturePixelCoordinates(0, 0, 1024, 64)
 	self.titleBackground:SetColor(Color(1, 1, 1, 0))
 	self.titleBackground:SetAnchor(GUIItem.Middle, GUIItem.Top)
-	self.titleBackground:SetPosition(Vector(-kTitleBackgroundSize.x/2, kTopOffset, 0))
-	self.titleBackground:SetSize(kTitleBackgroundSize)
+	self.titleBackground:SetScale(GetScaledVector())
 	self.titleBackground:SetLayer(kGUILayerPlayerHUD)
 	
-	self.titleShadow = GetGUIManager():CreateTextItem()
+	self.titleShadow = self:CreateAnimatedTextItem()
 	self.titleShadow:SetFontName(kTitleFontName)
 	self.titleShadow:SetAnchor(GUIItem.Middle, GUIItem.Middle)
 	self.titleShadow:SetTextAlignmentX(GUIItem.Align_Center)
@@ -39,19 +36,22 @@ function CHUDGUI_EndStats:Initialize()
 	self.titleShadow:SetPosition(GUIScale(Vector(0, 3, 0)))
 	self.titleShadow:SetText("Last round stats")
 	self.titleShadow:SetColor(Color(0, 0, 0, 1))
-	self.titleShadow:SetScale(kFontScale)
+	self.titleShadow:SetScale(GetScaledVector())
 	self.titleShadow:SetInheritsParentAlpha(true)
 	self.titleBackground:AddChild(self.titleShadow)
 	
-	self.titleText = GetGUIManager():CreateTextItem()
+	self.titleText = self:CreateAnimatedTextItem()
 	self.titleText:SetFontName(kTitleFontName)
 	self.titleText:SetTextAlignmentX(GUIItem.Align_Center)
 	self.titleText:SetTextAlignmentY(GUIItem.Align_Center)
 	self.titleText:SetPosition(GUIScale(Vector(-2, -2, 0)))
 	self.titleText:SetText("Last round stats")
-	self.titleText:SetScale(kFontScale)
+	self.titleText:SetScale(GetScaledVector())
 	self.titleText:SetInheritsParentAlpha(true)
 	self.titleShadow:AddChild(self.titleText)
+	
+	self.titleBackground:SetSize(Vector(self.titleText:GetTextWidth(self.titleText:GetText())+40, self.titleText:GetTextHeight(self.titleText:GetText())+10, 0))
+	self.titleBackground:SetPosition(Vector(-self.titleBackground:GetSize().x/2, kTopOffset, 0))
 	
 	self.stringsTable = {}
 	self.commStringsTable = {}
@@ -75,23 +75,16 @@ end
 local function AddString(self, string, isComm)
 	
 	if Shared.GetTime() > lastStatsMsg + appendTime then
-		for _, textItem in pairs(self.stringsTable) do
-			GUI.DestroyItem(textItem)
-		end
-		
-		for _, stringUI in pairs(self.commStringsTable) do
-			GUI.DestroyItem(textItem)
-		end
-		
-		self.stringsTable = {}
-		self.commStringsTable = {}
+		GUI.DestroyItem(self.titleBackground)
+
+		self:Initialize()
 	end
 	
-	local stringUI = GetGUIManager():CreateTextItem()
+	local stringUI = self:CreateAnimatedTextItem()
 	stringUI:SetFontName(kStatsFontName)
 	stringUI:SetAnchor(GUIItem.Center, GUIItem.Top)
 	stringUI:SetTextAlignmentX(GUIItem.Align_Center)
-	stringUI:SetScale(kFontScale)
+	stringUI:SetScale(GetScaledVector())
 	stringUI:SetInheritsParentAlpha(true)
 	stringUI:SetText(string)
 	self.titleBackground:AddChild(stringUI)
@@ -99,7 +92,7 @@ local function AddString(self, string, isComm)
 	table.insert(ConditionalValue(isComm, self.commStringsTable, self.stringsTable), stringUI)
 	
 	// Reposition everything on new strings
-	local yCoord = kTitleBackgroundSize.y + GUIScale(5)
+	local yCoord = GUIScale(self.titleBackground:GetSize().y) + GUIScale(5)
 	if isComm then
 		local totalSize = 0
 		for _, textItem in pairs(self.commStringsTable) do
@@ -115,7 +108,7 @@ local function AddString(self, string, isComm)
 			local xCoord = -(totalSize/2) + (textItemSize/2) + pos
 			pos = pos + textItemSize/2 + xSpacing
 			totalSize = totalSize - textItemSize
-			textItem:SetPosition(Vector(xCoord, yCoord, 0))
+			textItem:SetPosition(Vector(GUIScale(xCoord), yCoord, 0))
 		end
 	else
 		local biggest = 0
@@ -124,11 +117,13 @@ local function AddString(self, string, isComm)
 			if textItemSize > biggest then biggest = textItemSize end
 		end
 		
-		yCoord = yCoord + biggest + GUIScale(5)
+		if #self.commStringsTable > 0 then
+			yCoord = yCoord + GUIScale(biggest) + GUIScale(5)
+		end
 		
 		for i, textItem in ipairs(self.stringsTable) do
 			textItem:SetPosition(Vector(0, yCoord, 0))
-			yCoord = yCoord + textItem:GetTextHeight(textItem:GetText())
+			yCoord = yCoord + GUIScale(textItem:GetTextHeight(textItem:GetText()))
 		end
 	end
 	
