@@ -116,7 +116,7 @@ end
 function CHUDGUI_DeathStats:SendKeyEvent(key, down)
 
 	// Force show when request menu is open
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible and not ChatUI_EnteringChatMessage() then
 		self.titleBackground:SetIsVisible(down)
 		self.requestVisible = down
 		self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(down and self.statsText:GetText() ~= "", 1, 0)))
