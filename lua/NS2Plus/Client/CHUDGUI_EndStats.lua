@@ -8,73 +8,19 @@ local gStatsUI
 local lastStatsMsg = 0
 local appendTime = 2.5
 local shownTime = 0
-local displayTime = 20
+local displayTime = 15
 local hasText = false
+local loadedLastRound = false
+local lastRoundFile = "config://NS2Plus/LastRoundStats.json"
 
 local kTitleFontName = "fonts/AgencyFB_medium.fnt"
 local kStatsFontName = "fonts/AgencyFB_small.fnt"
 local kTopOffset = GUIScale(32)
 local kTitleBackgroundTexture = "ui/objective_banner_marine.dds"
 
-function CHUDGUI_EndStats:Initialize()
-
-	GUIAnimatedScript.Initialize(self)
-
-	self.titleBackground = self:CreateAnimatedGraphicItem()
-	self.titleBackground:SetTexture(kTitleBackgroundTexture)
-	self.titleBackground:SetTexturePixelCoordinates(0, 0, 1024, 64)
-	self.titleBackground:SetColor(Color(1, 1, 1, 0))
-	self.titleBackground:SetAnchor(GUIItem.Middle, GUIItem.Top)
-	self.titleBackground:SetScale(GetScaledVector())
-	self.titleBackground:SetLayer(kGUILayerPlayerHUD)
+local function AddString(self, string, isComm, isVisible)
 	
-	self.titleShadow = self:CreateAnimatedTextItem()
-	self.titleShadow:SetFontName(kTitleFontName)
-	self.titleShadow:SetAnchor(GUIItem.Middle, GUIItem.Middle)
-	self.titleShadow:SetTextAlignmentX(GUIItem.Align_Center)
-	self.titleShadow:SetTextAlignmentY(GUIItem.Align_Center)
-	self.titleShadow:SetPosition(GUIScale(Vector(0, 3, 0)))
-	self.titleShadow:SetText("Last round stats")
-	self.titleShadow:SetColor(Color(0, 0, 0, 1))
-	self.titleShadow:SetScale(GetScaledVector())
-	self.titleShadow:SetInheritsParentAlpha(true)
-	self.titleBackground:AddChild(self.titleShadow)
-	
-	self.titleText = self:CreateAnimatedTextItem()
-	self.titleText:SetFontName(kTitleFontName)
-	self.titleText:SetTextAlignmentX(GUIItem.Align_Center)
-	self.titleText:SetTextAlignmentY(GUIItem.Align_Center)
-	self.titleText:SetPosition(GUIScale(Vector(-2, -2, 0)))
-	self.titleText:SetText("Last round stats")
-	self.titleText:SetScale(GetScaledVector())
-	self.titleText:SetInheritsParentAlpha(true)
-	self.titleShadow:AddChild(self.titleText)
-	
-	self.titleBackground:SetSize(Vector(self.titleText:GetTextWidth(self.titleText:GetText())+40, self.titleText:GetTextHeight(self.titleText:GetText())+10, 0))
-	self.titleBackground:SetPosition(Vector(-self.titleBackground:GetSize().x/2, kTopOffset, 0))
-	
-	self.stringsTable = {}
-	self.commStringsTable = {}
-	
-	self.actionIconGUI = GetGUIManager():CreateGUIScript("GUIActionIcon")
-	self.actionIconGUI:SetColor(kWhite)
-	self.actionIconGUI.pickupIcon:SetLayer(kGUILayerPlayerHUD)
-	
-	self.showing = false
-	self.fading = false
-	
-	gStatsUI = self
-end
-
-function CHUDGUI_EndStats:Reset()
-
-	GUIAnimatedScript.Reset(self)
-
-end
-
-local function AddString(self, string, isComm)
-	
-	if Shared.GetTime() > lastStatsMsg + appendTime then
+	if Shared.GetTime() > lastStatsMsg + appendTime and isVisible then
 		GUI.DestroyItem(self.titleBackground)
 
 		self:Initialize()
@@ -128,7 +74,91 @@ local function AddString(self, string, isComm)
 	end
 	
 	lastStatsMsg = Shared.GetTime()
-	gStatsUI.showing = false
+	if isVisible then
+		gStatsUI.showing = false
+	end
+end
+
+function CHUDGUI_EndStats:Initialize()
+
+	GUIAnimatedScript.Initialize(self)
+
+	self.titleBackground = self:CreateAnimatedGraphicItem()
+	self.titleBackground:SetTexture(kTitleBackgroundTexture)
+	self.titleBackground:SetTexturePixelCoordinates(0, 0, 1024, 64)
+	self.titleBackground:SetColor(Color(1, 1, 1, 0))
+	self.titleBackground:SetAnchor(GUIItem.Middle, GUIItem.Top)
+	self.titleBackground:SetScale(GetScaledVector())
+	self.titleBackground:SetLayer(kGUILayerPlayerHUD)
+	self.titleBackground:SetIsVisible(false)
+	
+	self.titleShadow = self:CreateAnimatedTextItem()
+	self.titleShadow:SetFontName(kTitleFontName)
+	self.titleShadow:SetAnchor(GUIItem.Middle, GUIItem.Middle)
+	self.titleShadow:SetTextAlignmentX(GUIItem.Align_Center)
+	self.titleShadow:SetTextAlignmentY(GUIItem.Align_Center)
+	self.titleShadow:SetPosition(GUIScale(Vector(0, 3, 0)))
+	self.titleShadow:SetText("Last round stats")
+	self.titleShadow:SetColor(Color(0, 0, 0, 1))
+	self.titleShadow:SetScale(GetScaledVector())
+	self.titleShadow:SetInheritsParentAlpha(true)
+	self.titleBackground:AddChild(self.titleShadow)
+	
+	self.titleText = self:CreateAnimatedTextItem()
+	self.titleText:SetFontName(kTitleFontName)
+	self.titleText:SetTextAlignmentX(GUIItem.Align_Center)
+	self.titleText:SetTextAlignmentY(GUIItem.Align_Center)
+	self.titleText:SetPosition(GUIScale(Vector(-2, -2, 0)))
+	self.titleText:SetText("Last round stats")
+	self.titleText:SetScale(GetScaledVector())
+	self.titleText:SetInheritsParentAlpha(true)
+	self.titleShadow:AddChild(self.titleText)
+	
+	self.titleBackground:SetSize(Vector(self.titleText:GetTextWidth(self.titleText:GetText())+40, self.titleText:GetTextHeight(self.titleText:GetText())+10, 0))
+	self.titleBackground:SetPosition(Vector(-self.titleBackground:GetSize().x/2, kTopOffset, 0))
+	
+	self.stringsTable = {}
+	self.commStringsTable = {}
+	
+	self.saved = false
+	
+	if not loadedLastRound then
+		local openedFile = io.open(lastRoundFile, "r")
+		if openedFile then
+		
+			local parsedFile = json.decode(openedFile:read("*all"))
+			io.close(openedFile)
+			
+			if parsedFile then
+				for _, string in ipairs(parsedFile.commStringsTable) do
+					AddString(self, string, true, false)
+				end
+				
+				for _, string in ipairs(parsedFile.stringsTable) do
+					AddString(self, string, false, false)
+				end
+			end
+			
+			self.saved = true
+			
+			loadedLastRound = true
+		end
+	end
+	
+	self.actionIconGUI = GetGUIManager():CreateGUIScript("GUIActionIcon")
+	self.actionIconGUI:SetColor(kWhite)
+	self.actionIconGUI.pickupIcon:SetLayer(kGUILayerPlayerHUD)
+	
+	self.showing = true
+	self.fading = true
+	
+	gStatsUI = self
+end
+
+function CHUDGUI_EndStats:Reset()
+
+	GUIAnimatedScript.Reset(self)
+
 end
 
 function CHUDGUI_EndStats:Update(deltaTime)
@@ -137,7 +167,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 	
 	hasText = #self.stringsTable > 0 or #self.commStringsTable > 0
 	
-	if PlayerUI_GetHasGameStarted() then
+	if PlayerUI_GetHasGameStarted() and Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom then
 		self.titleBackground:SetIsVisible(false)
 		self.actionIconGUI:Hide()
 	end
@@ -155,10 +185,32 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		self.titleBackground:FadeIn(2, "CHUD_ENDSTATS")
 		self.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last round stats", nil)
 		self.fading = false
-	elseif Shared.GetTime() - shownTime > displayTime and not self.fading then
-		self.fading = true
-		self.actionIconGUI:Hide()
-		self.titleBackground:FadeOut(2, "CHUD_ENDSTATS")
+	else
+		-- Save the stats to a file when we can't append more strings
+		if Shared.GetTime() - shownTime > appendTime and not self.saved then
+			local statsTable = {}
+			statsTable.stringsTable = {}
+			statsTable.commStringsTable = {}
+			for _, textItem in ipairs(self.commStringsTable) do
+				table.insert(statsTable.commStringsTable, textItem:GetText())
+			end
+			for _, textItem in ipairs(self.stringsTable) do
+				table.insert(statsTable.stringsTable, textItem:GetText())
+			end
+			
+			local savedFile = io.open(lastRoundFile, "w+")
+			if savedFile then
+				savedFile:write(json.encode(statsTable))
+				io.close(savedFile)
+			end
+			self.saved = true
+		end
+		
+		if Shared.GetTime() - shownTime > displayTime and not self.fading then
+			self.fading = true
+			self.actionIconGUI:Hide()
+			self.titleBackground:FadeOut(2, "CHUD_ENDSTATS")
+		end
 	end
 
 end
@@ -167,8 +219,12 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
 	// Force show when request menu is open
 	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) then
-		self.titleBackground:SetIsVisible(down)
-		self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(down and hasText, 1, 0)))
+		
+		if not down then
+			self.titleBackground:SetIsVisible(not self.titleBackground:GetIsVisible())
+			self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(self.titleBackground:GetIsVisible() and hasText, 1, 0)))
+		end
+		
 	end
 	
 end
@@ -218,7 +274,7 @@ local function CHUDSetAccuracyString(message)
 		accuracyString = accuracyString .. string.format(" / Without Onos hits: %.2f%%", message.accuracyOnos)
 	end
 
-	AddString(gStatsUI, accuracyString)
+	AddString(gStatsUI, accuracyString, false, true)
 end
 
 local function CHUDSetOverallString(message)
@@ -232,7 +288,7 @@ local function CHUDSetOverallString(message)
 			finalStatsString = finalStatsString .. string.format("\nRes spent on expired medpacks: %d", message.medpackResExpired)
 			finalStatsString = finalStatsString .. string.format("\nRes efficiency: %.2f%%", message.medpackEfficiency)
 			
-			AddString(gStatsUI, finalStatsString, true)
+			AddString(gStatsUI, finalStatsString, true, true)
 		end
 		
 		if message.ammopackResUsed + message.ammopackResExpired > 0 then
@@ -241,7 +297,7 @@ local function CHUDSetOverallString(message)
 			finalStatsString = finalStatsString .. string.format("\nRes spent on expired ammopacks: %d", message.ammopackResExpired)
 			finalStatsString = finalStatsString .. string.format("\nRes efficiency: %.2f%%", message.ammopackEfficiency)
 			
-			AddString(gStatsUI, finalStatsString, true)
+			AddString(gStatsUI, finalStatsString, true, true)
 		end
 		
 		if message.catpackResUsed + message.catpackResExpired > 0 then
@@ -249,7 +305,7 @@ local function CHUDSetOverallString(message)
 			finalStatsString = finalStatsString .. string.format("\nRes spent on expired catpacks: %d", message.catpackResExpired)
 			finalStatsString = finalStatsString .. string.format("\nRes efficiency: %.2f%%", message.catpackEfficiency)
 			
-			AddString(gStatsUI, finalStatsString, true)
+			AddString(gStatsUI, finalStatsString, true, true)
 		end
 		
 	elseif message.accuracy then
@@ -262,7 +318,7 @@ local function CHUDSetOverallString(message)
 		
 		finalStatsString = finalStatsString .. string.format("\nPlayer damage: %.2f\nStructure damage: %.2f", message.pdmg, message.sdmg)
 		
-		AddString(gStatsUI, finalStatsString)
+		AddString(gStatsUI, finalStatsString, false, true)
 
 	end
 
