@@ -46,9 +46,6 @@ originalMarineInit = Class_ReplaceMethod( "GUIMarineHUD", "Initialize",
 function(self)
 	originalMarineInit(self)
 	
-	// Make the location text non-stupid
-	self.locationText:SetIsVisible(false)
-	
 	self.gameTime = self:CreateAnimatedTextItem()
     self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 	self.gameTime:SetFontIsBold(true)
@@ -117,6 +114,7 @@ originalSetHUDMap = Class_ReplaceMethod( "GUIMarineHUD", "SetHUDMapEnabled",
 function(self, enabled)
 	local minimap = CHUDGetOption("minimap")
 	originalSetHUDMap(self, minimap)
+	self.locationText:SetIsVisible(minimap)
 end)
 
 local originalShowNewArmorLevel		
