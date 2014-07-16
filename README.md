@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /07/2014
+- 16/07/2014
 	- Added a toggle for the low ammo warning.
 
 - 15/07/2014
