@@ -181,12 +181,13 @@ if Server then
             end
             
             // Send the accumulated damage message
-            SendDamageMessage( attacker, target, hit.amount, hit.point, hit.overkill )
+            // Since these hits are delayed one frame, the attacker entity may not exist anymore
+            if attacker then SendDamageMessage( attacker, target, hit.amount, hit.point, hit.overkill ) end
             
         end
         
         // Xenocide hitsound is based on number of people hit
-        for attacker,xenocount in pairs(xenocounts) do
+        for attacker, xenocount in pairs(xenocounts) do
             
             if kHitSoundHighXenoHitCount <= xenocount then
                 sound = 3
@@ -201,7 +202,7 @@ if Server then
             
         end
         
-        for attacker,sound in pairs(hitsounds) do
+        for attacker, sound in pairs(hitsounds) do
             
             local msg = BuildHitSoundMessage(sound)
             
