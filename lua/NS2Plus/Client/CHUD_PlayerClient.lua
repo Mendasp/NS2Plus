@@ -28,34 +28,6 @@ function UpdateDSPEffects()
 	end*/
 end
 
-function PlayerUI_GetGameLengthTime()
-	
-    local state
-    local entityList = Shared.GetEntitiesWithClassname("GameInfo")
-    if entityList:GetSize() > 0 then
-    
-        local gameInfo = entityList:GetEntityAtIndex(0)
-        
-		state = gameInfo:GetState()
-        		
-        if state ~= kGameState.PreGame and
-           state ~= kGameState.Countdown
-		then
-			if state ~= kGameState.Started then
-				return gameInfo.prevTimeLength or 0, state
-			else
-				return math.max( 0, math.floor(Shared.GetTime()) - gameInfo:GetStartTime() ), state
-			end
-        end
-        
-    end
-    
-    return 0, state
-    
-end
-
-
-
 local lastIngameNumPlayers = 0
 local totalNumPlayers = 0
 local nextUpdateTotalNumPlayers = 0

@@ -1,21 +1,3 @@
-// Keep last game time instead of immediatly resetting
-local originalScoreboardUpdate
-originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
-function(self, deltaTime)
-	originalScoreboardUpdate(self, deltaTime)
-	
-    if self.visible then
-        local gameTime = PlayerUI_GetGameLengthTime()
-        local minutes = math.floor(gameTime / 60)
-        local seconds = gameTime - minutes * 60
-        local serverName = Client.GetServerIsHidden() and "Hidden" or Client.GetConnectedServerName()
-        local gameTimeText = serverName .. " | " .. Shared.GetMapName() .. string.format(" - %d:%02d", minutes, seconds)
-        
-        self.gameTime:SetText(gameTimeText)
-	end
-end)
-	
-	
 local originalScoreboardUpdateTeam
 originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam",
 function(self, updateTeam)
