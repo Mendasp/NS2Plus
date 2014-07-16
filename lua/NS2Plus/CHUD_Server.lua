@@ -5,7 +5,6 @@ SetCHUDTagBitmask(0)
 
 Script.Load("lua/NS2Plus/Server/CHUD_ServerSettings.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_ModUpdater.lua")
-Script.Load("lua/NS2Plus/Server/CHUD_HiveStats.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_ServerStats.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_ClientOptions.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_PickupExpire.lua")
