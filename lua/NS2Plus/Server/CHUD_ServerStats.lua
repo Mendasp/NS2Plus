@@ -79,27 +79,10 @@ function SendDamageMessage( attacker, target, amount, point, overkill )
 		AddDamageStat(steamId, amount or 0, target and target:isa("Player") and not (target:isa("Hallucination") or target.isHallucination))
 	end
 	
-	
-	if amount > 0 then
-	
-		local msg = BuildCHUDDamageMessage( target, amount, point, overkill )
-		
-		// damage reports must always be reliable when not spectating
-		Server.SendNetworkMessage(attacker, "CHUDDamage", msg, true)
-		
-		for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do
-		
-			if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
-				Server.SendNetworkMessage(spectator, "CHUDDamage", msg, false)
-			end
-			
-		end
-		
-	end
+	oldSendDamageMessage( attacker, target, amount, point, overkill )
 	
 end
-	
-	
+
 local function CHUDResetCommStats(commSteamId)
 	if not CHUDCommStats[commSteamId] then
 		CHUDCommStats[commSteamId] = { }

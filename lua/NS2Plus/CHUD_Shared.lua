@@ -2,33 +2,6 @@ kCHUDElixerVersion = 1.72
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
-kCHUDStatsTrackAccLookup =
-	set {
-		kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,
-		kTechId.Axe, kTechId.Bite, kTechId.Parasite, kTechId.Spit, kTechId.Swipe, kTechId.Gore,
-		kTechId.LerkBite, kTechId.Spikes, kTechId.Stab
-	}
-
-// CompMod v3 compat.
-if rawget( kTechId, "HeavyMachineGun" ) then
-	kCHUDStatsTrackAccLookup[kTechId.HeavyMachineGun] = true
-end
-
-
-kHitsoundMode = enum { 'Hitcount', 'Overkill' }
-kCHUDDamageMaxDamage = 4095
-kCHUDDamage2MessageMaxHitCount = 14
-
-local kCHUDDamageMessage =
-{
-	posx = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-	posy = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-	posz = string.format("float (%d to %d by 0.05)", -kHitEffectMaxPosition, kHitEffectMaxPosition),
-	targetId = "entityid",
-	amount = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
-	overkill = string.format("integer (0 to %d)", kCHUDDamageMaxDamage ),
-}
-
 local kCHUDDeathStatsMessage =
 {
 	lastAcc = "float (0 to 100 by 0.01)",
@@ -79,25 +52,6 @@ local kCHUDAutopickupMessage =
 	autoPickupBetter = "boolean",
 }
 
-function BuildCHUDDamageMessage( target, amount, hitpos, overkill )
-	
-    local t = {}
-    t.posx = hitpos.x
-    t.posy = hitpos.y
-    t.posz = hitpos.z
-    t.amount = math.min( math.max( amount, 0 ), 4095 )
-	t.overkill = math.min( math.max( overkill, 0 ), kCHUDDamageMaxDamage )
-    t.targetId = (target and target:GetId()) or Entity.invalidId
-    return t
-	
-end
-
-function ParseCHUDDamageMessage(message)
-    local position = Vector(message.posx, message.posy, message.posz)
-    return Shared.GetEntity(message.targetId), message.amount, position, message.overkill
-end
-
-Shared.RegisterNetworkMessage( "CHUDDamage", kCHUDDamageMessage )
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
