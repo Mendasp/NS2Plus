@@ -16,6 +16,7 @@ weaponClip     = 0
 weaponAmmo     = 0
 weaponAuxClip  = 0
 globalTime     = 0
+lowAmmoWarning = true
 
 bulletDisplay  = nil
 
@@ -31,6 +32,7 @@ function GUIFlamethrowerDisplay:Initialize()
     self.weaponClip = 0
     self.maxClip = 50
 	self.globalTime = 0
+	self.lowAmmoWarning = true
     
     self.background = GUIManager:CreateGraphicItem()
     self.background:SetAnchor(GUIItem.Top, GUIItem.Left)
@@ -86,7 +88,9 @@ function GUIFlamethrowerDisplay:Update(deltaTime)
 		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
 	end
 	
-	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.7))
+	if not self.lowAmmoWarning then alpha = 0 end
+	
+	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
     
 end
 
@@ -106,6 +110,10 @@ function GUIFlamethrowerDisplay:SetGlobalTime(globalTime)
     self.globalTime = globalTime
 end
 
+function GUIFlamethrowerDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    self.lowAmmoWarning = ConditionalValue(lowAmmoWarning == "true", true, false)
+end
+
 /**
  * Called by the player to update the components.
  */
@@ -114,6 +122,7 @@ function Update(deltaTime)
     bulletDisplay:SetClip(weaponClip)
     bulletDisplay:SetAmmo(weaponAmmo)
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
         
 end
@@ -129,6 +138,7 @@ function Initialize()
     bulletDisplay:Initialize()
     bulletDisplay:SetClipSize(50)
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
 
 end
 

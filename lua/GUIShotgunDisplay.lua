@@ -16,6 +16,7 @@ weaponClip     = 0
 weaponAmmo     = 0
 weaponAuxClip  = 0
 globalTime     = 0
+lowAmmoWarning = true
 
 bulletDisplay  = nil
 
@@ -27,6 +28,7 @@ function GUIShotgunDisplay:Initialize()
     self.weaponAmmo     = 0
     self.weaponClipSize = 6
 	self.globalTime     = 0
+	self.lowAmmoWarning = true
     
     self.background = GUIManager:CreateGraphicItem()
     self.background:SetSize( Vector(256, 128, 0) )
@@ -105,7 +107,9 @@ function GUIShotgunDisplay:Update(deltaTime)
 		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
 	end
 	
-	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.7))
+	if not self.lowAmmoWarning then alpha = 0 end
+	
+	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
     
 end
 
@@ -125,6 +129,10 @@ function GUIShotgunDisplay:SetGlobalTime(globalTime)
     self.globalTime = globalTime
 end
 
+function GUIShotgunDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    self.lowAmmoWarning = ConditionalValue(lowAmmoWarning == "true", true, false)
+end
+
 /**
  * Called by the player to update the components.
  */
@@ -133,6 +141,7 @@ function Update(deltaTime)
     bulletDisplay:SetClip(weaponClip)
     bulletDisplay:SetAmmo(weaponAmmo)
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
         
 end
@@ -148,6 +157,7 @@ function Initialize()
     bulletDisplay:Initialize()
     bulletDisplay:SetClipSize(6)
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
 
 end
 

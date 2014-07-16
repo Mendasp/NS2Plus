@@ -704,6 +704,18 @@ CHUDOptions =
 				end,
 				sort = "D9b",
 			},
+			lowammowarning = {
+				name    = "CHUD_LowAmmoWarning",
+				label   = "Low ammo warning",
+				tooltip = "Enables or disables the low ammo warning in the weapon displays.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "hud",
+				valueType = "bool",
+				sort = "E1",
+			},
 			
 			
 			hitsounds = {
@@ -830,8 +842,8 @@ CHUDOptions =
 			},
 			deathstats = { 
 				name    = "CHUD_DeathStats",
-				label   = "Death stats UI",
-				tooltip = "Enables or disables the stats you get after you die. Also visible on voiceover menu (default: X).",
+				label   = "Stats UI",
+				tooltip = "Enables or disables the stats you get after you die and at the end of the round. Also visible on voiceover menu (default: X).",
 				type    = "select",
 				values  = { "Fully disabled", "Only voiceover menu", "Enabled" },
 				callback = CHUDSaveMenuSettings,

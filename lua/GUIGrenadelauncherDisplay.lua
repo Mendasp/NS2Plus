@@ -17,6 +17,7 @@ weaponAmmo     = 0
 weaponAuxClip  = 0
 pitch          = 0
 globalTime     = 0
+lowAmmoWarning = true
 
 bulletDisplay  = nil
 
@@ -41,6 +42,7 @@ function GUIGrenadelauncherDisplay:Initialize()
     self.weaponClip = 0
     self.weaponAmmo = 0
 	self.globalTime = 0
+	self.lowAmmoWarning = true
     
     self.viewPitch = GUIManager:CreateGraphicItem()
     self.viewPitch:SetSize( Vector(128, 256, 0) )
@@ -131,7 +133,9 @@ function GUIGrenadelauncherDisplay:Update(deltaTime)
 		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
 	end
 	
-	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.7))
+	if not self.lowAmmoWarning then alpha = 0 end
+	
+	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
     
 end
 
@@ -151,6 +155,10 @@ function GUIGrenadelauncherDisplay:SetGlobalTime(globalTime)
     self.globalTime = globalTime
 end
 
+function GUIGrenadelauncherDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    self.lowAmmoWarning = ConditionalValue(lowAmmoWarning == "true", true, false)
+end
+
 /**
  * Called by the player to update the components.
  */
@@ -159,6 +167,7 @@ function Update(deltaTime)
     bulletDisplay:SetClip(weaponClip)
     bulletDisplay:SetAmmo(weaponAmmo)
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
         
 end
@@ -173,6 +182,7 @@ function Initialize()
     bulletDisplay = GUIGrenadelauncherDisplay()
     bulletDisplay:Initialize()
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
 
 end
 

@@ -18,6 +18,7 @@ weaponAuxClip  = 0
 weaponVariant  = 1
 pulsateAlpha   = 0
 globalTime     = 0
+lowAmmoWarning = true
 
 bulletDisplay  = nil
 grenadeDisplay = nil
@@ -33,6 +34,7 @@ function Update(deltaTime)
     bulletDisplay:SetAmmo(weaponAmmo)
 	bulletDisplay:SetWeaponVariant(weaponVariant)
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
     
     grenadeDisplay:SetNumGrenades(weaponAuxClip)
@@ -51,6 +53,7 @@ function Initialize()
     bulletDisplay:Initialize()
     bulletDisplay:SetClipSize(50)
 	bulletDisplay:SetGlobalTime(globalTime)
+	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
 
     grenadeDisplay = GUIGrenadeDisplay()
     grenadeDisplay:Initialize()
