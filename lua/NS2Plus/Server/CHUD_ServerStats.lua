@@ -71,12 +71,31 @@ local function AddDamageStat(steamId, damage, isPlayer)
 	end
 end
 
+local function OnSetCHUDOverkill(client, message)
+
+	if client then
+	
+		local player = client:GetControllingPlayer()
+		if player and message ~= nil then
+			player.overkill = message.overkill
+		end
+		
+	end
+	
+end
+
+Server.HookNetworkMessage("SetCHUDOverkill", OnSetCHUDOverkill)
+
 local oldSendDamageMessage = SendDamageMessage
 function SendDamageMessage( attacker, target, amount, point, overkill )
 		
 	local steamId = GetSteamIdForClientIndex(attacker:GetClientIndex())
 	if steamId then
 		AddDamageStat(steamId, amount or 0, target and target:isa("Player") and not (target:isa("Hallucination") or target.isHallucination))
+	end
+	
+	if attacker.overkill == true then
+		amount = overkill
 	end
 	
 	oldSendDamageMessage( attacker, target, amount, point, overkill )

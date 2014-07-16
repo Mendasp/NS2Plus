@@ -52,8 +52,14 @@ local kCHUDAutopickupMessage =
 	autoPickupBetter = "boolean",
 }
 
+local kCHUDOverkillMessage =
+{
+	overkill = "boolean",
+}
+
 Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
+Shared.RegisterNetworkMessage( "SetCHUDOverkill", kCHUDOverkillMessage)
 Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)

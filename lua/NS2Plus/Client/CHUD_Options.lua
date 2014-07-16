@@ -440,6 +440,11 @@ CHUDOptions =
 				defaultValue = false,
 				category = "hud",
 				valueType = "bool",
+				applyFunction = function()
+					local message = { }
+					message.overkill = CHUDGetOption("overkilldamagenumbers")
+					Client.SendNetworkMessage("SetCHUDOverkill", message)
+				end,
 				sort = "C6b",
 			},
 			damagenumbertime = 

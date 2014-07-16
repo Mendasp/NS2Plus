@@ -108,6 +108,16 @@ local function ClientTeamSay(...)
 	end
 end
 
+local originalPlayerOnInit
+originalPlayerOnInit = Class_ReplaceMethod("Player", "OnInitialized",
+	function(self)
+		originalPlayerOnInit(self)
+		
+		local message = { }
+		message.overkill = CHUDGetOption("overkilldamagenumbers")
+		Client.SendNetworkMessage("SetCHUDOverkill", message)
+	end)
+
 // Bandaid fix for players crashing when they run Client.RefreshServer
 local function OnCommandNS2PDC()
 	if Client.GetOptionBoolean("CHUDScoreboardConnecting", true) then
