@@ -155,43 +155,6 @@ originalLocationNameInit = Class_ReplaceMethod( "GUIMinimap", "InitializeLocatio
 	end)
 
 
-local GetNamePool, OnSameMinimapBlipTeam, kPlayerNameColorMarine, kPlayerNameColorAlien, namePos, kPlayerNameOffset
-local function NewDrawMinimapNames(self, shouldShowPlayerNames, clientIndex, spectating, blipTeam, xPos, yPos, isParasited)
-
-	if clientIndex > 0 and shouldShowPlayerNames then
-		
-		local record = Scoreboard_GetPlayerRecord( clientIndex )			
-		
-		if record and record.Name then			
-			local nameItem = GetNamePool(self, clientIndex)
-			nameItem:SetIsVisible(true)	
-			nameItem:SetText(record.Name)
-			
-			local nameColor = Color(1, 1, 1)
-			if isParasited then
-				nameColor.b = 0
-			elseif spectating then
-				if OnSameMinimapBlipTeam(kMinimapBlipTeam.Marine, blipTeam) then
-					nameColor = kPlayerNameColorMarine
-				else
-					nameColor = kPlayerNameColorAlien
-				end
-			elseif record.IsRookie then
-				nameColor = Color( 0, 1, 0 )
-			end
-			
-			nameItem:SetColor(nameColor)
-			
-			namePos.x = xPos
-			namePos.y = yPos - kPlayerNameOffset
-			nameItem:SetPosition(namePos)
-		end
-		
-	end
-	
-end
-ReplaceUpValue( GUIMinimap.Update, "DrawMinimapNames", NewDrawMinimapNames, { CopyUpValues = true; LocateRecurse = true; } )
-
 local UpdateMinimapNames, kScanAnimDuration, PlotToMap, blipPos, blipRotation, DrawMinimapNames, kHallucinationColor, MinimapBlipTeamIsActive, PulseRed, PulseDarkRed
 local function NewUpdateStaticBlips(self, deltaTime)
 	
