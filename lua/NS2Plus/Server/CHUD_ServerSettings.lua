@@ -49,12 +49,6 @@ CHUDServerOptions =
 		minValue = 0,
 		maxValue = 999,
 		},
-	hivestats = {
-		label   = "Report stats to Hive",
-		tooltip = "Enables or disables the Hive stats reporting",
-		valueType = "bool",
-		defaultValue = true,
-		},
 }
 
 local configFileName = "NS2PlusServerConfig.json"
