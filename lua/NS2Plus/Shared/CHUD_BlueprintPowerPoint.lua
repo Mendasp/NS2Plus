@@ -1,3 +1,12 @@
+local originalBuildClassToGrid = BuildClassToGrid
+function BuildClassToGrid()
+	local map = originalBuildClassToGrid()
+
+	map["UnsocketedPowerPoint"] = { 8, 8 }
+
+	return map
+end
+
 AppendToEnum( kMinimapBlipType, "UnsocketedPowerPoint" )
 AppendToEnum( kMinimapBlipType, "BlueprintPowerPoint" )
 
