@@ -25,9 +25,3 @@ if Server then
 			end
 		end)
 end
-
-// Remove in 267
-Class_AddMethod("Grenade", "GetWeaponTechId",
-	function(self)
-		return kTechId.GrenadeLauncher
-	end)

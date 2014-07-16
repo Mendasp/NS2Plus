@@ -2,9 +2,6 @@ kCHUDElixerVersion = 1.72
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
--- Remove with 267
-Script.Load("lua/NS2Plus/CHUD_Shared266.lua")
-
 kCHUDStatsTrackAccLookup =
 	set {
 		kTechId.Pistol, kTechId.Rifle, kTechId.Minigun, kTechId.Railgun, kTechId.Shotgun,

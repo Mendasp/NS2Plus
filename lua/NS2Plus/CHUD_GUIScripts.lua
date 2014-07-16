@@ -24,6 +24,3 @@ Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_PlayerHealthbars.lua")
 
 // I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/NS2Plus/GUIScripts/GhostModel.lua")
-
-// Remove for 267
-GUIInventory.kItemSize = Vector(96, 48, 0)

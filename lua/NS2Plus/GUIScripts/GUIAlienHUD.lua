@@ -52,10 +52,6 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 	
 		originalAlienInit(self)
 		
-		// Remove in 267
-		self.activeAbilityIcon:SetSize(Vector(GUIScale(kInventoryIconTextureWidth*0.75), GUIScale(kInventoryIconTextureHeight*0.75), 0))
-		self.activeAbilityIcon:SetPosition(Vector(-GUIScale(kInventoryIconTextureWidth*0.75) / 2, -GUIScale(kInventoryIconTextureHeight*0.75) / 2, 0))
-		
 		self.gameTime = self:CreateAnimatedTextItem()
 		self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 		self.gameTime:SetFontIsBold(true)
