@@ -141,20 +141,32 @@ end)
 
 local oldBadgesGetBadgeTextures = Badges_GetBadgeTextures
 function Badges_GetBadgeTextures( clientId, usecase )
-	local badges = oldBadgesGetBadgeTextures( clientId, usecase )
+	local badges, badgeNames = oldBadgesGetBadgeTextures( clientId, usecase )
 	if usecase == "scoreboard" then
 		local steamid = GetSteamIdForClientIndex( clientId )
-		if steamid == 49009641 then
+		if steamid == 49009641 and not table.contains(badgeNames, "ns2plus_dev") then
 			-- remi.D
 			badges[#badges+1] = "ui/badges/community_dev_20.dds"
+			badgeNames[#badgeNames+1] = "community_dev"
 			badges[#badges+1] = "ui/badges/ns2plus_dev_20.dds"
+			badgeNames[#badgeNames+1] = "ns2plus_dev"
 		end
-		if steamid == 39843 then
+		if steamid == 39843 and not table.contains(badgeNames, "ns2plus_dev") then
 			-- mendasp
 			badges[#badges+1] = "ui/badges/ns2plus_dev_20.dds"
+			badgeNames[#badgeNames+1] = "ns2plus_dev"
 		end
 	end
-	return badges
+	return badges, badgeNames
+end
+
+local oldGetBadgeFormalName = GetBadgeFormalName
+function GetBadgeFormalName( name )
+	if name ~= "ns2plus_dev" then
+		return oldGetBadgeFormalName( name )
+	else
+		return "NS2+ Developer"
+	end
 end
  
 Event.Hook( "Console_debugshotgunlights", function()

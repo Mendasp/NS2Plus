@@ -23,16 +23,6 @@ function(self, updateTeam)
 	end
 	
 	
-	// Determines if the local player can see secret information for this team.
-	local isVisibleTeam = false
-	if Client.GetLocalPlayer() then
-		local playerTeamNum = Client.GetLocalPlayer():GetTeamNumber()
-		if playerTeamNum == kSpectatorIndex or playerTeamNum == teamNumber then
-			isVisibleTeam = true
-		end
-	end
-    
-	
 	local currentPlayerIndex = 1
 	local playerList = updateTeam["PlayerList"]
 	for index, player in pairs(playerList) do
@@ -48,7 +38,6 @@ function(self, updateTeam)
 		currentPlayerIndex = currentPlayerIndex + 1
 	end
 end)
-
 
 // I removed all of remi.D's semicolons here
 local oldCreateTeamBackground = GetUpValue( GUIScoreboard.Initialize, "CreateTeamBackground" )
