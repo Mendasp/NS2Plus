@@ -5,7 +5,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - 16/07/2014
-	- Added a toggle for the low ammo warning.
+	- Added a toggle for the low ammo warning. Available in HUD tab.
 
 - 15/07/2014
 	- Made endgame stats appear as soon as they are received.
