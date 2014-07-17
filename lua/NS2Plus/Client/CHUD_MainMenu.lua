@@ -335,8 +335,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				soundPreview:SetTopOffset(y)
 				
 				function soundPreview:OnClick()
-					Client.PrecacheLocalSound(CHUDGetOptionAssocVal("hitsounds"))
-					Shared.PlaySound(nil, CHUDGetOptionAssocVal("hitsounds"), CHUDGetOption("hitsounds_vol"))
+					HitSounds_PlayHitsound( 1 )
 				end
 				
 			elseif option.name == "CHUD_HitsoundsPitch" then
@@ -348,12 +347,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				soundPreview:SetTopOffset(y)
 				
 				function soundPreview:OnClick()
-					local soundEffectName = CHUDGetOptionAssocVal("hitsounds") .. "-hi"
-					if CHUDGetOption("hitsounds_pitch") == 1 then
-						soundEffectName = soundEffectName .. "-h"
-					end
-					Client.PrecacheLocalSound(soundEffectName)
-					Shared.PlaySound(nil, soundEffectName, CHUDGetOption("hitsounds_vol"))
+					HitSounds_PlayHitsound( 3 )
 				end
 			end
 			
