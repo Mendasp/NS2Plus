@@ -10,7 +10,7 @@ function(self, updateTeam)
 	if teamNumber == kTeamReadyRoom then
 		local numPlayersReported, numPlayersTotal = PlayerUI_GetServerNumPlayers()
 		if numPlayersReported < numPlayersTotal then
-			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]			
+			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]
 			local teamNameText = updateTeam["TeamName"]
 			local numPlayers = table.count(updateTeam["GetScores"]())
 			

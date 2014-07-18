@@ -85,11 +85,11 @@ local impulseMap = {
 	},
 }
 
-local function PrintOnCommandImpulseHelp()	
+local function PrintOnCommandImpulseHelp()
 	local keys = {}
 	for k,v in pairs( impulseMap ) do
-		keys[#keys+1] = k	
-	end	
+		keys[#keys+1] = k
+	end
 	Shared.Message( "Usage: \"impulse arg1 [arg2 [...]]\"\n"..
 					"\tArguments may be one or more of: [ \""..table.concat( keys , "\", \"" ).."\" ]\n"..
 					"\tIf more than one of the provided arguments is available to the player's class, it will randomly select between them." )
@@ -114,7 +114,7 @@ local function OnCommandImpulse( ... )
 		end
 	end
 	
-	for i,v in ipairs( args ) do	
+	for i,v in ipairs( args ) do
 		if not impulseMap[v] then
 			Shared.Message( "Invalid argument: \""..v.."\"" )
 			PrintOnCommandImpulseHelp()
@@ -125,7 +125,7 @@ local function OnCommandImpulse( ... )
 		end
 	end
 	
-	if #request > 0 then		
+	if #request > 0 then
 		SendRequest(nil, request[math.random(#request)] )
 	end
 end
