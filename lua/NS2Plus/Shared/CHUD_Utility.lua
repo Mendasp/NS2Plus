@@ -100,24 +100,24 @@ end
 // Reminder to fix all the stupid time rounding stuff
 local function FormatTime(time)
 
-    local t = math.round(time)
-    local h = math.floor(t / 3600)
-    local m = math.floor((t / 60) % 60)
-    local s = math.floor(t % 60)
-    return string.format("%d:%.2d:%.2d", h,  m, s)
-    
+	local t = math.round(time)
+	local h = math.floor(t / 3600)
+	local m = math.floor((t / 60) % 60)
+	local s = math.floor(t % 60)
+	return string.format("%d:%.2d:%.2d", h,  m, s)
+
 end
 
 function CHUDGetGameTime()
-	
+
 	local gameTime, state = PlayerUI_GetGameLengthTime()
 	if state == kGameState.NotStarted then
 		gameTime = 0
 	end
-				
+
 	local minutes = math.floor(gameTime / 60)
 	local seconds = math.floor(gameTime % 60)
-							
+
 	return(string.format("%d:%.2d", minutes, seconds))
-	
+
 end

@@ -1,5 +1,5 @@
 Script.Load("lua/Commander_Selection.lua")
-	
+
 local originalGetUnitUnderCursor
 originalGetUnitUnderCursor = Class_ReplaceMethod( "Commander", "GetUnitUnderCursor",
 function(self, pickVec)
@@ -11,12 +11,13 @@ function(self, pickVec)
 	if entity and entity:isa("Marine") and player:isa("MarineCommander") and not CHUDGetOption("marinecommselect") then
 		entity = nil
 	end
-    
-    return entity
-    
+
+	return entity
+
 end)
 
 
+-- Try to select enemy units if the marquee returns no entities
 local oldGetSelectablesOnScreen = GetSelectablesOnScreen
 function GetSelectablesOnScreen(commander, className, minPos, maxPos)
 
