@@ -39,30 +39,13 @@ function(self, updateTeam)
 	end
 end)
 
-// I removed all of remi.D's semicolons here
-local oldCreateTeamBackground = GetUpValue( GUIScoreboard.Initialize, "CreateTeamBackground" )
-local function NewCreateTeamBackground( self, teamNumber )
-	local textItems = { }
-	local oldCreateTextItem = GUIManager.CreateTextItem
-	GUIManager.CreateTextItem = 
-	function( self )
-		local obj = oldCreateTextItem( self )
-			table.insert(textItems, obj)
-		return obj
+local originalLocaleResolveString = Locale.ResolveString
+function Locale.ResolveString(string)
+	if string == "SB_ASSISTS" and CHUDGetOption("kda") then
+		return originalLocaleResolveString("SB_DEATHS")
+	elseif string == "SB_DEATHS" and CHUDGetOption("kda") then
+		return originalLocaleResolveString("SB_ASSISTS")
+	else
+		return originalLocaleResolveString(string)
 	end
-	
-	local ret = oldCreateTeamBackground( self, teamNumber )
-	
-	GUIManager.CreateTextItem = oldCreateTextItem
-	
-	for _, item in pairs(textItems) do
-		if item:GetText() == "A" and CHUDGetOption("kda") then
-			item:SetText("D")
-		elseif item:GetText() == "D" and CHUDGetOption("kda") then
-			item:SetText("A")
-		end
-	end
-	
-	return ret
 end
-ReplaceUpValue( GUIScoreboard.Initialize, "CreateTeamBackground", NewCreateTeamBackground )
