@@ -67,7 +67,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			updateBlip.HealthBarBg:SetIsVisible(false)
 			updateBlip.ArmorBarBg:SetIsVisible(false)
 			updateBlip.AbilityBar:SetColor(Color(kMarineTeamColorFloat))
-			if CHUDGetOption("pickupexpirecolor") then
+			if CHUDGetOption("pickupexpirecolor") > 0 then
 				if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
 					updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
 				elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
