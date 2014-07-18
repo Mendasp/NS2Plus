@@ -892,6 +892,18 @@ CHUDOptions =
 				valueType = "int",
 				sort = "E3",
 			},
+			pickupexpirecolor = { 
+				name    = "CHUD_PickupExpireBarColor",
+				label   = "Dynamically colored expiration bar",
+				tooltip = "Makes the expire bar colored depending on time left.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "comp",
+				valueType = "int",
+				sort = "E4",
+			},
 			instantdissolve = { 
 				name    = "CHUD_InstantDissolve",
 				label   = "Ragdoll instant dissolve effect",
@@ -902,7 +914,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				sort = "E4",
+				sort = "E5",
 			},
 			minimaptoggle = { 
 				name    = "CHUD_MinimapToggle",

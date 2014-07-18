@@ -9,6 +9,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		blipData.Hint = CHUDBlipData.Hint
 		if CHUDBlipData.IsVisible == false then
 			blipData.IsCrossHairTarget = false
+			blipData.HealthFraction = 0
 		end
 	end
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)	
@@ -31,10 +32,11 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			end
 		end
 		
-		if CHUDBlipData.ExpireTime and CHUDBlipData.ExpireTime ~= 0 and localPlayerIsCommander then
+		if CHUDBlipData.ExpireTime and localPlayerIsCommander then
 			blipData.IsCrossHairTarget = CHUDGetOption("pickupexpire") > 0
-			blipData.AbilityFraction = Clamp(math.abs(CHUDBlipData.ExpireTime - Shared.GetTime())/ConditionalValue(kWeaponStayTime, kWeaponStayTime, kItemStayTime), 0, 1)
+			blipData.AbilityFraction = Clamp((CHUDBlipData.ExpireTime - Shared.GetTime())/ConditionalValue(kWeaponStayTime, kWeaponStayTime, kItemStayTime), 0, 1)
 			blipData.Name = ""
+			blipData.HealthFraction = 0
 		end
 	end
 	
@@ -65,6 +67,15 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			updateBlip.HealthBarBg:SetIsVisible(false)
 			updateBlip.ArmorBarBg:SetIsVisible(false)
 			updateBlip.AbilityBar:SetColor(Color(kMarineTeamColorFloat))
+			if CHUDGetOption("pickupexpirecolor") then
+				if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
+					updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
+				elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
+					updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
+				elseif blipData.AbilityFraction < 0.25 then
+					updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
+				end
+			end
 		end
 	
 	end

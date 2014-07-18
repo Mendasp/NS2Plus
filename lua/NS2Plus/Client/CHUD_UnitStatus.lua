@@ -28,7 +28,7 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 		end
 		
 		if self:isa("Weapon") and self.weaponWorldState == true then
-			if player:isa("MarineCommander") then
+			if player:isa("MarineCommander") and self.expireTime ~= 0 then
 				hintTable.ExpireTime = self.expireTime
 			else
 				hintTable.IsVisible = false

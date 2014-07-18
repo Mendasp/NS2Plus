@@ -12,7 +12,7 @@ originalGUIPickupsUpdate = Class_ReplaceMethod( "GUIPickups", "Update",
 					pickupGraphic.expireBar:SetIsVisible(isVisible)
 					pickupGraphic.expireBarBg:SetIsVisible(isVisible)
 					
-					if isVisible then
+					if isVisible and CHUDGetOption("pickupexpirecolor") > 0 then
 						local alpha = pickupGraphic.expireBar:GetColor().a
 						local barColor = Color(0, 0.6117, 1, alpha)
 
