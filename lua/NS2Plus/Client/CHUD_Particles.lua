@@ -120,7 +120,7 @@ local replacedCinematics = set {
 							"cinematics/alien/tracer_residue.cinematic",
 						}
 
-mapCinematicNames = set {	
+local mapCinematicNames = set {	
 						"cinematics/environment/biodome/flying_papers.cinematic",
 						"cinematics/environment/biodome/leaves_folliage_01.cinematic",
 						"cinematics/environment/biodome/mosquitos_glow.cinematic",
