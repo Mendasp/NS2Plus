@@ -1,7 +1,7 @@
 // This file is a bit of a mess... needs a cleanup, just like the lights loading stuff
 
-local PropCache = { }
-local PropValuesCache = { }
+local propCache = { }
+local propValuesCache = { }
 local propsRemoved = false
 local cinematicsCache = { }
 local cinematicsValuesCache = { }
@@ -9,7 +9,7 @@ local cinematicsRemoved = false
 local ambientsValuesCache = { }
 local ambientsRemoved = false
 
-local BlockedProps = set { 	
+local blockedProps = set { 	
 						"models/props/veil/veil_hologram_01.model", 
 						"models/props/veil/veil_holosign_01_nanogrid.model", 
 						"models/props/veil/veil_hologram_01_scanlines.model",
@@ -249,8 +249,8 @@ end
 local originalSetCommanderPropState = SetCommanderPropState
 function SetCommanderPropState(isComm)
 	originalSetCommanderPropState(isComm)
-	if PropCache ~= nil then
-		for index, propPair in ipairs(PropCache) do
+	if propCache ~= nil then
+		for index, propPair in ipairs(propCache) do
 			local prop = propPair[1]
 			if prop.commAlpha < 1 then
 				prop:SetIsVisible(not isComm)
@@ -263,10 +263,10 @@ local originalLoadMapEntity = LoadMapEntity
 function LoadMapEntity(className, groupName, values)
 	local success = originalLoadMapEntity(className, groupName, values)
 	if success then
-		if className == "prop_static" and BlockedProps[values.model] then
-			table.insert(PropCache, Client.propList[#Client.propList])
+		if className == "prop_static" and blockedProps[values.model] then
+			table.insert(propCache, Client.propList[#Client.propList])
 			if not Client.fullyLoaded then
-				table.insert(PropValuesCache, {className = className, groupName = groupName, values = values})
+				table.insert(propValuesCache, {className = className, groupName = groupName, values = values})
 			end
 			table.remove(Client.propList, #Client.propList)
 		end
@@ -276,7 +276,7 @@ end
 
 function RemovePropDynamics()
 	for _, entity in ientitylist(Shared.GetEntitiesWithClassname("PropDynamic")) do
-		if BlockedProps[entity:GetModelName()] and not CHUDGetOption("mapparticles") then
+		if blockedProps[entity:GetModelName()] and not CHUDGetOption("mapparticles") then
 			entity:SetModel(nil)
 		end
 	end
@@ -291,12 +291,12 @@ function SetCHUDCinematics()
 			cinematicsCache = { }
 			cinematicsRemoved = true
 		end
-		if PropCache ~= nil then
-			for index, models in ipairs(PropCache) do
+		if propCache ~= nil then
+			for index, models in ipairs(propCache) do
 				Client.DestroyRenderModel(models[1])
 				Shared.DestroyCollisionObject(models[2])
 			end
-			PropCache = { }
+			propCache = { }
 			propsRemoved = true
 		end
 	else
@@ -307,7 +307,7 @@ function SetCHUDCinematics()
 			cinematicsRemoved = false
 		end
 		if propsRemoved then
-			for i, prop in pairs(PropValuesCache) do
+			for i, prop in pairs(propValuesCache) do
 				LoadMapEntity(prop.className, prop.groupName, prop.values)
 			end
 			propsRemoved = false
