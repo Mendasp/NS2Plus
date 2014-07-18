@@ -16,11 +16,7 @@ originalGUIPickupsUpdate = Class_ReplaceMethod( "GUIPickups", "Update",
 						local alpha = pickupGraphic.expireBar:GetColor().a
 						local barColor = Color(0, 0.6117, 1, alpha)
 
-						local timeLeft = -1
-						
-						if pickupGraphic.expireTime and pickupGraphic.expireTime ~= 0 then
-							timeLeft = Clamp((pickupGraphic.expireTime - Shared.GetTime())/pickupGraphic.stayTime, 0, 1)
-						end
+						local timeLeft = pickupGraphic.expireFraction
 						
 						if timeLeft >= 0.5 and timeLeft < 0.75 then
 							barColor = Color(1, 1, 0, alpha)

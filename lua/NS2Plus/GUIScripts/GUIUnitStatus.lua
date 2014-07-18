@@ -31,13 +31,6 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 				blipData.AbilityFraction = CHUDBlipData.EnergyFraction
 			end
 		end
-		
-		if CHUDBlipData.ExpireTime and localPlayerIsCommander then
-			blipData.IsCrossHairTarget = CHUDGetOption("pickupexpire") > 0
-			blipData.AbilityFraction = Clamp((CHUDBlipData.ExpireTime - Shared.GetTime())/ConditionalValue(kWeaponStayTime, kWeaponStayTime, kItemStayTime), 0, 1)
-			blipData.Name = ""
-			blipData.HealthFraction = 0
-		end
 	end
 	
 
@@ -61,24 +54,24 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
 			updateBlip.AbilityBar:SetColor(Color(1,1,0,1))
 		end
-		
-		-- Dropped weapons expire bar
-		if CHUDBlipData.ExpireTime and updateBlip.AbilityBar and localPlayerIsCommander then
-			updateBlip.HealthBarBg:SetIsVisible(false)
-			updateBlip.ArmorBarBg:SetIsVisible(false)
-			updateBlip.AbilityBar:SetColor(Color(kMarineTeamColorFloat))
-			if CHUDGetOption("pickupexpirecolor") > 0 then
-				if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
-					updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
-				elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
-					updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
-				elseif blipData.AbilityFraction < 0.25 then
-					updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
-				end
-			end
-		end
 	
 	end
+
+    if blipData.IsWorldWeapon and updateBlip.AbilityBar then
+        if CHUDGetOption("pickupexpire") == 0 then
+            updateBlip.AbilityBarBg:SetIsVisible(false)
+        end
+        if CHUDGetOption("pickupexpirecolor") > 0 then
+            if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
+                updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
+            elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
+                updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
+            elseif blipData.AbilityFraction < 0.25 then
+                updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
+            end
+        end
+    end
+
 	
 	-- Minimal Nameplates
 	if minnps then
