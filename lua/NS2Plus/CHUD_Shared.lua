@@ -82,24 +82,3 @@ CHUDTagBitmask = {
 	nsllights = 0x8,
 	deathstats = 0x0,
 }
-
-local embryoNetworkVars =
-{
-	evolvePercentage = "float",
-}
-
-local pickupableNetworkVars =
-{
-	expireTime = "time (by 0.1)",
-}
-
-local catpackNetworkVars =
-{
-	catpackboost = "boolean",
-}
-
-Class_Reload("Embryo", embryoNetworkVars)
-Class_Reload("Weapon", pickupableNetworkVars)
-Class_Reload("DropPack", pickupableNetworkVars)
-Class_Reload("Marine", catpackNetworkVars)
-Class_Reload("Exo", catpackNetworkVars)
