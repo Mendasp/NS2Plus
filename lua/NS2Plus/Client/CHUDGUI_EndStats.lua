@@ -218,7 +218,7 @@ end
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
 	// Force show when request menu is open
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) and not ChatUI_EnteringChatMessage() then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
 		
 		if not down then
 			self.titleBackground:SetIsVisible(not self.titleBackground:GetIsVisible())
