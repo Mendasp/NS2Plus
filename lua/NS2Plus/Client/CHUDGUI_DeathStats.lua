@@ -59,7 +59,6 @@ function CHUDGUI_DeathStats:Initialize()
 	self.titleBackground:AddChild(self.statsText)
 	
 	self.actionIconGUI = GetGUIManager():CreateGUIScript("GUIActionIcon")
-	self.actionIconGUI:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineFontColor, kAlienFontColor))
 	self.actionIconGUI.pickupIcon:SetLayer(kGUILayerPlayerHUD)
 	
 	self.fading = false
@@ -116,7 +115,7 @@ end
 function CHUDGUI_DeathStats:SendKeyEvent(key, down)
 
 	// Force show when request menu is open
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible and not ChatUI_EnteringChatMessage() then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible and (Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index or Client.GetLocalPlayer():GetTeamNumber() == kTeam2Index) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
 		self.titleBackground:SetIsVisible(down)
 		self.requestVisible = down
 		self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(down and self.statsText:GetText() ~= "", 1, 0)))
@@ -148,6 +147,7 @@ local function CHUDGetStatsString(message)
 	gStatsUI.statsText:SetText(statsString)
 	gStatsUI.titleBackground:FadeIn(2, "CHUD_DEATHSTATS")
 	gStatsUI.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last life stats", nil)
+	gStatsUI.actionIconGUI:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineFontColor, kAlienFontColor))
 	gStatsUI.fading = false
 	lastStatsMsg = Shared.GetTime()
 end

@@ -30,12 +30,9 @@ Event.Hook("LoadComplete", SetCHUDCinematics)
 Event.Hook("LoadComplete", SetCHUDAmbients)
 Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 
-AddClientUIScriptForClass("Marine", "NS2Plus/Client/CHUDGUI_DeathStats")
-AddClientUIScriptForClass("Alien", "NS2Plus/Client/CHUDGUI_DeathStats")
-AddClientUIScriptForClass("Spectator", "NS2Plus/Client/CHUDGUI_DeathStats")
-
 AddClientUIScriptForClass("Marine", "NS2Plus/Client/CHUDGUI_ClassicAmmo")
 
+AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_DeathStats")
 AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_EndStats")
 
 function Client.AddWorldMessage(messageType, message, position, entityId)
