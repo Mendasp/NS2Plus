@@ -4,8 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /07/2014
-	- Fixed Commander logging out attacking.
+- 20/07/2014
+	- Fixed vanilla bug where the Commander would log out attacking.
+	- Fixed vanilla bug that made trigger volumes bigger than their representation in the editor. This affected some map locations (power node issues).
+	- Made powered room effect for Commanders with the same accuracy as the actual volume they cover.
 
 - 16/07/2014
 	- Added a toggle for the low ammo warning. Available in HUD tab.
