@@ -434,11 +434,14 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 							text = text .. " (Disabled by server)."
 						end
 						
-						local cutoff = 300
+						local cutoff = 290
 						
 						mainMenu.optionTooltip.tooltip:SetText(WordWrap(mainMenu.optionTooltip.tooltip, text, 0, cutoff))
 						
-						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, ConditionalValue(string.find(text, "\n"), 0, -10), 0))
+						text = mainMenu.optionTooltip.tooltip:GetText()
+						local wrapped = string.find(text, "\n")
+						
+						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, ConditionalValue(wrapped and wrapped > 0, -10, 0), 0))
 					else
 						mainMenu.optionTooltip.tooltip:SetText("")
 					end
