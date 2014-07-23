@@ -33,6 +33,10 @@ Event.Hook("LocalPlayerChanged", CHUDLoadLights)
 
 AddClientUIScriptForClass("Marine", "NS2Plus/Client/CHUDGUI_ClassicAmmo")
 
+AddClientUIScriptForClass("Marine", "NS2Plus/Client/CHUDGUI_CustomHUD")
+AddClientUIScriptForClass("Exo", "NS2Plus/Client/CHUDGUI_CustomHUD")
+AddClientUIScriptForClass("Alien", "NS2Plus/Client/CHUDGUI_CustomHUD")
+
 AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_DeathStats")
 AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_EndStats")
 
