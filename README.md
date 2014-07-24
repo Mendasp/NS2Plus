@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /07/2014
+	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.
+	- 
+
 - 20/07/2014
 	- Fixed vanilla bug where the Commander would log out attacking.
 	- Fixed vanilla bug that made trigger volumes bigger than their representation in the editor. This affected some map locations (power node issues).
@@ -43,26 +47,6 @@ Latest changes
 	- Alien Commanders can now see the energy of the players.
 	- Added high contrast colors for armor in Insight.
 	- Added max decal lifetime option. You can set how long decals last (still affected by the vanilla setting). Available in Visual tab.
-	
-- 28/06/2014
-	- Added option to change the color of the killfeed higlight border. Available in the HUD tab.
-	- Added option to make Spacebar prioritize player requests as a Marine Commander. Available in the Misc. tab.
-
-- 26/06/2014
-	- Added option for bigger killfeed icons.
-	- Made the border of the killfeed the color of the team you're in.
-	- Adjusted scale of inventory icons.
-
-- 20/06/2014
-	- Text in the killfeed now scales too with the scaling option.
-	- Endgame stats now appear in the Readyroom instead of console and uses the same key as Death stats.
-
-- 17/06/2014
-	- Shotgun lights now show number of shells loaded. (Thanks remi.D!)
-	- Gestating teammates will show what type of egg they are. (Thanks remi.D!)
-	- Phase Gates and Gorge Tunnels will display their destination without aiming at them. This is disabled for Minimal Nameplates. (Thanks remi.D!)
-	- Gorge tunnels will show who dropped it if you look at it. This is disabled for Minimal Nameplates. (Thanks remi.D!)
-	- Added kill feed size option. Available in the HUD tab.
 
 =================
 Credits/Thanks to

@@ -16,7 +16,8 @@ Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",
 		end
 		
 		local currentWeapon = self:GetWeaponInHUDSlot(1)
-		local bestPriority = currentWeapon and ( pickupPriority[currentWeapon:GetTechId()] or 0 ) or -1
+		local currentWeaponPriority = currentWeapon and pickupPriority[currentWeapon:GetTechId()] or 0
+		local bestPriority = currentWeapon and currentWeaponPriority or -1
 		
 		for i, nearbyWeapon in ipairs(nearbyWeapons) do
 		
@@ -33,7 +34,7 @@ Class_AddMethod( "Marine", "FindNearbyAutoPickupWeapon",
 				
 				end
 				
-			elseif nearbyWeapon:isa("Weapon") and nearbyWeapon:GetIsValidRecipient(self) and pickupSlot == 1 and self.autoPickupBetter then
+			elseif nearbyWeapon:isa("Weapon") and nearbyWeapon:GetIsValidRecipient(self) and pickupSlot == 1 and self.autoPickupBetter and currentWeaponPriority < 1 then
 
 				local techId = nearbyWeapon:GetTechId()
 				local curPriority = pickupPriority[techId] or 0
