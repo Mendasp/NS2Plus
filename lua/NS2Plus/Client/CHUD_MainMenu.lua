@@ -433,24 +433,17 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 						if option.disabled and val ~= option.currentValue then
 							text = text .. " (Disabled by server)."
 						end
-						
-						local cutoff = 290
-						
-						mainMenu.optionTooltip.tooltip:SetText(WordWrap(mainMenu.optionTooltip.tooltip, text, 0, cutoff))
-						
-						text = mainMenu.optionTooltip.tooltip:GetText()
-						local wrapped = string.find(text, "\n")
-						
-						mainMenu.optionTooltip.tooltip:SetPosition(Vector(15, ConditionalValue(wrapped and wrapped > 0, -10, 0), 0))
+
+						mainMenu.optionTooltip:SetText(text)
 					else
-						mainMenu.optionTooltip.tooltip:SetText("")
+						mainMenu.optionTooltip:SetText("")
 					end
 				end    
 			end,
 			
 			OnMouseOut = function(self)
 				if mainMenu ~= nil then
-					mainMenu.optionTooltip.tooltip:SetText("")
+					mainMenu.optionTooltip:SetText("")
 				end
 			end,
 			}
