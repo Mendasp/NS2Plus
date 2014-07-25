@@ -433,17 +433,18 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 						if option.disabled and val ~= option.currentValue then
 							text = text .. " (Disabled by server)."
 						end
-
+						
 						mainMenu.optionTooltip:SetText(text)
+						mainMenu.optionTooltip:Show()
 					else
-						mainMenu.optionTooltip:SetText("")
+						mainMenu.optionTooltip:Hide()
 					end
 				end    
 			end,
 			
 			OnMouseOut = function(self)
 				if mainMenu ~= nil then
-					mainMenu.optionTooltip:SetText("")
+					mainMenu.optionTooltip:Hide()
 				end
 			end,
 			}
