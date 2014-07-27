@@ -1,4 +1,5 @@
 local mainMenu
+LoadCSSFile("lua/NS2Plus/Client/chud.css")
 
 function MakeCHUDSliderCallback( elemId, key )
 	return function()
@@ -40,7 +41,15 @@ function CHUDSaveMenuSettings()
 					local maxValue = CHUDOption.maxValue or 1
 					CHUDSetOption(option.index, (option:GetValue() * (maxValue - minValue) + minValue) * multiplier)
 				end
-							
+
+				if CHUDOption.name == "CHUD_HitsoundsPitch" then
+					if CHUDGetOption("hitsounds") > 0 then
+						option.label:SetCSSClass("option_label")
+					else
+						option.label:SetCSSClass("option_label_disabled")
+					end
+				end
+
 				if CHUDOption.disabled then
 					local val = ConditionalValue(CHUDOption.disabledValue == nil, CHUDOption.defaultValue, CHUDOption.disabledValue)
 					if val == CHUDOption.currentValue then
