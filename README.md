@@ -7,7 +7,7 @@ Latest changes
 - /07/2014
 	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.
 	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style). Available in HUD tab.
-	- Fixed some crosshair hit indicator fade time not being applied on map load properly.
+	- Fixed crosshair hit indicator fade time not being applied on map load properly.
 
 - 20/07/2014
 	- Fixed vanilla bug where the Commander would log out attacking.
