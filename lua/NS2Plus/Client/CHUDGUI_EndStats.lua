@@ -13,10 +13,10 @@ local hasText = false
 local loadedLastRound = false
 local lastRoundFile = "config://NS2Plus/LastRoundStats.json"
 
-local kTitleFontName = "fonts/AgencyFB_medium.fnt"
-local kStatsFontName = "fonts/AgencyFB_small.fnt"
+local kTitleFontName = Fonts.kAgencyFB_Medium
+local kStatsFontName = Fonts.kAgencyFB_Small
 local kTopOffset = GUIScale(32)
-local kTitleBackgroundTexture = "ui/objective_banner_marine.dds"
+local kTitleBackgroundTexture = PrecacheAsset("ui/objective_banner_marine.dds")
 
 local function AddString(self, string, isComm, isVisible)
 	

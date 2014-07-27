@@ -2,7 +2,7 @@ Script.Load("lua/GUIAnimatedScript.lua")
 
 class 'CHUDGUI_ClassicAmmo' (GUIAnimatedScript)
 
-local kFontName = "fonts/AgencyFB_large_bold.fnt"
+local kFontName = Fonts.kAgencyFB_Large_Bold
 local kAmmoColor = Color(163/255, 210/255, 220/255, 0.8)
 local kLowAmmoColor = Color(1, 0, 0, 1)
 local kAmmoPos = Vector(-210, -105, 0)
