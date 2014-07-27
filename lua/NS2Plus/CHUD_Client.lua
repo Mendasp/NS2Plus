@@ -26,8 +26,6 @@ AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_EndStats")
 
 local function OnLoadComplete()
 	GetCHUDSettings()
-	SetCHUDCinematics()
-	SetCHUDAmbients()
 	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")
 end
 

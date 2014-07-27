@@ -131,6 +131,10 @@ function GetCHUDSettings()
 				CHUDSetOption(name, option.defaultValue)
 			end
 		end
+		
+		if option.applyOnLoadComplete and option.applyFunction then
+			option.applyFunction()
+		end
 	end
 end
 

@@ -233,6 +233,7 @@ CHUDOptions =
 				category = "func",
 				valueType = "bool",
 				applyFunction = SetCHUDCinematics,
+				applyOnLoadComplete = true,
 				sort = "E2"
 			}, 
 			tracers = {
@@ -469,6 +470,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "float",
 				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator") end,
+				applyOnLoadComplete = true,
 				sort = "C7"
 			},
 			minimapalpha = { 
@@ -798,6 +800,7 @@ CHUDOptions =
 				category = "comp",
 				valueType = "bool",
 				applyFunction = SetCHUDAmbients,
+				applyOnLoadComplete = true,
 				sort = "B1",
 			}, 
 			mapparticles = {
@@ -811,6 +814,7 @@ CHUDOptions =
 				category = "comp",
 				valueType = "bool",
 				applyFunction = SetCHUDCinematics,
+				applyOnLoadComplete = true,
 				sort = "B2",
 			}, 
 			nsllights = {
