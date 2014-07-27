@@ -138,12 +138,12 @@ if Client then
 				classicammo = true
 			end
 			
-			if CHUDGetOption("customhud_m") > 0 then
+			if CHUDGetOption("customhud_m") > 0 and not player:isa("Commander") then
 				GetGUIManager():CreateGUIScriptSingle(customhudScript)
 				customhud = true
 			end
 		elseif teamNumber == kTeam2Index then
-			if CHUDGetOption("customhud_a") > 0 then
+			if CHUDGetOption("customhud_a") > 0 and not player:isa("Commander")  then
 				GetGUIManager():CreateGUIScriptSingle(customhudScript)
 				customhud = true
 			end

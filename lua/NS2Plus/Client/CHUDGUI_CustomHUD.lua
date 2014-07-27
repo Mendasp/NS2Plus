@@ -6,7 +6,7 @@ local hudbars = 1
 local kBarSize, kXOffset, leftBarXOffset, rightBarXOffset, yOffset, leftBarXAnchor, rightBarXAnchor, yAnchor, kBarBgTexCoords, kBarTexCoords
 local kCenterBarTexture = PrecacheAsset("ui/centerhudbar.dds")
 local kBottomBarTexture = PrecacheAsset("ui/bottomhudbar.dds")
-local kFontName = "fonts/AgencyFB_tiny.fnt"
+local kFontName = Fonts.kAgencyFB_Tiny
 
 local kHealthColors = { }
 kHealthColors[kTeam1Index] = Color(0, 0.6117, 1, 1)
