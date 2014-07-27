@@ -944,10 +944,11 @@ CHUDOptions =
 				type    = "select",
 				values  = { "Disabled", "Equipment Only", "All pickupables" },
 				callback = CHUDSaveMenuSettings,
-				defaultValue = 0,
+				defaultValue = 2,
 				category = "comp",
 				valueType = "int",
 				sort = "E3",
+				resetSettingInBuild = 191,
 			},
 			instantdissolve = { 
 				name    = "CHUD_InstantDissolve",

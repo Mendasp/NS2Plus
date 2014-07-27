@@ -102,6 +102,13 @@ function CHUDSetOption(key, value)
 end
 
 function GetCHUDSettings()
+	// Set the default to something different than the current one
+	local lastCHUD = Client.GetOptionInteger("CHUD_LastCHUDVersion", kCHUDVersion-1)
+	
+	if lastCHUD < kCHUDVersion then
+		Client.SetOptionInteger("CHUD_LastCHUDVersion", kCHUDVersion)
+	end
+	
 	for name, option in pairs(CHUDOptions) do
 		// If setting is not what we expect we reset to default
 		local value
@@ -130,6 +137,10 @@ function GetCHUDSettings()
 			else
 				CHUDSetOption(name, option.defaultValue)
 			end
+		end
+		
+		if lastCHUD < kCHUDVersion and option.resetSettingInBuild and kCHUDVersion >= option.resetSettingInBuild then
+			CHUDSetOption(name, option.defaultValue)
 		end
 		
 		if option.applyOnLoadComplete and option.applyFunction then
