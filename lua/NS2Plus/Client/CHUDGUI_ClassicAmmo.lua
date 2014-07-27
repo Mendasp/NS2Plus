@@ -5,13 +5,18 @@ class 'CHUDGUI_ClassicAmmo' (GUIAnimatedScript)
 local kFontName = "fonts/AgencyFB_large_bold.fnt"
 local kAmmoColor = Color(163/255, 210/255, 220/255, 0.8)
 local kLowAmmoColor = Color(1, 0, 0, 1)
-local kAmmoPos = Vector(-210, -105, 0)
 
 function CHUDGUI_ClassicAmmo:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
 	self.scale = Client.GetScreenHeight() / kBaseScreenHeight
+	
+	if CHUDGetOption("customhud_m") == 2 then
+		self.kAmmoPos = Vector(-320, -105, 0)
+	else
+		self.kAmmoPos = Vector(-210, -105, 0)
+	end
 	
 	self.ammoText = self:CreateAnimatedTextItem()
 	self.ammoText:SetFontName(kFontName)
@@ -21,7 +26,7 @@ function CHUDGUI_ClassicAmmo:Initialize()
 	self.ammoText:SetColor(kAmmoColor)
 	self.ammoText:SetUniformScale(self.scale)
 	self.ammoText:SetScale(GetScaledVector())
-	self.ammoText:SetPosition(kAmmoPos)
+	self.ammoText:SetPosition(self.kAmmoPos)
 	
 	self.lowAmmoOverlay = self:CreateAnimatedTextItem()
 	self.lowAmmoOverlay:SetFontName(kFontName)
@@ -31,21 +36,21 @@ function CHUDGUI_ClassicAmmo:Initialize()
 	self.lowAmmoOverlay:SetColor(kAmmoColor)
 	self.lowAmmoOverlay:SetUniformScale(self.scale)
 	self.lowAmmoOverlay:SetScale(GetScaledVector())
-	self.lowAmmoOverlay:SetPosition(kAmmoPos)
+	self.lowAmmoOverlay:SetPosition(self.kAmmoPos)
 	
 end
 
 function CHUDGUI_ClassicAmmo:Reset()
 
-    GUIAnimatedScript.Reset(self)
+	GUIAnimatedScript.Reset(self)
 	
 	self.ammoText:SetUniformScale(self.scale)
 	self.ammoText:SetScale(GetScaledVector())
-	self.ammoText:SetPosition(kAmmoPos)
+	self.ammoText:SetPosition(self.kAmmoPos)
 	
 	self.lowAmmoOverlay:SetUniformScale(self.scale)
 	self.lowAmmoOverlay:SetScale(GetScaledVector())
-	self.lowAmmoOverlay:SetPosition(kAmmoPos)
+	self.lowAmmoOverlay:SetPosition(self.kAmmoPos)
 	
 end
 

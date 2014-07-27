@@ -6,7 +6,7 @@ Latest changes
 ==============
 - /07/2014
 	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.
-	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style).
+	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style). Available in HUD tab.
 
 - 20/07/2014
 	- Fixed vanilla bug where the Commander would log out attacking.

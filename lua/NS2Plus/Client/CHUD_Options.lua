@@ -728,7 +728,18 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "hud",
 				valueType = "int",
-				applyFunction = CHUDEvaluateGUIVis,
+				applyFunction = function()
+					local classicammoScript = "NS2Plus/Client/CHUDGUI_ClassicAmmo"
+					local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
+					if GetGUIManager():GetGUIScriptSingle(customhudScript) then
+						GetGUIManager():DestroyGUIScriptSingle(customhudScript)
+					end
+					if GetGUIManager():GetGUIScriptSingle(classicammoScript) then
+						GetGUIManager():DestroyGUIScriptSingle(classicammoScript)
+					end
+					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
+					CHUDEvaluateGUIVis()
+				end,
 				sort = "E2",
 			},
 			customhud_a = {
@@ -741,7 +752,14 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "hud",
 				valueType = "int",
-				applyFunction = CHUDEvaluateGUIVis,
+				applyFunction = function()
+					local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
+					if GetGUIManager():GetGUIScriptSingle(customhudScript) then
+						GetGUIManager():DestroyGUIScriptSingle(customhudScript)
+					end
+					CHUDRestartScripts({ "GUIAlienHUD" })
+					CHUDEvaluateGUIVis()
+				end,
 				sort = "E3",
 			},
 			

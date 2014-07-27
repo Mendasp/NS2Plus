@@ -113,6 +113,24 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		HiveVisionExtra_screenEffect = Client.CreateScreenEffect("shaders/HiveVisionExtra.screenfx")
 		Player.screenEffects.darkVision = Client.CreateScreenEffect(CHUDGetOptionAssocVal("av"))
 		
+		if CHUDGetOption("customhud_a") == 2 then
+			self.resourceDisplay.background:SetPosition(Vector(-440, -100, 0))
+			
+			local healthBall = self.healthBall:GetBackground()
+			local energyBall = self.energyBall:GetBackground()
+			local healthBallPos = healthBall:GetPosition()
+			local energyBallPos = energyBall:GetPosition()
+			self.healthBall.leftSide:SetIsVisible(false)
+			self.healthBall.rightSide:SetIsVisible(false)
+			self.energyBall.leftSide:SetIsVisible(false)
+			self.energyBall.rightSide:SetIsVisible(false)
+			healthBall:SetPosition(Vector(healthBallPos.x+50, healthBallPos.y, 0))
+			energyBall:SetPosition(Vector(energyBallPos.x-50, energyBallPos.y, 0))
+			self.armorBall:SetIsVisible(false)
+			self.adrenalineEnergy:SetIsVisible(false)
+			self.secondaryAbilityBackground:SetPosition(Vector(-50, -125, 0))
+		end
+		
 		self:CHUDRepositionGUI()
 	end)
 

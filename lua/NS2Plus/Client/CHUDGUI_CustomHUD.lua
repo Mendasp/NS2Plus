@@ -2,11 +2,10 @@ Script.Load("lua/GUIAnimatedScript.lua")
 
 class 'CHUDGUI_CustomHUD' (GUIAnimatedScript)
 
+local hudbars = 1
+local kBarSize, kXOffset, leftBarXOffset, rightBarXOffset, yOffset, leftBarXAnchor, rightBarXAnchor, yAnchor, kBarBgTexCoords, kBarTexCoords
 local kCenterBarTexture = PrecacheAsset("ui/centerhudbar.dds")
-local kBarSize = Vector(32, 64, 0)
-local kXOffset = 32
-local leftBarXOffset = -kXOffset-kBarSize.x
-local rightBarXOffset = kXOffset
+local kBottomBarTexture = PrecacheAsset("ui/bottomhudbar.dds")
 local kFontName = "fonts/AgencyFB_tiny.fnt"
 
 local kHealthColors = { }
@@ -21,49 +20,72 @@ local kAmmoColors = { }
 kAmmoColors[kTeam1Index] = Color(0, 0.6117, 1, 1)
 kAmmoColors[kTeam2Index] = Color(1,1,0,1)
 
--- Q: Mendasp, why are you setting a negative size and the coordinates upside down?
--- A: Why don't you mind your own business?
 function CHUDGUI_CustomHUD:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
+	-- Q: Mendasp, why are you setting a negative size and the coordinates upside down?
+	-- A: Why don't you mind your own business?
+	if Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index then
+		hudbars = CHUDGetOption("customhud_m")
+	else
+		hudbars = CHUDGetOption("customhud_a")
+	end
+	
+	kBarSize = { Vector(32, 64, 0), GUIScale(Vector(128, kBaseScreenHeight/3, 0)) }
+	kXOffset = { 32, 0 }
+	leftBarXOffset = { -kXOffset[hudbars]-kBarSize[hudbars].x, 0 }
+	rightBarXOffset = { -leftBarXOffset[1], 0 }
+	yOffset = { kBarSize[hudbars].y/2, 0 }
+	leftBarXAnchor = { GUIItem.Middle, GUIItem.Left }
+	rightBarXAnchor = { GUIItem.Middle, GUIItem.Right }
+	yAnchor = { GUIItem.Center, GUIItem.Bottom }
+	kBarBgTexCoords = ConditionalValue(hudbars == 1, { 0, 128, 32, 64 }, {0, 360, 128, 0})
+	kBarTexCoords = ConditionalValue(hudbars == 1, { 0, 64, 32, 0 },  {0, 360, 128, 0})
+	local barTexture = ConditionalValue(hudbars == 1, kCenterBarTexture, kBottomBarTexture)
+	
 	self.leftBarBg = self:CreateAnimatedGraphicItem()
-	self.leftBarBg:SetAnchor(GUIItem.Middle, GUIItem.Center)
+	self.leftBarBg:SetAnchor(leftBarXAnchor[hudbars], yAnchor[hudbars])
 	self.leftBarBg:SetLayer(kGUILayerPlayerHUD)
 	self.leftBarBg:SetIsVisible(true)
-	self.leftBarBg:SetTexture(kCenterBarTexture)
-	self.leftBarBg:SetTexturePixelCoordinates(0, 128, 32, 64)
-	self.leftBarBg:SetSize(Vector(kBarSize.x, -kBarSize.y, 0))
-	self.leftBarBg:SetPosition(Vector(leftBarXOffset, kBarSize.y/2, 0))
+	self.leftBarBg:SetIsScaling(false)
+	self.leftBarBg:SetTexture(barTexture)
+	self.leftBarBg:SetTexturePixelCoordinates(unpack(kBarBgTexCoords))
+	self.leftBarBg:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y, 0))
+	self.leftBarBg:SetPosition(Vector(leftBarXOffset[hudbars], yOffset[hudbars], 0))
 	
 	self.healthBar = self:CreateAnimatedGraphicItem()
-	self.healthBar:SetAnchor(GUIItem.Middle, GUIItem.Center)
+	self.healthBar:SetAnchor(leftBarXAnchor[hudbars], yAnchor[hudbars])
 	self.healthBar:SetLayer(kGUILayerPlayerHUD)
 	self.healthBar:SetIsVisible(true)
-	self.healthBar:SetTexture(kCenterBarTexture)
-	self.healthBar:SetPosition(Vector(leftBarXOffset, kBarSize.y/2, 0))
+	self.healthBar:SetIsScaling(false)
+	self.healthBar:SetTexture(barTexture)
+	self.healthBar:SetPosition(Vector(leftBarXOffset[hudbars], yOffset[hudbars], 0))
 	
 	self.armorBar = self:CreateAnimatedGraphicItem()
-	self.armorBar:SetAnchor(GUIItem.Middle, GUIItem.Center)
+	self.armorBar:SetAnchor(leftBarXAnchor[hudbars], yAnchor[hudbars])
 	self.armorBar:SetLayer(kGUILayerPlayerHUD)
 	self.armorBar:SetIsVisible(true)
-	self.armorBar:SetTexture(kCenterBarTexture)
+	self.armorBar:SetIsScaling(false)
+	self.armorBar:SetTexture(barTexture)
 	
 	self.rightBarBg = self:CreateAnimatedGraphicItem()
-	self.rightBarBg:SetAnchor(GUIItem.Middle, GUIItem.Center)
+	self.rightBarBg:SetAnchor(rightBarXAnchor[hudbars], yAnchor[hudbars])
 	self.rightBarBg:SetLayer(kGUILayerPlayerHUD)
 	self.rightBarBg:SetIsVisible(true)
-	self.rightBarBg:SetTexture(kCenterBarTexture)
-	self.rightBarBg:SetTexturePixelCoordinates(32, 128, 0, 64)
-	self.rightBarBg:SetSize(Vector(kBarSize.x, -kBarSize.y, 0))
-	self.rightBarBg:SetPosition(Vector(rightBarXOffset, kBarSize.y/2, 0))
+	self.rightBarBg:SetIsScaling(false)
+	self.rightBarBg:SetTexture(barTexture)
+	self.rightBarBg:SetTexturePixelCoordinates(unpack(kBarBgTexCoords))
+	self.rightBarBg:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y, 0))
+	self.rightBarBg:SetPosition(Vector(rightBarXOffset[hudbars], yOffset[hudbars], 0))
 	
 	self.rightBar = self:CreateAnimatedGraphicItem()
-	self.rightBar:SetAnchor(GUIItem.Middle, GUIItem.Center)
+	self.rightBar:SetAnchor(rightBarXAnchor[hudbars], yAnchor[hudbars])
 	self.rightBar:SetLayer(kGUILayerPlayerHUD)
 	self.rightBar:SetIsVisible(true)
-	self.rightBar:SetTexture(kCenterBarTexture)
-	self.rightBar:SetPosition(Vector(rightBarXOffset, kBarSize.y/2, 0))
+	self.rightBar:SetIsScaling(false)
+	self.rightBar:SetTexture(barTexture)
+	self.rightBar:SetPosition(Vector(rightBarXOffset[hudbars], yOffset[hudbars], 0))
 	
 	self.healthTextBg = self:CreateAnimatedTextItem()
 	self.healthTextBg:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -71,8 +93,9 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.healthTextBg:SetTextAlignmentX(GUIItem.Align_Center)
 	self.healthTextBg:SetLayer(kGUILayerPlayerHUD)
 	self.healthTextBg:SetIsVisible(true)
+	self.healthTextBg:SetIsScaling(false)
 	self.healthTextBg:SetColor(Color(0,0,0,1))
-	self.healthTextBg:SetPosition(Vector(leftBarXOffset/2-10, kBarSize.y/2+10, 0))
+	self.healthTextBg:SetPosition(Vector(leftBarXOffset[hudbars]/2-10, kBarSize[hudbars].y/2+10, 0))
 	
 	self.healthText = self:CreateAnimatedTextItem()
 	self.healthText:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -80,8 +103,9 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.healthText:SetTextAlignmentX(GUIItem.Align_Center)
 	self.healthText:SetLayer(kGUILayerPlayerHUD)
 	self.healthText:SetIsVisible(true)
+	self.healthText:SetIsScaling(false)
 	self.healthText:SetColor(Color(1,1,1,1))
-	self.healthText:SetPosition(Vector(leftBarXOffset/2-12, kBarSize.y/2+8, 0))
+	self.healthText:SetPosition(Vector(leftBarXOffset[hudbars]/2-12, kBarSize[hudbars].y/2+8, 0))
 	
 	self.ammoTextBg = self:CreateAnimatedTextItem()
 	self.ammoTextBg:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -89,8 +113,9 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.ammoTextBg:SetTextAlignmentX(GUIItem.Align_Center)
 	self.ammoTextBg:SetLayer(kGUILayerPlayerHUD)
 	self.ammoTextBg:SetIsVisible(true)
+	self.ammoTextBg:SetIsScaling(false)
 	self.ammoTextBg:SetColor(Color(0,0,0,1))
-	self.ammoTextBg:SetPosition(Vector(rightBarXOffset/2+25, kBarSize.y/2+10, 0))
+	self.ammoTextBg:SetPosition(Vector(rightBarXOffset[hudbars]/2+12, kBarSize[hudbars].y/2+10, 0))
 	
 	self.ammoText = self:CreateAnimatedTextItem()
 	self.ammoText:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -98,8 +123,9 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.ammoText:SetTextAlignmentX(GUIItem.Align_Center)
 	self.ammoText:SetLayer(kGUILayerPlayerHUD)
 	self.ammoText:SetIsVisible(true)
+	self.ammoText:SetIsScaling(false)
 	self.ammoText:SetColor(Color(1,1,1,1))
-	self.ammoText:SetPosition(Vector(rightBarXOffset/2+23, kBarSize.y/2+8, 0))
+	self.ammoText:SetPosition(Vector(rightBarXOffset[hudbars]/2+10, kBarSize[hudbars].y/2+8, 0))
 	
 	self.lastReserveAmmo = 0
 	self.lastHealth = 0
@@ -166,11 +192,11 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 			end
 		end
 		
-		local hpTextureCoord = kBarSize.y-kBarSize.y*healthFraction
-		local apTextureCoord = kBarSize.y*armorFraction
+		local hpTextureCoord = kBarTexCoords[2]-kBarTexCoords[2]*healthFraction
+		local apTextureCoord = kBarTexCoords[2]*armorFraction
 		self.healthBar:SetIsVisible(healthFraction > 0)
-		self.healthBar:SetSize(Vector(kBarSize.x, -kBarSize.y*healthFraction, 0))
-		self.healthBar:SetTexturePixelCoordinates(0, kBarSize.y, kBarSize.x, hpTextureCoord)
+		self.healthBar:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y*healthFraction, 0))
+		self.healthBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], hpTextureCoord)
 		
 		if healthFraction < 0.3 then
 			self.healthBar:SetColor(pulsatingRed)
@@ -178,13 +204,11 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 			self.healthBar:SetColor(kHealthColors[teamIndex])
 		end
 		
-		self.healthText:SetIsVisible(true)
-		self.healthTextBg:SetIsVisible(true)
-		
-		if player:isa("Marine") or player:isa("Alien") or player:isa("Exo") then
+		if (player:isa("Marine") or player:isa("Exo") or player:isa("Alien")) then
 			if self.lastHealth ~= health or self.lastArmor ~= armor then
-				self.healthText:SetIsVisible(true)
-				self.healthTextBg:SetIsVisible(true)
+				-- Don't display the text for the NS1 bars, we will reuse the existing UI elements
+				self.healthText:SetIsVisible(hudbars == 1)
+				self.healthTextBg:SetIsVisible(hudbars == 1)
 				self.healthText:SetColor(Color(1,1,1,1))
 				self.healthTextBg:SetColor(Color(0,0,0,1))
 				
@@ -209,20 +233,21 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 		end
 		
 		self.armorBar:SetIsVisible(armorFraction > 0)
-		self.armorBar:SetSize(Vector(kBarSize.x, -kBarSize.y*armorFraction, 0))
-		self.armorBar:SetPosition(Vector(leftBarXOffset, kBarSize.y/2-kBarSize.y*healthFraction, 0))
-		self.armorBar:SetTexturePixelCoordinates(0, hpTextureCoord, kBarSize.x, hpTextureCoord-apTextureCoord)
+		self.armorBar:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y*armorFraction, 0))
+		self.armorBar:SetPosition(Vector(leftBarXOffset[hudbars], yOffset[hudbars]-kBarSize[hudbars].y*healthFraction, 0))
+		self.armorBar:SetTexturePixelCoordinates(kBarTexCoords[1], hpTextureCoord, kBarTexCoords[3], hpTextureCoord-apTextureCoord)
 		self.armorBar:SetColor(kArmorColors[teamIndex])
 
 		self.rightBar:SetIsVisible(fraction > 0)
-		self.rightBar:SetSize(Vector(kBarSize.x, -kBarSize.y*fraction, 0))
-		self.rightBar:SetTexturePixelCoordinates(kBarSize.x, kBarSize.y, 0, kBarSize.y-kBarSize.y*fraction)
+		self.rightBar:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y*fraction, 0))
+		self.rightBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], kBarTexCoords[2]-kBarTexCoords[2]*fraction)
 		self.rightBar:SetColor(ConditionalValue(enoughEnergy, kAmmoColors[teamIndex], pulsatingRed))
 		
 		if activeWeapon and activeWeapon:isa("ClipWeapon") and not activeWeapon:isa("ExoWeaponHolder") then
 			if self.lastReserveAmmo ~= activeWeapon:GetAmmo() then
-				self.ammoText:SetIsVisible(true)
-				self.ammoTextBg:SetIsVisible(true)
+				-- Don't display the text for the NS1 bars, we will reuse the existing UI elements
+				self.ammoText:SetIsVisible(hudbars == 1)
+				self.ammoTextBg:SetIsVisible(hudbars == 1)
 				self.ammoText:SetColor(Color(1,1,1,1))
 				self.ammoTextBg:SetColor(Color(0,0,0,1))
 				
@@ -249,6 +274,10 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 		self.rightBar:SetIsVisible(false)
 		self.leftBarBg:SetIsVisible(false)
 		self.rightBarBg:SetIsVisible(false)
+		self.healthText:SetIsVisible(false)
+		self.healthTextBg:SetIsVisible(false)
+		self.ammoText:SetIsVisible(false)
+		self.ammoTextBg:SetIsVisible(false)
 	end
 
 end
