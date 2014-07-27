@@ -181,77 +181,7 @@ if Server then
 	end
 
 	Server.HookNetworkMessage("SetCHUDAutopickup", OnSetCHUDAutopickup)
-	
-	local originalWeaponDropped
-	originalWeaponDropped = Class_ReplaceMethod( "Weapon", "Dropped",
-		function(self, prevOwner)
-			local slot = self:GetHUDSlot()
 
-			originalWeaponDropped(self, prevOwner)
-			
-			if self.physicsModel then
-				local viewCoords = prevOwner:GetViewCoords()
-				local impulse = 0.075
-				if slot == 2 then
-					impulse = 0.0075
-				elseif slot == 3 then
-					impulse = 0.005
-				end
-				self.physicsModel:AddImpulse(self:GetOrigin(), (viewCoords.zAxis * impulse))
-			end
-		end)
-		
-	local originalClipWeaponDropped
-	originalClipWeaponDropped = Class_ReplaceMethod( "ClipWeapon", "Dropped",
-		function(self, prevOwner)
-
-			local ammopackMapName = self:GetAmmoPackMapName()
-			
-			if ammopackMapName and self.ammo ~= 0 then
-			
-				local ammoPack = CreateEntity(ammopackMapName, self:GetOrigin(), self:GetTeamNumber())
-				ammoPack:SetAmmoPackSize(self.ammo)
-				self.ammo = 0
-				
-				ammoPack.weapon = self:GetId()
-				
-			end
-			
-			// Since self.ammo will be 0 it shouldn't be creating a second ammo pack when we call the original func
-			originalClipWeaponDropped(self, prevOwner)
-		end)
-		
-	local originalDropPackOnUpdate
-	originalDropPackOnUpdate = Class_ReplaceMethod( "DropPack", "OnUpdate",
-		function(self, deltaTime)
-			local weapon = self.weapon and Shared.GetEntity(self.weapon)
-			
-			originalDropPackOnUpdate(self, deltaTime)
-			
-			// Give it an outline
-			if Client then
-				EquipmentOutline_UpdateModel(self)
-			end
-			
-			// If the ammo entity has an associated weapon set that as our origin
-			// Makes ammo packs from dropped weapons sit next to the weapons
-			if weapon ~= nil and weapon.weaponWorldState == true then
-				if self:GetOrigin() ~= weapon:GetOrigin() then
-					// With this set to nil the original update accepts its fate and succumbs to my power
-					self.onGroundPoint = nil
-					self:SetOrigin(weapon:GetOrigin())
-				end
-			// When the weapon gets picked up, move the ammo to the floor so it can get picked up
-			// Prevents magical floating ammo when you pick up weapons mid-air
-			elseif self.weapon then
-				local trace = Shared.TraceRay(self:GetOrigin() + kUpVector * 0.025, self:GetOrigin() - kUpVector * 20, CollisionRep.Move, PhysicsMask.AllButPCs, EntityFilterOneAndIsa(self, "Player"))
-				self:SetOrigin(Vector(trace.endPoint))
-				
-				// Remember to nullify the self.weapon or when you drop the weapon somewhere else the ammo will follow!
-				self.weapon = nil
-			end
-		
-		end)
 end
 
 

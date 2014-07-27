@@ -4,12 +4,8 @@ local kBlipSize 		= GetUpValue( GUIMinimap.SetBlipScale, "kBlipSize", 			{ Locat
 local kBlipSizeType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipSizeType", 		{ LocateRecurse = true } )
 local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ LocateRecurse = true } )
 
-
-AppendToEnum( kBlipColorType, "White" )
-AppendToEnum( kBlipSizeType, "BoneWall" )
 AppendToEnum( kBlipSizeType, "UnpoweredPowerPoint" )
-kBlipInfo[kMinimapBlipType.BoneWall] = {  kBlipColorType.White, kBlipSizeType.BoneWall, kStaticBlipsLayer }
-kBlipInfo[kMinimapBlipType.UnsocketedPowerPoint] = { kBlipColorType.White, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
+kBlipInfo[kMinimapBlipType.UnsocketedPowerPoint] = { kBlipColorType.FullColor, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
 kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
 
 
@@ -85,11 +81,6 @@ function(self)
 		ConditionalValue(friends, kMinimapBlipTeam.FriendAlien, kMinimapBlipTeam.Alien) } )
 	ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendMarine =
 		ConditionalValue(friends, kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
-
-	-- Add a white blipcolor for full-color icons
-	for blipTeam, _ in ipairs(kMinimapBlipTeam) do
-		self.blipColorTable[blipTeam][kBlipColorType.White] = Color(1, 1, 1, 1)
-    end
 	
 	minimapScript = self
 end)
@@ -155,44 +146,7 @@ originalLocationNameInit = Class_ReplaceMethod( "GUIMinimap", "InitializeLocatio
 	end)
 
 
-local GetNamePool, OnSameMinimapBlipTeam, kPlayerNameColorMarine, kPlayerNameColorAlien, namePos, kPlayerNameOffset
-local function NewDrawMinimapNames(self, shouldShowPlayerNames, clientIndex, spectating, blipTeam, xPos, yPos, isParasited)
-
-	if clientIndex > 0 and shouldShowPlayerNames then
-		
-		local record = Scoreboard_GetPlayerRecord( clientIndex )			
-		
-		if record and record.Name then			
-			local nameItem = GetNamePool(self, clientIndex)
-			nameItem:SetIsVisible(true)	
-			nameItem:SetText(record.Name)
-			
-			local nameColor = Color(1, 1, 1)
-			if isParasited then
-				nameColor.b = 0
-			elseif spectating then
-				if OnSameMinimapBlipTeam(kMinimapBlipTeam.Marine, blipTeam) then
-					nameColor = kPlayerNameColorMarine
-				else
-					nameColor = kPlayerNameColorAlien
-				end
-			elseif record.IsRookie then
-				nameColor = Color( 0, 1, 0 )
-			end
-			
-			nameItem:SetColor(nameColor)
-			
-			namePos.x = xPos
-			namePos.y = yPos - kPlayerNameOffset
-			nameItem:SetPosition(namePos)
-		end
-		
-	end
-	
-end
-ReplaceUpValue( GUIMinimap.Update, "DrawMinimapNames", NewDrawMinimapNames, { CopyUpValues = true; LocateRecurse = true; } )
-
-local UpdateMinimapNames, kScanAnimDuration, PlotToMap, blipPos, blipRotation, DrawMinimapNames, kHallucinationColor, MinimapBlipTeamIsActive, PulseRed, PulseDarkRed
+local UpdateMinimapNames, kScanAnimDuration, PlotToMap, blipPos, blipRotation, OnSameMinimapBlipTeam, DrawMinimapNames, kHallucinationColor, MinimapBlipTeamIsActive, PulseRed, PulseDarkRed
 local function NewUpdateStaticBlips(self, deltaTime)
 	
 	PROFILE("GUIMinimap:UpdateStaticBlips")
@@ -377,18 +331,15 @@ originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
 		end
 	end)
 
-
--- Bone Wall size change
 local oldSetBlipScale 
 oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
 	function( self, blipScale )
-		if blipScale ~= self.blipScale then				
+		if blipScale ~= self.blipScale then
 			local blipSize = Vector(kBlipSize, kBlipSize, 0)
-			self.blipSizeTable[kBlipSizeType.BoneWall] = blipSize * 1.5 * blipScale 
 			self.blipSizeTable[kBlipSizeType.UnpoweredPowerPoint] = blipSize * 0.45 * blipScale 
 		end
 		oldSetBlipScale( self, blipScale )
-	end)	
+	end)
 
 local oldSetPlayerIconColor
 oldSetPlayerIconColor = Class_ReplaceMethod( "GUIMinimap", "SetPlayerIconColor",

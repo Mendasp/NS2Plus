@@ -71,6 +71,21 @@ local function AddDamageStat(steamId, damage, isPlayer)
 	end
 end
 
+local function OnSetCHUDOverkill(client, message)
+
+	if client then
+	
+		local player = client:GetControllingPlayer()
+		if player and message ~= nil then
+			player.overkill = message.overkill
+		end
+		
+	end
+	
+end
+
+Server.HookNetworkMessage("SetCHUDOverkill", OnSetCHUDOverkill)
+
 local oldSendDamageMessage = SendDamageMessage
 function SendDamageMessage( attacker, target, amount, point, overkill )
 		
@@ -79,27 +94,14 @@ function SendDamageMessage( attacker, target, amount, point, overkill )
 		AddDamageStat(steamId, amount or 0, target and target:isa("Player") and not (target:isa("Hallucination") or target.isHallucination))
 	end
 	
-	
-	if amount > 0 then
-	
-		local msg = BuildCHUDDamageMessage( target, amount, point, overkill )
-		
-		// damage reports must always be reliable when not spectating
-		Server.SendNetworkMessage(attacker, "CHUDDamage", msg, true)
-		
-		for _, spectator in ientitylist(Shared.GetEntitiesWithClassname("Spectator")) do
-		
-			if attacker == Server.GetOwner(spectator):GetSpectatingPlayer() then
-				Server.SendNetworkMessage(spectator, "CHUDDamage", msg, false)
-			end
-			
-		end
-		
+	if attacker.overkill == true then
+		amount = overkill
 	end
 	
+	oldSendDamageMessage( attacker, target, amount, point, overkill )
+	
 end
-	
-	
+
 local function CHUDResetCommStats(commSteamId)
 	if not CHUDCommStats[commSteamId] then
 		CHUDCommStats[commSteamId] = { }
@@ -369,108 +371,6 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 		self.lastClass = self:GetMapName()
 		
 	end)
-
--- Make FireMixin use the message accumulation stuff
-
-function LiveMixin:DeductHealth(damage, attacker, doer, healthOnly, armorOnly, preventAlert)
-
-    local armorUsed = 0
-    local healthUsed = damage
-    
-    if self.healthIgnored or armorOnly then
-    
-        armorUsed = damage
-        healthUsed = 0
-        
-    elseif not healthOnly then
-    
-        armorUsed = math.min(self:GetArmor() * kHealthPointsPerArmor, (damage * kBaseArmorUseFraction) / kHealthPointsPerArmor )
-        healthUsed = healthUsed - armorUsed
-        
-    end
-
-    local engagePoint = HasMixin(self, "Target") and self:GetEngagementPoint() or self:GetOrigin()
-    return self:TakeDamage(damage, attacker, doer, engagePoint, nil, armorUsed, healthUsed, kDamageType.Normal, preventAlert)
-    
-end
-
-
-local kBurnUpdateRate
-local function NewFireMixinSharedUpdate(self, deltaTime)
-
-    if Client then
-        UpdateFireMaterial(self)
-        self:_UpdateClientFireEffects()
-    end
-
-    if not self:GetIsOnFire() then
-        return
-    end
-    
-    if Server then
-    
-        if self:GetIsAlive() and (not self.timeLastFireDamageUpdate or self.timeLastFireDamageUpdate + kBurnUpdateRate <= Shared.GetTime()) then
-    
-            local damageOverTime = kBurnUpdateRate * kBurnDamagePerSecond
-            if self.GetIsFlameAble and self:GetIsFlameAble() then
-                damageOverTime = damageOverTime * kFlameableMultiplier
-            end
-            
-            local attacker = nil
-            if self.fireAttackerId ~= Entity.invalidId then
-                attacker = Shared.GetEntity(self.fireAttackerId)
-            end
-
-            local doer = nil
-            if self.fireDoerId ~= Entity.invalidId then
-                doer = Shared.GetEntity(self.fireDoerId)
-            end
-            
-            local killedFromDamage, damageDone = self:DeductHealth(damageOverTime, attacker, doer)
-
-            if attacker then
-            
-				SendDamageMessage( attacker, self, damageDone, self:GetOrigin(), damageOverTime)
-            
-            end
-            
-            self.timeLastFireDamageUpdate = Shared.GetTime()
-            
-        end
-        
-        // See if we put ourselves out
-        if Shared.GetTime() - self.timeBurnInit > kFlamethrowerBurnDuration then
-            self:SetGameEffectMask(kGameEffect.OnFire, false)
-        end
-        
-    end
-    
-end
-ReplaceUpValue( FireMixin.OnUpdate, "SharedUpdate", NewFireMixinSharedUpdate, { LocateRecurse = true; CopyUpValues = true; } )
-
-
-
-local oldMarineOnProcessMove = Marine.OnProcessMove
-function Marine:OnProcessMove(input)
-	local oldDeductHealth = self.DeductHealth 
-	self.DeductHealth =  
-		function ( self, damage, attacker, doer, healthOnly )
-				
-			oldDeductHealth( self, damage, attacker, doer, healthOnly )
-			
-			if attacker then
-				
-				SendDamageMessage( attacker, self, damage, self:GetOrigin(), damage)
-				
-			end
-			
-		end
-
-	oldMarineOnProcessMove( self, input )
-	
-	self.DeductHealth = oldDeductHealth
-	
-end
 
 // Attack counters for every single fucking thing in the game
 // ClipWeapon covers FT, GL, pistol, rifle and SG

@@ -19,4 +19,3 @@ originalGUIWorldDamageText = Class_ReplaceMethod( "GUIWorldText", "UpdateDamageM
 		useColorCHUD = ColorIntToColor(ConditionalValue(PlayerUI_IsOnMarineTeam(), CHUDGetOptionAssocVal("dmgcolor_m"), CHUDGetOptionAssocVal("dmgcolor_a")))
 		messageItem:SetColor(Color(useColorCHUD.r, useColorCHUD.g, useColorCHUD.b, oldalpha))
 	end)
-	

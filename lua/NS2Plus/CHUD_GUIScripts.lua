@@ -1,4 +1,4 @@
-Elixer.UseVersion( kCHUDElixerVersion ) 
+Elixer.UseVersion( kCHUDElixerVersion )
 
 Script.Load("lua/NS2Plus/GUIScripts/GUIAlienHUD.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIMarineHUD.lua")
@@ -25,6 +25,3 @@ Script.Load("lua/NS2Plus/GUIScripts/GUICommanderLogout.lua")
 
 // I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/NS2Plus/GUIScripts/GhostModel.lua")
-
-// Remove for 267
-GUIInventory.kItemSize = Vector(96, 48, 0)

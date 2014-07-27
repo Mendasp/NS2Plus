@@ -6,6 +6,7 @@
 // Copyright 2011, Unknown Worlds Entertainment
 //
 //=============================================================================
+
 Script.Load("lua/InterfaceSounds_Client.lua")
 Script.Load("lua/ServerBrowser.lua")
 Script.Load("lua/CreateServer.lua")
@@ -140,22 +141,30 @@ function MainMenu_GetSelectedIsFull()
         local numReservedSlots = GetNumServerReservedSlots(gSelectedServerData.serverId)
         return Client.GetServerNumPlayers(gSelectedServerNum) >= Client.GetServerMaxPlayers(gSelectedServerNum) - numReservedSlots
     end
-	
+    
 end
 
 function MainMenu_GetSelectedIsFullWithNoRS()
     
-    if gSelectedServerNum then
+    if gSelectedServerNum and gSelectedServerNum >0 then
         return Client.GetServerNumPlayers(gSelectedServerNum) >= Client.GetServerMaxPlayers(gSelectedServerNum)
     end
-	
+    
+end
+
+function MainMenu_GetSelectedIsHighPlayerCount()
+    
+    if gSelectedServerNum and gSelectedServerData then
+        return gSelectedServerData.maxPlayers > 24 and Client.GetOptionBoolean( kRookieOptionsKey, false ) == true
+    end
+    
 end
 
 function MainMenu_ForceJoin(forceJoin)
-	if forceJoin ~= nil then
-		gForceJoin = forceJoin
-	end
-	return gForceJoin
+    if forceJoin ~= nil then
+        gForceJoin = forceJoin
+    end
+    return gForceJoin
 end
 
 function MainMenu_GetSelectedServerName()
@@ -307,12 +316,12 @@ end
  */
 local function OnCommandMap(mapFileName)
 
-	if mapFileName ~= nil then
-		MainMenu_HostGame(mapFileName)
-		
-		if Client then
-			Client.SetOptionString("lastServerMapName", mapFileName)
-		end
+    if mapFileName ~= nil then
+        MainMenu_HostGame(mapFileName)
+        
+        if Client then
+            Client.SetOptionString("lastServerMapName", mapFileName)
+        end
     end
 
 end
@@ -386,9 +395,9 @@ function MainMenu_OnMouseOut()
 end
 
 function MainMenu_OnMouseOver()
-	if MainMenu_GetIsOpened() then
-		StartSoundEffect(kMouseOutSound)
-	end
+    if MainMenu_GetIsOpened() then
+        StartSoundEffect(kMouseOutSound)
+    end
 end
 
 function MainMenu_OnMouseClick()
@@ -444,23 +453,23 @@ function MainMenu_OnPlayButtonClicked()
 end
 
 function MainMenu_OnSlide()
-	if MainMenu_GetIsOpened() then
-		StartSoundEffect(kSlideSound)
-	end
+    if MainMenu_GetIsOpened() then
+        StartSoundEffect(kSlideSound)
+    end
 end
 
 function MainMenu_OnTrainingLinkedClicked()
-	if MainMenu_GetIsOpened() then
-		StartSoundEffect(kTrainigLinkSound)
-	end
+    if MainMenu_GetIsOpened() then
+        StartSoundEffect(kTrainigLinkSound)
+    end
 end
 
 function MainMenu_OnLoadingSound()
-	if MainMenu_GetIsOpened() then
-		StartSoundEffect(kLoadingSound)
-	end
+    if MainMenu_GetIsOpened() then
+        StartSoundEffect(kLoadingSound)
+    end
 end
-	
+    
 function MainMenu_OnCustomizationHover()
     StartSoundEffect(kCustomizeHoverSound)    
 end

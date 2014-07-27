@@ -441,6 +441,11 @@ CHUDOptions =
 				defaultValue = false,
 				category = "hud",
 				valueType = "bool",
+				applyFunction = function()
+					local message = { }
+					message.overkill = CHUDGetOption("overkilldamagenumbers")
+					Client.SendNetworkMessage("SetCHUDOverkill", message)
+				end,
 				sort = "C6b",
 			},
 			damagenumbertime = 
@@ -767,9 +772,9 @@ CHUDOptions =
 			hitsounds = {
 				name    = "CHUD_Hitsounds",
 				label   = "Hitsounds",
-				tooltip = "Enables or disables server confirmed hitsounds.",
+				tooltip = "Chooses between different server confirmed hitsounds.",
 				type    = "select",
-				values  = { "Disabled", "Quake 3", "Quake 4", "Dystopia" },
+				values  = { "Vanilla", "Quake 3", "Quake 4", "Dystopia" },
 				valueTable = { "null",
 					"sound/hitsounds.fev/hitsounds/q3",
 					"sound/hitsounds.fev/hitsounds/q4",
@@ -784,7 +789,7 @@ CHUDOptions =
 			hitsounds_pitch = { 
 				name    = "CHUD_HitsoundsPitch",
 				label   = "Hitsounds pitch modifier",
-				tooltip = "Sets the pitch for high damage hits (only shotgun).",
+				tooltip = "Sets the pitch for high damage hits on variable damage weapons. This setting has no effect for vanilla hitsounds.",
 				type    = "select",
 				values  = { "Low pitch", "High pitch" },
 				callback = CHUDSaveMenuSettings,
@@ -792,20 +797,6 @@ CHUDOptions =
 				category = "comp",
 				valueType = "int",
 				sort = "A2",
-			},
-			hitsounds_vol = { 
-				name    = "CHUD_HitsoundsVolume",
-				label   = "Hitsounds volume",
-				tooltip = "Sets the volume for hitsounds.",
-				type    = "slider",
-				sliderCallback = CHUDHitsoundsSlider,
-				defaultValue = 0.75,
-				minValue = 0,
-				maxValue = 1,
-				multiplier = 100,
-				category = "comp",
-				valueType = "float",
-				sort = "A3",
 			},
 			ambient = {
 				name    = "CHUD_Ambient",
@@ -950,6 +941,18 @@ CHUDOptions =
 				sort = "E3",
 				resetSettingInBuild = 191,
 			},
+			pickupexpirecolor = { 
+				name    = "CHUD_PickupExpireBarColor",
+				label   = "Dynamically colored expiration bar",
+				tooltip = "Makes the expire bar colored depending on time left.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "comp",
+				valueType = "int",
+				sort = "E4",
+			},
 			instantdissolve = { 
 				name    = "CHUD_InstantDissolve",
 				label   = "Ragdoll instant dissolve effect",
@@ -960,7 +963,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				sort = "E4",
+				sort = "E5",
 			},
 			minimaptoggle = { 
 				name    = "CHUD_MinimapToggle",

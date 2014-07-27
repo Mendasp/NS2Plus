@@ -1,3 +1,5 @@
+local kHitSoundVol = 0.0
+
 local hitsounds = {}
 hitsounds[0] = ""
 hitsounds[1] = "-mid"
@@ -11,7 +13,19 @@ for _, sound in pairs(CHUDGetOptionVals("hitsounds")) do
 	Client.PrecacheLocalSound(sound .. "-hi-h")
 end
 
+function HitSounds_SyncOptions()
+	kHitSoundVol = Client.GetOptionFloat( "hitsound-vol", 0.0 )
+end
+
 function HitSounds_PlayHitsound( i )
+	if CHUDGetOption("hitsounds") > 0 then
+		HitSounds_PlayCHUDHitsound( i )
+	elseif kHitSounds[i] then
+		StartSoundEffect( kHitSounds[i], kHitSoundVol )
+	end
+end
+
+function HitSounds_PlayCHUDHitsound( i )
 	local hitsound = i - 1
 	if hitsounds[hitsound] then
 		local soundEffectName = CHUDGetOptionAssocVal("hitsounds")
@@ -21,6 +35,6 @@ function HitSounds_PlayHitsound( i )
 			soundEffectName = soundEffectName .. "-h"
 		end
 	
-		StartSoundEffect(soundEffectName, CHUDGetOption("hitsounds_vol"))
+		StartSoundEffect(soundEffectName, kHitSoundVol)
 	end
 end

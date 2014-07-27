@@ -7,11 +7,11 @@ CHUDStatsVisible = false
 local gStatsUI
 local lastStatsMsg = 0
 
-local kTitleFontName = "fonts/AgencyFB_medium.fnt"
-local kStatsFontName = "fonts/AgencyFB_small.fnt"
+local kTitleFontName = Fonts.kAgencyFB_Medium
+local kStatsFontName = Fonts.kAgencyFB_Small
 local kTopOffset = GUIScale(96)
 local kFontScale = GUIScale(Vector(1, 1, 0))
-local kTitleBackgroundTexture = "ui/objective_banner_marine.dds"
+local kTitleBackgroundTexture = PrecacheAsset("ui/objective_banner_marine.dds")
 local kTitleBackgroundSize = GUIScale(Vector(210, 45, 0))
 
 function CHUDGUI_DeathStats:Initialize()

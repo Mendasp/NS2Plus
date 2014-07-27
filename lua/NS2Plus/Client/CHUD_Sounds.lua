@@ -1,5 +1,5 @@
 Script.Load("lua/EffectManager.lua")
-local blockedEffects = set {	
+local blockedEffects = set {
 							"complete_order",
 							"upgrade_complete" }
 originalTriggerEffects = Class_ReplaceMethod( "EffectManager", "TriggerEffects",
@@ -13,7 +13,7 @@ originalTriggerEffects = Class_ReplaceMethod( "EffectManager", "TriggerEffects",
 	end
 )
 
-local blockedVO = set {	
+local blockedVO = set {
 					"sound/NS2.fev/marine/voiceovers/commander/build",
 					"sound/NS2.fev/marine/voiceovers/commander/defend",
 					"sound/NS2.fev/marine/voiceovers/move" }

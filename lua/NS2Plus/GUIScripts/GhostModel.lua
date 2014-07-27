@@ -5,7 +5,7 @@ local kCircleModelAlien = PrecacheAsset("models/misc/circle/circle_alien.model")
 
 // I think this is a very honest function name, I'd trust it with my wallet, kids, dog and car keys
 function GhostModel:MaybeInitCircleModel()
-	if not self.circleEnergyModel then	
+	if not self.circleEnergyModel then
 		// Second ring just for the shift, so always alien
 		self.circleEnergyModel = Client.CreateRenderModel(RenderScene.Zone_Default)
 		self.circleEnergyModel:SetModel(kCircleModelAlien)

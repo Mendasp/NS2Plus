@@ -135,3 +135,53 @@ for i = 1, #modEntries do
 	end
 	
 end
+
+
+-- fsfod's Event Hook utility
+-- This should only be called in cases when a Mod needs to Override an existing Event.Hook().
+-- Example Client-Scope usage (in ModClient.lua):
+-- Event.RemoveHook("OnUpdateRender")
+-- 
+-- function ModClientOnUpdateRender()
+--     --do stuff
+-- end
+-- 
+-- Add mod Event Hook
+-- Event.Hook("OnUpdateRender", ModClientOnUpdateRender())
+local dummyFunc = function()end
+Event.Hook("a", dummyFunc)  //force the creation of the hook table
+
+local HookTable = debug.getregistry()["Event.HookTable"]
+
+setmetatable( HookTable, {
+    __index = function(self, key)
+        RawPrint(key)
+        return rawget(self, key)
+    end
+})
+
+Event.RemoveHook = function(event, hook)
+  
+    local hookList = HookTable[event]
+
+    if(not hookList) then
+        RawPrint("There are no hooks set for an event named %s", event)
+        return false
+    end
+  
+    for i,hookEntry in ipairs(hookList) do
+        if(hook == hookEntry) then
+            table.remove(hookList, i)   
+
+            if(#hookList == 0) then
+                HookTable[event] = nil
+            end
+            
+            return true
+        end
+    end
+  
+    return false
+end
+
+Event.RemoveHook("a", dummyFunc)

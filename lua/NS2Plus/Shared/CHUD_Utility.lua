@@ -97,53 +97,29 @@ function CheckCHUDTagOption(bitmask, option)
 	return(bit.band(bitmask, option) > 0)
 end
 
-// Obviously from Shine
-local Gamemode
-function ShineGetGamemode()
-	if Gamemode then return Gamemode end
-
-	local GameSetup = io.open( "game_setup.xml", "r" )
-
-	if not GameSetup then
-		Gamemode = "ns2"
-
-		return "ns2"
-	end
-
-	local Data = GameSetup:read( "*all" )
-
-	GameSetup:close()
-
-	local Match = Data:match( "<name>(.+)</name>" )
-
-	Gamemode = Match or "ns2"
-
-	return Gamemode
-end
-
 // Reminder to fix all the stupid time rounding stuff
 local function FormatTime(time)
 
-    local t = math.round(time)
-    local h = math.floor(t / 3600)
-    local m = math.floor((t / 60) % 60)
-    local s = math.floor(t % 60)
-    return string.format("%d:%.2d:%.2d", h,  m, s)
-    
+	local t = math.round(time)
+	local h = math.floor(t / 3600)
+	local m = math.floor((t / 60) % 60)
+	local s = math.floor(t % 60)
+	return string.format("%d:%.2d:%.2d", h,  m, s)
+
 end
 
 function CHUDGetGameTime()
-	
+
 	local gameTime, state = PlayerUI_GetGameLengthTime()
 	if state == kGameState.NotStarted then
 		gameTime = 0
 	end
-				
+
 	local minutes = math.floor(gameTime / 60)
 	local seconds = math.floor(gameTime % 60)
-							
+
 	return(string.format("%d:%.2d", minutes, seconds))
-	
+
 end
 
 if Client then

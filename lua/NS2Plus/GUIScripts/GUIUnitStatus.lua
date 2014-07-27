@@ -9,11 +9,12 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		blipData.Hint = CHUDBlipData.Hint
 		if CHUDBlipData.IsVisible == false then
 			blipData.IsCrossHairTarget = false
+			blipData.HealthFraction = 0
 		end
 	end
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)	
 	local isCrosshairTarget = blipData.IsCrossHairTarget
-	local player = Client.GetLocalPlayer()	
+	local player = Client.GetLocalPlayer()
 	
 	local minnps = CHUDGetOption("minnps") and not localPlayerIsCommander
 	
@@ -22,25 +23,6 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	if minnps then
 		showHints = false
 	elseif CHUDBlipData then
-		-- Show evolve class of friendly players
-		if CHUDBlipData.EvolveClass ~= nil and not localPlayerIsCommander then
-			blipData.Hint = CHUDBlipData.EvolveClass
-			showHints = true
-		end
-		
-		-- Show only destination name when not looking at the tunnel
-		if CHUDBlipData.Destination and not isCrosshairTarget and not localPlayerIsCommander then
-			blipData.Name = CHUDBlipData.Destination
-			blipData.ForceName = true 
-			blipData.IsPlayer = true
-		end
-		
-		-- Show tunnel owner when looking at it
-		if CHUDBlipData.TunnelOwner then
-			blipData.Hint = CHUDBlipData.TunnelOwner
-			showHints = true
-		end
-		
 		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
 			// If someone is already fucking with this, we fuck off
 			if blipData.AbilityFraction > 0 then
@@ -49,23 +31,17 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 				blipData.AbilityFraction = CHUDBlipData.EnergyFraction
 			end
 		end
-		
-		if CHUDBlipData.ExpireTime and CHUDBlipData.ExpireTime ~= 0 and localPlayerIsCommander then
-			blipData.IsCrossHairTarget = CHUDGetOption("pickupexpire") > 0
-			blipData.AbilityFraction = Clamp(math.abs(CHUDBlipData.ExpireTime - Shared.GetTime())/ConditionalValue(kWeaponStayTime, kWeaponStayTime, kItemStayTime), 0, 1)
-			blipData.Name = ""
-		end
 	end
 	
 
-	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )		
+	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
 		
 	-- Hide Background
 	if CHUDGetOption("mingui") or minnps then
-		updateBlip.statusBg:SetTexture(kTransparentTexture)		
+		updateBlip.statusBg:SetTexture(kTransparentTexture)
 		if updateBlip.BorderMask then
-            updateBlip.BorderMask:SetIsVisible(false)
+			updateBlip.BorderMask:SetIsVisible(false)
 		end
 		if updateBlip.smokeyBackground then
 			updateBlip.smokeyBackground:SetIsVisible(false)
@@ -74,44 +50,65 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	
 	if CHUDBlipData then
 	
-		// Make the energy bar like in Insight
+		-- Make the energy bar same color as Insight
 		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
 			updateBlip.AbilityBar:SetColor(Color(1,1,0,1))
 		end
-		
-		if CHUDBlipData.ExpireTime and updateBlip.AbilityBar and localPlayerIsCommander then
-			updateBlip.HealthBarBg:SetIsVisible(false)
-			updateBlip.ArmorBarBg:SetIsVisible(false)
-			updateBlip.AbilityBar:SetColor(Color(kMarineTeamColorFloat))
-		end
 	
 	end
+
+    if blipData.IsWorldWeapon and updateBlip.AbilityBar then
+        if CHUDGetOption("pickupexpire") == 0 then
+            updateBlip.AbilityBarBg:SetIsVisible(false)
+        end
+        if CHUDGetOption("pickupexpirecolor") > 0 then
+            if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
+                updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
+            elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
+                updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
+            elseif blipData.AbilityFraction < 0.25 then
+                updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
+            end
+        end
+    end
+
 	
 	-- Minimal Nameplates
 	if minnps then
-		if CHUDBlipData and updateBlip.NameText:GetIsVisible() then	
+		if CHUDBlipData and updateBlip.NameText:GetIsVisible() then
 			
-			if blipData.SpawnFraction ~= nil and not isEnemy and not blipData.IsCrossHairTarget then
-				updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.SpawnerName, blipData.SpawnFraction*100))
-				updateBlip.HintText:SetIsVisible(false)
-			else
-				if blipData.EvolvePercentage ~= nil and not isEnemy and ( blipData.IsPlayer or blipData.IsCrossHairTarget ) then
-					updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.Name, blipData.EvolvePercentage*100))
-					if CHUDBlipData.EvolveClass ~= nil then
-						blipData.Hint = blipData.Hint .. " - " .. CHUDBlipData.EvolveClass
-					end
-				else
-					updateBlip.NameText:SetText(CHUDBlipData.Description)
-				end
-				updateBlip.HintText:SetIsVisible(true)
-				updateBlip.HintText:SetText( blipData.Hint )
-				updateBlip.HintText:SetColor(updateBlip.NameText:GetColor())	
+			if CHUDBlipData.Percentage then
+				updateBlip.NameText:SetText(CHUDBlipData.Percentage)
 			end
-
+			
+			if CHUDBlipData.Status then
+				updateBlip.HintText:SetText(CHUDBlipData.Status)
+			end
+			
+			updateBlip.HintText:SetIsVisible(true)
+			updateBlip.HintText:SetColor(updateBlip.NameText:GetColor())
+			
 			updateBlip.HealthBarBg:SetIsVisible(false)
 			updateBlip.ArmorBarBg:SetIsVisible(false)
 			if updateBlip.AbilityBarBg then
 				updateBlip.AbilityBarBg:SetIsVisible(false)
+			end
+			
+			if blipData.SpawnFraction ~= nil and not isEnemy and not blipData.IsCrossHairTarget then
+				updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.SpawnerName, blipData.SpawnFraction*100))
+				updateBlip.HintText:SetIsVisible(false)
+			elseif blipData.EvolvePercentage ~= nil and not isEnemy and ( blipData.IsPlayer or blipData.IsCrossHairTarget ) then
+				updateBlip.NameText:SetText(string.format("%s (%d%%)", blipData.Name, blipData.EvolvePercentage*100))
+				if blipData.EvolveClass ~= nil then
+					updateBlip.HintText:SetText(string.format("%s (%s)", CHUDBlipData.Status, blipData.EvolveClass))
+				end
+			elseif blipData.Destination ~= nil and not isEnemy then
+				if blipData.IsCrossHairTarget then
+					updateBlip.NameText:SetText(string.format("%s (%s)", blipData.Destination, CHUDBlipData.Percentage))
+				else
+					updateBlip.NameText:SetText(blipData.Destination)
+					updateBlip.HintText:SetIsVisible(false)
+				end
 			end
 			
 		end

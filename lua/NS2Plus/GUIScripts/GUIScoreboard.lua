@@ -1,21 +1,3 @@
-// Keep last game time instead of immediatly resetting
-local originalScoreboardUpdate
-originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
-function(self, deltaTime)
-	originalScoreboardUpdate(self, deltaTime)
-	
-    if self.visible then
-        local gameTime = PlayerUI_GetGameLengthTime()
-        local minutes = math.floor(gameTime / 60)
-        local seconds = gameTime - minutes * 60
-        local serverName = Client.GetServerIsHidden() and "Hidden" or Client.GetConnectedServerName()
-        local gameTimeText = serverName .. " | " .. Shared.GetMapName() .. string.format(" - %d:%02d", minutes, seconds)
-        
-        self.gameTime:SetText(gameTimeText)
-	end
-end)
-	
-	
 local originalScoreboardUpdateTeam
 originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam",
 function(self, updateTeam)
@@ -28,7 +10,7 @@ function(self, updateTeam)
 	if teamNumber == kTeamReadyRoom then
 		local numPlayersReported, numPlayersTotal = PlayerUI_GetServerNumPlayers()
 		if numPlayersReported < numPlayersTotal then
-			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]			
+			local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]
 			local teamNameText = updateTeam["TeamName"]
 			local numPlayers = table.count(updateTeam["GetScores"]())
 			
@@ -40,16 +22,6 @@ function(self, updateTeam)
 		end
 	end
 	
-	
-	// Determines if the local player can see secret information for this team.
-	local isVisibleTeam = false
-	if Client.GetLocalPlayer() then
-		local playerTeamNum = Client.GetLocalPlayer():GetTeamNumber()
-		if playerTeamNum == kSpectatorIndex or playerTeamNum == teamNumber then
-			isVisibleTeam = true
-		end
-	end
-    
 	
 	local currentPlayerIndex = 1
 	local playerList = updateTeam["PlayerList"]
@@ -63,47 +35,17 @@ function(self, updateTeam)
 			player["Deaths"]:SetPosition(temp)
 		end
 		
-		// Show if holding JP
-		if isVisibleTeam and teamNumber == kTeam1Index then
-			local currentTech = GetTechIdsFromBitMask(playerRecord.Tech)
-			if table.contains(currentTech, kTechId.Jetpack) then
-				if playerRecord.Status ~= "" and playerRecord.Status ~= " " then
-					player["Status"]:SetText(string.format("%s/JP", playerRecord.Status == "Flamethrower" and "Flame" or playerRecord.Status))
-				else
-					player["Status"]:SetText("JP")
-				end
-			end
-		end
-		
 		currentPlayerIndex = currentPlayerIndex + 1
 	end
 end)
 
-
-// I removed all of remi.D's semicolons here
-local oldCreateTeamBackground = GetUpValue( GUIScoreboard.Initialize, "CreateTeamBackground" )
-local function NewCreateTeamBackground( self, teamNumber )
-	local textItems = { }
-	local oldCreateTextItem = GUIManager.CreateTextItem
-	GUIManager.CreateTextItem = 
-	function( self )
-		local obj = oldCreateTextItem( self )
-			table.insert(textItems, obj)
-		return obj
+local originalLocaleResolveString = Locale.ResolveString
+function Locale.ResolveString(string)
+	if string == "SB_ASSISTS" and CHUDGetOption("kda") then
+		return originalLocaleResolveString("SB_DEATHS")
+	elseif string == "SB_DEATHS" and CHUDGetOption("kda") then
+		return originalLocaleResolveString("SB_ASSISTS")
+	else
+		return originalLocaleResolveString(string)
 	end
-	
-	local ret = oldCreateTeamBackground( self, teamNumber )
-	
-	GUIManager.CreateTextItem = oldCreateTextItem
-	
-	for _, item in pairs(textItems) do
-		if item:GetText() == "A" and CHUDGetOption("kda") then
-			item:SetText("D")
-		elseif item:GetText() == "D" and CHUDGetOption("kda") then
-			item:SetText("A")
-		end
-	end
-	
-	return ret
 end
-ReplaceUpValue( GUIScoreboard.Initialize, "CreateTeamBackground", NewCreateTeamBackground )
