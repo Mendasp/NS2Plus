@@ -21,24 +21,23 @@ Script.Load("lua/NS2Plus/Client/CHUD_WeaponTime.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Dissolve.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Location.lua")
 
-function AnnounceCHUD()
-	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")
-	GetCHUDSettings()
-end
-
-Event.Hook("LoadComplete", AnnounceCHUD)
-Event.Hook("LoadComplete", SetCHUDCinematics)
-Event.Hook("LoadComplete", SetCHUDAmbients)
-Event.Hook("LocalPlayerChanged", CHUDLoadLights)
-
-AddClientUIScriptForClass("Marine", "NS2Plus/Client/CHUDGUI_ClassicAmmo")
-
-AddClientUIScriptForClass("Marine", "NS2Plus/Client/CHUDGUI_CustomHUD")
-AddClientUIScriptForClass("Exo", "NS2Plus/Client/CHUDGUI_CustomHUD")
-AddClientUIScriptForClass("Alien", "NS2Plus/Client/CHUDGUI_CustomHUD")
-
 AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_DeathStats")
 AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_EndStats")
+
+local function OnLoadComplete()
+	GetCHUDSettings()
+	SetCHUDCinematics()
+	SetCHUDAmbients()
+	Shared.Message("NS2+ loaded. Type \"plus\" in console for available commands. You can also customize your game from the menu.")
+end
+
+local function OnLocalPlayerChanged()
+	CHUDLoadLights()
+	CHUDEvaluateGUIVis()
+end
+
+Event.Hook("LoadComplete", OnLoadComplete)
+Event.Hook("LocalPlayerChanged", OnLocalPlayerChanged)
 
 function Client.AddWorldMessage(messageType, message, position, entityId)
 
