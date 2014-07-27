@@ -145,3 +145,39 @@ function CHUDGetGameTime()
 	return(string.format("%d:%.2d", minutes, seconds))
 	
 end
+
+if Client then
+	function CHUDEvaluateGUIVis()
+		local player = Client.GetLocalPlayer()
+		local teamNumber = player:GetTeamNumber()
+		
+		local classicammo = false
+		local customhud = false
+		
+		local classicammoScript = "NS2Plus/Client/CHUDGUI_ClassicAmmo"
+		local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
+		if teamNumber == kTeam1Index then
+			if CHUDGetOption("classicammo") then
+				GetGUIManager():CreateGUIScriptSingle(classicammoScript)
+				classicammo = true
+			end
+			
+			if CHUDGetOption("customhud_m") > 0 then
+				GetGUIManager():CreateGUIScriptSingle(customhudScript)
+				customhud = true
+			end
+		elseif teamNumber == kTeam2Index then
+			if CHUDGetOption("customhud_a") > 0 then
+				GetGUIManager():CreateGUIScriptSingle(customhudScript)
+				customhud = true
+			end
+		end
+		
+		if GetGUIManager():GetGUIScriptSingle(classicammoScript) and not classicammo then
+			GetGUIManager():DestroyGUIScriptSingle(classicammoScript)
+		end
+		if GetGUIManager():GetGUIScriptSingle(customhudScript) and not customhud then
+			GetGUIManager():DestroyGUIScriptSingle(customhudScript)
+		end
+	end
+end

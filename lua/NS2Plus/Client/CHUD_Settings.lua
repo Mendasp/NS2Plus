@@ -254,7 +254,7 @@ local function OnCommandCHUD(...)
 	end
 end
 
-function OnCHUDOption(msg)
+local function OnCHUDOption(msg)
 	local key = msg.disabledOption
 	
 	if CHUDOptions[key] ~= nil then

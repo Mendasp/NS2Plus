@@ -54,7 +54,7 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 	GUIAnimatedScript.Update(self, deltaTime)
 
 	local player = Client.GetLocalPlayer()
-	if player:GetActiveWeapon() and player:GetActiveWeapon():isa("ClipWeapon") and not player:isa("Exo") and CHUDGetOption("classicammo") then
+	if player:GetActiveWeapon() and player:GetActiveWeapon():isa("ClipWeapon") and not player:isa("Exo") then
 		local clipammo = ToString(PlayerUI_GetWeaponClip())
 		local ammo = ToString(PlayerUI_GetWeaponAmmo())
 		if clipammo == nil then clipammo = "0" end

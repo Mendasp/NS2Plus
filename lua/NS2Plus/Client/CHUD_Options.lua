@@ -716,6 +716,32 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "E1",
 			},
+			customhud_m = {
+				name    = "CHUD_CustomHUD_M",
+				label   = "HUD bars (Marine)",
+				tooltip = "HL2 Style displays health/armor and ammo next to the crosshair. NS1 Style puts big bars at the bottom on each side.",
+				type    = "select",
+				values  = { "Disabled", "HL2 Style", "NS1 Style" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = CHUDEvaluateGUIVis,
+				sort = "E2",
+			},
+			customhud_a = {
+				name    = "CHUD_CustomHUD_A",
+				label   = "HUD bars (Alien)",
+				tooltip = "HL2 Style displays health/armor and ammo next to the crosshair. NS1 Style puts big bars at the bottom on each side.",
+				type    = "select",
+				values  = { "Disabled", "HL2 Style", "NS1 Style" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = CHUDEvaluateGUIVis,
+				sort = "E3",
+			},
 			
 			
 			hitsounds = {
