@@ -1,4 +1,3 @@
-originalBuildServerEntry = BuildServerEntry
 function BuildServerEntry(serverIndex)
 
     local mods = Client.GetServerKeyValue(serverIndex, "mods")
@@ -9,23 +8,24 @@ function BuildServerEntry(serverIndex)
     serverEntry.map = GetTrimmedMapName(Client.GetServerMapName(serverIndex))
     serverEntry.numPlayers = Client.GetServerNumPlayers(serverIndex)
     serverEntry.maxPlayers = Client.GetServerMaxPlayers(serverIndex)
-	serverEntry.numRS = GetNumServerReservedSlots(serverIndex)
+    serverEntry.numRS = GetNumServerReservedSlots(serverIndex)
     serverEntry.ping = Client.GetServerPing(serverIndex)
     serverEntry.address = Client.GetServerAddress(serverIndex)
     serverEntry.requiresPassword = Client.GetServerRequiresPassword(serverIndex)
     serverEntry.playerSkill = GetServerPlayerSkill(serverIndex)
     serverEntry.rookieFriendly = Client.GetServerHasTag(serverIndex, "rookie")
-	serverEntry.gatherServer = Client.GetServerHasTag(serverIndex, "gather_server")
+    serverEntry.gatherServer = Client.GetServerHasTag(serverIndex, "gather_server")
     serverEntry.friendsOnServer = false
     serverEntry.lanServer = false
-    serverEntry.tickrate = Client.GetServerTickRate(serverIndex)
+    serverEntry.tickrate = GetServerTickRate(serverIndex)
     serverEntry.serverId = serverIndex
     serverEntry.modded = Client.GetServerIsModded(serverIndex)
     serverEntry.favorite = GetServerIsFavorite(serverEntry.address)
     serverEntry.history = GetServerIsHistory(serverEntry.address)
+    serverEntry.customNetworkSettings = Client.GetServerHasTag(serverIndex, "custom_network_settings")
     
     serverEntry.name = FormatServerName(serverEntry.name, serverEntry.rookieFriendly)
-	
+
 	local serverTags = { }
 	Client.GetServerTags(serverIndex, serverTags)
 	
