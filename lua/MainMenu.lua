@@ -291,7 +291,7 @@ function MainMenu_Open()
 							Script.Load("lua/NS2Plus/Client/CHUD_Hitsounds.lua")
 							GetCHUDSettings()
 							io.close(check)
-							Shared.Message("NS2+ Main Menu mods loaded.")
+							Shared.Message("NS2+ Main Menu mods loaded. Build " .. kCHUDVersion .. ".")
 						else
 							Shared.Message("NS2+ has been updated or is not available, not loading main menu mods. A restart will be required when the update is installed (you can do it from the mods menu).")
 						end
