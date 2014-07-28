@@ -3,81 +3,82 @@ kCHUDElixerVersion = 1.72
 // Try to update but only important when changing defaults
 kCHUDVersion = 191
 
+Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
 Elixer.UseVersion( kCHUDElixerVersion ) 
 
-local kCHUDDeathStatsMessage =
-{
-	lastAcc = "float (0 to 100 by 0.01)",
-	currentAcc = "float (0 to 100 by 0.01)",
-	pdmg = "float (0 to 524288 by 0.01)",
-	sdmg = "float (0 to 524288 by 0.01)",
-}
+if not CHUDMainMenu then
+	local kCHUDDeathStatsMessage =
+	{
+		lastAcc = "float (0 to 100 by 0.01)",
+		currentAcc = "float (0 to 100 by 0.01)",
+		pdmg = "float (0 to 524288 by 0.01)",
+		sdmg = "float (0 to 524288 by 0.01)",
+	}
 
-local kCHUDEndStatsWeaponMessage =
-{
-	wTechId = "enum kTechId",
-	accuracy = "float (0 to 100 by 0.01)",
-	accuracyOnos = "float (-1 to 100 by 0.01)",
-}
+	local kCHUDEndStatsWeaponMessage =
+	{
+		wTechId = "enum kTechId",
+		accuracy = "float (0 to 100 by 0.01)",
+		accuracyOnos = "float (-1 to 100 by 0.01)",
+	}
 
-local kCHUDEndStatsOverallMessage =
-{
-	accuracy = "float (0 to 100 by 0.01)",
-	accuracyOnos = "float (-1 to 100 by 0.01)",
-	pdmg = "float (0 to 524288 by 0.01)",
-	sdmg = "float (0 to 524288 by 0.01)",
-}
+	local kCHUDEndStatsOverallMessage =
+	{
+		accuracy = "float (0 to 100 by 0.01)",
+		accuracyOnos = "float (-1 to 100 by 0.01)",
+		pdmg = "float (0 to 524288 by 0.01)",
+		sdmg = "float (0 to 524288 by 0.01)",
+	}
 
-local kCHUDMarineCommStatsMessage =
-{
-	medpackAccuracy = "float (0 to 100 by 0.01)",
-	medpackResUsed = "integer (0 to 65536)",
-	medpackResExpired = "integer (0 to 65536)",
-	medpackEfficiency = "float (0 to 100 by 0.01)",
-	medpackRefill = "integer (0 to 262144)",
-	ammopackResUsed = "integer (0 to 65536)",
-	ammopackResExpired = "integer (0 to 65536)",
-	ammopackEfficiency = "float (0 to 100 by 0.01)",
-	ammopackRefill = "integer (0 to 262144)",
-	catpackResUsed = "integer (0 to 65536)",
-	catpackResExpired = "integer (0 to 65536)",
-	catpackEfficiency = "float (0 to 100 by 0.01)",
-}
+	local kCHUDMarineCommStatsMessage =
+	{
+		medpackAccuracy = "float (0 to 100 by 0.01)",
+		medpackResUsed = "integer (0 to 65536)",
+		medpackResExpired = "integer (0 to 65536)",
+		medpackEfficiency = "float (0 to 100 by 0.01)",
+		medpackRefill = "integer (0 to 262144)",
+		ammopackResUsed = "integer (0 to 65536)",
+		ammopackResExpired = "integer (0 to 65536)",
+		ammopackEfficiency = "float (0 to 100 by 0.01)",
+		ammopackRefill = "integer (0 to 262144)",
+		catpackResUsed = "integer (0 to 65536)",
+		catpackResExpired = "integer (0 to 65536)",
+		catpackEfficiency = "float (0 to 100 by 0.01)",
+	}
 
-local kCHUDOptionMessage =
-{
-	disabledOption = "string (32)"
-}
+	local kCHUDOptionMessage =
+	{
+		disabledOption = "string (32)"
+	}
 
-local kCHUDAutopickupMessage =
-{
-	autoPickup = "boolean",
-	autoPickupBetter = "boolean",
-}
+	local kCHUDAutopickupMessage =
+	{
+		autoPickup = "boolean",
+		autoPickupBetter = "boolean",
+	}
 
-local kCHUDOverkillMessage =
-{
-	overkill = "boolean",
-}
+	local kCHUDOverkillMessage =
+	{
+		overkill = "boolean",
+	}
 
-Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
-Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
-Shared.RegisterNetworkMessage( "SetCHUDOverkill", kCHUDOverkillMessage)
-Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
-Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
-Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
-Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
+	Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
+	Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
+	Shared.RegisterNetworkMessage( "SetCHUDOverkill", kCHUDOverkillMessage)
+	Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
+	Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
+	Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
+	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
 
-Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
-Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
-Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
-Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
-Script.Load("lua/NS2Plus/Shared/CHUD_Grenade.lua")
-Script.Load("lua/NS2Plus/Shared/CHUD_BlueprintPowerPoint.lua")
-Script.Load("lua/NS2Plus/Shared/CHUD_Autoreload.lua")
-Script.Load("lua/NS2Plus/Shared/CHUD_TriggerMixin.lua")
-
+	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_Grenade.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_BlueprintPowerPoint.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_Autoreload.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_TriggerMixin.lua")
+end
 
 CHUDTagBitmask = {
 	mcr = 0x1,

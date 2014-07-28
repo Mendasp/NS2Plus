@@ -80,14 +80,14 @@ originalMenuCreateOptions = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionsFo
 	
 originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks", function(self)
 		mainMenu = self
-		local OnClick = function(self)            
+		local OnClick = function(self)
 			if not self.scriptHandle.CHUDOptionWindow then
 				self.scriptHandle:CreateCHUDOptionWindow()
 			end
 			self.scriptHandle:TriggerOpenAnimation(self.scriptHandle.CHUDOptionWindow)
 			self.scriptHandle:HideMenu()
 		end
-		self:AddMainLink( "NS2+ OPTIONS", 6, OnClick, 2)
+		self:AddMainLink( "NS2+ OPTIONS", 6, OnClick, 3)
 		originalCreateMainLinks(self)
 		
 		for i, menuLink in pairs(self.Links) do
@@ -147,12 +147,14 @@ function MainMenu_OnOpenMenu()
 		mainMenu.mainWindow:SetBackgroundRepeat(true)
 	end
 	
-	if not mainMenu.CHUDNewsScript then
-		mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_MenuNews")
-	else
-		// Solves issue where the news were visible when you click options and then spam escape
-		// This hides the news script properly
-		mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.Links[1]:GetIsVisible())
+	if not CHUDMainMenu then
+		if not mainMenu.CHUDNewsScript then
+			mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_MenuNews")
+		else
+			// Solves issue where the news were visible when you click options and then spam escape
+			// This hides the news script properly
+			mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.Links[1]:GetIsVisible())
+		end
 	end
 
 end

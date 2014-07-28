@@ -92,7 +92,7 @@ function CHUDSetOption(key, value)
 		end
 		
 		// Don't waste time reapplying settings we already have active
-		if oldValue ~= option.currentValue and option.applyFunction and option.disabled == nil then
+		if oldValue ~= option.currentValue and option.applyFunction and option.disabled == nil and not CHUDMainMenu then
 			option.applyFunction()
 		end
 		
@@ -143,7 +143,7 @@ function GetCHUDSettings()
 			CHUDSetOption(name, option.defaultValue)
 		end
 		
-		if option.applyOnLoadComplete and option.applyFunction then
+		if option.applyOnLoadComplete and option.applyFunction and not CHUDMainMenu then
 			option.applyFunction()
 		end
 	end
@@ -281,4 +281,6 @@ local function OnCHUDOption(msg)
 end
 
 Event.Hook("Console_plus", OnCommandCHUD)
-Client.HookNetworkMessage("CHUDOption", OnCHUDOption)
+if not CHUDMainMenu then
+	Client.HookNetworkMessage("CHUDOption", OnCHUDOption)
+end
