@@ -160,6 +160,12 @@ function MainMenu_GetSelectedIsHighPlayerCount()
     
 end
 
+function MainMenu_GetSelectedIsNetworkModded()
+    if gSelectedServerNum and gSelectedServerData then
+        return gSelectedServerData.customNetworkSettings
+    end
+end
+
 function MainMenu_ForceJoin(forceJoin)
     if forceJoin ~= nil then
         gForceJoin = forceJoin
@@ -306,7 +312,7 @@ function MainMenu_Open()
         end
         
         MainMenu_OnOpenMenu()
-
+        
     end
     
 end
