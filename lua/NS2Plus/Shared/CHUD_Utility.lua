@@ -156,4 +156,24 @@ if Client then
 			GetGUIManager():DestroyGUIScriptSingle(customhudScript)
 		end
 	end
+	
+	function CHUDApplyTeamSpecificStuff()
+		local player = Client.GetLocalPlayer()
+		local teamNumber = player:GetTeamNumber()
+		local isMarine = teamNumber == kTeam1Index
+		
+		local sensitivity = ConditionalValue(isMarine, CHUDGetOption("sensitivity_m"), CHUDGetOption("sensitivity_a"))
+		local fov = ConditionalValue(isMarine, CHUDGetOption("fov_m"), CHUDGetOption("fov_a"))
+		
+		local sensitivity_perteam = CHUDGetOption("sensitivity_perteam")
+		local fov_perteam = CHUDGetOption("fov_perteam")
+		
+		if CHUDGetOption("sensitivity_perteam") then
+			OptionsDialogUI_SetMouseSensitivity(sensitivity)
+		end
+		
+		if CHUDGetOption("fov_perteam") then
+			Client.SetOptionFloat("graphics/display/fov-adjustment", fov)
+		end
+	end
 end

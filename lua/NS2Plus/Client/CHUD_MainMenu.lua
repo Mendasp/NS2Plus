@@ -24,6 +24,10 @@ CHUDDMGTimeSlider = MakeCHUDSliderCallback( "CHUD_DamageNumberTime", "damagenumb
 CHUDKillFeedScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedScale", "killfeedscale" )
 CHUDKillFeedIconScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedIconScale", "killfeediconscale" )
 CHUDDecalSlider = MakeCHUDSliderCallback( "CHUD_MaxDecalLifeTime", "maxdecallifetime" )
+CHUDMarineSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_M", "sensitivity_m" )
+CHUDAlienSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_A", "sensitivity_a" )
+CHUDMarineFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_M", "fov_m" )
+CHUDAlienFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_A", "fov_a" )
 
 
 function CHUDSaveMenuSettings()
@@ -41,15 +45,7 @@ function CHUDSaveMenuSettings()
 					local maxValue = CHUDOption.maxValue or 1
 					CHUDSetOption(option.index, (option:GetValue() * (maxValue - minValue) + minValue) * multiplier)
 				end
-
-				if CHUDOption.name == "CHUD_HitsoundsPitch" then
-					if CHUDGetOption("hitsounds") > 0 then
-						option.label:SetCSSClass("option_label")
-					else
-						option.label:SetCSSClass("option_label_disabled")
-					end
-				end
-
+				
 				if CHUDOption.disabled then
 					local val = ConditionalValue(CHUDOption.disabledValue == nil, CHUDOption.defaultValue, CHUDOption.disabledValue)
 					if val == CHUDOption.currentValue then
@@ -60,6 +56,29 @@ function CHUDSaveMenuSettings()
 				end
 			end
 		end
+		
+		if CHUDGetOption("hitsounds") > 0 then
+			mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label")
+		else
+			mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label_disabled")
+		end
+		
+		if CHUDGetOption("sensitivity_perteam") then
+			mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label")
+			mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label")
+		else
+			mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label_disabled")
+			mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label_disabled")
+		end
+		
+		if CHUDGetOption("fov_perteam") then
+			mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label")
+			mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label")
+		else
+			mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label_disabled")
+			mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label_disabled")
+		end
+		
 	end
 end
 	

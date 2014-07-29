@@ -1001,4 +1001,102 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "F3",
 			},
+			sensitivity_perteam = { 
+				name    = "CHUD_SensitivityPerTeam",
+				label   = "Team specific sensitivities",
+				tooltip = "Lets you have different sensitivities for aliens and marines.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "G1",
+				applyFunction = function()
+					CHUDApplyTeamSpecificStuff()
+				end,
+			},
+			sensitivity_m = { 
+				name    = "CHUD_Sensitivity_M",
+				label   = "Marine sensitivity",
+				tooltip = "Sensitivity for marines",
+				type    = "slider",
+				sliderCallback = CHUDMarineSensSlider,
+				defaultValue = 5,
+				minValue = 0.01,
+				maxValue = 20,
+				multiplier = 1,
+				category = "comp",
+				valueType = "float",
+				sort = "G2",
+				applyFunction = function()
+					CHUDApplyTeamSpecificStuff()
+				end,
+			},
+			sensitivity_a = { 
+				name    = "CHUD_Sensitivity_A",
+				label   = "Alien sensitivity",
+				tooltip = "Sensitivity for aliens",
+				type    = "slider",
+				sliderCallback = CHUDAlienSensSlider,
+				defaultValue = 5,
+				minValue = 0.01,
+				maxValue = 20,
+				multiplier = 1,
+				category = "comp",
+				valueType = "float",
+				sort = "G3",
+				applyFunction = function()
+					CHUDApplyTeamSpecificStuff()
+				end,
+			},
+			fov_perteam = { 
+				name    = "CHUD_FOVPerTeam",
+				label   = "Team specific FOV",
+				tooltip = "Lets you have different FOVs for aliens and marines.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "G4",
+				applyFunction = function()
+					CHUDApplyTeamSpecificStuff()
+				end,
+			},
+			fov_m = { 
+				name    = "CHUD_FOV_M",
+				label   = "Marine FOV",
+				tooltip = "FOV for marines",
+				type    = "slider",
+				sliderCallback = CHUDMarineFOVSlider,
+				defaultValue = 0,
+				minValue = 0,
+				maxValue = 1,
+				multiplier = 20,
+				category = "comp",
+				valueType = "float",
+				sort = "G5",
+				applyFunction = function()
+					CHUDApplyTeamSpecificStuff()
+				end,
+			},
+			fov_a = { 
+				name    = "CHUD_FOV_A",
+				label   = "Alien FOV",
+				tooltip = "FOV for aliens",
+				type    = "slider",
+				sliderCallback = CHUDAlienFOVSlider,
+				defaultValue = 0,
+				minValue = 0,
+				maxValue = 1,
+				multiplier = 20,
+				category = "comp",
+				valueType = "float",
+				sort = "G6",
+				applyFunction = function()
+					CHUDApplyTeamSpecificStuff()
+				end,
+			},
 }

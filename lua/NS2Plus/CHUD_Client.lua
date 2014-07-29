@@ -30,6 +30,7 @@ end
 local function OnLocalPlayerChanged()
 	CHUDLoadLights()
 	CHUDEvaluateGUIVis()
+	CHUDApplyTeamSpecificStuff()
 end
 
 Event.Hook("LoadComplete", OnLoadComplete)
