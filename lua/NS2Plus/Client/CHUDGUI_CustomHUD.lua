@@ -5,7 +5,10 @@ class 'CHUDGUI_CustomHUD' (GUIAnimatedScript)
 local hudbars = 1
 local kBarSize, kXOffset, leftBarXOffset, rightBarXOffset, yOffset, leftBarXAnchor, rightBarXAnchor, yAnchor, kBarBgTexCoords, kBarTexCoords
 local kCenterBarTexture = PrecacheAsset("ui/centerhudbar.dds")
-local kBottomBarTexture = PrecacheAsset("ui/bottomhudbar.dds")
+local kBottomBar1BgTexture = PrecacheAsset("ui/bottomhudbar1bg.dds")
+local kBottomBar1Texture = PrecacheAsset("ui/bottomhudbar1.dds")
+local kBottomBar2BgTexture = PrecacheAsset("ui/bottomhudbar2bg.dds")
+local kBottomBar2Texture = PrecacheAsset("ui/bottomhudbar2.dds")
 local kFontName = Fonts.kAgencyFB_Tiny
 
 local kHealthColors = { }
@@ -24,12 +27,17 @@ function CHUDGUI_CustomHUD:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
+	local isMarine = Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index
+	local kBottomBarBgTexture = kBottomBar1BgTexture
+	local kBottomBarTexture = kBottomBar1Texture
 	-- Q: Mendasp, why are you setting a negative size and the coordinates upside down?
 	-- A: Why don't you mind your own business?
-	if Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index then
+	if isMarine then
 		hudbars = CHUDGetOption("customhud_m")
 	else
 		hudbars = CHUDGetOption("customhud_a")
+		kBottomBarBgTexture = kBottomBar2BgTexture
+		kBottomBarTexture = kBottomBar2Texture
 	end
 	
 	kBarSize = { Vector(32, 64, 0), GUIScale(Vector(128, kBaseScreenHeight/3, 0)) }
@@ -40,16 +48,17 @@ function CHUDGUI_CustomHUD:Initialize()
 	leftBarXAnchor = { GUIItem.Middle, GUIItem.Left }
 	rightBarXAnchor = { GUIItem.Middle, GUIItem.Right }
 	yAnchor = { GUIItem.Center, GUIItem.Bottom }
-	kBarBgTexCoords = ConditionalValue(hudbars == 1, { 0, 128, 32, 64 }, {0, 360, 128, 0})
-	kBarTexCoords = ConditionalValue(hudbars == 1, { 0, 64, 32, 0 },  {0, 360, 128, 0})
+	kBarBgTexCoords = ConditionalValue(hudbars == 1, { 0, 127, 31, 63 }, {0, 359, 127, 0})
+	kBarTexCoords = ConditionalValue(hudbars == 1, { 0, 63, 31, 0 },  {0, 359, 127, 0})
 	local barTexture = ConditionalValue(hudbars == 1, kCenterBarTexture, kBottomBarTexture)
+	local barTextureBg = ConditionalValue(hudbars == 1, kCenterBarTexture, kBottomBarBgTexture)
 	
 	self.leftBarBg = self:CreateAnimatedGraphicItem()
 	self.leftBarBg:SetAnchor(leftBarXAnchor[hudbars], yAnchor[hudbars])
 	self.leftBarBg:SetLayer(kGUILayerPlayerHUD)
 	self.leftBarBg:SetIsVisible(true)
 	self.leftBarBg:SetIsScaling(false)
-	self.leftBarBg:SetTexture(barTexture)
+	self.leftBarBg:SetTexture(barTextureBg)
 	self.leftBarBg:SetTexturePixelCoordinates(unpack(kBarBgTexCoords))
 	self.leftBarBg:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y, 0))
 	self.leftBarBg:SetPosition(Vector(leftBarXOffset[hudbars], yOffset[hudbars], 0))
@@ -74,7 +83,7 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.rightBarBg:SetLayer(kGUILayerPlayerHUD)
 	self.rightBarBg:SetIsVisible(true)
 	self.rightBarBg:SetIsScaling(false)
-	self.rightBarBg:SetTexture(barTexture)
+	self.rightBarBg:SetTexture(barTextureBg)
 	self.rightBarBg:SetTexturePixelCoordinates(unpack(kBarBgTexCoords))
 	self.rightBarBg:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y, 0))
 	self.rightBarBg:SetPosition(Vector(rightBarXOffset[hudbars], yOffset[hudbars], 0))
