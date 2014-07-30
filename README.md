@@ -7,7 +7,7 @@ Latest changes
 - /07/2014
 	- Added NS2+ Options to the main menu if the mod is mounted.
 	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.
-	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style). Available in HUD tab.
+	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style). Available in HUD tab. Thanks to rantology for the art!
 	- Fixed crosshair hit indicator fade time not being applied on map load properly.
 	- Added team specific sensitivities. Available in Misc. tab.
 	- Added team specific FOVs. Available in Misc. tab.
@@ -55,11 +55,15 @@ Latest changes
 =================
 Credits/Thanks to
 =================
-- **Unknown Worlds Entertainment** (http://unknownworlds.com)
-- **Dragon** (https://github.com/xToken)
-- **bawNg** (https://github.com/bawNg)
-- **lwf** [(Better NS2)](http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
-- **Ghoul** (https://github.com/BrightPaul)
-- **Sewlek**
-- **Person8880** (https://github.com/Person8880)
-- **remi.D** (https://github.com/sclark39)
+- Regular contributors
+	- [**remi.D**](https://github.com/sclark39)
+	- **rantology**
+
+- Also thanks to
+	- [**Unknown Worlds Entertainment**](http://unknownworlds.com)
+	- [**Dragon**](https://github.com/xToken)
+	- [**bawNg**](https://github.com/bawNg)
+	- **lwf** - [(Better NS2)](http://steamcommunity.com/sharedfiles/filedetails/?id=113116595)
+	- [**Ghoul**](https://github.com/BrightPaul)
+	- **Sewlek**
+	- [**Person8880**](https://github.com/Person8880)
