@@ -1,12 +1,17 @@
 Script.Load("lua/GUIAnimatedScript.lua")
 
+-- I had to reorganize this code at least 10 times because of varying and increasingly specific conditions.
+-- Please, forgive me if something is super twisted, I can't be bothered going through this again.
+
 class 'CHUDGUI_CustomHUD' (GUIAnimatedScript)
 
 local kBarSize, kXOffset, leftBarXOffset, rightBarXOffset, yOffset, leftBarXAnchor, rightBarXAnchor, yAnchor, kBarBgTexCoords, kBarTexCoords, hudbars
 local kCenterBarTexture = PrecacheAsset("ui/centerhudbar.dds")
+local kBottomBar1MainTexture = PrecacheAsset("ui/bottomhudbar1main.dds")
+local kBottomBar1SecTexture = PrecacheAsset("ui/bottomhudbar1sec.dds")
 local kBottomBar1BgTexture = PrecacheAsset("ui/bottomhudbar1bg.dds")
-local kBottomBar1Texture = PrecacheAsset("ui/bottomhudbar1.dds")
-local kBottomBar2BgTexture = PrecacheAsset("ui/bottomhudbar2bg.dds")
+local kBottomBar2BgLTexture = PrecacheAsset("ui/bottomhudbar2bg-l.dds")
+local kBottomBar2BgRTexture = PrecacheAsset("ui/bottomhudbar2bg-r.dds")
 local kBottomBar2HPTexture = PrecacheAsset("ui/bottomhudbar2hp.dds")
 local kBottomBar2APTexture = PrecacheAsset("ui/bottomhudbar2ap.dds")
 local kBottomBar2RightTexture = PrecacheAsset("ui/bottomhudbar2right.dds")
@@ -16,10 +21,13 @@ local kHealthColors = { Color(0, 0.6117, 1, 1), Color(1,1,0,1) }
 local kArmorColors = { Color(0, 0.25, 0.45, 1), Color(1, 0.4941, 0, 1) }
 local kAmmoColors = { Color(0, 0.6117, 1, 1), Color(1,1,0,1) }
 
-local kBarBgTextures = { kBottomBar1BgTexture, kBottomBar2BgTexture, kCenterBarTexture }
-local kBarHPTextures = { kBottomBar1Texture, kBottomBar2HPTexture, kCenterBarTexture }
-local kBarAPTextures = { kBottomBar1Texture, kBottomBar2APTexture, kCenterBarTexture }
-local kBarRightTextures = { kBottomBar1Texture, kBottomBar2RightTexture, kCenterBarTexture }
+local kBarBgLTextures = { kBottomBar1BgTexture, kBottomBar2BgLTexture, kCenterBarTexture }
+local kBarBgRTextures = { kBottomBar1BgTexture, kBottomBar2BgRTexture, kCenterBarTexture }
+local kBarHPTextures = { kBottomBar1MainTexture, kBottomBar2HPTexture, kCenterBarTexture }
+local kBarAPTextures = { kBottomBar1SecTexture, kBottomBar2APTexture, kCenterBarTexture }
+local kBarRightTextures = { kBottomBar1MainTexture, kBottomBar2RightTexture, kCenterBarTexture }
+
+local kBottomBar1SecSizeProportion = 0.925
 
 function CHUDGUI_CustomHUD:Initialize()
 
@@ -34,7 +42,7 @@ function CHUDGUI_CustomHUD:Initialize()
 	kXOffset = { 32, 0 }
 	leftBarXOffset = { -kXOffset[hudbars]-kBarSize[hudbars].x, 0 }
 	rightBarXOffset = { -leftBarXOffset[1], 0 }
-	yOffset = { kBarSize[hudbars].y/2, 0 }
+	yOffset = { kBarSize[hudbars].y/2, hudbars == 2 and isMarine and GUIScale(-16) or 0 }
 	leftBarXAnchor = { GUIItem.Middle, GUIItem.Left }
 	rightBarXAnchor = { GUIItem.Middle, GUIItem.Right }
 	yAnchor = { GUIItem.Center, GUIItem.Bottom }
@@ -46,7 +54,7 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.leftBarBg:SetLayer(kGUILayerPlayerHUD)
 	self.leftBarBg:SetIsVisible(true)
 	self.leftBarBg:SetIsScaling(false)
-	self.leftBarBg:SetTexture(kBarBgTextures[textureMode])
+	self.leftBarBg:SetTexture(kBarBgLTextures[textureMode])
 	self.leftBarBg:SetTexturePixelCoordinates(unpack(kBarBgTexCoords))
 	self.leftBarBg:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y, 0))
 	self.leftBarBg:SetPosition(Vector(leftBarXOffset[hudbars], yOffset[hudbars], 0))
@@ -71,7 +79,7 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.rightBarBg:SetLayer(kGUILayerPlayerHUD)
 	self.rightBarBg:SetIsVisible(true)
 	self.rightBarBg:SetIsScaling(false)
-	self.rightBarBg:SetTexture(kBarBgTextures[textureMode])
+	self.rightBarBg:SetTexture(kBarBgRTextures[textureMode])
 	self.rightBarBg:SetTexturePixelCoordinates(unpack(kBarBgTexCoords))
 	self.rightBarBg:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y, 0))
 	self.rightBarBg:SetPosition(Vector(rightBarXOffset[hudbars], yOffset[hudbars], 0))
@@ -124,9 +132,19 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.ammoText:SetColor(Color(1,1,1,1))
 	self.ammoText:SetPosition(Vector(rightBarXOffset[hudbars]/2+10, kBarSize[hudbars].y/2+8, 0))
 	
-	self.lastReserveAmmo = 0
-	self.lastHealth = 0
-	self.lastArmor = 0
+	if hudbars == 2 and isMarine then
+		self.reserveBar = self:CreateAnimatedGraphicItem()
+		self.reserveBar:SetAnchor(rightBarXAnchor[hudbars], yAnchor[hudbars])
+		self.reserveBar:SetLayer(kGUILayerPlayerHUD)
+		self.reserveBar:SetIsVisible(true)
+		self.reserveBar:SetIsScaling(false)
+		self.reserveBar:SetTexture(kBottomBar1SecTexture)
+		self.reserveBar:SetPosition(Vector(rightBarXOffset[hudbars], yOffset[hudbars], 0))
+	end
+	
+	self.lastReserveAmmo = -1
+	self.lastHealth = -1
+	self.lastArmor = -1
 
 end
 
@@ -147,58 +165,64 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 		local health = player:isa("Exo") and 0 or player:GetHealth()
 		-- Do not multiply by kHealthPointsPerArmor here so we can display the armor number directly later
 		local armor = player:GetArmor()
+		local armorHP = player:GetArmor() * kHealthPointsPerArmor
 		local maxHealth = player:isa("Exo") and 0 or player:GetMaxHealth()
 		local maxArmor = player:GetMaxArmor() * kHealthPointsPerArmor
-		local healthFraction = player:isa("Exo") and 0 or health/(maxHealth+maxArmor)
-		local armorFraction = armor*kHealthPointsPerArmor/(maxHealth+maxArmor)
+		-- For the mode 2 of hudbars the bars show on top of each other, so we need the fractions independent of each other
+		local healthFraction = hudbars == 2 and health/maxHealth or health/(maxHealth+maxArmor)
+		local armorFraction = hudbars == 2 and armorHP/maxArmor or armorHP/(maxHealth+maxArmor)
+		if self.reserveBar then armorFraction = armorFraction * kBottomBar1SecSizeProportion end
 		local activeWeapon = player:GetActiveWeapon()
+		local rightFraction = 0
+		local reserveFraction = 0
+		local rightPulsatingRed = false
 		
-		local fraction = 0
-		local enoughEnergy = true
-		if player:isa("Alien") then
-			self.rightBar:SetIsVisible(false)
-			fraction = player:GetEnergy() / player:GetMaxEnergy()
-			
-			if activeWeapon then
-				enoughEnergy = player:GetEnergy() > activeWeapon:GetEnergyCost()
-			end
-			
-		else
-			if activeWeapon then
-				if activeWeapon:isa("ClipWeapon") then
-					fraction = activeWeapon:GetClip() / activeWeapon:GetClipSize()
-				elseif activeWeapon:isa("ExoWeaponHolder") then
-					local leftWeapon = Shared.GetEntity(activeWeapon.leftWeaponId)
-					local rightWeapon = Shared.GetEntity(activeWeapon.rightWeaponId)
+		if activeWeapon then
+			if player:isa("Alien") then
+				local energy = player:GetEnergy()
+				local maxEnergy = player:GetMaxEnergy()
+				local energyCost = activeWeapon:GetEnergyCost()
+				
+				self.rightBar:SetIsVisible(false)
+				rightFraction = energy / maxEnergy
+				rightPulsatingRed = energy < energyCost
+			elseif player:isa("Marine") and activeWeapon:isa("ClipWeapon") then
+				rightFraction = activeWeapon:GetClip() / activeWeapon:GetClipSize()
+				reserveFraction = activeWeapon:GetAmmo() / activeWeapon:GetMaxAmmo() * kBottomBar1SecSizeProportion
+				rightPulsatingRed = rightFraction <= 0.4 or (activeWeapon:isa("GrenadeLauncher") and rightFraction <= 0.5)
+			elseif player:isa("Exo") and activeWeapon:isa("ExoWeaponHolder") then
+				local leftWeapon = Shared.GetEntity(activeWeapon.leftWeaponId)
+				local rightWeapon = Shared.GetEntity(activeWeapon.rightWeaponId)
 
-					if rightWeapon:isa("Railgun") then
-						fraction = rightWeapon:GetChargeAmount()
-						if leftWeapon:isa("Railgun") then
-							fraction = (fraction + leftWeapon:GetChargeAmount()) / 2.0
-						end
-					elseif rightWeapon:isa("Minigun") then
-						fraction = rightWeapon.heatAmount
-						if leftWeapon:isa("Minigun") then
-							fraction = (fraction + leftWeapon.heatAmount) / 2.0
-						end
-						fraction = 1 - fraction
+				if rightWeapon:isa("Railgun") then
+					rightFraction = rightWeapon:GetChargeAmount()
+					if leftWeapon:isa("Railgun") then
+						rightFraction = (rightFraction + leftWeapon:GetChargeAmount()) / 2.0
 					end
+				elseif rightWeapon:isa("Minigun") then
+					rightFraction = rightWeapon.heatAmount
+					if leftWeapon:isa("Minigun") then
+						rightFraction = (rightFraction + leftWeapon.heatAmount) / 2.0
+					end
+					rightFraction = 1 - rightFraction
 				end
 			end
 		end
 		
-		local hpTextureCoord = kBarTexCoords[2]-kBarTexCoords[2]*healthFraction
-		local apTextureCoord = kBarTexCoords[2]*armorFraction
-		self.healthBar:SetIsVisible(healthFraction > 0)
-		self.healthBar:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y*healthFraction, 0))
-		self.healthBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], hpTextureCoord)
-		self.healthBar:SetColor(ConditionalValue(healthFraction < 0.3, pulsatingRed, hudbars == 1 and kHealthColors[teamIndex] or kWhite))
-		
-		if (player:isa("Marine") or player:isa("Exo") or player:isa("Alien")) then
+		-- Don't display the text for the NS1 bars, we will reuse the existing UI elements
+		-- ALSO: COUNTDOWN FOR SOMEONE TO COMPLAIN AND REQUEST THIS TEXT TO BE AN OPTION IN 3, 2, 1...
+		if (player:isa("Marine") or player:isa("Exo") or player:isa("Alien")) and hudbars == 1 then
 			if self.lastHealth ~= health or self.lastArmor ~= armor then
-				-- Don't display the text for the NS1 bars, we will reuse the existing UI elements
-				self.healthText:SetIsVisible(hudbars == 1)
-				self.healthTextBg:SetIsVisible(hudbars == 1)
+				if not player:isa("Exo") then
+					self.healthText:SetText(string.format("%s / %s", health, armor))
+					self.healthTextBg:SetText(string.format("%s / %s", health, armor))
+				else
+					self.healthText:SetText(string.format("%s", armor))
+					self.healthTextBg:SetText(string.format("%s", armor))
+				end
+				
+				self.healthText:SetIsVisible(true)
+				self.healthTextBg:SetIsVisible(true)
 				self.healthText:SetColor(Color(1,1,1,1))
 				self.healthTextBg:SetColor(Color(0,0,0,1))
 				
@@ -209,55 +233,67 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 				self.lastArmor = armor
 			end
 			
-			if not player:isa("Exo") then
-				self.healthText:SetText(string.format("%s / %s", health, armor))
-				self.healthTextBg:SetText(string.format("%s / %s", health, armor))
+			if activeWeapon and activeWeapon:isa("ClipWeapon") and not activeWeapon:isa("ExoWeaponHolder") then
+				local clip = activeWeapon:GetClip()
+				local ammo = activeWeapon:GetAmmo()
+				
+				if self.lastReserveAmmo ~= ammo then
+					self.ammoText:SetText(string.format("%s / %s", clip, ammo))
+					self.ammoTextBg:SetText(string.format("%s / %s", clip, ammo))
+					
+					self.ammoText:SetIsVisible(true)
+					self.ammoTextBg:SetIsVisible(true)
+					self.ammoText:SetColor(Color(1,1,1,1))
+					self.ammoTextBg:SetColor(Color(0,0,0,1))
+					
+					self.ammoText:FadeOut(3, "AMMO_FADEOUT")
+					self.ammoTextBg:FadeOut(3, "AMMO_FADEOUT")
+					
+					self.lastReserveAmmo = ammo
+				end
 			else
-				self.healthText:SetText(string.format("%s", armor))
-				self.healthTextBg:SetText(string.format("%s", armor))
+				self.ammoText:SetIsVisible(false)
+				self.ammoTextBg:SetIsVisible(false)
+				-- When switching to non-clipweapons and switching back we want the text to show up again
+				self.lastReserveAmmo = -1
 			end
-			
 		else
 			self.healthText:SetIsVisible(false)
 			self.healthTextBg:SetIsVisible(false)
 		end
 		
+		-- The armor bar coordinates and position depend on the mode, since for mode 2 the bars are on top of each other instead of in a single continuous bar
+		local hpTextureCoord = kBarTexCoords[2]-kBarTexCoords[2]*healthFraction
+		local apTextureBottomCoord = hudbars == 2 and kBarTexCoords[2] or hpTextureCoord
+		local apTextureTopCoord = hudbars == 2 and kBarTexCoords[2]-kBarTexCoords[2]*armorFraction or hpTextureCoord-kBarTexCoords[2]*armorFraction
+		local armorDistance = hudbars == 2 and 0 or healthFraction
+		local healthColor = ConditionalValue(healthFraction < 0.3, pulsatingRed, hudbars == 1 and kHealthColors[teamIndex] or kWhite)
+		local armorColor = ConditionalValue(player:isa("Exo") and armor < 100, pulsatingRed, hudbars == 1 and kArmorColors[teamIndex] or kWhite)
+		local rightColor = ConditionalValue(rightPulsatingRed, pulsatingRed, hudbars == 1 and kAmmoColors[teamIndex] or kWhite)
+		
+		self.healthBar:SetIsVisible(healthFraction > 0)
+		self.healthBar:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y*healthFraction, 0))
+		self.healthBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], hpTextureCoord)
+		self.healthBar:SetColor(healthColor)
+		
 		self.armorBar:SetIsVisible(armorFraction > 0)
 		self.armorBar:SetSize(Vector(kBarSize[hudbars].x, -kBarSize[hudbars].y*armorFraction, 0))
-		self.armorBar:SetPosition(Vector(leftBarXOffset[hudbars], yOffset[hudbars]-kBarSize[hudbars].y*healthFraction, 0))
-		self.armorBar:SetTexturePixelCoordinates(kBarTexCoords[1], hpTextureCoord, kBarTexCoords[3], hpTextureCoord-apTextureCoord)
-		self.armorBar:SetColor(ConditionalValue(player:isa("Exo") and armor < 100, pulsatingRed, hudbars == 1 and kArmorColors[teamIndex] or kWhite))
+		self.armorBar:SetPosition(Vector(leftBarXOffset[hudbars], yOffset[hudbars]-kBarSize[hudbars].y*armorDistance, 0))
+		self.armorBar:SetTexturePixelCoordinates(kBarTexCoords[1], apTextureBottomCoord, kBarTexCoords[3], apTextureTopCoord)
+		self.armorBar:SetColor(armorColor)
 
-		self.rightBar:SetIsVisible(fraction > 0)
-		self.rightBar:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y*fraction, 0))
-		self.rightBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], kBarTexCoords[2]-kBarTexCoords[2]*fraction)
-		self.rightBar:SetColor(ConditionalValue(enoughEnergy, hudbars == 1 and kAmmoColors[teamIndex] or kWhite, pulsatingRed))
+		self.rightBar:SetIsVisible(rightFraction > 0)
+		self.rightBar:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y*rightFraction, 0))
+		self.rightBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], kBarTexCoords[2]-kBarTexCoords[2]*rightFraction)
+		self.rightBar:SetColor(rightColor)
 		
-		if activeWeapon and activeWeapon:isa("ClipWeapon") and not activeWeapon:isa("ExoWeaponHolder") then
-			if self.lastReserveAmmo ~= activeWeapon:GetAmmo() then
-				-- Don't display the text for the NS1 bars, we will reuse the existing UI elements
-				self.ammoText:SetIsVisible(hudbars == 1)
-				self.ammoTextBg:SetIsVisible(hudbars == 1)
-				self.ammoText:SetColor(Color(1,1,1,1))
-				self.ammoTextBg:SetColor(Color(0,0,0,1))
-				
-				self.ammoText:FadeOut(3, "AMMO_FADEOUT")
-				self.ammoTextBg:FadeOut(3, "AMMO_FADEOUT")
-				
-				self.lastReserveAmmo = activeWeapon:GetAmmo()
-			end
-			
-			if fraction <= 0.4 or (activeWeapon and activeWeapon:isa("GrenadeLauncher") and fraction <= 0.5) then
-				self.rightBar:SetColor(pulsatingRed)
-			end
-			
-			self.ammoText:SetText(string.format("%s / %s", activeWeapon:GetClip(), activeWeapon:GetAmmo()))
-			self.ammoTextBg:SetText(string.format("%s / %s", activeWeapon:GetClip(), activeWeapon:GetAmmo()))
-			
-		else
-			self.ammoText:SetIsVisible(false)
-			self.ammoTextBg:SetIsVisible(false)
+		if self.reserveBar then
+			self.reserveBar:SetIsVisible(reserveFraction > 0)
+			self.reserveBar:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y*reserveFraction, 0))
+			self.reserveBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], kBarTexCoords[2]-kBarTexCoords[2]*reserveFraction)
+			self.reserveBar:SetColor(kWhite)
 		end
+
 	else
 		self.healthBar:SetIsVisible(false)
 		self.armorBar:SetIsVisible(false)
@@ -268,6 +304,9 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 		self.healthTextBg:SetIsVisible(false)
 		self.ammoText:SetIsVisible(false)
 		self.ammoTextBg:SetIsVisible(false)
+		if self.reserveBar then
+			self.reserveBar:SetIsVisible(false)
+		end
 	end
 
 end
