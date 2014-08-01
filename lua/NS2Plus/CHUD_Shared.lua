@@ -12,8 +12,8 @@ if not CHUDMainMenu then
 	{
 		lastAcc = "float (0 to 100 by 0.01)",
 		currentAcc = "float (0 to 100 by 0.01)",
-		pdmg = "float (0 to 524288 by 0.01)",
-		sdmg = "float (0 to 524288 by 0.01)",
+		pdmg = "float (0 to 524287 by 0.01)",
+		sdmg = "float (0 to 524287 by 0.01)",
 	}
 
 	local kCHUDEndStatsWeaponMessage =
@@ -27,23 +27,23 @@ if not CHUDMainMenu then
 	{
 		accuracy = "float (0 to 100 by 0.01)",
 		accuracyOnos = "float (-1 to 100 by 0.01)",
-		pdmg = "float (0 to 524288 by 0.01)",
-		sdmg = "float (0 to 524288 by 0.01)",
+		pdmg = "float (0 to 524287 by 0.01)",
+		sdmg = "float (0 to 524287 by 0.01)",
 	}
 
 	local kCHUDMarineCommStatsMessage =
 	{
 		medpackAccuracy = "float (0 to 100 by 0.01)",
-		medpackResUsed = "integer (0 to 65536)",
-		medpackResExpired = "integer (0 to 65536)",
+		medpackResUsed = "integer (0 to 65535)",
+		medpackResExpired = "integer (0 to 65535)",
 		medpackEfficiency = "float (0 to 100 by 0.01)",
-		medpackRefill = "integer (0 to 262144)",
-		ammopackResUsed = "integer (0 to 65536)",
-		ammopackResExpired = "integer (0 to 65536)",
+		medpackRefill = "integer (0 to 262143)",
+		ammopackResUsed = "integer (0 to 65535)",
+		ammopackResExpired = "integer (0 to 65535)",
 		ammopackEfficiency = "float (0 to 100 by 0.01)",
-		ammopackRefill = "integer (0 to 262144)",
-		catpackResUsed = "integer (0 to 65536)",
-		catpackResExpired = "integer (0 to 65536)",
+		ammopackRefill = "integer (0 to 262143)",
+		catpackResUsed = "integer (0 to 65535)",
+		catpackResExpired = "integer (0 to 65535)",
 		catpackEfficiency = "float (0 to 100 by 0.01)",
 	}
 
