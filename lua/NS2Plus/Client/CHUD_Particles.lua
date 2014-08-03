@@ -110,6 +110,9 @@ local replacedCinematics = set {
 							"cinematics/marine/spawn_item.cinematic",
 							"cinematics/common/resnode.cinematic",
 							"cinematics/marine/minigun/muzzle_flash.cinematic",
+							"cinematics/marine/rifle/muzzle_flash.cinematic",
+							"cinematics/marine/rifle/muzzle_flash2.cinematic",
+							"cinematics/marine/rifle/muzzle_flash3.cinematic",
 							"cinematics/marine/structures/hurt_severe.cinematic",
 							"cinematics/marine/structures/hurt_small_severe.cinematic",
 							"cinematics/marine/structures/hurt.cinematic",
@@ -118,9 +121,15 @@ local replacedCinematics = set {
 							"cinematics/alien/fade/blink_in_silent.cinematic",
 							"cinematics/alien/fade/blink_out_silent.cinematic",
 							"cinematics/alien/tracer_residue.cinematic",
+							"cinematics/materials/metal/ricochet.cinematic",
+							"cinematics/materials/metal/ricochetHeavy.cinematic",
+							"cinematics/materials/rock/ricochet.cinematic",
+							"cinematics/materials/rock/ricochetHeavy.cinematic",
+							"cinematics/materials/thin_metal/ricochet.cinematic",
+							"cinematics/materials/thin_metal/ricochetHeavy.cinematic",
 						}
 
-local mapCinematicNames = set {	
+local mapCinematicNames = set {
 						"cinematics/environment/biodome/flying_papers.cinematic",
 						"cinematics/environment/biodome/leaves_folliage_01.cinematic",
 						"cinematics/environment/biodome/mosquitos_glow.cinematic",
