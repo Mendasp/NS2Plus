@@ -4,13 +4,14 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /07/2014
+- 05/07/2014
 	- Added NS2+ Options to the main menu if the mod is mounted.
 	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.
 	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style). Available in HUD tab. Thanks to rantology for the art!
 	- Fixed crosshair hit indicator fade time not being applied on map load properly.
 	- Added team specific sensitivities. Available in Misc. tab.
 	- Added team specific FOVs. Available in Misc. tab.
+	- Tweaked the rifle muzzleflash and some ricochet particles under Minimal Particles setting.
 
 - 20/07/2014
 	- Fixed vanilla bug where the Commander would log out attacking.
