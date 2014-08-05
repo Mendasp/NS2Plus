@@ -148,9 +148,31 @@ function CHUDGUI_CustomHUD:Initialize()
 
 end
 
+function CHUDGUI_CustomHUD:Uninitialize()
+
+	GUIAnimatedScript.Uninitialize(self)
+	
+	self.leftBarBg:Destroy()
+	self.healthBar:Destroy()
+	self.armorBar:Destroy()
+	self.rightBarBg:Destroy()
+	self.rightBar:Destroy()
+	self.healthTextBg:Destroy()
+	self.healthText:Destroy()
+	self.ammoTextBg:Destroy()
+	self.ammoText:Destroy()
+	if self.reserveBar then
+		self.reserveBar:Destroy()
+	end
+
+end
+
 function CHUDGUI_CustomHUD:Reset()
 
 	GUIAnimatedScript.Reset(self)
+	
+	self:Uninitialize()
+	self:Initialize()
 
 end
 
@@ -162,6 +184,9 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 	GUIAnimatedScript.Update(self, deltaTime)
 
 	if player and player:GetIsAlive() then
+		self.leftBarBg:SetIsVisible(true)
+		self.rightBarBg:SetIsVisible(true)
+	
 		local health = player:isa("Exo") and 0 or player:GetHealth()
 		-- Do not multiply by kHealthPointsPerArmor here so we can display the armor number directly later
 		local armor = player:GetArmor()

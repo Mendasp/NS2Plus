@@ -328,3 +328,12 @@ originalMarineMessage = Class_ReplaceMethod( "GUIMarineTeamMessage", "SetTeamMes
 		end
 	end
 )
+
+Script.Load("lua/GUIJetpackFuel.lua")
+local originalJetpackFuelInit
+originalJetpackFuelInit = Class_ReplaceMethod( "GUIJetpackFuel", "Initialize",
+	function(self)
+		GUIJetpackFuel.kBackgroundOffsetX = ConditionalValue(CHUDGetOption("customhud_m") == 2, GUIScale(128), 6)
+		originalJetpackFuelInit(self)
+	end
+)

@@ -742,7 +742,7 @@ CHUDOptions =
 					if GetGUIManager():GetGUIScriptSingle(classicammoScript) then
 						GetGUIManager():DestroyGUIScriptSingle(classicammoScript)
 					end
-					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
+					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD", "GUIJetpackFuel" })
 					CHUDEvaluateGUIVis()
 				end,
 				sort = "E2",
