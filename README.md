@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /07/2014
+	- Fixed alien armor still showing up in rare instances for alien HUD bars.
+
 - 05/07/2014
 	- Added NS2+ Options to the main menu if the mod is mounted.
 	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.

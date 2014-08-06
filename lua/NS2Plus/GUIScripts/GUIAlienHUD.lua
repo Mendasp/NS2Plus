@@ -121,7 +121,6 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 			self.healthBall.rightSide:SetIsVisible(false)
 			self.energyBall.leftSide:SetIsVisible(false)
 			self.energyBall.rightSide:SetIsVisible(false)
-			self.armorBall:SetIsVisible(false)
 			self.adrenalineEnergy:SetIsVisible(false)
 			if CHUDGetOption("customhud_a") == 2 then
 				healthBall:SetPosition(Vector(healthBallPos.x+50, healthBallPos.y, 0))
@@ -199,6 +198,8 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 			self.energyBall:GetLeftSide():SetColor(energyColor)
 			self.energyBall:GetRightSide():SetColor(energyColor)
 		end
+		
+		self.armorBall:SetIsVisible(self.healthBall:GetBackground():GetIsVisible() and CHUDGetOption("customhud_a") == 0)
 	end)
 	
 local originalAlienReset
