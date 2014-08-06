@@ -6,6 +6,7 @@ Latest changes
 ==============
 - /07/2014
 	- Fixed alien armor still showing up in rare instances for alien HUD bars.
+	- Made HL2 HUD bars thinner and slightly more transparent.
 
 - 05/07/2014
 	- Added NS2+ Options to the main menu if the mod is mounted.
