@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /07/2014
+- 07/07/2014
 	- Fixed alien armor still showing up in rare instances for alien HUD bars.
 	- Made HL2 HUD bars thinner and slightly more transparent.
 
