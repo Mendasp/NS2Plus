@@ -4,11 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- 07/07/2014
+- 07/08/2014
 	- Fixed alien armor still showing up in rare instances for alien HUD bars.
 	- Made HL2 HUD bars thinner and slightly more transparent.
 
-- 05/07/2014
+- 05/08/2014
 	- Added NS2+ Options to the main menu if the mod is mounted.
 	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.
 	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style). Available in HUD tab. Thanks to rantology for the art!
