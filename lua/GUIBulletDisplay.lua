@@ -16,11 +16,11 @@ class 'GUIBulletDisplay' (GUIScript)
 function GUIBulletDisplay:Initialize()
 
     self.weaponClip     = 0
-	self.weaponVariant  = 1
+    self.weaponVariant  = 1
     self.weaponAmmo     = 0
     self.weaponClipSize = 50
-	self.globalTime     = 0
-	self.lowAmmoWarning = true
+    self.globalTime     = 0
+    self.lowAmmoWarning = true
     
     self.onDraw = 0
     self.onHolster = 0
@@ -30,14 +30,14 @@ function GUIBulletDisplay:Initialize()
     self.background:SetPosition( Vector(0, 0, 0))    
     self.background:SetTexture("ui/rifledisplay0.dds")
     self.background:SetIsVisible(true)
-	
+    
     self.lowAmmoOverlay = GUIManager:CreateGraphicItem()
     self.lowAmmoOverlay:SetSize( Vector(256, 512, 0) )
     self.lowAmmoOverlay:SetPosition( Vector(0, 0, 0))
 
     // Slightly larger copy of the text for a glow effect
     self.ammoTextBg = GUIManager:CreateTextItem()
-    self.ammoTextBg:SetFontName("fonts/MicrogrammaDMedExt_large.fnt")
+    self.ammoTextBg:SetFontName(Fonts.kMicrogrammaDMedExt_Large)
     self.ammoTextBg:SetFontIsBold(true)
     self.ammoTextBg:SetFontSize(135)
     self.ammoTextBg:SetTextAlignmentX(GUIItem.Align_Center)
@@ -47,7 +47,7 @@ function GUIBulletDisplay:Initialize()
 
     // Text displaying the amount of ammo in the clip
     self.ammoText = GUIManager:CreateTextItem()
-    self.ammoText:SetFontName("fonts/MicrogrammaDMedExt_large.fnt")
+    self.ammoText:SetFontName(Fonts.kMicrogrammaDMedExt_Large)
     self.ammoText:SetFontIsBold(true)
     self.ammoText:SetFontSize(120)
     self.ammoText:SetTextAlignmentX(GUIItem.Align_Center)
@@ -104,24 +104,24 @@ function GUIBulletDisplay:Update(deltaTime)
         self:SetClipFraction( i, Math.Clamp(reserveFraction - i + 1, 0, 1) )
     end
     
-	local fraction = self.weaponClip / self.weaponClipSize
-	local alpha = 0
-	local pulseSpeed = 5
-	
-	if fraction <= 0.4 then
-		
-		if fraction == 0 then
-			pulseSpeed = 25
-		elseif fraction < 0.25 then
-			pulseSpeed = 10
-		end
-		
-		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
-	end
-	
-	if not self.lowAmmoWarning then alpha = 0 end
-	
-	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
+    local fraction = self.weaponClip / self.weaponClipSize
+    local alpha = 0
+    local pulseSpeed = 5
+    
+    if fraction <= 0.4 then
+        
+        if fraction == 0 then
+            pulseSpeed = 25
+        elseif fraction < 0.25 then
+            pulseSpeed = 10
+        end
+        
+        alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
+    end
+    
+    if not self.lowAmmoWarning then alpha = 0 end
+    
+    self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
 
 end
 
@@ -130,12 +130,12 @@ function GUIBulletDisplay:SetClip(weaponClip)
 end
 
 function GUIBulletDisplay:SetWeaponVariant(weaponVariant)
-	if weaponVariant ~= -1 then
-		self.background:SetTexture("ui/rifledisplay" .. weaponVariant-1 .. ".dds")
-		for i =1,self.numClips do
-			self.clip[i]:SetTexture("ui/rifledisplay" .. weaponVariant-1 .. ".dds")
-		end
-	end
+    if weaponVariant ~= -1 then
+        self.background:SetTexture("ui/rifledisplay" .. weaponVariant-1 .. ".dds")
+        for i =1,self.numClips do
+            self.clip[i]:SetTexture("ui/rifledisplay" .. weaponVariant-1 .. ".dds")
+        end
+    end
 end
 
 function GUIBulletDisplay:SetClipSize(weaponClipSize)

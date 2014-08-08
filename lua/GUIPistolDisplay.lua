@@ -25,8 +25,8 @@ function Update(deltaTime)
 
     bulletDisplay:SetClip(weaponClip)
     bulletDisplay:SetAmmo(weaponAmmo)
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
     
 end
@@ -41,8 +41,8 @@ function Initialize()
     bulletDisplay = GUIBulletDisplay()
     bulletDisplay:Initialize()
     bulletDisplay:SetClipSize(10)
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     
 end
 

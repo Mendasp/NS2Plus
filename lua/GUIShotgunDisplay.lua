@@ -27,14 +27,14 @@ function GUIShotgunDisplay:Initialize()
     self.weaponClip     = 0
     self.weaponAmmo     = 0
     self.weaponClipSize = 6
-	self.globalTime     = 0
-	self.lowAmmoWarning = true
+    self.globalTime     = 0
+    self.lowAmmoWarning = true
     
     self.background = GUIManager:CreateGraphicItem()
     self.background:SetSize( Vector(256, 128, 0) )
     self.background:SetPosition( Vector(0, 0, 0))    
     self.background:SetTexture("ui/ShotgunDisplay.dds")
-	
+    
     self.lowAmmoOverlay = GUIManager:CreateGraphicItem()
     self.lowAmmoOverlay:SetSize( Vector(256, 128, 0) )
     self.lowAmmoOverlay:SetPosition( Vector(0, 0, 0))    
@@ -57,7 +57,7 @@ end
 function GUIShotgunDisplay:CreateItem(x, y)
 
     local textBg = GUIManager:CreateTextItem()
-    textBg:SetFontName("fonts/MicrogrammaDMedExt_medium.fnt")
+    textBg:SetFontName(Fonts.kMicrogrammaDMedExt_Medium)
     textBg:SetFontSize(85)
     textBg:SetTextAlignmentX(GUIItem.Align_Center)
     textBg:SetTextAlignmentY(GUIItem.Align_Center)
@@ -66,7 +66,7 @@ function GUIShotgunDisplay:CreateItem(x, y)
 
     // Text displaying the amount of reserve ammo
     local text = GUIManager:CreateTextItem()
-    text:SetFontName("fonts/MicrogrammaDMedExt_medium2.fnt")
+    text:SetFontName(Fonts.kMicrogrammaDMedExt_Medium2 )
     text:SetFontSize(75)
     text:SetTextAlignmentX(GUIItem.Align_Center)
     text:SetTextAlignmentY(GUIItem.Align_Center)
@@ -92,24 +92,24 @@ function GUIShotgunDisplay:Update(deltaTime)
     self.ammoText:SetText( ammoFormat )
     self.ammoTextBg:SetText( ammoFormat )
     
-	local fraction = self.weaponClip / self.weaponClipSize
-	local alpha = 0
-	local pulseSpeed = 5
-	
-	if fraction <= 0.4 then
-		
-		if fraction == 0 then
-			pulseSpeed = 25
-		elseif fraction < 0.25 then
-			pulseSpeed = 10
-		end
-		
-		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
-	end
-	
-	if not self.lowAmmoWarning then alpha = 0 end
-	
-	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
+    local fraction = self.weaponClip / self.weaponClipSize
+    local alpha = 0
+    local pulseSpeed = 5
+    
+    if fraction <= 0.4 then
+        
+        if fraction == 0 then
+            pulseSpeed = 25
+        elseif fraction < 0.25 then
+            pulseSpeed = 10
+        end
+        
+        alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
+    end
+    
+    if not self.lowAmmoWarning then alpha = 0 end
+    
+    self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
     
 end
 
@@ -140,8 +140,8 @@ function Update(deltaTime)
 
     bulletDisplay:SetClip(weaponClip)
     bulletDisplay:SetAmmo(weaponAmmo)
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
         
 end
@@ -156,8 +156,8 @@ function Initialize()
     bulletDisplay = GUIShotgunDisplay()
     bulletDisplay:Initialize()
     bulletDisplay:SetClipSize(6)
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
 
 end
 

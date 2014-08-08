@@ -31,8 +31,8 @@ function GUIFlamethrowerDisplay:Initialize()
 
     self.weaponClip = 0
     self.maxClip = 50
-	self.globalTime = 0
-	self.lowAmmoWarning = true
+    self.globalTime = 0
+    self.lowAmmoWarning = true
     
     self.background = GUIManager:CreateGraphicItem()
     self.background:SetAnchor(GUIItem.Top, GUIItem.Left)
@@ -40,7 +40,7 @@ function GUIFlamethrowerDisplay:Initialize()
     self.background:SetPosition( Vector(0, 0, 0))    
     self.background:SetTexture("ui/FlamethrowerDisplay.dds")
     self.background:SetTexturePixelCoordinates(unpack(kBgTexCoords))
-	
+    
     self.lowAmmoOverlay = GUIManager:CreateGraphicItem()
     self.lowAmmoOverlay:SetSize( Vector(128, 256, 0) )
     self.lowAmmoOverlay:SetPosition( Vector(0, 0, 0))
@@ -74,23 +74,23 @@ function GUIFlamethrowerDisplay:Update(deltaTime)
     
     self.clipDisplay:SetTexturePixelCoordinates(kBarTexCoords[1], y1, kBarTexCoords[3], kBarTexCoords[4]  )
 
-	local alpha = 0
-	local pulseSpeed = 5
-	
-	if clipFraction <= 0.4 then
-		
-		if clipFraction == 0 then
-			pulseSpeed = 25
-		elseif clipFraction < 0.25 then
-			pulseSpeed = 10
-		end
-		
-		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
-	end
-	
-	if not self.lowAmmoWarning then alpha = 0 end
-	
-	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
+    local alpha = 0
+    local pulseSpeed = 5
+    
+    if clipFraction <= 0.4 then
+        
+        if clipFraction == 0 then
+            pulseSpeed = 25
+        elseif clipFraction < 0.25 then
+            pulseSpeed = 10
+        end
+        
+        alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
+    end
+    
+    if not self.lowAmmoWarning then alpha = 0 end
+    
+    self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
     
 end
 
@@ -121,8 +121,8 @@ function Update(deltaTime)
 
     bulletDisplay:SetClip(weaponClip)
     bulletDisplay:SetAmmo(weaponAmmo)
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
         
 end
@@ -137,8 +137,8 @@ function Initialize()
     bulletDisplay = GUIFlamethrowerDisplay()
     bulletDisplay:Initialize()
     bulletDisplay:SetClipSize(50)
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
 
 end
 

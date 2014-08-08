@@ -41,8 +41,8 @@ function GUIGrenadelauncherDisplay:Initialize()
     self.maxClip = 4
     self.weaponClip = 0
     self.weaponAmmo = 0
-	self.globalTime = 0
-	self.lowAmmoWarning = true
+    self.globalTime = 0
+    self.lowAmmoWarning = true
     
     self.viewPitch = GUIManager:CreateGraphicItem()
     self.viewPitch:SetSize( Vector(128, 256, 0) )
@@ -55,14 +55,14 @@ function GUIGrenadelauncherDisplay:Initialize()
     self.background:SetPosition( Vector(128, 0, 0))    
     self.background:SetTexture(kTexture)
     self.background:SetTexturePixelCoordinates(unpack(kBgTexCoords))
-	
+    
     self.lowAmmoOverlay = GUIManager:CreateGraphicItem()
     self.lowAmmoOverlay:SetSize( Vector(128, 256, 0) )
     self.lowAmmoOverlay:SetPosition( Vector(0, 0, 0))
     
     self.ammoDisplay = GUIManager:CreateTextItem()
     self.ammoDisplay:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
-    self.ammoDisplay:SetFontName("fonts/MicrogrammaDMedExt_large.fnt")
+    self.ammoDisplay:SetFontName(Fonts.kMicrogrammaDMedExt_Large)
     self.ammoDisplay:SetScale(Vector(0.5, 0.5, 0))
     self.ammoDisplay:SetPosition(Vector(0, -50, 0))
     self.ammoDisplay:SetTextAlignmentX(GUIItem.Align_Center)
@@ -119,23 +119,23 @@ function GUIGrenadelauncherDisplay:Update(deltaTime)
     
     end
 
-	local alpha = 0
-	local pulseSpeed = 5
-	
-	if self.weaponClip <= 2 then
-		
-		if self.weaponClip == 1 then
-			pulseSpeed = 10
-		elseif fraction == 0 then
-			pulseSpeed = 25
-		end
-		
-		alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
-	end
-	
-	if not self.lowAmmoWarning then alpha = 0 end
-	
-	self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
+    local alpha = 0
+    local pulseSpeed = 5
+    
+    if self.weaponClip <= 2 then
+        
+        if self.weaponClip == 1 then
+            pulseSpeed = 10
+        elseif fraction == 0 then
+            pulseSpeed = 25
+        end
+        
+        alpha = (math.sin(self.globalTime * pulseSpeed) + 1) / 2
+    end
+    
+    if not self.lowAmmoWarning then alpha = 0 end
+    
+    self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha * 0.5))
     
 end
 
@@ -166,8 +166,8 @@ function Update(deltaTime)
 
     bulletDisplay:SetClip(weaponClip)
     bulletDisplay:SetAmmo(weaponAmmo)
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
     bulletDisplay:Update(deltaTime)
         
 end
@@ -181,8 +181,8 @@ function Initialize()
 
     bulletDisplay = GUIGrenadelauncherDisplay()
     bulletDisplay:Initialize()
-	bulletDisplay:SetGlobalTime(globalTime)
-	bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
+    bulletDisplay:SetGlobalTime(globalTime)
+    bulletDisplay:SetLowAmmoWarning(lowAmmoWarning)
 
 end
 
