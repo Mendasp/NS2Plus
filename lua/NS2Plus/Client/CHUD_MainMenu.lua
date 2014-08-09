@@ -9,7 +9,7 @@ function MakeCHUDSliderCallback( elemId, key )
 			local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
 			local elem = mainMenu.CHUDOptionElements[elemId]
 			local value = (elem:GetValue() * (maxValue - minValue) + minValue) * multiplier
-			CHUDSetOption(key, value)
+			CHUDSetOption(key, Round(value, 2))
 		end
 	end
 end
@@ -355,7 +355,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			input = form:CreateFormElement(Form.kElementType.DropDown, option.name, option.value)
 			if option.values then
 				input:SetOptions(option.values)
-			end                
+			end
 			if option.name == "CHUD_Hitsounds" then
 				local soundPreview = CreateMenuElement(form, "MenuButton", false)
 				soundPreview:SetCSSClass("clear_keybind")
@@ -398,7 +398,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				
 			OnEnter = function(self)
 				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
-					input:SetValue(((input_display:GetValue() / multiplier) - minValue) / (maxValue - minValue))
+					input:SetValue(Round(((input_display:GetValue() / multiplier) - minValue) / (maxValue - minValue),4))
 				end
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
 					local value = (input:GetValue() * (maxValue - minValue) + minValue) * multiplier
@@ -408,7 +408,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			end,
 			OnBlur = function(self)
 				if input_display:GetValue() ~= "" and input_display:GetValue() ~= "." then
-					input:SetValue(((input_display:GetValue() / multiplier) - minValue) / (maxValue - minValue))
+					input:SetValue(Round(((input_display:GetValue() / multiplier) - minValue) / (maxValue - minValue),4))
 				end
 				
 				if input_display:GetValue() == "" or input_display:GetValue() == "." then
@@ -424,7 +424,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 						function(value, interest)
 							option.sliderCallback(mainMenu)
 							local value = (input:GetValue() * (maxValue - minValue) + minValue) * multiplier
-							input_display:SetValue(ToString(string.sub(value, 0, ConditionalValue(value > 100, 5, 4))))
+							input_display:SetValue(ToString(string.sub(Round(value,2), 0, ConditionalValue(value > 100, 5, 4))))
 						end
 					}, SLIDE_HORIZONTAL)
 			end

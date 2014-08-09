@@ -6,6 +6,7 @@ Latest changes
 ==============
 - /08/2014
 	- Added Gorge Spit accuracy back.
+	- Added some rounding to the options menu so people don't freak out about floating point precision.
 
 - 07/08/2014
 	- Fixed alien armor still showing up in rare instances for alien HUD bars.
