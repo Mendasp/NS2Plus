@@ -1063,3 +1063,42 @@ originalSwipeAttack = Class_ReplaceMethod( "SwipeBlink", "PerformMeleeAttack",
 		end
 
 	end)
+
+local originalSpitProcessHit
+originalSpitProcessHit = Class_ReplaceMethod( "Spit", "ProcessHit",
+	function(self, targetHit, surface, normal, hitPoint)
+
+		local player = self:GetOwner()
+		if player == targetHit then
+			targetHit = nil
+			local eyePos = player:GetEyePos()        
+			local viewCoords = player:GetViewCoords()
+			local trace = Shared.TraceRay(eyePos, eyePos + viewCoords.zAxis * 1.5, CollisionRep.Damage, PhysicsMask.Bullets, EntityFilterOneAndIsa(player, "Babbler"))
+			if trace.fraction ~= 1 then
+				targetHit = trace.entity
+			end
+		end
+		
+		if (targetHit and targetHit:isa("Player") and GetAreEnemies(player, targetHit)) or targetHit == nil then
+			local steamId = GetSteamIdForClientIndex(player:GetClientIndex())
+			if steamId then
+				AddAccuracyStat(steamId, self:GetWeaponTechId(), targetHit ~= nil, targetHit and targetHit:isa("Onos"), player:GetTeamNumber())
+			end
+		end
+		
+		-- An actual attack I can hook semi-properly :_)
+		originalSpitProcessHit(self, targetHit, surface, normal, hitPoint)
+
+	end)
+
+local originalSpitTimeUp
+originalSpitTimeUp = Class_ReplaceMethod( "Spit", "TimeUp",
+	function(self)
+		local player = self:GetOwner()
+		local steamId = GetSteamIdForClientIndex(player:GetClientIndex())
+		if steamId then
+			AddAccuracyStat(steamId, self:GetWeaponTechId(), false, false, player:GetTeamNumber())
+		end
+	
+		originalSpitTimeUp(self)
+	end)

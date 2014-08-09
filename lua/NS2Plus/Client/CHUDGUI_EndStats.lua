@@ -263,6 +263,9 @@ local function CHUDSetAccuracyString(message)
 	// This shows up as "Swipe Blink", just "Swipe"
 	elseif wTechId == kTechId.Swipe then
 		weaponName = "Swipe"
+	// Spitspray...
+	elseif wTechId == kTechId.Spit then
+		weaponName = "Spit"
 	// Use spaces!
 	elseif rawget( kTechId, "HeavyMachineGun" ) and wTechId == kTechId.HeavyMachineGun then
 		weaponName = "Heavy Machine Gun"
