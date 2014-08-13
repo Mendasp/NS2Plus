@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /08/2014
+- 13/08/2014
 	- Added Gorge Spit accuracy back.
 	- Added some rounding to the options menu so people don't freak out about floating point precision.
 
