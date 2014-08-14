@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 08/2014
+	- Fixed amazing bug that made the Endgame Stats show every time the request key was released ignoring all laws of physics, common sense, and other stuff. Seriously, wtf.
+
 - 13/08/2014
 	- Added Gorge Spit accuracy back.
 	- Added some rounding to the options menu so people don't freak out about floating point precision.

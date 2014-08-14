@@ -151,6 +151,7 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.showing = true
 	self.fading = true
+	self.prevKeyStatus = false
 	
 	gStatsUI = self
 end
@@ -217,9 +218,14 @@ end
 
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
+	// Good news! The game seems to correctly block the held down status when console is open but
+	// IT STILL REPORTS THE RELEASE OF THE KEY WHICH IS WHAT WE WERE USING:D
+	// So let's save the previous state and compare with current so we show only when appropriate
+
 	// Force show when request menu is open
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevKeyStatus ~= down then
 		
+		self.prevKeyStatus = down
 		if not down then
 			self.titleBackground:SetIsVisible(not self.titleBackground:GetIsVisible())
 			self.titleBackground:SetColor(Color(1, 1, 1, ConditionalValue(self.titleBackground:GetIsVisible() and hasText, 1, 0)))
