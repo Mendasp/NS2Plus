@@ -22,6 +22,7 @@ Script.Load("lua/NS2Plus/GUIScripts/GUIDeathMessages.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUICommanderAlerts.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_PlayerHealthbars.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUICommanderLogout.lua")
+Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_Follow.lua")
 
 // I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/NS2Plus/GUIScripts/GhostModel.lua")
