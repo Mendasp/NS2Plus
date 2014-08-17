@@ -7,12 +7,14 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		CHUDClientStats[steamId] = {}
 		CHUDClientStats[steamId].pdmg = 0
 		CHUDClientStats[steamId].sdmg = 0
+		CHUDClientStats[steamId].killstreak = 0
 		CHUDClientStats[steamId].teamNumber = teamNumber
 		CHUDClientStats[steamId]["last"] = {}
 		CHUDClientStats[steamId]["last"].pdmg = 0
 		CHUDClientStats[steamId]["last"].sdmg = 0
 		CHUDClientStats[steamId]["last"].hits = 0
 		CHUDClientStats[steamId]["last"].misses = 0
+		CHUDClientStats[steamId]["last"].kills = 0
 		CHUDClientStats[steamId]["weapons"] = {}
 	end
 	
@@ -21,6 +23,7 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		CHUDClientStats[steamId]["weapons"][wTechId].hits = 0
 		CHUDClientStats[steamId]["weapons"][wTechId].onosHits = 0
 		CHUDClientStats[steamId]["weapons"][wTechId].misses = 0
+		CHUDClientStats[steamId]["weapons"][wTechId].kills = 0
 	end
 end
 
@@ -32,6 +35,7 @@ local function ResetCHUDLastLifeStats(steamId)
 	CHUDClientStats[steamId]["last"].sdmg = 0
 	CHUDClientStats[steamId]["last"].hits = 0
 	CHUDClientStats[steamId]["last"].misses = 0
+	CHUDClientStats[steamId]["last"].kills = 0
 end
 
 local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
@@ -67,6 +71,23 @@ local function AddDamageStat(steamId, damage, isPlayer)
 		else
 			stat.sdmg = stat.sdmg + damage
 			lastStat.sdmg = lastStat.sdmg + damage
+		end
+	end
+end
+
+local function AddWeaponKill(steamId, wTechId, teamNumber)
+	if GetGamerules():GetGameStarted() then
+		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
+		
+		local rootStat = CHUDClientStats[steamId]
+		local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
+		local lastStat = CHUDClientStats[steamId]["last"]
+		
+		weaponStat.kills = weaponStat.kills + 1
+		lastStat.kills = lastStat.kills + 1
+		
+		if lastStat.kills > rootStat.killstreak then
+			rootStat.killstreak = lastStat.kills
 		end
 	end
 end
@@ -297,6 +318,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					msg.wTechId = wTechId
 					msg.accuracy = accuracy
 					msg.accuracyOnos = accuracyOnos
+					msg.kills = wStats.kills
 					
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
 				end
@@ -313,6 +335,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				msg.accuracyOnos = overallOnosAccuracy
 				msg.pdmg = stats.pdmg
 				msg.sdmg = stats.sdmg
+				msg.killstreak = stats.killstreak
 				
 				Server.SendNetworkMessage(client, "CHUDEndStatsOverall", msg, true)
 			end
@@ -325,7 +348,8 @@ local originalPlayerOnKill
 originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 	function (self, killer, doer, point, direction)
 		originalPlayerOnKill(self, killer, doer, point, direction)
-		
+
+		-- Send stats to the player on death
 		local steamId = GetSteamIdForClientIndex(self:GetClientIndex())
 		if steamId then
 			if CHUDClientStats[steamId] then
@@ -360,6 +384,15 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 				end
 			end
 			ResetCHUDLastLifeStats(steamId)
+		end
+		
+		-- Now save the attacker weapon
+		local killerTeam = killer and killer:isa("Player") and killer:GetTeamNumber()
+		local killerSteamId = killer and killer:isa("Player") and GetSteamIdForClientIndex(killer:GetClientIndex())
+		local killerWeapon = doer and doer:isa("Weapon") and doer:GetTechId()
+
+		if killerSteamId and killerWeapon then
+			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
 		end
 		
 		// Save position of last death only if we didn't die to a DeathTrigger

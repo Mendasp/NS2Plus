@@ -1,7 +1,7 @@
 kCHUDElixerVersion = 1.72
-// Initial version number from the amount of revisions in the Workshop
+// Version number is the amount of revisions in the Workshop
 // Try to update but only important when changing defaults
-kCHUDVersion = 197
+kCHUDVersion = 198
 
 Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
@@ -21,6 +21,7 @@ if not CHUDMainMenu then
 		wTechId = "enum kTechId",
 		accuracy = "float (0 to 100 by 0.01)",
 		accuracyOnos = "float (-1 to 100 by 0.01)",
+		kills = "integer (0 to 1023)",
 	}
 
 	local kCHUDEndStatsOverallMessage =
@@ -29,6 +30,7 @@ if not CHUDMainMenu then
 		accuracyOnos = "float (-1 to 100 by 0.01)",
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
+		killstreak = "integer (0 to 1023)",
 	}
 
 	local kCHUDMarineCommStatsMessage =

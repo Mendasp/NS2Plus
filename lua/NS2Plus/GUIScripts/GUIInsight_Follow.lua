@@ -37,7 +37,7 @@ originalInsightOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Upda
 			end
 			
 			// If the player is dead, deselect
-			if entity and entity:GetIsAlive() then
+			if entity and entity:isa("Player") and entity:GetIsAlive() then
 				local origin = entity:GetOrigin()
 				player:SetWorldScrollPosition(origin.x, origin.z)
 			else

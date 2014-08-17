@@ -277,7 +277,7 @@ local function CHUDSetAccuracyString(message)
 		weaponName = "Heavy Machine Gun"
 	end
 
-	local accuracyString = string.format("%s accuracy: %.2f%%", weaponName, message.accuracy)
+	local accuracyString = string.format("%s - Kills: %d - Accuracy: %.2f%%", weaponName, message.kills, message.accuracy)
 	
 	if message.accuracyOnos > -1 then
 		accuracyString = accuracyString .. string.format(" / Without Onos hits: %.2f%%", message.accuracyOnos)
@@ -326,6 +326,10 @@ local function CHUDSetOverallString(message)
 		end
 		
 		finalStatsString = finalStatsString .. string.format("\nPlayer damage: %.2f\nStructure damage: %.2f", message.pdmg, message.sdmg)
+		
+		if message.killstreak >= 5 then
+			finalStatsString = finalStatsString .. string.format("\nLongest killstreak: %d kills", message.killstreak)
+		end
 		
 		AddString(gStatsUI, finalStatsString, false, true)
 
