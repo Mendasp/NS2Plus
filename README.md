@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /08/2014
+	- Made medpack accuracy stricter, pickups have to occur in 25ms for it to count as a hit instead of the previous 100ms.
+	- Enabled TVGlare element in the main menu so the Fastload menu mods work again.
+
 - 16/08/2014
 	- Fixed amazing bug that made the Endgame Stats show every time the request key was released ignoring all laws of physics, common sense, and other stuff. Seriously, wtf.
 	- Added improved follow mode to Insight. When clicking on a player frame it will autofollow that player until it dies or changes classes (or the frame is clicked again).

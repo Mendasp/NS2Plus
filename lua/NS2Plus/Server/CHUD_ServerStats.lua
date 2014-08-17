@@ -171,7 +171,7 @@ originalMedPackOnTouch = Class_ReplaceMethod("MedPack", "OnTouch",
 		originalMedPackOnTouch(self, recipient)
 		if oldHealth < recipient:GetHealth() then
 			// If the medpack hits immediatly expireTime is 0
-			if ConditionalValue(self.expireTime == 0, Shared.GetTime(), self.expireTime - kItemStayTime) + 0.1 > Shared.GetTime() then
+			if ConditionalValue(self.expireTime == 0, Shared.GetTime(), self.expireTime - kItemStayTime) + 0.025 > Shared.GetTime() then
 				CHUDCommStats[CHUDMarineComm]["medpack"].misses = CHUDCommStats[CHUDMarineComm]["medpack"].misses - 1
 				CHUDCommStats[CHUDMarineComm]["medpack"].hits = CHUDCommStats[CHUDMarineComm]["medpack"].hits + 1
 			end
