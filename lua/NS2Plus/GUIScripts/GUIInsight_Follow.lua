@@ -18,31 +18,31 @@ originalInsightOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Upda
 			return
 		end
 		
-		if player.selectedId then
-			local entity = Shared.GetEntity(player.selectedId)
+		local entityId = player.selectedId
+		if entityId and entityId ~= Entity.invalidId then
+			local entity = Shared.GetEntity(entityId)
 			
-			// If we're not in relevancy range, get the position from the mapblips
+			-- If we're not in relevancy range, get the position from the mapblips
 			if not entity then
 				for _, blip in ientitylist(Shared.GetEntitiesWithClassname("MapBlip")) do
 
-					if blip.ownerEntityId == player.selectedId then
+					if blip.ownerEntityId == entityId then
 					
-						local player = Client.GetLocalPlayer()
 						local blipOrig = blip:GetOrigin()
 						player:SetWorldScrollPosition(blipOrig.x, blipOrig.z)
 						
 					end
 				end
-				// Try to get the player again
-				entity = Shared.GetEntity(player.selectedId)
+				-- Try to get the player again
+				entity = Shared.GetEntity(entityId)
 			end
 			
-			// If the player is dead, deselect
+			-- If the player is dead, or the entity is not a player, deselect
 			if entity and entity:isa("Player") and entity:GetIsAlive() then
 				local origin = entity:GetOrigin()
 				player:SetWorldScrollPosition(origin.x, origin.z)
 			else
-				player.selectedId = Entity.invalidId
+				entityId = Entity.invalidId
 			end
 			
 			if lastPlayerId ~= entityId then
