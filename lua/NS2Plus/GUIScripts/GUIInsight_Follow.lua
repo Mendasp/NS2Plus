@@ -7,6 +7,7 @@ originalInsightOverheadSendKeyEvent = Class_ReplaceMethod("GUIInsight_Overhead",
 		// DO NOTHING, HEHEHE!
 	end)
 
+local lastPlayerId = Entity.invalidId
 local originalInsightOverheadUpdate
 originalInsightOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Update",
 	function(self, deltaTime)
@@ -43,7 +44,11 @@ originalInsightOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Upda
 			else
 				player.selectedId = Entity.invalidId
 			end
-
+			
+			if lastPlayerId ~= entityId then
+				Client.SendNetworkMessage("SpectatePlayer", {entityId = entityId}, true)
+				lastPlayerId = entityId
+			end
 		end
 	end)
 	
@@ -91,4 +96,16 @@ originalInsightPlayerFramesSendKeyEvent = Class_ReplaceMethod("GUIInsight_Player
 		end
 		
 		return false
+	end)
+	
+local originalPlayerOnEntityChange
+originalPlayerOnEntityChange = Class_ReplaceMethod("Player", "OnEntityChange",
+	function(self, oldEntityId, newEntityId)
+		originalPlayerOnEntityChange(self, oldEntityId, newEntityId)
+		-- If this is a player changing classes that we're already following, update the id
+		local player = Client.GetLocalPlayer()
+		if player.selectedId == oldEntityId then
+			Client.SendNetworkMessage("SpectatePlayer", {entityId = newEntityId}, true)
+			player.selectedId = newEntityId
+		end
 	end)

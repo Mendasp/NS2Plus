@@ -9,6 +9,7 @@ Latest changes
 	- Enabled tvglare element in the main menu so the Fastload menu mods work again.
 	- Added kills per weapon and the longest killstreak to the endgame stats.
 	- Fixed bug where the follow mode would try to follow entities that weren't players.
+	- Made spectator follow mode keep following the player through class changes.
 
 - 16/08/2014
 	- Fixed amazing bug that made the Endgame Stats show every time the request key was released ignoring all laws of physics, common sense, and other stuff. Seriously, wtf.
