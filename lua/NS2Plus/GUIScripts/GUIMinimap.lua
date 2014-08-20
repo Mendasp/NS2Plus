@@ -4,11 +4,6 @@ local kBlipSize 		= GetUpValue( GUIMinimap.SetBlipScale, "kBlipSize", 			{ Locat
 local kBlipSizeType 	= GetUpValue( GUIMinimap.Initialize,   "kBlipSizeType", 		{ LocateRecurse = true } )
 local kBlipInfo 		= GetUpValue( GUIMinimap.Initialize,   "kBlipInfo", 			{ LocateRecurse = true } )
 
-AppendToEnum( kBlipSizeType, "UnpoweredPowerPoint" )
-kBlipInfo[kMinimapBlipType.UnsocketedPowerPoint] = { kBlipColorType.FullColor, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
-kBlipInfo[kMinimapBlipType.BlueprintPowerPoint] = { kBlipColorType.Team, kBlipSizeType.UnpoweredPowerPoint, kStaticBlipsLayer, "UnsocketedPowerPoint" }
-
-
 Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 	function(self)
 		local player = Client.GetLocalPlayer()
@@ -157,9 +152,6 @@ local function NewUpdateStaticBlips(self, deltaTime)
 	local alienPlayers = set {
 		kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
 	}
-	local powerPoints = set {
-		kMinimapBlipType.BlueprintPowerPoint, kMinimapBlipType.UnsocketedPowerPoint, kMinimapBlipType.PowerPoint, kMinimapBlipType.DestroyedPowerPoint
-	}
 	
 	local staticBlips = PlayerUI_GetStaticMapBlips()
 	local blipItemCount = 10
@@ -271,8 +263,6 @@ local function NewUpdateStaticBlips(self, deltaTime)
 		GUIItemSetSize(blip, blipSize)
 		GUIItemSetPosition(blip, blipPos)
 		
-		GUIItemSetRotation(blip, ConditionalValue(powerPoints[blipType], Vector(0, 0, 0), blipRotation))
-		
 		if CHUDGetOption("playercolor_m") > 0 and marinePlayers[blipType] then
 			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_m"))
 		end
@@ -329,16 +319,6 @@ originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
 		else
 			originalMinimapSendKeyEvent(self, key, down)
 		end
-	end)
-
-local oldSetBlipScale 
-oldSetBlipScale = Class_ReplaceMethod( "GUIMinimap", "SetBlipScale",
-	function( self, blipScale )
-		if blipScale ~= self.blipScale then
-			local blipSize = Vector(kBlipSize, kBlipSize, 0)
-			self.blipSizeTable[kBlipSizeType.UnpoweredPowerPoint] = blipSize * 0.45 * blipScale 
-		end
-		oldSetBlipScale( self, blipScale )
 	end)
 
 local oldSetPlayerIconColor

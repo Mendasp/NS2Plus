@@ -77,7 +77,6 @@ if not CHUDMainMenu then
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_Grenade.lua")
-	Script.Load("lua/NS2Plus/Shared/CHUD_BlueprintPowerPoint.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autoreload.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_TriggerMixin.lua")
 end
