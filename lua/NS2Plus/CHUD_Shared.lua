@@ -76,8 +76,6 @@ if not CHUDMainMenu then
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
-	Script.Load("lua/NS2Plus/Shared/CHUD_Autoreload.lua")
-	Script.Load("lua/NS2Plus/Shared/CHUD_TriggerMixin.lua")
 end
 
 CHUDTagBitmask = {
