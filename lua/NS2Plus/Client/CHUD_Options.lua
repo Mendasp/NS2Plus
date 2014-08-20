@@ -989,18 +989,6 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "F2",
 			},
-			commqueue = { 
-				name    = "CHUD_CommQueue",
-				label   = "(Comm) Spacebar Alert Queue",
-				tooltip = "Allows the spacebar alert queue to prioritize player requests.",
-				type    = "select",
-				values  = { "Default", "Prioritize Player Alerts" },
-				callback = CHUDSaveMenuSettings,
-				defaultValue = false,
-				category = "comp",
-				valueType = "bool",
-				sort = "F3",
-			},
 			sensitivity_perteam = { 
 				name    = "CHUD_SensitivityPerTeam",
 				label   = "Team specific sensitivities",
