@@ -16,6 +16,7 @@ Script.Load("lua/Update.lua")
 Script.Load("lua/MenuManager.lua")
 Script.Load("lua/DSPEffects.lua")
 Script.Load("lua/SoundEffect.lua")
+Script.Load("lua/ServerPerformanceData.lua")
 
 CreateDSPs()
 
