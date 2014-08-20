@@ -109,34 +109,6 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
 	
 end
 
-local debugLights = false
-local oldOnUpdateRender
-oldOnUpdateRender = Class_ReplaceMethod( "Shotgun", "OnUpdateRender",
-	function( self )
-
-		oldOnUpdateRender( self )
-
-		local parent = self:GetParent()
-		if parent and parent:GetIsLocalPlayer() then		
-			local viewModel = parent:GetViewModelEntity()
-			if viewModel and viewModel:GetRenderModel() then
-				local clip = self:GetClip()
-				local time = Shared.GetTime()
-				if self.lightCount ~= clip and 
-					not self.lightChangeTime or self.lightChangeTime + 0.15 < time 
-				then
-					self.lightCount = clip
-					self.lightChangeTime = time
-				end
-				
-				viewModel:InstanceMaterials()
-				viewModel:GetRenderModel():SetMaterialParameter("ammo", self.lightCount )
-				
-			end
-		end
-
-end)
-
 local oldBadgesGetBadgeTextures = Badges_GetBadgeTextures
 function Badges_GetBadgeTextures( clientId, usecase )
 	local badges, badgeNames = oldBadgesGetBadgeTextures( clientId, usecase )
@@ -168,8 +140,3 @@ function GetBadgeFormalName( name )
 		return "NS2+ God / Developer"
 	end
 end
- 
-Event.Hook( "Console_debugshotgunlights", function()
-		debugLights = not debugLights
-		EPrint( "Shotgun debugging is %s", debugLights and "ON" or "OFF" )
-	end)
