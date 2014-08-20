@@ -37,16 +37,6 @@ originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 		
 	end)
 
-
-
-function set( table )
-	local ret = {}
-	for i,v in ipairs( table ) do
-		ret[v] = true
-	end
-	return ret
-end
-
 local impulseTypes =
 {
 	marineType = set{ "Marine", "JetpackMarine", "Exo" },
