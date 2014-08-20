@@ -119,7 +119,7 @@ local kTechIdTable = {
     'LifeFormMenu', 'SkulkMenu', 'GorgeMenu', 'LerkMenu', 'FadeMenu', 'OnosMenu',
 
     // Alien structures 
-    'Hive', 'HiveHeal', 'CragHive', 'ShadeHive', 'ShiftHive','Harvester', 'Egg', 'Embryo', 'Hydra', 'Cyst', 'Clog', 'GorgeTunnel',
+    'Hive', 'HiveHeal', 'CragHive', 'ShadeHive', 'ShiftHive','Harvester', 'Egg', 'Embryo', 'Hydra', 'Cyst', 'Clog', 'GorgeTunnel', 'EvolutionChamber',
     'GorgeEgg', 'LerkEgg', 'FadeEgg', 'OnosEgg',
     
     // Infestation upgrades
@@ -138,7 +138,7 @@ local kTechIdTable = {
     'UpgradeCeleritySpur', 'CeleritySpur', 'UpgradeAdrenalineSpur', 'AdrenalineSpur', 'UpgradeHyperMutationSpur', 'HyperMutationSpur',
     'UpgradeSilenceVeil', 'SilenceVeil', 'UpgradeCamouflageVeil', 'CamouflageVeil', 'UpgradeAuraVeil', 'AuraVeil', 'UpgradeFeintVeil', 'FeintVeil',
     'UpgradeRegenerationShell', 'RegenerationShell', 'UpgradeCarapaceShell', 'CarapaceShell',
-    'DrifterCamouflage', 'DrifterCelerity', 'DrifterRegeneration',
+    'DrifterCamouflage', 'DrifterCelerity', 'DrifterRegeneration', 'Return',
     
     'DefensivePosture', 'OffensivePosture', 'AlienMuscles', 'AlienBrain',
     
@@ -156,7 +156,7 @@ local kTechIdTable = {
     'LerkBite', 'Cling', 'Spikes', 'Umbra', 'Spores',
 
     // fade abilities   
-    'Swipe', 'Blink', 'ShadowStep', 'Vortex', 'Stab', 
+    'Swipe', 'Blink', 'ShadowStep', 'Vortex', 'Stab', 'MetabolizeEnergy', 'MetabolizeHealth',
     
     // onos abilities
     'Gore', 'Smash', 'Charge', 'BoneShield', 'Stomp', 'Shockwave', 
