@@ -12,7 +12,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			blipData.HealthFraction = 0
 		end
 	end
-	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)	
+	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
 	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()
 	
@@ -22,15 +22,6 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	
 	if minnps then
 		showHints = false
-	elseif CHUDBlipData then
-		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
-			// If someone is already fucking with this, we fuck off
-			if blipData.AbilityFraction > 0 then
-				CHUDBlipData.EnergyFraction = nil
-			else
-				blipData.AbilityFraction = CHUDBlipData.EnergyFraction
-			end
-		end
 	end
 	
 
@@ -46,15 +37,6 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		if updateBlip.smokeyBackground then
 			updateBlip.smokeyBackground:SetIsVisible(false)
 		end
-	end
-	
-	if CHUDBlipData then
-	
-		-- Make the energy bar same color as Insight
-		if CHUDBlipData.EnergyFraction and localPlayerIsCommander then
-			updateBlip.AbilityBar:SetColor(Color(1,1,0,1))
-		end
-	
 	end
 
     if blipData.IsWorldWeapon and updateBlip.AbilityBar then

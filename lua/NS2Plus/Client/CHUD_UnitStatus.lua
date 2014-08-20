@@ -21,20 +21,6 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			end
 		end
 		
-		if not GetAreEnemies(player, self) then
-			if self:isa("Player") and self:isa("Alien") and not self:isa("Hallucination") and not self:isa("Embryo") then
-				hintTable.EnergyFraction = self:GetEnergy() / self:GetMaxEnergy()
-			end
-		end
-		
-		if self:isa("Weapon") and self.weaponWorldState == true then
-			if player:isa("MarineCommander") and self.expireTime ~= 0 then
-				hintTable.ExpireTime = self.expireTime
-			else
-				hintTable.IsVisible = false
-			end
-		end
-		
 		return hintTable
 	end
 	
