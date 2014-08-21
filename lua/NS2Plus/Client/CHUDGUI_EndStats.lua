@@ -23,6 +23,7 @@ local function AddString(self, string, isComm, isVisible)
 	if Shared.GetTime() > lastStatsMsg + appendTime and isVisible then
 		GUI.DestroyItem(self.titleBackground)
 
+		self:Uninitialize()
 		self:Initialize()
 	end
 	
@@ -241,7 +242,7 @@ function CHUDGUI_EndStats:Uninitialize()
 
 	GUI.DestroyItem(self.titleBackground)
 	self.titleBackground = nil
-	
+
 	GetGUIManager():DestroyGUIScript(self.actionIconGUI)
 	self.actionIconGUI = nil
 	
