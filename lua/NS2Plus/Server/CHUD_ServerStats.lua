@@ -395,14 +395,6 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
 		end
 		
-		// Save position of last death only if we didn't die to a DeathTrigger
-		// Also save if the player killed himself
-		if (killer and not killer:isa("DeathTrigger")) or (doer and not doer:isa("DeathTrigger")) or (not killer and not doer) then
-			self.lastDeathPos = self:GetOrigin()
-		end
-		
-		self.lastClass = self:GetMapName()
-		
 	end)
 
 // Attack counters for every single fucking thing in the game
