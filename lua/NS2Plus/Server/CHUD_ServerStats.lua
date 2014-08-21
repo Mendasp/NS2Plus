@@ -1,5 +1,17 @@
 
 local CHUDClientStats = {}
+CHUDResearchTree = {}
+CHUDResearchTree[1] = {}
+CHUDResearchTree[2] = {}
+
+local oldTechResearched
+oldTechResearched = ResearchMixin.TechResearched
+	function ResearchMixin:TechResearched(structure, researchId)
+		oldTechResearched(self, structure, researchId)
+		if self.OnResearchComplete then
+			CHUDResearchTree[structure:GetTeamNumber()][researchId] = LookupTechData(researchId, kTechDataDisplayName)
+		end
+	end
 
 // Function name 2 stronk
 local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
