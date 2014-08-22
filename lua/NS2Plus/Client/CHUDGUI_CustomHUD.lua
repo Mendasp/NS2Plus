@@ -33,11 +33,13 @@ function CHUDGUI_CustomHUD:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
+	self.team = Client.GetLocalPlayer():GetTeamNumber()
+	
 	local kBottomBarBgTexture, kBottomBarHPTexture, kBottomBarAPTexture, kBottomBarRightTexture
-	local isMarine = Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index
+	local isMarine = self.team == kTeam1Index
 	hudbars = isMarine and CHUDGetOption("customhud_m") or CHUDGetOption("customhud_a")
 	
-	local textureMode = hudbars == 1 and 3 or Client.GetLocalPlayer():GetTeamNumber()
+	local textureMode = hudbars == 1 and 3 or self.team
 	kBarSize = { Vector(32, 64, 0), GUIScale(Vector(128, kBaseScreenHeight/3, 0)) }
 	kXOffset = { 32, 0 }
 	leftBarXOffset = { -kXOffset[hudbars]-kBarSize[hudbars].x, 0 }
@@ -163,6 +165,7 @@ function CHUDGUI_CustomHUD:Uninitialize()
 	self.ammoText:Destroy()
 	if self.reserveBar then
 		self.reserveBar:Destroy()
+		self.reserveBar = nil
 	end
 
 end
@@ -179,6 +182,12 @@ end
 function CHUDGUI_CustomHUD:Update(deltaTime)
 	local player = Client.GetLocalPlayer()
 	local teamIndex = player:GetTeamNumber()
+	
+	-- If we get team swapped reinit the script
+	if self.team ~= teamIndex then
+		self:Reset()
+	end
+	
 	local pulsatingRed = Color(0.5+((math.sin(Shared.GetTime() * 10) + 1) / 2)*0.5, 0, 0, 1)
 
 	GUIAnimatedScript.Update(self, deltaTime)
