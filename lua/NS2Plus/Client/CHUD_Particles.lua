@@ -181,7 +181,10 @@ local mapCinematicNames = set {
 // Precache all the new cinematics
 PrecacheAsset("chud_cinematics/blank.cinematic")
 for cinematic,_ in pairs(replacedCinematics) do
-	PrecacheAsset(cinematic)
+	// THE WORST 3 HOURS OF MY LIFE BECAUSE I FORGOT TO APPEND CHUD_
+	// APPARENTLY THE GAME DOESN'T LIKE NON-PRELOADED RESOURCES ANYMORE
+	// CRASHING IS BETTER I SUPPOSE
+	PrecacheAsset("chud_" .. cinematic)
 end
 
 local originalSetCinematic
@@ -191,21 +194,16 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 		if Client.fullyLoaded then
 			if CHUDGetOption("particles") then
 				if replacedCinematics[cinematicName] then
-					originalSetCinematic(self, "chud_" .. cinematicName)
+					cinematicName = "chud_" .. cinematicName
 				elseif blockedCinematics[cinematicName] then
-					originalSetCinematic(self, "chud_cinematics/blank.cinematic")
+					cinematicName = "chud_cinematics/blank.cinematic"
 				// Easier than doing this in like 10 folders
 				elseif string.find(cinematicName, "ricochetMinigun.cinematic") then
-					originalSetCinematic(self, string.gsub(cinematicName, "ricochetMinigun.cinematic", "ricochet.cinematic"))
-				else
-					originalSetCinematic(self, cinematicName)
+					cinematicName = string.gsub(cinematicName, "ricochetMinigun.cinematic", "ricochet.cinematic")
 				end
-			else
-				originalSetCinematic(self, cinematicName)
 			end
-		else
-			originalSetCinematic(self, cinematicName)
 		end
+		originalSetCinematic(self, cinematicName)
 	end
 )
 
