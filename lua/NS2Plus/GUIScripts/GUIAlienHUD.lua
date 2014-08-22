@@ -209,10 +209,10 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 		local hasShield = PlayerUI_GetHasMucousShield()
 		
 		if self.mucousText then
-			self.mucousText:SetIsVisible(false)
+			self.mucousText:SetIsVisible(CHUDGetOption("customhud_a") > 0 and PlayerUI_GetHasMucousShield())
 		end
 		
-		if not self.mucousBall then
+		if not self.mucousBall and CHUDGetOption("customhud_a") == 0 then
 			local mucousBallSettings = { }
 			mucousBallSettings.BackgroundWidth = GUIScale(192)
 			mucousBallSettings.BackgroundHeight = GUIScale(192)
@@ -238,9 +238,11 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 			self.mucousBall:GetLeftSide():SetColor(Color(0, 1, 0, 1))
 			self.mucousBall:GetRightSide():SetColor(Color(0, 1, 0, 1))
 		end
-		self.mucousBall:SetIsVisible(shieldFraction and shieldFraction > 0)
-		self.mucousBall:SetPercentage(shieldFraction)
-		self.mucousBall:Update()
+		if self.mucousBall then
+			self.mucousBall:SetIsVisible(shieldFraction and shieldFraction > 0 and CHUDGetOption("customhud_a") == 0)
+			self.mucousBall:SetPercentage(shieldFraction)
+			self.mucousBall:Update()
+		end
 	end)
 	
 local originalAlienReset
