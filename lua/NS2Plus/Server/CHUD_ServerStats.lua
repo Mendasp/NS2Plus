@@ -1055,8 +1055,7 @@ originalStabOnTag = Class_ReplaceMethod( "StabBlink", "OnTag",
 			if player then
 
 				local _, target = AttackMeleeCapsule(self, player, kStabDamage, kRange, nil, false, EntityFilterOneAndIsa(player, "Babbler"))            
-				self:ConsumeVortex(player)
-			
+
 				if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 					if steamId then
