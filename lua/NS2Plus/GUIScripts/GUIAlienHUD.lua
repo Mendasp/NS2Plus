@@ -1,3 +1,6 @@
+PrecacheAsset("ui/oma_alien_hud_health.dds")
+PrecacheAsset("ui/rant_alien_hud_health.dds")
+
 Class_AddMethod( "GUIAlienHUD", "CHUDRepositionGUI",
 	function(self)
 		local mingui = not CHUDGetOption("mingui")

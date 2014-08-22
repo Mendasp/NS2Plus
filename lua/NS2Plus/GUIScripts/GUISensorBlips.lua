@@ -1,4 +1,4 @@
-PrecacheAsset("ui/chud_sensor.dds")
+local kCHUDSensorTexture = PrecacheAsset("ui/chud_sensor.dds")
 
 local originalSensorBlipsUpdate
 originalSensorBlipsUpdate = Class_ReplaceMethod( "GUISensorBlips", "Update",
@@ -6,7 +6,7 @@ originalSensorBlipsUpdate = Class_ReplaceMethod( "GUISensorBlips", "Update",
 		if CHUDGetOption("motiontracking") == 0 then
 			GUISensorBlips.kBlipImageName = "ui/sensor.dds"
 		else
-			GUISensorBlips.kBlipImageName = "ui/chud_sensor.dds"
+			GUISensorBlips.kBlipImageName = kCHUDSensorTexture
 		end
 	
 		originalSensorBlipsUpdate(self, deltaTime)

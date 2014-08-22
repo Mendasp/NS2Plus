@@ -3,7 +3,7 @@ local newsAspect = 1.05/1
 local kTextureName = "*chudmenu_news"
 local lastUpdatedtime = 0
 local playAnimation = ""
-
+local kCHUDLogoTexture = PrecacheAsset("ui/chud_logo.dds")
 -- Non local so modders can easily change the URL.
 kCHUDMenuNewsURL = "http://www.mendasp.net/ns2plus-ingame/"
 
@@ -14,7 +14,7 @@ function CHUDGUI_MenuNews:Initialize()
     local layer = kGUILayerMainMenuWeb
 
     self.logo = GUIManager:CreateGraphicItem()
-    self.logo:SetTexture("ui/chud_logo.dds")
+    self.logo:SetTexture(kCHUDLogoTexture)
     self.logo:SetLayer(layer)
     
     local width = widthFraction * Client.GetScreenWidth()

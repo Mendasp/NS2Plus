@@ -1,3 +1,6 @@
+local kCHUDMinimapStencilTexture = PrecacheAsset("ui/chud_square_minimap_stencil.dds")
+local kCHUDUpgradeIconsTexture = PrecacheAsset("ui/chud_upgradeicons.dds")
+
 Class_AddMethod( "GUIMarineHUD", "CHUDRepositionGUI",
 	function(self)
 		local hpbar = CHUDGetOption("hpbar")
@@ -71,7 +74,7 @@ function(self)
 	local alpha = ConditionalValue(mingui,1,0)
 	
 	if minimap then
-		local stencilTexture = ConditionalValue(mingui, "ui/marine_HUD_minimap.dds", "ui/chud_square_minimap_stencil.dds")
+		local stencilTexture = ConditionalValue(mingui, "ui/marine_HUD_minimap.dds", kCHUDMinimapStencilTexture)
 		
 		self.minimapBackground:SetColor(Color(1,1,1,alpha))
 		self.minimapScanLines:SetColor(Color(1,1,1,alpha))
@@ -90,7 +93,7 @@ function(self)
 	self.statusDisplay.healthBar:SetIsVisible(hpbar)
 	self.statusDisplay.armorBar:SetIsVisible(hpbar)
 	
-	local texture = ConditionalValue(hpbar, PrecacheAsset("ui/marine_HUD_status.dds"), PrecacheAsset("ui/transparent.dds"))
+	local texture = ConditionalValue(hpbar, "ui/marine_HUD_status.dds", kCHUDMinimapStencilTexture)
 	self.statusDisplay.statusbackground:SetTexture(texture)
 	
 	self:CHUDRepositionGUI()
@@ -119,7 +122,7 @@ function(self)
 	self.minimapBackground:SetColor(Color(1,1,1,ConditionalValue((setting),1,0)))
 	self.minimapScanLines:SetColor(Color(1,1,1,ConditionalValue((setting),1,0)))
 	
-	local stencilTexture = ConditionalValue(setting, "ui/marine_HUD_minimap.dds", "ui/chud_square_minimap_stencil.dds")
+	local stencilTexture = ConditionalValue(setting, "ui/marine_HUD_minimap.dds", kCHUDMinimapStencilTexture)
 	self.minimapStencil:SetTexture(stencilTexture)
 
 end)
@@ -142,7 +145,7 @@ function(self, armorLevel)
 		originalShowNewArmorLevel(self, armorLevel)
 		self.armorLevel:SetTexture(GUIMarineHUD.kUpgradesTexture)
 	elseif uplvl == 2 then
-		self.armorLevel:SetTexture("ui/chud_upgradeicons.dds")
+		self.armorLevel:SetTexture(kCHUDUpgradeIconsTexture)
 		local x1 = armorLevel * 80 - 80
 		local x2 = x1 + 80
 		local textureCoords = { x1, 0, x2, 80 }
@@ -160,7 +163,7 @@ function(self, weaponLevel)
 		originalShowNewWeaponLevel(self, weaponLevel)
 		self.weaponLevel:SetTexture(GUIMarineHUD.kUpgradesTexture)
 	elseif uplvl == 2 then
-		self.weaponLevel:SetTexture("ui/chud_upgradeicons.dds")
+		self.weaponLevel:SetTexture(kCHUDUpgradeIconsTexture)
 		local x1 = 160 + weaponLevel * 80
 		local x2 = x1 + 80
 		local textureCoords = { x1, 0, x2, 80 }
