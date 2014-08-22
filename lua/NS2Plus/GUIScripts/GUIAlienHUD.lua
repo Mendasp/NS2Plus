@@ -203,6 +203,44 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 		end
 		
 		self.armorBall:SetIsVisible(self.healthBall:GetBackground():GetIsVisible() and CHUDGetOption("customhud_a") == 0)
+		
+		local player = Client.GetLocalPlayer()
+		local shieldFraction = player:GetShieldPercentage()
+		local hasShield = PlayerUI_GetHasMucousShield()
+		
+		if self.mucousText then
+			self.mucousText:SetIsVisible(false)
+		end
+		
+		if not self.mucousBall then
+			local mucousBallSettings = { }
+			mucousBallSettings.BackgroundWidth = GUIScale(192)
+			mucousBallSettings.BackgroundHeight = GUIScale(192)
+			mucousBallSettings.BackgroundAnchorX = GUIItem.Left
+			mucousBallSettings.BackgroundAnchorY = GUIItem.Bottom
+			mucousBallSettings.BackgroundOffset = Vector(15, -35, 0) * GUIScale(1)
+			mucousBallSettings.BackgroundTextureName = nil
+			mucousBallSettings.BackgroundTextureX1 = 0
+			mucousBallSettings.BackgroundTextureY1 = 0
+			mucousBallSettings.BackgroundTextureX2 = 0
+			mucousBallSettings.BackgroundTextureY2 = 0
+			mucousBallSettings.ForegroundTextureName = CHUDGetOptionAssocVal("alienbars")
+			mucousBallSettings.ForegroundTextureWidth = 128
+			mucousBallSettings.ForegroundTextureHeight = 128
+			mucousBallSettings.ForegroundTextureX1 = 128
+			mucousBallSettings.ForegroundTextureY1 = 0
+			mucousBallSettings.ForegroundTextureX2 = 256
+			mucousBallSettings.ForegroundTextureY2 = 128
+			mucousBallSettings.InheritParentAlpha = false
+			self.mucousBall = GUIDial()
+			self.mucousBall:Initialize(mucousBallSettings)
+			
+			self.mucousBall:GetLeftSide():SetColor(Color(0, 1, 0, 1))
+			self.mucousBall:GetRightSide():SetColor(Color(0, 1, 0, 1))
+		end
+		self.mucousBall:SetIsVisible(shieldFraction and shieldFraction > 0)
+		self.mucousBall:SetPercentage(shieldFraction)
+		self.mucousBall:Update()
 	end)
 	
 local originalAlienReset
@@ -220,6 +258,16 @@ function(self)
 
 	GUI.DestroyItem(self.gameTime)
 	self.gameTime = nil
+	
+	if self.mucousText then
+		GUI.DestroyItem(self.mucousText)
+		self.mucousText = nil
+	end
+	
+	if self.mucousBall then
+		self.mucousBall:Uninitialize()
+		self.mucousBall = nil
+	end
 end)
 	
 Script.Load("lua/GUIAlienTeamMessage.lua")
