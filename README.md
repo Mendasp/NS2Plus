@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 22/08/2014
+	- Updated for Build 268. Removed all the stuff that is now part of vanilla.
+
 - 18/08/2014
 	- Made medpack accuracy stricter, pickups have to occur in 25ms for it to count as a hit instead of the previous 100ms.
 	- Enabled tvglare element in the main menu so the Fastload menu mods work again.
