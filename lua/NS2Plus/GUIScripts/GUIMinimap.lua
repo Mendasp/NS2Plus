@@ -262,6 +262,7 @@ local function NewUpdateStaticBlips(self, deltaTime)
 		GUIItemSetTexturePixelCoordinates(blip, blipInfo[1]())
 		GUIItemSetSize(blip, blipSize)
 		GUIItemSetPosition(blip, blipPos)
+		GUIItemSetRotation(blip, blipRotation)
 		
 		if CHUDGetOption("playercolor_m") > 0 and marinePlayers[blipType] then
 			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_m"))
