@@ -7,6 +7,7 @@ Latest changes
 - 23/08/2014
 	- Precached some textures to avoid potential hitching.
 	- Improved mucous display making it an extra ring in the health bars.
+	- Fixed super small rounding error caused by saving slider settings twice.
 
 - 22/08/2014
 	- Updated for Build 268. Removed all the stuff that is now part of vanilla.

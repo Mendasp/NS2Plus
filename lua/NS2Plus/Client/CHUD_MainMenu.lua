@@ -35,15 +35,12 @@ function CHUDSaveMenuSettings()
 		for _, option in pairs(mainMenu.CHUDOptionElements) do
 			CHUDOption = CHUDOptions[option.index]
 			if CHUDOption then
+				-- We don't need to save floats, as that's being handled by the slider callback
+				-- Which is called on menu open and close, and when changing the value, of course
 				if CHUDOption.valueType == "bool" then
 					CHUDSetOption(option.index, option:GetActiveOptionIndex() > 1)
 				elseif CHUDOption.valueType == "int" and CHUDOption.type == "select" then
 					CHUDSetOption(option.index, option:GetActiveOptionIndex()-1)
-				elseif CHUDOption.valueType == "float" then
-					local multiplier = CHUDOption.multiplier or 1
-					local minValue = CHUDOption.minValue or 0
-					local maxValue = CHUDOption.maxValue or 1
-					CHUDSetOption(option.index, (option:GetValue() * (maxValue - minValue) + minValue) * multiplier)
 				end
 				
 				if CHUDOption.disabled then
@@ -89,7 +86,7 @@ local function BoolToIndex(value)
 	return 1
 end
 
-// Set appropriate form size without CSS		
+// Set appropriate form size without CSS
 originalMenuCreateOptions = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionsForm",
 	function(mainMenu, content, options, optionElements)
 		local form = originalMenuCreateOptions(mainMenu, content, options, optionElements)
@@ -266,7 +263,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 			table.insert(CompOptionsMenu, CHUDOptions[idx])
 		end
 		
-		function CHUDOptionsSort(a, b)	
+		function CHUDOptionsSort(a, b)
 			if a.sort == nil then
 				a.sort = "Z" .. a.name
 			end
