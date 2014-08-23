@@ -4,11 +4,12 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- 23/08/2014
+- 24/08/2014
 	- Precached some textures to avoid potential hitching.
 	- Improved mucous display making it an extra ring in the health bars.
 	- Fixed super small rounding error caused by saving slider settings twice.
 	- Fixed phase gate lines not being applied correctly.
+	- Changed drop/select range circles from models to decals so they represent better the area that they cover. Cysts are still using models.
 
 - 22/08/2014
 	- Updated for Build 268. Removed all the stuff that is now part of vanilla.
