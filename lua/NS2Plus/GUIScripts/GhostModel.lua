@@ -1,77 +1,81 @@
 Script.Load("lua/Hud/Commander/GhostModel.lua")
 
-local kCircleModelMarine = PrecacheAsset("models/misc/circle/circle.model")
-local kCircleModelAlien = PrecacheAsset("models/misc/circle/circle_alien.model")
-
-// I think this is a very honest function name, I'd trust it with my wallet, kids, dog and car keys
-function GhostModel:MaybeInitCircleModel()
-	if not self.circleEnergyModel then
-		// Second ring just for the shift, so always alien
-		self.circleEnergyModel = Client.CreateRenderModel(RenderScene.Zone_Default)
-		self.circleEnergyModel:SetModel(kCircleModelAlien)
-	end
-end
-
-local oldGhostModelInit = GhostModel.Initialize
-function GhostModel:Initialize()
-	oldGhostModelInit(self)
-	self:MaybeInitCircleModel()
-end
-		
-local oldGhostModelDestroy = GhostModel.Destroy
-function GhostModel:Destroy()
-	oldGhostModelDestroy(self)
-	
-	if self.circleEnergyModel then
-		Client.DestroyRenderModel(self.circleEnergyModel)
-		self.circleEnergyModel = nil
-	end
-end
-
-local oldGhostModelVis = GhostModel.SetIsVisible
-function GhostModel:SetIsVisible(isVisible)
-	oldGhostModelVis(self, isVisible)
-
-	local player = Client.GetLocalPlayer()
-	
-	self:MaybeInitCircleModel()
-	
-	self.circleEnergyModel:SetIsVisible(false)
-	
-	if player and player.currentTechId then
-		// Show a second circle for the shift energize radius
-		if player.currentTechId == kTechId.Shift then
-			self.circleEnergyModel:SetIsVisible(isVisible)
-		end
-	end
-end
-
 local oldGhostModelUpdate = GhostModel.Update
 function GhostModel:Update()
 	
-	local modelCoords = GhostModelUI_GetGhostModelCoords()
+	local modelCoords = oldGhostModelUpdate(self)
+	
+	if self.circleRangeModel then
+		self.circleRangeModel:SetIsVisible(false)
+	end
 	
 	local player = Client.GetLocalPlayer()
 	
-	if modelCoords and player and player.currentTechId then
+	if modelCoords then
 		local radius = LookupTechData(player.currentTechId, kVisualRange, nil)
-		if radius then
-		
-			self:MaybeInitCircleModel()
-		
+		if radius and player.currentTechId ~= kTechId.Cyst then
+			player:AddGhostGuide(Vector(modelCoords.origin), radius)
 			if player.currentTechId == kTechId.Shift then
-				// Too lazy to use a second variable
-				local energizeCoords = CopyCoords(modelCoords)
-				energizeCoords:Scale(kEnergizeRange*2)
-				energizeCoords.origin.y = energizeCoords.origin.y+0.01
-				self.circleEnergyModel:SetCoords(energizeCoords)
+				player:AddGhostGuide(Vector(modelCoords.origin), kEnergizeRange)
 			end
-
 		end
 	end
 	
-	return oldGhostModelUpdate(self)
+	return modelCoords
 end
+
+Class_ReplaceMethod("Commander", "AddGhostGuide",
+	function(self, origin, radius)
+		local guide = nil
+
+		if #self.reuseGhostGuides > 0 then
+			guide = self.reuseGhostGuides[#self.reuseGhostGuides]
+			table.remove(self.reuseGhostGuides, #self.reuseGhostGuides)
+		end
+
+		// Insert point, circle
+		
+		if not guide then
+			guide = Client.CreateRenderDecal()
+			guide.material = Client.CreateRenderMaterial()
+		end
+
+		local materialName = ConditionalValue(self:GetTeamType() == kAlienTeamType, PrecacheAsset("models/misc/circle/circle_alien.material"), PrecacheAsset("models/misc/circle/circle.material"))
+		guide.material:SetMaterial(materialName)
+		guide:SetMaterial(guide.material)
+		local coords = Coords.GetTranslation(origin)
+		guide:SetCoords( coords )
+		guide:SetExtents(Vector(1,1,1)*radius)
+		
+		table.insert(self.ghostGuides, {origin, guide})
+	end)
+	
+Class_ReplaceMethod("Commander", "DestroyGhostGuides",
+	function(self, reuse)
+		for index, guide in ipairs(self.ghostGuides) do
+			if not reuse then
+				Client.DestroyRenderDecal(guide[2])
+
+			else
+				guide[2]:SetExtents(Vector(0,0,0))
+				table.insert(self.reuseGhostGuides, guide[2])
+			end
+		end
+		
+		if not reuse then
+		
+			for index, guide in ipairs(self.reuseGhostGuides) do
+				Client.DestroyRenderMaterial(guide.material)
+				Client.DestroyRenderDecal(guide)
+				guide = nil
+			end
+
+			self.reuseGhostGuides = {}
+			
+		end
+
+		self.ghostGuides = {}
+	end)
 
 local oldCommanderUpdateGhostGuides
 oldCommanderUpdateGhostGuides = Class_ReplaceMethod("Commander", "UpdateGhostGuides",
