@@ -85,8 +85,8 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 	// Hide the stats when you're alive
 	// When getting beaconed right after dying you could still see the UI
 	// Also makes training with cheats in a private server not horrible
-	local visible = not Client.GetIsControllingPlayer() or PlayerUI_GetIsThirdperson() or isDead
-	self.titleBackground:SetIsVisible(self.requestVisible or visible and CHUDGetOption("deathstats") == 2)
+	local visible = (not Client.GetIsControllingPlayer() or PlayerUI_GetIsThirdperson() or isDead)
+	self.titleBackground:SetIsVisible((self.requestVisible or visible and CHUDGetOption("deathstats") == 2) and not PlayerUI_IsOverhead())
 	local binding = BindingsUI_GetInputValue("RequestMenu")
 	// Lazy mode: Engaged
 	if not visible or CHUDGetOption("deathstats") < 2 or binding == "None" then
