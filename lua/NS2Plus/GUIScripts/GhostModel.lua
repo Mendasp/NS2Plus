@@ -24,6 +24,31 @@ function GhostModel:Update()
 	return modelCoords
 end
 
+local oldCystGhostModelUpdate
+oldCystGhostModelUpdate = Class_ReplaceMethod("CystGhostModel", "Update",
+	function(self)
+	
+		oldCystGhostModelUpdate(self)
+		
+		local modelCoords = GhostModelUI_GetGhostModelCoords()
+		
+		if self.circleModel then
+			self.circleModel:SetIsVisible(false)
+		end
+		
+		if modelCoords then
+			local player = Client.GetLocalPlayer()
+			
+			player:DestroyGhostGuides(true)
+			
+			local cystPoints = GetCystPoints(modelCoords.origin)
+			
+			if #cystPoints > 1 then
+				player:AddGhostGuide(cystPoints[#cystPoints], kInfestationRadius)
+			end
+		end
+	end)
+
 Class_ReplaceMethod("Commander", "AddGhostGuide",
 	function(self, origin, radius)
 		local guide = nil
@@ -79,25 +104,25 @@ Class_ReplaceMethod("Commander", "DestroyGhostGuides",
 
 local oldCommanderUpdateGhostGuides
 oldCommanderUpdateGhostGuides = Class_ReplaceMethod("Commander", "UpdateGhostGuides",
-function(self)
-	oldCommanderUpdateGhostGuides(self)
-	
-	for index, entity in pairs(self.selectedEntities) do    
-		local visualRadius = entity:GetVisualRadius()
+	function(self)
+		oldCommanderUpdateGhostGuides(self)
 		
-		if visualRadius ~= nil then
-			if type(visualRadius) == "table" then
-				for i,r in ipairs(visualRadius) do
+		for index, entity in pairs(self.selectedEntities) do    
+			local visualRadius = entity:GetVisualRadius()
+			
+			if visualRadius ~= nil then
+				if type(visualRadius) == "table" then
+					for i,r in ipairs(visualRadius) do
+						if entity:GetTechId() == kTechId.Shift then
+							self:AddGhostGuide(Vector(entity:GetOrigin()), kEnergizeRange)
+						end
+					end
+				else
 					if entity:GetTechId() == kTechId.Shift then
 						self:AddGhostGuide(Vector(entity:GetOrigin()), kEnergizeRange)
 					end
 				end
-			else
-				if entity:GetTechId() == kTechId.Shift then
-					self:AddGhostGuide(Vector(entity:GetOrigin()), kEnergizeRange)
-				end
 			end
+			
 		end
-		
-	end
-end)
+	end)

@@ -9,7 +9,8 @@ Latest changes
 	- Improved mucous display making it an extra ring in the health bars.
 	- Fixed super small rounding error caused by saving slider settings twice.
 	- Fixed phase gate lines not being applied correctly.
-	- Changed drop/select range circles from models to decals so they represent better the area that they cover. Cysts are still using models.
+	- Changed drop/select range circles from models to decals so they represent better the area that they cover.
+	- Reduced Fade Blink volume.
 
 - 22/08/2014
 	- Updated for Build 268. Removed all the stuff that is now part of vanilla.
