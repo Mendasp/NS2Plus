@@ -28,10 +28,19 @@ end
 
 local function OnLocalPlayerChanged()
 	CHUDLoadLights()
-	CHUDEvaluateGUIVis()
-	CHUDApplyTeamSpecificStuff()
 end
 
+-- Apparently NS2 doesn't always call OnLocalPlayerChanged when changing teams, so this
+local lastTeam
+local function OnUpdateClient()
+	if Client.GetLocalPlayer() and lastTeam ~= Client.GetLocalPlayer():GetTeamNumber() then
+		CHUDEvaluateGUIVis()
+		CHUDApplyTeamSpecificStuff()
+		lastTeam = Client.GetLocalPlayer():GetTeamNumber()
+	end
+end
+
+Event.Hook("UpdateClient", OnUpdateClient)
 Event.Hook("LoadComplete", OnLoadComplete)
 Event.Hook("LocalPlayerChanged", OnLocalPlayerChanged)
 
