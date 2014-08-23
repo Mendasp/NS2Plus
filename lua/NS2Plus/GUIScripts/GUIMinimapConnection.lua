@@ -1,4 +1,6 @@
 local kLineTextureCoord = {0, 0, 64, 16}
+local kLineTexture = "ui/mapconnector_line.dds"
+local kDashedLineTexture = PrecacheAsset("ui/chud_mapconnector_dashed.dds")
 
 Class_ReplaceMethod("GUIMinimapConnection", "UpdateAnimation",
 	function(self, teamNumber, modeIsMini)
@@ -10,10 +12,12 @@ Class_ReplaceMethod("GUIMinimapConnection", "UpdateAnimation",
 					
 		local x1Coord = kLineTextureCoord[1] - animation * (kLineTextureCoord[3] - kLineTextureCoord[1])
 		local x2Coord = x1Coord + (self.length or 0)
-			
+		
+		self.line:SetTexture(ConditionalValue(pglines == 2, kDashedLineTexture, kLineTexture))
+
 		// Don't draw arrows for just 2 PGs, the direction is clear here
 		// Gorge tunnels also don't need this since it is limited to entrance/exit
-		local textureIndex = ConditionalValue(animatedArrows, pglines * 16, 0)
+		local textureIndex = ConditionalValue(animatedArrows and pglines > 0, 16, 0)
 		
 		self.line:SetTexturePixelCoordinates(x1Coord, textureIndex, x2Coord, textureIndex + 16)
 		self.line:SetColor(ConditionalValue(teamNumber == kTeam1Index, kMarineFontColor, kAlienFontColor))
