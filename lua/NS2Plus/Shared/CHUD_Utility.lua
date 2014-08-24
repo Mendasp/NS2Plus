@@ -148,7 +148,7 @@ if Client then
 				customhud = true
 			end
 		end
-		
+
 		if GetGUIManager():GetGUIScriptSingle(classicammoScript) and not classicammo then
 			GetGUIManager():DestroyGUIScriptSingle(classicammoScript)
 		end
