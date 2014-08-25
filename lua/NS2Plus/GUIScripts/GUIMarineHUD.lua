@@ -93,7 +93,7 @@ function(self)
 	self.statusDisplay.healthBar:SetIsVisible(hpbar)
 	self.statusDisplay.armorBar:SetIsVisible(hpbar)
 	
-	local texture = ConditionalValue(hpbar, "ui/marine_HUD_status.dds", kCHUDMinimapStencilTexture)
+	local texture = ConditionalValue(hpbar, "ui/marine_HUD_status.dds", "ui/transparent.dds")
 	self.statusDisplay.statusbackground:SetTexture(texture)
 	
 	self:CHUDRepositionGUI()
