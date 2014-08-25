@@ -23,7 +23,7 @@ AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_EndStats")
 
 local function OnLoadComplete()
 	GetCHUDSettings()
-	Shared.Message("NS2+ build " .. kCHUDVersion .. " loaded. Type \"plus\" in console for available commands. You can also customize your game from the options menu.")
+	Shared.Message("NS2+ v" .. kCHUDVersion .. " loaded (NS2 Build " .. Shared.GetBuildNumber() .. "). Type \"plus\" in console for available commands. You can also customize your game from the options menu.")
 end
 
 local function OnLocalPlayerChanged()
