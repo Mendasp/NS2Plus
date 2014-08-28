@@ -2,6 +2,5 @@ modEntry = [[
 	Client: lua/NS2Plus/CHUD_Client.lua,
 	Server: lua/NS2Plus/CHUD_Server.lua,
 	Predict: lua/NS2Plus/CHUD_Predict.lua,
-	GUIScripts: lua/NS2Plus/CHUD_GUIScripts.lua,
 	Priority: 50
 ]]

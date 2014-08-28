@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 28/08/2014
+	- Updated for Build 269.
+
 - 24/08/2014
 	- Precached some textures to avoid potential hitching.
 	- Improved mucous display making it an extra ring in the health bars.
