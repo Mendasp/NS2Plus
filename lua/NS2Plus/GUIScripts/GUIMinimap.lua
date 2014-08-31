@@ -115,50 +115,25 @@ function(self)
 	originalCommanderOnDestroy(self)
 end)
 
+
+local marinePlayers = set {
+	kMinimapBlipType.Marine, kMinimapBlipType.JetpackMarine, kMinimapBlipType.Exo
+}
+local alienPlayers = set {
+	kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
+}
 local OnSameMinimapBlipTeam = GetUpValue (GUIMinimap.Update,   "OnSameMinimapBlipTeam", { LocateRecurse = true } )
 local MinimapBlipTeamIsActive = GetUpValue (GUIMinimap.Update, "MinimapBlipTeamIsActive", { LocateRecurse = true } )
 local PulseRed = GetUpValue (GUIMinimap.Update, "PulseRed", { LocateRecurse = true } )
 local PulseDarkRed = GetUpValue (GUIMinimap.Update, "PulseDarkRed", { LocateRecurse = true } )
-local originalMinimapUpdate
-originalMinimapUpdate = Class_ReplaceMethod( "GUIMinimap", "Update",
-function(self, deltaTime)
-	originalMinimapUpdate(self, deltaTime)
-	
-	local marinePlayers = set {
-		kMinimapBlipType.Marine, kMinimapBlipType.JetpackMarine, kMinimapBlipType.Exo
-	}
-	local alienPlayers = set {
-		kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
-	}
-	
-	local staticBlips = PlayerUI_GetStaticMapBlips()
-	local blipItemCount = 10
-	local numBlips = table.count(staticBlips) / blipItemCount
-	local staticBlipItems = self.staticBlips
-	
-	local spectating = Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex
-	local playerTeam = Client.GetLocalPlayer():GetTeamNumber()
-	
-	if playerTeam == kMarineTeamType then
-		playerTeam = kMinimapBlipTeam.Marine
-	elseif playerTeam == kAlienTeamType then
-		playerTeam = kMinimapBlipTeam.Alien
-	end
-	
-	// Update each blip.
-	local currentIndex = 1
-	local GUIItemSetColor = GUIItem.SetColor
-	
-	local blipType, blipTeam, underAttack, blip, isHallucination, blipColor
-	for i = 1, numBlips do
 
-		blipType = staticBlips[currentIndex + 5]
-		blipTeam = staticBlips[currentIndex + 6]
-		underAttack = staticBlips[currentIndex + 7]
-		isHallucination = staticBlips[currentIndex + 9]
-		blip = staticBlipItems[i]
-		blipColor = nil
-		
+local OldGUIItemSetColor = GUIItem.SetColor
+local function NewGUIItemSetColor( blip, blipColor )
+	local vars = GetLocalsFromCallingFunction()	
+	local blipType, isHallucination, playerTeam, blipTeam, spectating, underAttack = 
+		vars.blipType, vars.isHallucination, vars.playerTeam, vars.blipTeam, vars.spectating, vars.underAttack
+	
+	if blipType and playerTeam and blipTeam then
 		if CHUDGetOption("playercolor_m") > 0 and marinePlayers[blipType] then
 			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_m"))
 		end
@@ -166,7 +141,7 @@ function(self, deltaTime)
 		if CHUDGetOption("playercolor_a") > 0 and alienPlayers[blipType] then
 			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_a"))
 		end
-		
+			
 		if blip and blipColor and not isHallucination then
 			if OnSameMinimapBlipTeam(playerTeam, blipTeam) or spectating then
 
@@ -176,16 +151,23 @@ function(self, deltaTime)
 					else
 						blipColor = PulseDarkRed(blipColor)
 					end
-				end  
-
+				end
 			end
-		
-			GUIItemSetColor(blip, blipColor)
 		end
-		
-		currentIndex = currentIndex + blipItemCount
-		
 	end
+	
+	OldGUIItemSetColor( blip, blipColor )
+end
+
+
+local originalMinimapUpdate
+originalMinimapUpdate = Class_ReplaceMethod( "GUIMinimap", "Update",
+function(self, deltaTime)
+	GUIItem.SetColor = NewGUIItemSetColor
+	
+	originalMinimapUpdate(self, deltaTime)
+	
+	GUIItem.SetColor = OldGUIItemSetColor
 	
 	local mingui = CHUDGetOption("mingui")
 	if self.lastMinGUI ~= mingui then
@@ -194,6 +176,7 @@ function(self, deltaTime)
 	end
 
 end)
+
 
 local originalLocationNameInit
 originalLocationNameInit = Class_ReplaceMethod( "GUIMinimap", "InitializeLocationNames",
