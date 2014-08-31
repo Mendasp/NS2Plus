@@ -4,8 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /09/2014
-	- Updated for Build 269.
+- 31/08/2014
+	- Changed method of doing the player colors in the minimap to be more mod friendly.
+	- Fixed rounding error in HL2 style bars.
+	- Fixed white box around health/armor in marine HUD when not displaying the vanilla bars.
+	- Compatibility with build 269.
 
 - 24/08/2014
 	- Precached some textures to avoid potential hitching.
