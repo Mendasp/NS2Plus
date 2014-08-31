@@ -1,4 +1,4 @@
-kCHUDElixerVersion = 1.72
+kCHUDElixerVersion = 1.8
 // Version number is the amount of revisions in the Workshop
 // Try to update but only important when changing defaults
 kCHUDVersion = 208

@@ -14,7 +14,7 @@
 
 Script.Load( "lua/Class.lua" )
 
-local version = 1.72;
+local version = 1.8;
 
 Elixer = Elixer or {}
 Elixer.Debug = Elixer.Debug or false  
@@ -211,6 +211,38 @@ function ELIXER.ReplaceUpValue( func, localname, newval, options )
 
 	debug.setupvalue( func, i, newval )
 end;
+
+
+function ELIXER.locals( stacklevel )
+	local i = 0;
+	return function()
+		i = i + 1
+		local name, val = debug.getlocal(stacklevel + 1, i)
+		if name then
+			return i,name,val
+		end -- if
+	end
+end
+
+
+function ELIXER.GetLocalsFromCallingFunction()
+	local vars = {}
+	for _,name,val in locals( 3 ) do -- go back 2 function calls on the stack
+		vars[name] = val
+	end
+	return vars
+end
+
+
+function ELIXER.SetLocalFromCallingFunction( localname, newval )
+	for i,name,_ in locals( 3 ) do -- go back 2 function calls on the stack
+		if localname == name then
+			debug.setlocal( 3, i, newval )
+			return true
+		end
+	end
+	return false
+end
 
 
 function ELIXER.AppendToEnum( tbl, key )
