@@ -767,8 +767,20 @@ CHUDOptions =
 				end,
 				sort = "E3",
 			},
-			
-			
+			voiceenddelay = { 
+				name    = "CHUD_VoiceEndDelay",
+				label   = "Microphone release delay",
+				tooltip = "Number of seconds the microphone will continue to record after being released",
+				type    = "slider",
+				sliderCallback = CHUDVoiceEndDelaySlider,
+				defaultValue = 0.15,
+				minValue = 0.0,
+				maxValue = 0.5,
+				multiplier = 1,
+				category = "comp",
+				valueType = "float",
+				sort = "A0",
+			},
 			hitsounds = {
 				name    = "CHUD_Hitsounds",
 				label   = "Hitsounds",

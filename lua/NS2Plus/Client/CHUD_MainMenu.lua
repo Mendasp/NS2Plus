@@ -28,7 +28,7 @@ CHUDMarineSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_M", "sensitivit
 CHUDAlienSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_A", "sensitivity_a" )
 CHUDMarineFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_M", "fov_m" )
 CHUDAlienFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_A", "fov_a" )
-
+CHUDVoiceEndDelaySlider = MakeCHUDSliderCallback( "CHUD_VoiceEndDelay", "voiceenddelay" )
 
 function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
