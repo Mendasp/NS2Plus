@@ -196,9 +196,14 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 		self.leftBarBg:SetIsVisible(true)
 		self.rightBarBg:SetIsVisible(true)
 	
-		local health = player:isa("Exo") and 0 or player:GetHealth()
+		-- This is what vanilla is doing with health display so might as well do the same
+		-- Except for the Exo shenanigans, but still
+		local health = player:isa("Exo") and 0 or math.floor(player:GetHealth())
+		if not player:isa("Exo") and player:GetHealth() > 0 and health == 0 then
+			health = 1
+		end
 		-- Do not multiply by kHealthPointsPerArmor here so we can display the armor number directly later
-		local armor = player:GetArmor()
+		local armor = math.floor(player:GetArmor())
 		local armorHP = player:GetArmor() * kHealthPointsPerArmor
 		local maxHealth = player:isa("Exo") and 0 or player:GetMaxHealth()
 		local maxArmor = player:GetMaxArmor() * kHealthPointsPerArmor
