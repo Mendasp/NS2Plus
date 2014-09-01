@@ -7,7 +7,7 @@ Latest changes
 - 01/09/2014
 	- Added option to delay ending recording after releasing the microphone binding (default 0.15 seconds).
 	- Fixed issue with microphone being cut off when switching in/out of commander mode.
-	
+
 - 31/08/2014
 	- Changed method of doing the player colors in the minimap to be more mod friendly.
 	- Fixed rounding error in HL2 style bars.
