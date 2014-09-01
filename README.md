@@ -4,9 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
--
-	- Added option to delay ending recording after releasing the microphone binding (defaulted to 0.15 seconds)
-	- Fixed issue with microphone being cut off when switching in/out of commander mode
+- 01/09/2014
+	- Added option to delay ending recording after releasing the microphone binding (default 0.15 seconds).
+	- Fixed issue with microphone being cut off when switching in/out of commander mode.
 	
 - 31/08/2014
 	- Changed method of doing the player colors in the minimap to be more mod friendly.
