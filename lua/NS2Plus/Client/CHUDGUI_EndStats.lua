@@ -257,28 +257,31 @@ local function CHUDSetAccuracyString(message)
 	
 	local wTechId = message.wTechId
 
-	if message.wTechId > 1 then
-		local techdataName = LookupTechData(wTechId, kTechDataMapName) or string.lower(LookupTechData(wTechId, kTechDataDisplayName))
-		weaponName = techdataName:gsub("^%l", string.upper)
+	local kFriendlyWeaponNames = { }
+	kFriendlyWeaponNames[kTechId.LerkBite] = "Lerk Bite"
+	kFriendlyWeaponNames[kTechId.Swipe] = "Swipe"
+	kFriendlyWeaponNames[kTechId.Spit] = "Spit"
+	kFriendlyWeaponNames[kTechId.Spray] = "Spray"
+	kFriendlyWeaponNames[kTechId.GrenadeLauncher] = "Grenade Launcher"
+	if rawget( kTechId, "HeavyMachineGun" ) then
+		kFriendlyWeaponNames[kTechId.HeavyMachineGun] = "Heavy Machine Gun"
+	end
+	
+	if message.wTechId > 1 and message.wTechId ~= kTechId.None then
+		if kFriendlyWeaponNames[message.wTechId] then
+			weaponName = kFriendlyWeaponNames[message.wTechId]
+		else
+			local techdataName = LookupTechData(wTechId, kTechDataMapName) or Locale.ResolveString(LookupTechData(wTechId, kTechDataDisplayName))
+			weaponName = techdataName:gsub("^%l", string.upper)
+		end
 	else
 		weaponName = "Others"
 	end
-	
-	// Lerk's bite is called "Bite", just like the skulk bite, so clarify this
-	if wTechId == kTechId.LerkBite then
-		weaponName = "Lerk Bite"
-	// This shows up as "Swipe Blink", just "Swipe"
-	elseif wTechId == kTechId.Swipe then
-		weaponName = "Swipe"
-	// Spitspray...
-	elseif wTechId == kTechId.Spit then
-		weaponName = "Spit"
-	// Use spaces!
-	elseif rawget( kTechId, "HeavyMachineGun" ) and wTechId == kTechId.HeavyMachineGun then
-		weaponName = "Heavy Machine Gun"
-	end
 
-	local accuracyString = string.format("%s - Kills: %d - Accuracy: %.2f%%", weaponName, message.kills, message.accuracy)
+	local accuracyString = string.format("%s - Kills: %d", weaponName, message.kills)
+	if message.accuracy > 0 then
+		accuracyString = accuracyString .. string.format(" - Accuracy: %.2f%%", message.accuracy)
+	end
 	
 	if message.accuracyOnos > -1 then
 		accuracyString = accuracyString .. string.format(" / Without Onos hits: %.2f%%", message.accuracyOnos)

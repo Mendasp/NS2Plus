@@ -390,9 +390,22 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 		local killerTeam = killer and killer:isa("Player") and killer:GetTeamNumber()
 		local killerSteamId = killer and killer:isa("Player") and GetSteamIdForClientIndex(killer:GetClientIndex())
 		local killerWeapon = doer and doer:isa("Weapon") and doer:GetTechId()
-
-		if killerSteamId and killerWeapon then
-			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
+		
+		if doer:GetParent() and doer:GetParent():isa("Player") then
+			if killer:isa("Alien") and (doer.secondaryAttacking or doer.shootingSpikes) then
+				killerWeapon = killer:GetActiveWeapon():GetSecondaryTechId()
+			else
+				killerWeapon = doer:GetTechId()
+			end
+			
+		elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
+			if doer.GetWeaponTechId then
+				killerWeapon = doer:GetWeaponTechId()
+			end
+		end
+		
+		if killerSteamId then
+			AddWeaponKill(killerSteamId, killerWeapon or kTechId.None, killerTeam)
 		end
 		
 	end)
