@@ -1,3 +1,5 @@
+
+
 local originalGUIRequestUpdate
 originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 	function(self, deltaTime)
@@ -11,22 +13,22 @@ originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 			
 			self.background:SetTexture("ui/transparent.dds")
 			
-			if GUIItemContainsPoint(self.ejectCommButton.Background, mouseX, mouseY) then
+			if self.selectedButton == self.ejectCommButton then
 				self.ejectCommButton.CommanderName:SetColor(highlightColor)
 			else
 				self.ejectCommButton.CommanderName:SetColor(defaultColor)
 			end
 			self.ejectCommButton.Background:SetTexture("ui/transparent.dds")
 			
-			if GUIItemContainsPoint(self.voteConcedeButton.Background, mouseX, mouseY) then
+			if self.selectedButton == self.voteConcedeButton then
 				self.voteConcedeButton.ConcedeText:SetColor(highlightColor)
 			else
 				self.voteConcedeButton.ConcedeText:SetColor(defaultColor)
 			end
 			self.voteConcedeButton.Background:SetTexture("ui/transparent.dds")
 				
-			for _, button in pairs(self.menuButtons) do		
-				if GUIItemContainsPoint(button.Background, mouseX, mouseY) then
+			for _, button in pairs(self.menuButtons) do					
+				if self.selectedButton == button then
 					button.Description:SetColor(highlightColor)
 				else
 					button.Description:SetColor(defaultColor)
