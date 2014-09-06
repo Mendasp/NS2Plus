@@ -9,6 +9,7 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		CHUDClientStats[steamId].sdmg = 0
 		CHUDClientStats[steamId].killstreak = 0
 		CHUDClientStats[steamId].teamNumber = teamNumber
+		CHUDClientStats[steamId].timeBuilding = 0
 		CHUDClientStats[steamId]["last"] = {}
 		CHUDClientStats[steamId]["last"].pdmg = 0
 		CHUDClientStats[steamId]["last"].sdmg = 0
@@ -89,6 +90,15 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 		if lastStat.kills > rootStat.killstreak then
 			rootStat.killstreak = lastStat.kills
 		end
+	end
+end
+
+local function AddBuildTime(steamId, buildTime, teamNumber)
+	if GetGamerules():GetGameStarted() then
+		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
+		
+		local stat = CHUDClientStats[steamId]
+		stat.timeBuilding = stat.timeBuilding + buildTime
 	end
 end
 
@@ -409,6 +419,23 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 		end
 		
 	end)
+
+local originalConstructMixinConstruct = ConstructMixin.Construct
+
+function ConstructMixin:Construct(elapsedTime, builder)
+
+	local success, playAV = originalConstructMixinConstruct(self, elapsedTime, builder)
+	local steamId
+	
+	if builder and builder:isa("Player") then
+		steamId = GetSteamIdForClientIndex(builder:GetClientIndex())
+	end
+
+	if success and steamId then
+		AddBuildTime(steamId, elapsedTime, builder:GetTeamNumber())
+	end
+
+end
 
 // Attack counters for every single fucking thing in the game
 // ClipWeapon covers FT, GL, pistol, rifle and SG
