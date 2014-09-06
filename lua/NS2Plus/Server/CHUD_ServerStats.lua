@@ -1,5 +1,19 @@
 
 local CHUDClientStats = {}
+local CHUDResearchTree = {}
+
+local oldTechResearched = ResearchMixin.TechResearched
+function ResearchMixin:TechResearched(structure, researchId)
+	oldTechResearched(self, structure, researchId)
+	if structure and structure:GetId() == self:GetId() then
+		local gamerules = GetGamerules()
+		local gameTime
+		if gamerules then
+			gameTime = gamerules:GetGameTimeChanged()
+		end
+		table.insert(CHUDResearchTree[structure:GetTeamNumber()], { researchId = researchId, researchFinished = gameTime })
+	end
+end
 
 // Function name 2 stronk
 local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
@@ -159,6 +173,8 @@ function NS2Gamerules:ResetGame()
 
 	CHUDCommStats = {}
 	CHUDClientStats = {}
+	CHUDResearchTree[1] = {}
+	CHUDResearchTree[2] = {}
 	
 	// Do this so we can spawn items without a commander with cheats on
 	CHUDResetCommStats(0)
