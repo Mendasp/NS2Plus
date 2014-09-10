@@ -29,7 +29,7 @@ if Server then
 				Shared.Message("Chat All - NS2+: " .. messageList[m])
 				Server.AddChatToHistory(messageList[m], "NS2+", 0, kTeamReadyRoom, false)
 			end
-						
+		
 		end
 		
 	end

@@ -31,6 +31,7 @@ if not CHUDMainMenu then
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
 		killstreak = "integer (0 to 1023)",
+		minutesBuilding = "float (0 to 1023 by 0.01)",
 	}
 
 	local kCHUDMarineCommStatsMessage =

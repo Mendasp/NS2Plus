@@ -335,6 +335,12 @@ local function CHUDSetOverallString(message)
 			finalStatsString = finalStatsString .. string.format("\nLongest killstreak: %d kills", message.killstreak)
 		end
 		
+		if message.minutesBuilding > 0 then
+			local minutes = math.floor(message.minutesBuilding)
+			local seconds = (message.minutesBuilding % 1)*60
+			finalStatsString = finalStatsString .. string.format("\nTime building: %d:%02d", minutes, seconds)
+		end
+		
 		AddString(gStatsUI, finalStatsString, false, true)
 
 	end

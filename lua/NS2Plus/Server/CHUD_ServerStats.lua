@@ -362,6 +362,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				msg.pdmg = stats.pdmg
 				msg.sdmg = stats.sdmg
 				msg.killstreak = stats.killstreak
+				msg.minutesBuilding = stats.timeBuilding/60
 				
 				Server.SendNetworkMessage(client, "CHUDEndStatsOverall", msg, true)
 			end
