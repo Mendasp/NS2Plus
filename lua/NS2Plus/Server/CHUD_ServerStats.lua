@@ -418,7 +418,7 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 		local killerSteamId = killer and killer:isa("Player") and GetSteamIdForClientIndex(killer:GetClientIndex())
 		local killerWeapon = doer and doer:isa("Weapon") and doer:GetTechId()
 		
-		if doer:GetParent() and doer:GetParent():isa("Player") then
+		if killer and doer and doer:GetParent() and doer:GetParent():isa("Player") then
 			if killer:isa("Alien") and (doer.secondaryAttacking or doer.shootingSpikes) then
 				killerWeapon = killer:GetActiveWeapon():GetSecondaryTechId()
 			else
@@ -1150,23 +1150,24 @@ originalSpitProcessHit = Class_ReplaceMethod( "Spit", "ProcessHit",
 	function(self, targetHit, surface, normal, hitPoint)
 
 		local player = self:GetOwner()
-		if player == targetHit then
-			targetHit = nil
-			local eyePos = player:GetEyePos()        
-			local viewCoords = player:GetViewCoords()
-			local trace = Shared.TraceRay(eyePos, eyePos + viewCoords.zAxis * 1.5, CollisionRep.Damage, PhysicsMask.Bullets, EntityFilterOneAndIsa(player, "Babbler"))
-			if trace.fraction ~= 1 then
-				targetHit = trace.entity
+		if player then
+			if player == targetHit then
+				targetHit = nil
+				local eyePos = player:GetEyePos()        
+				local viewCoords = player:GetViewCoords()
+				local trace = Shared.TraceRay(eyePos, eyePos + viewCoords.zAxis * 1.5, CollisionRep.Damage, PhysicsMask.Bullets, EntityFilterOneAndIsa(player, "Babbler"))
+				if trace.fraction ~= 1 then
+					targetHit = trace.entity
+				end
+			end
+			
+			if (targetHit and targetHit:isa("Player") and GetAreEnemies(player, targetHit)) or targetHit == nil then
+				local steamId = GetSteamIdForClientIndex(player:GetClientIndex())
+				if steamId then
+					AddAccuracyStat(steamId, self:GetWeaponTechId(), targetHit ~= nil, targetHit and targetHit:isa("Onos"), player:GetTeamNumber())
+				end
 			end
 		end
-		
-		if (targetHit and targetHit:isa("Player") and GetAreEnemies(player, targetHit)) or targetHit == nil then
-			local steamId = GetSteamIdForClientIndex(player:GetClientIndex())
-			if steamId then
-				AddAccuracyStat(steamId, self:GetWeaponTechId(), targetHit ~= nil, targetHit and targetHit:isa("Onos"), player:GetTeamNumber())
-			end
-		end
-		
 		-- An actual attack I can hook semi-properly :_)
 		originalSpitProcessHit(self, targetHit, surface, normal, hitPoint)
 
