@@ -262,8 +262,8 @@ CHUDOptions =
 				valueType = "float",
 				sort = "E4",
 			},
-			
-			
+
+
 			score = {
 				name    = "CHUD_ScorePopup",
 				label   = "Score popup",
@@ -767,6 +767,23 @@ CHUDOptions =
 				end,
 				sort = "E3",
 			},
+			crosshairscaling = {
+				name    = "CHUD_CrosshairScaling",
+				label   = "Scale crosshair with resolution",
+				tooltip = "Makes the crosshair be the same size across resolutions",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "hud",
+				valueType = "bool",
+				applyFunction = function()
+					CHUDRestartScripts({ "GUICrosshair" })
+				end,
+				sort = "E4",
+			},
+
+
 			voiceenddelay = { 
 				name    = "CHUD_VoiceEndDelay",
 				label   = "Microphone release delay",

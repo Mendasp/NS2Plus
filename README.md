@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /09/2014
+	- Added option to make crosshairs scale with resolution. Available in HUD tab.
+
 - 10/09/2014
 	- Improved request menu option selection (Thanks remi.D!)
 	- Added the time spent building to the end round stats.
