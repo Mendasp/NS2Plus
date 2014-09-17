@@ -17,6 +17,7 @@ Script.Load("lua/NS2Plus/Client/CHUD_Outlines.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Decals.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_WeaponTime.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Dissolve.lua")
+Script.Load("lua/NS2Plus/Client/CHUD_ViewModel.lua")
 
 AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_DeathStats")
 AddClientUIScriptForTeam("all", "NS2Plus/Client/CHUDGUI_EndStats")

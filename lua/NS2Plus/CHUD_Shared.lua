@@ -84,5 +84,6 @@ CHUDTagBitmask = {
 	ambient = 0x2,
 	mapparticles = 0x4,
 	nsllights = 0x8,
+	drawviewmodel = 0x10,
 	deathstats = 0x0,
 }

@@ -22,6 +22,7 @@ function BuildServerEntry(serverIndex)
     
 end
 
+local originalSetServerData
 originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
 		originalSetServerData(self, serverData)
@@ -30,6 +31,7 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 		
 			self.modName:SetColor(kYellow)
 			
+			local blockedString = nil
 			for index, mask in pairs(CHUDTagBitmask) do
 				if CheckCHUDTagOption(serverData.CHUDBitmask, mask) then
 					if index == "mcr" then
@@ -39,12 +41,56 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 						
 						if CHUDOptions[index].currentValue ~= val then
 							self.modName:SetColor(kRed)
+							if not blockedString then
+								blockedString = "This server has disabled these NS2+ settings that you're currently using: " .. CHUDOptions[index].label
+							else
+								blockedString = blockedString .. ", " .. CHUDOptions[index].label
+							end
+							
 						end
 					end
 				end
 			end
 			
+			self.modName.tooltip = blockedString
+			
 		end
 		
 	end
 )
+
+local kFavoriteMouseOverColor = Color(1,1,0,1)
+local kFavoriteColor = Color(1,1,1,0.9)
+
+local originalServerEntryInit
+originalServerEntryInit = Class_ReplaceMethod( "ServerEntry", "Initialize",
+	function(self)
+		originalServerEntryInit(self)
+		
+		self.mouseOverCallbacks = {}
+		table.insertunique(self.mouseOverCallbacks, function(self)
+		
+			local height = self:GetHeight()
+			local topOffSet = self:GetBackground():GetPosition().y + self:GetParent():GetBackground():GetPosition().y
+			self.scriptHandle.highlightServer:SetBackgroundPosition(Vector(0, topOffSet, 0), true)
+			self.scriptHandle.highlightServer:SetIsVisible(true)
+			
+			if GUIItemContainsPoint(self.favorite, Client.GetCursorPosScreen()) then
+				self.favorite:SetColor(kFavoriteMouseOverColor)
+			else
+				self.favorite:SetColor(kFavoriteColor)
+			end
+			
+			if GUIItemContainsPoint(self.playerSkill, Client.GetCursorPosScreen()) then
+				self.playerSkill.tooltip:SetText(self.playerSkill.tooltipText)
+				self.playerSkill.tooltip:Show()
+			else
+				if self.modName.tooltip then
+					self.playerSkill.tooltip:SetText(self.modName.tooltip)
+					self.playerSkill.tooltip:Show()
+				else
+					self.playerSkill.tooltip:Hide()
+				end
+			end
+		end)
+	end)

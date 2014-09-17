@@ -1116,4 +1116,16 @@ CHUDOptions =
 					CHUDApplyTeamSpecificStuff()
 				end,
 			},
+			drawviewmodel = { 
+				name    = "CHUD_DrawViewModel",
+				label   = "Draw viewmodel",
+				tooltip = "Enables or disables showing the viewmodel for marines.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "G7",
+			},
 }

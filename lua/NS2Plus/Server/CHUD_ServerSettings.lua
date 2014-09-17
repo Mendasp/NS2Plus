@@ -26,6 +26,12 @@ CHUDServerOptions =
 		valueType = "bool",
 		defaultValue = true,
 		},
+	allow_drawviewmodel = {
+		label   = "Draw viewmodel",
+		tooltip = "Enables or disables the draw viewmodel option for clients.",
+		valueType = "bool",
+		defaultValue = false,
+		},
 
 	modupdater = {
 		label   = "Mod updater",
@@ -50,6 +56,12 @@ CHUDServerOptions =
 		maxValue = 999,
 		},
 }
+
+for modNum = 1, Server.GetNumActiveMods() do
+	if Server.GetActiveModId(modNum) == "e5ffa15" then
+		CHUDServerOptions["allow_drawviewmodel"] = nil
+	end
+end
 
 local configFileName = "NS2PlusServerConfig.json"
 
