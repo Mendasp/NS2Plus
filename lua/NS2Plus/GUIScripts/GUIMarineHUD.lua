@@ -204,6 +204,11 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 
 		originalMarineHUDUpdate(self, deltaTime)
 		
+		// Force it on all the time when disabling the viewmodel
+		if self.inventoryDisplay then
+			self.inventoryDisplay.forceAnimationReset = not CHUDGetOption("drawviewmodel")
+		end
+		
 		if self.gameTime then
 			self.gameTime:SetText(CHUDGetGameTime())
 			self.gameTime:SetIsVisible(gametime)

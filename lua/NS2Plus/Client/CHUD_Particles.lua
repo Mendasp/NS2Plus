@@ -177,7 +177,21 @@ local mapCinematicNames = set {
 						"cinematics/environment/waterfall_fine.cinematic",
 						"cinematics/environment/waterfall_large_basemist.cinematic"
 					}
-							
+					
+local viewModelCinematics = set {
+						"cinematics/marine/shotgun/muzzle_flash.cinematic",
+						"cinematics/marine/shotgun/shell.cinematic",
+						"cinematics/marine/gl/muzzle_flash.cinematic",
+						"cinematics/marine/gl/shell.cinematic",
+						"cinematics/marine/pistol/muzzle_flash.cinematic",
+						"cinematics/marine/pistol/shell.cinematic",
+						"cinematics/marine/rifle/muzzle_flash.cinematic",
+						"cinematics/marine/rifle/muzzle_flash2.cinematic",
+						"cinematics/marine/rifle/muzzle_flash3.cinematic",
+						"cinematics/marine/rifle/shell.cinematic",
+						"cinematics/marine/rifle/shell_looping_1p.cinematic",
+}
+
 // Precache all the new cinematics
 PrecacheAsset("chud_cinematics/blank.cinematic")
 for cinematic,_ in pairs(replacedCinematics) do
@@ -192,6 +206,11 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 	function(self, cinematicName)
 		//Print(cinematicName)
 		if Client.fullyLoaded then
+
+			if not CHUDGetOption("drawviewmodel") and viewModelCinematics[cinematicName] then
+				cinematicName = "chud_cinematics/blank.cinematic"
+			end
+
 			if CHUDGetOption("particles") then
 				if replacedCinematics[cinematicName] then
 					cinematicName = "chud_" .. cinematicName
@@ -202,6 +221,7 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 					cinematicName = string.gsub(cinematicName, "ricochetMinigun.cinematic", "ricochet.cinematic")
 				end
 			end
+
 		end
 		originalSetCinematic(self, cinematicName)
 	end
