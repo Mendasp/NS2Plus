@@ -207,7 +207,7 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 		//Print(cinematicName)
 		if Client.fullyLoaded then
 
-			if not CHUDGetOption("drawviewmodel") and viewModelCinematics[cinematicName] then
+			if (CHUDGetOption("drawviewmodel") == 1 or CHUDGetOption("drawviewmodel") == 3) and viewModelCinematics[cinematicName] then
 				cinematicName = "chud_cinematics/blank.cinematic"
 			end
 

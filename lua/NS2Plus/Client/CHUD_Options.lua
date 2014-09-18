@@ -1131,13 +1131,14 @@ CHUDOptions =
 			drawviewmodel = { 
 				name    = "CHUD_DrawViewModel",
 				label   = "Draw viewmodel",
-				tooltip = "Enables or disables showing the viewmodel for marines.",
+				tooltip = "Enables or disables showing the viewmodel.",
 				type    = "select",
-				values  = { "Disabled", "Enabled" },
+				values  = { "Display all", "Hide marines", "Hide aliens", "Hide both" },
 				callback = CHUDSaveMenuSettings,
-				defaultValue = true,
+				defaultValue = 0,
 				category = "comp",
-				valueType = "bool",
+				valueType = "int",
 				sort = "G7",
+				resetSettingInBuild = 214,
 			},
 }

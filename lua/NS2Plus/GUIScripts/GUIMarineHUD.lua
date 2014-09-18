@@ -208,7 +208,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local player = Client.GetLocalPlayer()
 		-- Don't show it for the exo because it doesn't normally show it, duh
 		if player and self.inventoryDisplay then
-			self.inventoryDisplay.forceAnimationReset = not player:isa("Exo") and not CHUDGetOption("drawviewmodel")
+			self.inventoryDisplay.forceAnimationReset = not player:isa("Exo") and (CHUDGetOption("drawviewmodel") == 1 or CHUDGetOption("drawviewmodel") == 3)
 		end
 		
 		if self.gameTime then
