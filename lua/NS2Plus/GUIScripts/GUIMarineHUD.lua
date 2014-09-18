@@ -135,7 +135,7 @@ function(self, enabled)
 	self.locationText:SetIsVisible(minimap)
 end)
 
-local originalShowNewArmorLevel		
+local originalShowNewArmorLevel
 originalShowNewArmorLevel = Class_ReplaceMethod( "GUIMarineHUD", "ShowNewArmorLevel",
 function(self, armorLevel)
 	local uplvl = CHUDGetOption("uplvl")
@@ -204,9 +204,11 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 
 		originalMarineHUDUpdate(self, deltaTime)
 		
-		// Force it on all the time when disabling the viewmodel
-		if self.inventoryDisplay then
-			self.inventoryDisplay.forceAnimationReset = not CHUDGetOption("drawviewmodel")
+		-- Force it on all the time when disabling the viewmodel
+		local player = Client.GetLocalPlayer()
+		-- Don't show it for the exo because it doesn't normally show it, duh
+		if player and self.inventoryDisplay then
+			self.inventoryDisplay.forceAnimationReset = not player:isa("Exo") and not CHUDGetOption("drawviewmodel")
 		end
 		
 		if self.gameTime then

@@ -8,6 +8,7 @@ Latest changes
 	- Added option to make crosshairs scale with resolution. Available in HUD tab.
 	- Added viewmodel toggle for marines. It is always allowed on CompMod servers and disabled by default on vanilla servers (can be enabled by server admins).
 	- Server browser will now tell you the NS2+ options that are blocked by the server in conflict with your own settings.
+	- Added option for the marine commander alert queue to only respond to player alerts.
 
 - 10/09/2014
 	- Improved request menu option selection (Thanks remi.D!)

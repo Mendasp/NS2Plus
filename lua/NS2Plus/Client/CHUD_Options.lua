@@ -1018,6 +1018,18 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "F2",
 			},
+			commqueue_playeronly = { 
+				name    = "CHUD_CommQueuePlayerOnly",
+				label   = "(Comm) Spacebar Player Alerts",
+				tooltip = "Allows the spacebar alert queue to only respond to player requests.",
+				type    = "select",
+				values  = { "Default", "Only Player Alerts" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "F3",
+			},
 			sensitivity_perteam = { 
 				name    = "CHUD_SensitivityPerTeam",
 				label   = "Team specific sensitivities",
