@@ -27,7 +27,7 @@ originalGUICommAlertsKeyEvent = Class_ReplaceMethod("GUICommanderAlerts", "SendK
 				
 				-- If we go through the queue and no players have requests, we go to the last alert
 				-- Some people wanted to disable this so...
-				if not CHUDGetOption("commqueue_playeronly") then
+				if not CHUDGetOption("commqueue_playeronly") or player:isa("AlienCommander") then
 					local latestMessage = self.messages[table.count(self.messages)]
 					AlertClicked(latestMessage)
 					return true
