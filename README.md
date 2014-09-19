@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 19/09/2014
+	- Made the viewmodel toggle available for aliens too, the option has been reset.
+
 - 18/09/2014
 	- Added option to make crosshairs scale with resolution. Available in HUD tab.
 	- Added viewmodel toggle for marines. It is always allowed on CompMod servers and disabled by default on vanilla servers (can be enabled by server admins).
