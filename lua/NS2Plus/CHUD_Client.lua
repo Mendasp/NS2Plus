@@ -126,6 +126,7 @@ function Badges_GetBadgeTextures( clientId, usecase )
 	local badges, badgeNames = oldBadgesGetBadgeTextures( clientId, usecase )
 	if usecase == "scoreboard" then
 		local steamid = GetSteamIdForClientIndex( clientId )
+		local playerName = string.UTF8Lower(Scoreboard_GetPlayerData(clientId, "Name"))
 		if steamid == 49009641 and not table.contains(badgeNames, "ns2plus_dev") then
 			-- remi.D
 			badges[#badges+1] = "ui/badges/community_dev_20.dds"
@@ -133,10 +134,18 @@ function Badges_GetBadgeTextures( clientId, usecase )
 			badges[#badges+1] = kNS2PlusDevBadgeTexture
 			badgeNames[#badgeNames+1] = "ns2plus_dev"
 		end
-		if steamid == 39843 and not table.contains(badgeNames, "ns2plus_god") then
+		-- Smurf mode, activated
+		if steamid == 39843 then
 			-- mendasp
-			badges[#badges+1] = kNS2PlusDevBadgeTexture
-			badgeNames[#badgeNames+1] = "ns2plus_god"
+			if string.find(playerName, "mendasp") then
+				if not table.contains(badgeNames, "ns2plus_god") then
+					badges[#badges+1] = kNS2PlusDevBadgeTexture
+					badgeNames[#badgeNames+1] = "ns2plus_god"
+				end
+			else
+				badges = {}
+				badgeNames = {}
+			end
 		end
 	end
 	return badges, badgeNames
