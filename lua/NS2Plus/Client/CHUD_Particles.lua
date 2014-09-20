@@ -9,24 +9,10 @@ local cinematicsRemoved = false
 local ambientsValuesCache = { }
 local ambientsRemoved = false
 
-local blockedProps = set { 	
+local blockedProps = set {
 						"models/props/veil/veil_hologram_01.model", 
 						"models/props/veil/veil_holosign_01_nanogrid.model", 
 						"models/props/veil/veil_hologram_01_scanlines.model",
-						"models/props/biodome/biodome_bamboo_crown_01_01.model",
-						"models/props/biodome/biodome_bamboo_crown_01_02.model",
-						"models/props/biodome/biodome_bamboo_crown_01_03.model",
-						"models/props/biodome/biodome_bamboo_crown_01_04.model",
-						"models/props/biodome/biodome_bamboo_clump_01_01_high.model",
-						"models/props/biodome/biodome_bamboo_clump_01_02_high.model",
-						"models/props/biodome/biodome_bamboo_clump_01_03_high.model",
-						"models/props/biodome/biodome_bamboo_clump_01_04_high.model",
-						"models/props/biodome/biodome_bamboo_clump_01_05_high.model",
-						"models/props/biodome/biodome_bamboo_clump_01_01_low.model",
-						"models/props/biodome/biodome_bamboo_clump_01_02_low.model",
-						"models/props/biodome/biodome_bamboo_clump_01_03_low.model",
-						"models/props/biodome/biodome_bamboo_clump_01_04_low.model",
-						"models/props/biodome/biodome_bamboo_clump_01_05_low.model",
 						"models/props/biodome/biodome_waterfall_01.model",
 						"models/props/biodome/biodome_grass_01_01.model",
 						"models/props/biodome/biodome_grass_01_02.model",
@@ -39,7 +25,124 @@ local blockedProps = set {
 						"models/props/descent/descent_hologram_planet_03.model",
 						"models/props/descent/descent_hologram_spacestation_01.model"
 					}
-local blockedCinematics = set {	
+
+blockedProps["ns2_biodome"] = set {
+						"models/marine/dropship/dropship.model",
+						"models/props/biodome/biobome_outdoor_rock_01.model",
+						"models/props/biodome/biobome_outdoor_rock_02.model",
+						"models/props/biodome/biobome_outdoor_rock_03.model",
+						"models/props/biodome/biobome_outdoor_rock_04.model",
+						"models/props/biodome/biodome_bamboo_01_01_high.model",
+						"models/props/biodome/biodome_bamboo_01_01_low.model",
+						"models/props/biodome/biodome_bamboo_01_02_high.model",
+						"models/props/biodome/biodome_bamboo_01_02_low.model",
+						"models/props/biodome/biodome_bamboo_01_03_high.model",
+						"models/props/biodome/biodome_bamboo_01_03_low.model",
+						"models/props/biodome/biodome_bamboo_01_04_high.model",
+						"models/props/biodome/biodome_bamboo_01_04_low.model",
+						"models/props/biodome/biodome_bamboo_01_05_high.model",
+						"models/props/biodome/biodome_bamboo_01_05_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_01_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_01_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_02_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_02_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_03_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_03_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_04_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_04_low.model",
+						"models/props/biodome/biodome_bamboo_clump_01_05_high.model",
+						"models/props/biodome/biodome_bamboo_clump_01_05_low.model",
+						"models/props/biodome/biodome_bamboo_crown_01_01.model",
+						"models/props/biodome/biodome_bamboo_crown_01_02.model",
+						"models/props/biodome/biodome_bamboo_crown_01_03.model",
+						"models/props/biodome/biodome_bamboo_crown_01_04.model",
+						"models/props/biodome/biodome_carousel_plants_01.model",
+						"models/props/biodome/biodome_carousel_plants_02.model",
+						"models/props/biodome/biodome_carousel_plants_03.model",
+						"models/props/biodome/biodome_carousel_plants_04.model",
+						"models/props/biodome/biodome_container_tree_01.model",
+						"models/props/biodome/biodome_container_tree_02.model",
+						"models/props/biodome/biodome_container_tree_03.model",
+						"models/props/biodome/biodome_container_tree_04.model",
+						"models/props/biodome/biodome_flower_01_high.model",
+						"models/props/biodome/biodome_flower_02_low.model",
+						"models/props/biodome/biodome_flower_03_low.model",
+						"models/props/biodome/biodome_fruit_pods_01.model",
+						"models/props/biodome/biodome_fruit_pods_02.model",
+						"models/props/biodome/biodome_fruit_pods_03.model",
+						"models/props/biodome/biodome_fruit_pods_04.model",
+						"models/props/biodome/biodome_fruit_pods_grapes_01.model",
+						"models/props/biodome/biodome_fruit_pods_grapes_02.model",
+						"models/props/biodome/biodome_fruit_pods_melone.model",
+						"models/props/biodome/biodome_fruit_pods_tomato_01.model",
+						"models/props/biodome/biodome_fruit_pods_tomato_02.model",
+						"models/props/biodome/biodome_fruit_pods_tomato_03.model",
+						"models/props/biodome/biodome_outdoor_rock_boulder_01.model",
+						"models/props/biodome/biodome_outdoor_rock_boulder_02.model",
+						"models/props/biodome/biodome_outdoor_rock_pile_01.model",
+						"models/props/biodome/biodome_outdoor_rock_pile_02.model",
+						"models/props/biodome/biodome_outdoor_rock_pile_03.model",
+						"models/props/biodome/biodome_outdoor_rock_smallpile_01.model",
+						"models/props/biodome/biodome_outdoor_rock_smallpile_02.model",
+						"models/props/biodome/biodome_outdoor_rock_smallpile_03.model",
+						"models/props/biodome/biodome_outdoor_rock_smallpile_04.model",
+						"models/props/biodome/biodome_outdoor_sandbank_01.model",
+						"models/props/biodome/biodome_outdoor_sandbank_02.model",
+						"models/props/biodome/biodome_outdoor_sandbank_03.model",
+						"models/props/biodome/biodome_outdoor_sandbank_04.model",
+						"models/props/biodome/biodome_outdoor_sandbank_05.model",
+						"models/props/biodome/biodome_outdoor_terrain.model",
+						"models/props/biodome/biodome_outdoor_terrain_wet.model",
+						"models/props/biodome/biodome_plant_01_high.model",
+						"models/props/biodome/biodome_plant_01_low.model",
+						"models/props/biodome/biodome_plant_02_high.model",
+						"models/props/biodome/biodome_plant_02_low.model",
+						"models/props/biodome/biodome_plant_03_01_high.model",
+						"models/props/biodome/biodome_plant_03_02_high.model",
+						"models/props/biodome/biodome_plant_03_03_high.model",
+						"models/props/biodome/biodome_plant_04_01_high.model",
+						"models/props/biodome/biodome_plant_04_01_low.model",
+						"models/props/biodome/biodome_plant_04_01_red_high.model",
+						"models/props/biodome/biodome_plant_04_01_red_low.model",
+						"models/props/biodome/biodome_plant_04_02_high.model",
+						"models/props/biodome/biodome_plant_04_02_low.model",
+						"models/props/biodome/biodome_plant_04_02_red_high.model",
+						"models/props/biodome/biodome_plant_04_02_red_low.model",
+						"models/props/biodome/biodome_plant_05_01_high.model",
+						"models/props/biodome/biodome_plant_05_01_low.model",
+						"models/props/biodome/biodome_plant_05_02_high.model",
+						"models/props/biodome/biodome_plant_05_02_low.model",
+						"models/props/biodome/biodome_plant_05_03_low.model",
+						"models/props/biodome/biodome_plant_06_01_high.model",
+						"models/props/biodome/biodome_plant_06_02_high.model",
+						"models/props/biodome/biodome_plant_06_03_high.model",
+						"models/props/biodome/biodome_plant_07_high.model",
+						"models/props/biodome/biodome_plant_07_low.model",
+						"models/props/biodome/biodome_robot_arm.model",
+						"models/props/biodome/biodome_special_plant_01.model",
+						"models/props/biodome/biodome_tray_b_01.model",
+						"models/props/biodome/biodome_tray_b_02.model",
+						"models/props/biodome/biodome_tray_b_03.model",
+						"models/props/biodome/biodome_tree_01_high.model",
+						"models/props/biodome/biodome_tree_01_low.model",
+						"models/props/biodome/biodome_tree_02_high.model",
+						"models/props/biodome/biodome_tree_02_low.model",
+						"models/props/biodome/biodome_tree_03.model",
+						"models/props/descent/descent_satellitearray_dish.model",
+						"models/props/docking/docking_landingshield_brace.model",
+						"models/props/docking/docking_plants_01_plant1.model",
+						"models/props/refinery/mining_light_04.model",
+						"models/props/refinery/refinery_rockhard_09.model",
+						"models/props/refinery/refinery_rock_bot_str_256.model",
+						"models/props/refinery/refinery_rock_large_01.model",
+						"models/props/refinery/refinery_rock_ledge_01.model",
+						"models/props/refinery/refinery_rock_ledge_02.model",
+						"models/props/refinery/refinery_rock_mid_str_128.model",
+						"models/props/refinery/refinery_rock_pile_03.model",
+						"models/props/refinery/refinery_skytowers_landingpad.model",
+}
+
+local blockedCinematics = set {
 							"cinematics/marine/structures/death_large.cinematic",
 							"cinematics/marine/structures/death_small.cinematic",
 							"cinematics/marine/sentry/death.cinematic",
@@ -99,7 +202,7 @@ local blockedCinematics = set {
 							"cinematics/alien/fade/trail_light_2.cinematic",
 							"cinematics/alien/fade/blink_view.cinematic",
 						}
-							
+
 local replacedCinematics = set {
 							"cinematics/alien/mucousmembrane.cinematic",
 							"cinematics/alien/cyst/enzymecloud_large.cinematic",
@@ -177,7 +280,7 @@ local mapCinematicNames = set {
 						"cinematics/environment/waterfall_fine.cinematic",
 						"cinematics/environment/waterfall_large_basemist.cinematic"
 					}
-					
+
 local viewModelCinematics = set {
 						"cinematics/marine/shotgun/muzzle_flash.cinematic",
 						"cinematics/marine/shotgun/shell.cinematic",
@@ -195,9 +298,6 @@ local viewModelCinematics = set {
 // Precache all the new cinematics
 PrecacheAsset("chud_cinematics/blank.cinematic")
 for cinematic,_ in pairs(replacedCinematics) do
-	// THE WORST 3 HOURS OF MY LIFE BECAUSE I FORGOT TO APPEND CHUD_
-	// APPARENTLY THE GAME DOESN'T LIKE NON-PRELOADED RESOURCES ANYMORE
-	// CRASHING IS BETTER I SUPPOSE
 	PrecacheAsset("chud_" .. cinematic)
 end
 
@@ -289,8 +389,12 @@ end
 local originalLoadMapEntity = LoadMapEntity
 function LoadMapEntity(className, groupName, values)
 	local success = originalLoadMapEntity(className, groupName, values)
-	if success then
-		if className == "prop_static" and blockedProps[values.model] then
+	if success and className == "prop_static" then
+		-- Biodome seems to be using a different case for some models than what the actual files show
+		local modelName = string.lower(values.model)
+		local mapName = string.lower(Shared.GetMapName())
+		local mapSpecificBlockedProp = blockedProps[mapName] and blockedProps[mapName][modelName]
+		if (blockedProps[modelName] or mapSpecificBlockedProp) then
 			table.insert(propCache, Client.propList[#Client.propList])
 			if not Client.fullyLoaded then
 				table.insert(propValuesCache, {className = className, groupName = groupName, values = values})
@@ -302,8 +406,12 @@ function LoadMapEntity(className, groupName, values)
 end
 
 function RemovePropDynamics()
+	local mapName = string.lower(Shared.GetMapName())
 	for _, entity in ientitylist(Shared.GetEntitiesWithClassname("PropDynamic")) do
-		if blockedProps[entity:GetModelName()] and not CHUDGetOption("mapparticles") then
+		-- Biodome seems to be using a different case for some models than what the actual files show
+		local modelName = string.lower(entity:GetModelName())
+		local mapSpecificBlockedProp = blockedProps[mapName] and blockedProps[mapName][modelName]
+		if (blockedProps[modelName] or mapSpecificBlockedProp) and not CHUDGetOption("mapparticles") then
 			entity:SetModel(nil)
 		end
 	end

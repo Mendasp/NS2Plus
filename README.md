@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 20/09/2014
+	- Added map-specific prop blocking.
+	- Removed more props from biodome under the map particles setting.
+
 - 19/09/2014
 	- Made the viewmodel toggle available for aliens too, the option has been reset.
 
