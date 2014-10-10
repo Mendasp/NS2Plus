@@ -63,14 +63,19 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 		local clipammo = ToString(PlayerUI_GetWeaponClip())
 		local ammo = ToString(PlayerUI_GetWeaponAmmo())
 		if clipammo == nil then clipammo = "0" end
-		self.ammoText:SetText(clipammo .. " / " .. ammo)
+		local reloadindicator = ""
+		if player:GetActiveWeapon():GetIsReloading() then
+			reloadindicator = " (R)"
+		end
+		self.ammoText:SetText(clipammo .. " / " .. ammo .. reloadindicator)
 		self.ammoText:SetIsVisible(true)
-		self.lowAmmoOverlay:SetText(clipammo .. " / " .. ammo)
+		self.lowAmmoOverlay:SetText(clipammo .. " / " .. ammo .. reloadindicator)
 		self.lowAmmoOverlay:SetIsVisible(true)
 
 		local fraction = PlayerUI_GetWeaponClip() / PlayerUI_GetWeapon():GetClipSize()
 		local alpha = 0
 		local pulseSpeed = 5
+
 		
 		if fraction <= 0.4 then
 			
