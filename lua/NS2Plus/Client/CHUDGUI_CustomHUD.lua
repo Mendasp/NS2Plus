@@ -133,6 +133,28 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.ammoText:SetIsScaling(false)
 	self.ammoText:SetColor(Color(1,1,1,1))
 	self.ammoText:SetPosition(Vector(rightBarXOffset[hudbars]/2+10, kBarSize[hudbars].y/2+8, 0))
+
+	self.reloadIndicatorTextBG = self:CreateAnimatedTextItem()
+	self.reloadIndicatorTextBG:SetAnchor(GUIItem.Middle, GUIItem.Center)
+	self.reloadIndicatorTextBG:SetFontName(kFontName)
+	self.reloadIndicatorTextBG:SetTextAlignmentX(GUIItem.Align_Center)
+	self.reloadIndicatorTextBG:SetLayer(kGUILayerPlayerHUD)
+	self.reloadIndicatorTextBG:SetIsVisible(false)
+	self.reloadIndicatorTextBG:SetIsScaling(false)
+	self.reloadIndicatorTextBG:SetColor(Color(0,0,0,1))
+	self.reloadIndicatorTextBG:SetText("R")
+	self.reloadIndicatorTextBG:SetPosition(Vector(2, kBarSize[hudbars].y/2+10, 0))
+
+	self.reloadIndicatorText = self:CreateAnimatedTextItem()
+	self.reloadIndicatorText:SetAnchor(GUIItem.Middle, GUIItem.Center)
+	self.reloadIndicatorText:SetFontName(kFontName)
+	self.reloadIndicatorText:SetTextAlignmentX(GUIItem.Align_Center)
+	self.reloadIndicatorText:SetLayer(kGUILayerPlayerHUD)
+	self.reloadIndicatorText:SetIsVisible(false)
+	self.reloadIndicatorText:SetIsScaling(false)
+	self.reloadIndicatorText:SetColor(Color(1,1,1,1))
+	self.reloadIndicatorText:SetText("R")
+	self.reloadIndicatorText:SetPosition(Vector(0, kBarSize[hudbars].y/2+8, 0))
 	
 	if hudbars == 2 and isMarine then
 		self.reserveBar = self:CreateAnimatedGraphicItem()
@@ -163,6 +185,8 @@ function CHUDGUI_CustomHUD:Uninitialize()
 	self.healthText:Destroy()
 	self.ammoTextBg:Destroy()
 	self.ammoText:Destroy()
+	self.reloadIndicatorText:Destroy()
+	self.reloadIndicatorTextBG:Destroy()
 	if self.reserveBar then
 		self.reserveBar:Destroy()
 		self.reserveBar = nil
@@ -275,6 +299,10 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 			if activeWeapon and activeWeapon:isa("ClipWeapon") and not activeWeapon:isa("ExoWeaponHolder") then
 				local clip = activeWeapon:GetClip()
 				local ammo = activeWeapon:GetAmmo()
+				local isreloading = activeWeapon:GetIsReloading()
+
+				self.reloadIndicatorText:SetIsVisible(isreloading)
+				self.reloadIndicatorTextBG:SetIsVisible(isreloading)
 				
 				if self.lastReserveAmmo ~= ammo then
 					self.ammoText:SetText(string.format("%s / %s", clip, ammo))
@@ -343,6 +371,8 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 		self.healthTextBg:SetIsVisible(false)
 		self.ammoText:SetIsVisible(false)
 		self.ammoTextBg:SetIsVisible(false)
+		self.reloadIndicatorText:SetIsVisible(false)
+		self.reloadIndicatorTextBG:SetIsVisible(false)
 		if self.reserveBar then
 			self.reserveBar:SetIsVisible(false)
 		end
