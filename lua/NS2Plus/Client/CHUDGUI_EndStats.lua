@@ -347,6 +347,19 @@ local function CHUDSetOverallString(message)
 
 end
 
+local function CHUDPlayerStatsString(message)
+	
+	if message and CHUDGetOption("deathstats") > 0 then
+		local minutes = math.floor(message.minutesBuilding)
+		local seconds = (message.minutesBuilding % 1)*60
+		
+		Shared.Message(string.format("(%s) %s - %d/%d/%d - %.2f - %.2f / %.2f - %d:%02d",
+			message.isMarine and "M" or "A", message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.pdmg, message.sdmg, minutes, seconds))
+	end
+
+end
+
 Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetAccuracyString)
 Client.HookNetworkMessage("CHUDEndStatsOverall", CHUDSetOverallString)
 Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetOverallString)
+Client.HookNetworkMessage("CHUDPlayerStats", CHUDPlayerStatsString)

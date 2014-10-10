@@ -49,6 +49,19 @@ if not CHUDMainMenu then
 		catpackResExpired = "integer (0 to 65535)",
 		catpackEfficiency = "float (0 to 100 by 0.01)",
 	}
+	
+	local kCHUDPlayerStatsMessage =
+	{
+		isMarine = "boolean",
+		playerName = string.format("string (%d)", kMaxNameLength * 4 ),
+		kills = string.format("integer (0 to %d)", kMaxKills),
+		assists = string.format("integer (0 to %d)", kMaxKills),
+		deaths = string.format("integer (0 to %d)", kMaxDeaths),
+		accuracy = "float (0 to 100 by 0.01)",
+		pdmg = "float (0 to 524287 by 0.01)",
+		sdmg = "float (0 to 524287 by 0.01)",
+		minutesBuilding = "float (0 to 1023 by 0.01)",
+	}
 
 	local kCHUDOptionMessage =
 	{
@@ -73,6 +86,7 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 	Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
 	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
+	Shared.RegisterNetworkMessage( "CHUDPlayerStats", kCHUDPlayerStatsMessage)
 
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")

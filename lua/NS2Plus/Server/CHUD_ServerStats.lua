@@ -373,6 +373,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				end
 				
 				local statEntry = {}
+				statEntry.isMarine = stats.teamNumber == 1
 				statEntry.playerName = playerInfo.playerName
 				statEntry.kills = playerInfo.kills
 				statEntry.assists = playerInfo.assists
@@ -417,14 +418,19 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			team2Accuracy = team2Hits/(team2Hits+team2Misses)*100
 		end
 		
-		Print(json.encode(finalStats))
-		
-		Print("Marine accuracy: " .. team1Accuracy)
+		Server.Broadcast(nil, string.format("\nAverage marine accuracy: %.2f", team1Accuracy))
 		if team1OnosAccuracy > -1 then
-			Print("Marine accuracy (without Onos hits): " .. team1OnosAccuracy)
+			Server.Broadcast(nil, string.format("Average marine accuracy (without Onos hits): %.2f", team1OnosAccuracy))
 		end
-		Print("Alien accuracy: " .. team2Accuracy)
+		Server.Broadcast(nil, string.format("Average alien accuracy: %.2f\n\n", team2Accuracy))
+		Server.Broadcast(nil, "(Team) Player - K/A/D - Accuracy - PDMG / SDMG - Time building")
 		
+		// This will probably kill the server...
+		for _, finalStat in pairs(finalStats) do
+			for _, entry in pairs(finalStat) do
+				Server.SendNetworkMessage("CHUDPlayerStats", entry, true)
+			end
+		end
 	end)
 
 local originalPlayerOnKill
