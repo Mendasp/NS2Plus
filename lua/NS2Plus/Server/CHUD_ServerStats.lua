@@ -17,44 +17,48 @@ end
 
 // Function name 2 stronk
 local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
-	if not CHUDClientStats[steamId] or (teamNumber ~= nil and CHUDClientStats[steamId].teamNumber ~= teamNumber) then
-		CHUDClientStats[steamId] = {}
-		CHUDClientStats[steamId].pdmg = 0
-		CHUDClientStats[steamId].sdmg = 0
-		CHUDClientStats[steamId].killstreak = 0
-		CHUDClientStats[steamId].teamNumber = teamNumber
-		CHUDClientStats[steamId].timeBuilding = 0
+	if steamId > 0 then
+		if not CHUDClientStats[steamId] or (teamNumber ~= nil and CHUDClientStats[steamId].teamNumber ~= teamNumber) then
+			CHUDClientStats[steamId] = {}
+			CHUDClientStats[steamId].pdmg = 0
+			CHUDClientStats[steamId].sdmg = 0
+			CHUDClientStats[steamId].killstreak = 0
+			CHUDClientStats[steamId].teamNumber = teamNumber
+			CHUDClientStats[steamId].timeBuilding = 0
+			CHUDClientStats[steamId]["last"] = {}
+			CHUDClientStats[steamId]["last"].pdmg = 0
+			CHUDClientStats[steamId]["last"].sdmg = 0
+			CHUDClientStats[steamId]["last"].hits = 0
+			CHUDClientStats[steamId]["last"].misses = 0
+			CHUDClientStats[steamId]["last"].kills = 0
+			CHUDClientStats[steamId]["weapons"] = {}
+		end
+		
+		if wTechId and not CHUDClientStats[steamId]["weapons"][wTechId] then
+			CHUDClientStats[steamId]["weapons"][wTechId] = {}
+			CHUDClientStats[steamId]["weapons"][wTechId].hits = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].onosHits = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].misses = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].kills = 0
+		end
+	end
+end
+
+local function ResetCHUDLastLifeStats(steamId)
+	if steamId > 0 then
+		MaybeInitCHUDClientStats(steamId)
+		
 		CHUDClientStats[steamId]["last"] = {}
 		CHUDClientStats[steamId]["last"].pdmg = 0
 		CHUDClientStats[steamId]["last"].sdmg = 0
 		CHUDClientStats[steamId]["last"].hits = 0
 		CHUDClientStats[steamId]["last"].misses = 0
 		CHUDClientStats[steamId]["last"].kills = 0
-		CHUDClientStats[steamId]["weapons"] = {}
 	end
-	
-	if wTechId and not CHUDClientStats[steamId]["weapons"][wTechId] then
-		CHUDClientStats[steamId]["weapons"][wTechId] = {}
-		CHUDClientStats[steamId]["weapons"][wTechId].hits = 0
-		CHUDClientStats[steamId]["weapons"][wTechId].onosHits = 0
-		CHUDClientStats[steamId]["weapons"][wTechId].misses = 0
-		CHUDClientStats[steamId]["weapons"][wTechId].kills = 0
-	end
-end
-
-local function ResetCHUDLastLifeStats(steamId)
-	MaybeInitCHUDClientStats(steamId)
-	
-	CHUDClientStats[steamId]["last"] = {}
-	CHUDClientStats[steamId]["last"].pdmg = 0
-	CHUDClientStats[steamId]["last"].sdmg = 0
-	CHUDClientStats[steamId]["last"].hits = 0
-	CHUDClientStats[steamId]["last"].misses = 0
-	CHUDClientStats[steamId]["last"].kills = 0
 end
 
 local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
-	if GetGamerules():GetGameStarted() then
+	if GetGamerules():GetGameStarted() and steamId > 0 then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
 		local stat = CHUDClientStats[steamId]["weapons"][wTechId]
@@ -74,7 +78,7 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 end
 
 local function AddDamageStat(steamId, damage, isPlayer)
-	if GetGamerules():GetGameStarted() then
+	if GetGamerules():GetGameStarted() and steamId > 0 then
 		MaybeInitCHUDClientStats(steamId)
 		
 		local stat = CHUDClientStats[steamId]
@@ -91,7 +95,7 @@ local function AddDamageStat(steamId, damage, isPlayer)
 end
 
 local function AddWeaponKill(steamId, wTechId, teamNumber)
-	if GetGamerules():GetGameStarted() then
+	if GetGamerules():GetGameStarted() and steamId > 0 then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
 		local rootStat = CHUDClientStats[steamId]
@@ -108,7 +112,7 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 end
 
 local function AddBuildTime(steamId, buildTime, teamNumber)
-	if GetGamerules():GetGameStarted() then
+	if GetGamerules():GetGameStarted() and steamId > 0 then
 		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
 		
 		local stat = CHUDClientStats[steamId]
@@ -272,6 +276,18 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 	
 		originalNS2GamerulesEndGame(self, winningTeam)
 		
+		local team1Accuracy = 0
+		local team1OnosAccuracy = -1
+		local team1Hits = 0
+		local team1OnosHits = 0
+		local team1Misses = 0
+		local team2Accuracy = 0
+		local team2Hits = 0
+		local team2Misses = 0
+		local finalStats = {}
+		finalStats[1] = {}
+		finalStats[2] = {}
+		
 		for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 			local client = Server.GetClientById(playerInfo.clientId)
 			
@@ -356,6 +372,27 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					end
 				end
 				
+				local statEntry = {}
+				statEntry.playerName = playerInfo.playerName
+				statEntry.kills = playerInfo.kills
+				statEntry.assists = playerInfo.assists
+				statEntry.deaths = playerInfo.deaths
+				statEntry.accuracy = overallOnosAccuracy == -1 and overallAccuracy or overallOnosAccuracy
+				statEntry.pdmg = stats.pdmg
+				statEntry.sdmg = stats.sdmg
+				statEntry.minutesBuilding = stats.timeBuilding/60
+				
+				if stats.teamNumber == 1 then
+					team1Hits = team1Hits + overallHits
+					team1OnosHits = team1OnosHits + overallOnosHits
+					team1Misses = team1Misses + overallMisses
+					table.insert(finalStats[1], statEntry)
+				elseif stats.teamNumber == 2 then
+					team2Hits = team2Hits + overallHits
+					team2Misses = team2Misses + overallMisses
+					table.insert(finalStats[2], statEntry)
+				end
+				
 				local msg = {}
 				msg.accuracy = overallAccuracy
 				msg.accuracyOnos = overallOnosAccuracy
@@ -368,6 +405,25 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			end
 		
 		end
+		
+		if team1Hits > 0 or team1Misses > 0 then
+			team1Accuracy = team1Hits/(team1Hits+team1Misses)*100
+			if team1OnosHits > 0 and team1Hits ~= team1OnosHits then
+				team1OnosAccuracy = (team1Hits-team1OnosHits)/((team1Hits-team1OnosHits)+team1Misses)*100
+			end
+		end
+		
+		if team2Hits > 0 or team2Misses > 0 then
+			team2Accuracy = team2Hits/(team2Hits+team2Misses)*100
+		end
+		
+		Print(json.encode(finalStats))
+		
+		Print("Marine accuracy: " .. team1Accuracy)
+		if team1OnosAccuracy > -1 then
+			Print("Marine accuracy (without Onos hits): " .. team1OnosAccuracy)
+		end
+		Print("Alien accuracy: " .. team2Accuracy)
 		
 	end)
 

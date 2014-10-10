@@ -30,7 +30,7 @@ if not CHUDMainMenu then
 		accuracyOnos = "float (-1 to 100 by 0.01)",
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
-		killstreak = "integer (0 to 1023)",
+		killstreak = "integer (0 to 254)",
 		minutesBuilding = "float (0 to 1023 by 0.01)",
 	}
 
