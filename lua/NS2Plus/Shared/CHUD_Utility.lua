@@ -129,9 +129,11 @@ if Client then
 		
 		local classicammo = false
 		local customhud = false
+		local scannedindicator = false
 		
 		local classicammoScript = "NS2Plus/Client/CHUDGUI_ClassicAmmo"
 		local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
+		local scannedScript = "NS2Plus/Client/CHUDGUI_AlienScanned"
 		if teamNumber == kTeam1Index then
 			if CHUDGetOption("classicammo") then
 				GetGUIManager():CreateGUIScriptSingle(classicammoScript)
@@ -143,9 +145,13 @@ if Client then
 				customhud = true
 			end
 		elseif teamNumber == kTeam2Index then
-			if CHUDGetOption("customhud_a") > 0 and not player:isa("Commander")  then
-				GetGUIManager():CreateGUIScriptSingle(customhudScript)
-				customhud = true
+			if not player:isa("Commander") then
+				if CHUDGetOption("customhud_a") > 0 then
+					GetGUIManager():CreateGUIScriptSingle(customhudScript)
+					customhud = true
+				end
+				GetGUIManager():CreateGUIScriptSingle(scannedScript)
+				scannedindicator = true
 			end
 		end
 
@@ -154,6 +160,9 @@ if Client then
 		end
 		if GetGUIManager():GetGUIScriptSingle(customhudScript) and not customhud then
 			GetGUIManager():DestroyGUIScriptSingle(customhudScript)
+		end
+		if GetGUIManager():GetGUIScriptSingle(scannedScript) and not scannedindicator then
+			GetGUIManager():DestroyGUIScriptSingle(scannedScript)
 		end
 	end
 	
