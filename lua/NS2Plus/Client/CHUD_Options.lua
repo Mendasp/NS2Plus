@@ -1139,6 +1139,9 @@ CHUDOptions =
 				category = "comp",
 				valueType = "int",
 				sort = "G7",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
 				resetSettingInBuild = 214,
 			},
 }

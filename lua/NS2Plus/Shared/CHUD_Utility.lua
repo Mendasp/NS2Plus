@@ -129,11 +129,11 @@ if Client then
 		
 		local classicammo = false
 		local customhud = false
-		local scannedindicator = false
+		local hiddenviewmodel = false
 		
 		local classicammoScript = "NS2Plus/Client/CHUDGUI_ClassicAmmo"
 		local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
-		local scannedScript = "NS2Plus/Client/CHUDGUI_AlienScanned"
+		local hiddenviewmodelScript = "NS2Plus/Client/CHUDGUI_HiddenViewmodel"
 		if teamNumber == kTeam1Index then
 			if CHUDGetOption("classicammo") then
 				GetGUIManager():CreateGUIScriptSingle(classicammoScript)
@@ -150,8 +150,10 @@ if Client then
 					GetGUIManager():CreateGUIScriptSingle(customhudScript)
 					customhud = true
 				end
-				GetGUIManager():CreateGUIScriptSingle(scannedScript)
-				scannedindicator = true
+				if CHUDGetOption("drawviewmodel") > 1 then
+					GetGUIManager():CreateGUIScriptSingle(hiddenviewmodelScript)
+					hiddenviewmodel = true
+				end
 			end
 		end
 
@@ -161,8 +163,8 @@ if Client then
 		if GetGUIManager():GetGUIScriptSingle(customhudScript) and not customhud then
 			GetGUIManager():DestroyGUIScriptSingle(customhudScript)
 		end
-		if GetGUIManager():GetGUIScriptSingle(scannedScript) and not scannedindicator then
-			GetGUIManager():DestroyGUIScriptSingle(scannedScript)
+		if GetGUIManager():GetGUIScriptSingle(hiddenviewmodelScript) and not hiddenviewmodel then
+			GetGUIManager():DestroyGUIScriptSingle(hiddenviewmodelScript)
 		end
 	end
 	

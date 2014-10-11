@@ -5,8 +5,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - /10/2014
-	- Added reload indicator to Classic Ammo and HUD bar options. (Thanks Bi()ha2arD)
-	- Added build/weld percentage to Classic Ammo and HUD bar options.
+	- Added reload indicator to Classic Ammo and HL2 HUD bar options. (Thanks Bi()ha2arD!)
+	- Added indicators for scan/obs, cloaking, umbra and enzyme when using the no viewmodel option.
+	- Added build/weld percentage to Classic Ammo and HL2 HUD bar options.
 	- Added stats for all the players at round end in the console with average team accuracies.
 
 - 20/09/2014

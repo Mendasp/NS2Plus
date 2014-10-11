@@ -70,7 +70,7 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self.energyBall.dialBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
 		self.secondaryAbilityBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
 		
-		// Alien bars		
+		// Alien bars
 		self.healthBall:SetForegroundTexture(kTextureNameCHUD)
 		self.armorBall:SetForegroundTexture(kTextureNameCHUD)
 		self.energyBall:SetForegroundTexture(kTextureNameCHUD)
@@ -114,7 +114,9 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		Player.screenEffects.darkVision = Client.CreateScreenEffect(CHUDGetOptionAssocVal("av"))
 		
 		if CHUDGetOption("customhud_a") > 0 then
-			self.resourceDisplay.background:SetPosition(Vector(-440, -100, 0))
+			if CHUDGetOption("customhud_a") == 2 then
+				self.resourceDisplay.background:SetPosition(Vector(-440, -100, 0))
+			end
 			
 			local healthBall = self.healthBall:GetBackground()
 			local energyBall = self.energyBall:GetBackground()
