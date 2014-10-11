@@ -142,7 +142,6 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.reloadIndicatorTextBG:SetIsVisible(false)
 	self.reloadIndicatorTextBG:SetIsScaling(false)
 	self.reloadIndicatorTextBG:SetColor(Color(0,0,0,1))
-	self.reloadIndicatorTextBG:SetText("R")
 	self.reloadIndicatorTextBG:SetPosition(Vector(2, kBarSize[hudbars].y/2+10, 0))
 
 	self.reloadIndicatorText = self:CreateAnimatedTextItem()
@@ -153,7 +152,6 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.reloadIndicatorText:SetIsVisible(false)
 	self.reloadIndicatorText:SetIsScaling(false)
 	self.reloadIndicatorText:SetColor(Color(1,1,1,1))
-	self.reloadIndicatorText:SetText("R")
 	self.reloadIndicatorText:SetPosition(Vector(0, kBarSize[hudbars].y/2+8, 0))
 	
 	if hudbars == 2 and isMarine then
@@ -301,6 +299,8 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 				local ammo = activeWeapon:GetAmmo()
 				local isreloading = activeWeapon:GetIsReloading()
 
+				self.reloadIndicatorText:SetText("R")
+				self.reloadIndicatorTextBG:SetText("R")
 				self.reloadIndicatorText:SetIsVisible(isreloading)
 				self.reloadIndicatorTextBG:SetIsVisible(isreloading)
 				
@@ -319,6 +319,12 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 					self.lastReserveAmmo = ammo
 				end
 			else
+				if activeWeapon:isa("Builder") or activeWeapon:isa("Welder") then
+					self.reloadIndicatorText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
+					self.reloadIndicatorTextBG:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
+					self.reloadIndicatorText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
+					self.reloadIndicatorTextBG:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
+				end
 				self.ammoText:SetIsVisible(false)
 				self.ammoTextBg:SetIsVisible(false)
 				-- When switching to non-clipweapons and switching back we want the text to show up again

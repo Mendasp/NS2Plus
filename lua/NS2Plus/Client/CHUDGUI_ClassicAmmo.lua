@@ -59,7 +59,8 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 	GUIAnimatedScript.Update(self, deltaTime)
 
 	local player = Client.GetLocalPlayer()
-	if player:GetActiveWeapon() and player:GetActiveWeapon():isa("ClipWeapon") and not player:isa("Exo") then
+	local activeWeapon = player:GetActiveWeapon()
+	if activeWeapon and activeWeapon:isa("ClipWeapon") and not player:isa("Exo") then
 		local clipammo = ToString(PlayerUI_GetWeaponClip())
 		local ammo = ToString(PlayerUI_GetWeaponAmmo())
 		if clipammo == nil then clipammo = "0" end
@@ -88,8 +89,15 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 		self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha))
 
 	else
-		self.ammoText:SetIsVisible(false)
-		self.lowAmmoOverlay:SetIsVisible(false)
+		if activeWeapon:isa("Builder") or activeWeapon:isa("Welder") then
+			self.ammoText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
+			self.lowAmmoOverlay:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
+			self.ammoText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
+			self.lowAmmoOverlay:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
+		else
+			self.ammoText:SetIsVisible(false)
+			self.lowAmmoOverlay:SetIsVisible(false)
+		end
 	end
 	
 end
