@@ -18,6 +18,8 @@ local kStatsFontName = Fonts.kAgencyFB_Small
 local kTopOffset = GUIScale(32)
 local kTitleBackgroundTexture = PrecacheAsset("ui/objective_banner_marine.dds")
 
+local finalStatsTable = {}
+
 local function AddString(self, string, isComm, isVisible)
 	
 	if Shared.GetTime() > lastStatsMsg + appendTime and isVisible then
@@ -206,6 +208,43 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				io.close(savedFile)
 			end
 			self.saved = true
+			
+			table.sort(finalStatsTable, function(a, b)
+				a.teamNumber = a.isMarine and 1 or 2
+				b.teamNumber = b.isMarine and 1 or 2
+				if a.teamNumber == b.teamNumber then
+					return a.accuracy > b.accuracy
+				else
+					return a.teamNumber < b.teamNumber
+				end
+			end)
+			
+			if CHUDGetOption("deathstats") > 0 and #finalStatsTable > 0 then
+				local lastTeam = 0
+				
+				for _, message in ipairs(finalStatsTable) do
+					if lastTeam ~= (message.isMarine and 1 or 2) then
+						lastTeam = message.isMarine and 1 or 2
+						Shared.Message("------------")
+						if lastTeam == 1 then
+							Shared.Message("Marines")
+						else
+							Shared.Message("Aliens")
+						end
+						Shared.Message("------------")
+						Shared.Message("Player - K/A/D - Accuracy - PDMG / SDMG - Time building")
+						Shared.Message("------------")
+					end
+					
+					local minutes = math.floor(message.minutesBuilding)
+					local seconds = (message.minutesBuilding % 1)*60
+					
+					Shared.Message(string.format("%s - %d/%d/%d - %.2f - %.2f / %.2f - %d:%02d",
+						message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.pdmg, message.sdmg, minutes, seconds))
+				
+				end
+			end
+			finalStatsTable = {}
 		end
 		
 		if Shared.GetTime() - shownTime > displayTime and not self.fading then
@@ -349,14 +388,8 @@ end
 
 local function CHUDPlayerStatsString(message)
 	
-	if message and CHUDGetOption("deathstats") > 0 then
-		local minutes = math.floor(message.minutesBuilding)
-		local seconds = (message.minutesBuilding % 1)*60
-		
-		Shared.Message(string.format("(%s) %s - %d/%d/%d - %.2f - %.2f / %.2f - %d:%02d",
-			message.isMarine and "M" or "A", message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.pdmg, message.sdmg, minutes, seconds))
-	end
-
+	table.insert(finalStatsTable, message)
+	
 end
 
 Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetAccuracyString)
