@@ -1,0 +1,7 @@
+shader = "models/alien/alien.surface_shader"
+albedoMap = "models/alien/gorge/clog_shadow.dds"
+normalMap = "models/alien/gorge/clog_shadow_normal.dds"
+emissiveMap = "models/alien/gorge/clog_shadow_illum.dds"
+specularMap = "models/alien/gorge/clog_shadow_spec.dds"
+highlight = 0.51
+surface = "organic"
