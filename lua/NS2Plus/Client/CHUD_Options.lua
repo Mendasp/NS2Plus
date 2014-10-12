@@ -1144,4 +1144,16 @@ CHUDOptions =
 				end,
 				resetSettingInBuild = 214,
 			},
+			deselectspec = { 
+				name    = "CHUD_DeselectSpec",
+				label   = "Deselect on death",
+				tooltip = "When spectating and using the autofollow feature, this lets you choose if you want to keep following the player or deselect it when it dies.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "G8",
+			},
 }
