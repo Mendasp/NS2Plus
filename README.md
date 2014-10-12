@@ -12,6 +12,7 @@ Latest changes
 	- Improved tunnel collision. It is now slightly higher and more closely matches the shape of the tunnel. (Thanks Samusdroid!)
 	- Grenade Launcher rounds are now highlighted in Alien vision and the visual model is slightly larger (collision is still the same). (Thanks Samusdroid!)
 	- Clogs no longer have decals projected onto them. (Thanks Samusdroid!)
+	- Added option to allow spectators to keep auto-following a player without reselecting it on respawn.
 
 - 20/09/2014
 	- Added map-specific prop blocking.

@@ -135,7 +135,7 @@ if Client then
 		local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
 		local hiddenviewmodelScript = "NS2Plus/Client/CHUDGUI_HiddenViewmodel"
 		if teamNumber == kTeam1Index then
-			if CHUDGetOption("classicammo") then
+			if CHUDGetOption("classicammo") and not player:isa("Commander") then
 				GetGUIManager():CreateGUIScriptSingle(classicammoScript)
 				classicammo = true
 			end

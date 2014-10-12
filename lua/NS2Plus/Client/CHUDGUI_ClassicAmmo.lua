@@ -89,7 +89,7 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 		self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha))
 
 	else
-		if activeWeapon:isa("Builder") or activeWeapon:isa("Welder") then
+		if activeWeapon and (activeWeapon:isa("Builder") or activeWeapon:isa("Welder")) then
 			self.ammoText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
 			self.lowAmmoOverlay:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
 			self.ammoText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)

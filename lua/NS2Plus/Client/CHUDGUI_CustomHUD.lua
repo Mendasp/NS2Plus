@@ -319,7 +319,7 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 					self.lastReserveAmmo = ammo
 				end
 			else
-				if activeWeapon:isa("Builder") or activeWeapon:isa("Welder") then
+				if activeWeapon and (activeWeapon:isa("Builder") or activeWeapon:isa("Welder")) then
 					self.reloadIndicatorText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
 					self.reloadIndicatorTextBG:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
 					self.reloadIndicatorText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
