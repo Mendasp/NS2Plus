@@ -58,11 +58,11 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 		local enzyme = player:GetIsEnzymed()
 		
 		-- When under obs/scan, it removes cloaking, so only one of them happen at a time
-		self.leftIndicator:SetIsVisible(obs or cloak)
+		self.leftIndicator:SetIsVisible(player:GetIsAlive() and (obs or cloak))
 		self.leftIndicator:SetPosition(leftPos)
 		
-		self.umbraIndicator:SetIsVisible(umbra)
-		self.enzymeIndicator:SetIsVisible(enzyme)
+		self.umbraIndicator:SetIsVisible(player:GetIsAlive() and umbra)
+		self.enzymeIndicator:SetIsVisible(player:GetIsAlive() and enzyme)
 		
 		if obs then
 			self.leftIndicator:SetTexture(obsIndicatorTexture)
