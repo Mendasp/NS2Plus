@@ -125,6 +125,9 @@ end
 if Client then
 	function CHUDEvaluateGUIVis()
 		local player = Client.GetLocalPlayer()
+		
+		if not player then return end
+		
 		local teamNumber = player:GetTeamNumber()
 		
 		local classicammo = false
