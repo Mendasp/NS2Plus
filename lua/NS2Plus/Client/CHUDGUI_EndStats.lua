@@ -394,11 +394,11 @@ local function CHUDPlayerStatsString(message)
 	if message and message.playerName then
 		table.insert(finalStatsTable, message)
 	elseif message and message.marineAcc then
-		Shared.Message(string.format("\nAverage marine accuracy: %.2f", message.marineAcc))
+		Shared.Message(string.format("\nAverage marine accuracy: %.2f%%", message.marineAcc))
 		if message.marineOnosAcc > -1 then
-			Shared.Message(string.format("Average marine accuracy (without Onos hits): %.2f", message.marineOnosAcc))
+			Shared.Message(string.format("Average marine accuracy (without Onos hits): %.2f%%", message.marineOnosAcc))
 		end
-		Shared.Message(string.format("Average alien accuracy: %.2f\n\n", message.alienAcc))
+		Shared.Message(string.format("Average alien accuracy: %.2f%%\n\n", message.alienAcc))
 	end
 	
 end
