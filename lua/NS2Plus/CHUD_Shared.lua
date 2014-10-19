@@ -50,6 +50,13 @@ if not CHUDMainMenu then
 		catpackEfficiency = "float (0 to 100 by 0.01)",
 	}
 	
+	local kCHUDAvgAccMessage =
+	{
+		marineAcc = "float (0 to 100 by 0.01)",
+		marineOnosAcc = "float (-1 to 100 by 0.01)",
+		alienAcc = "float (0 to 100 by 0.01)",
+	}
+	
 	local kCHUDPlayerStatsMessage =
 	{
 		isMarine = "boolean",
@@ -87,6 +94,7 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
 	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDPlayerStats", kCHUDPlayerStatsMessage)
+	Shared.RegisterNetworkMessage( "CHUDAvgAccStats", kCHUDAvgAccMessage)
 
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")

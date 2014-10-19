@@ -182,6 +182,45 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		CHUDEndStatsVisible = false
 	end
 	
+	if Shared.GetTime() > lastStatsMsg + appendTime then
+		table.sort(finalStatsTable, function(a, b)
+			a.teamNumber = a.isMarine and 1 or 2
+			b.teamNumber = b.isMarine and 1 or 2
+			if a.teamNumber == b.teamNumber then
+				return a.accuracy > b.accuracy
+			else
+				return a.teamNumber < b.teamNumber
+			end
+		end)
+		
+		if CHUDGetOption("deathstats") > 0 and #finalStatsTable > 0 then
+			local lastTeam = 0
+			
+			for _, message in ipairs(finalStatsTable) do
+				if lastTeam ~= (message.isMarine and 1 or 2) then
+					lastTeam = message.isMarine and 1 or 2
+					Shared.Message("------------")
+					if lastTeam == 1 then
+						Shared.Message("Marines")
+					else
+						Shared.Message("Aliens")
+					end
+					Shared.Message("------------")
+					Shared.Message("Player - K/A/D - Accuracy - PDMG / SDMG - Time building")
+					Shared.Message("------------")
+				end
+				
+				local minutes = math.floor(message.minutesBuilding)
+				local seconds = (message.minutesBuilding % 1)*60
+				
+				Shared.Message(string.format("%s - %d/%d/%d - %.2f%% - %.2f / %.2f - %d:%02d",
+					message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.pdmg, message.sdmg, minutes, seconds))
+			
+			end
+		end
+		finalStatsTable = {}
+	end
+	
 	if not PlayerUI_GetHasGameStarted() and hasText and self.showing == false and CHUDGetOption("deathstats") > 1 then
 		self.showing = true
 		shownTime = Shared.GetTime()
@@ -209,42 +248,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 			self.saved = true
 			
-			table.sort(finalStatsTable, function(a, b)
-				a.teamNumber = a.isMarine and 1 or 2
-				b.teamNumber = b.isMarine and 1 or 2
-				if a.teamNumber == b.teamNumber then
-					return a.accuracy > b.accuracy
-				else
-					return a.teamNumber < b.teamNumber
-				end
-			end)
-			
-			if CHUDGetOption("deathstats") > 0 and #finalStatsTable > 0 then
-				local lastTeam = 0
-				
-				for _, message in ipairs(finalStatsTable) do
-					if lastTeam ~= (message.isMarine and 1 or 2) then
-						lastTeam = message.isMarine and 1 or 2
-						Shared.Message("------------")
-						if lastTeam == 1 then
-							Shared.Message("Marines")
-						else
-							Shared.Message("Aliens")
-						end
-						Shared.Message("------------")
-						Shared.Message("Player - K/A/D - Accuracy - PDMG / SDMG - Time building")
-						Shared.Message("------------")
-					end
-					
-					local minutes = math.floor(message.minutesBuilding)
-					local seconds = (message.minutesBuilding % 1)*60
-					
-					Shared.Message(string.format("%s - %d/%d/%d - %.2f - %.2f / %.2f - %d:%02d",
-						message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.pdmg, message.sdmg, minutes, seconds))
-				
-				end
-			end
-			finalStatsTable = {}
 		end
 		
 		if Shared.GetTime() - shownTime > displayTime and not self.fading then
@@ -388,7 +391,15 @@ end
 
 local function CHUDPlayerStatsString(message)
 	
-	table.insert(finalStatsTable, message)
+	if message and message.playerName then
+		table.insert(finalStatsTable, message)
+	elseif message and message.marineAcc then
+		Shared.Message(string.format("\nAverage marine accuracy: %.2f", message.marineAcc))
+		if message.marineOnosAcc > -1 then
+			Shared.Message(string.format("Average marine accuracy (without Onos hits): %.2f", message.marineOnosAcc))
+		end
+		Shared.Message(string.format("Average alien accuracy: %.2f\n\n", message.alienAcc))
+	end
 	
 end
 
@@ -396,3 +407,4 @@ Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetAccuracyString)
 Client.HookNetworkMessage("CHUDEndStatsOverall", CHUDSetOverallString)
 Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetOverallString)
 Client.HookNetworkMessage("CHUDPlayerStats", CHUDPlayerStatsString)
+Client.HookNetworkMessage("CHUDAvgAccStats", CHUDPlayerStatsString)

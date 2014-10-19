@@ -418,11 +418,11 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			team2Accuracy = team2Hits/(team2Hits+team2Misses)*100
 		end
 		
-		Server.Broadcast(nil, string.format("\nAverage marine accuracy: %.2f", team1Accuracy))
-		if team1OnosAccuracy > -1 then
-			Server.Broadcast(nil, string.format("Average marine accuracy (without Onos hits): %.2f", team1OnosAccuracy))
-		end
-		Server.Broadcast(nil, string.format("Average alien accuracy: %.2f\n\n", team2Accuracy))
+		local msg = {}
+		msg.marineAcc = team1Accuracy
+		msg.marineOnosAcc = team1OnosAccuracy
+		msg.alienAcc = team2Accuracy
+		Server.SendNetworkMessage("CHUDAvgAccStats", msg, true)
 		
 		// This will probably kill the server...
 		for _, finalStat in pairs(finalStats) do
