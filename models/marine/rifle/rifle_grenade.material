@@ -1,7 +1,0 @@
-shader = "models/marine/marine.surface_shader"
-albedoMap = "models/marine/rifle/rifle_grenade.dds"
-normalMap = "models/marine/rifle/rifle_grenade_normal.dds"
-specularMap = "models/marine/rifle/rifle_grenade_spec.dds"
-emissiveMap = "models/marine/rifle/rifle_grenade_illum.dds"
-
-surface = "metal"
