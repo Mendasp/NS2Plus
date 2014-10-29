@@ -8,13 +8,6 @@ originalGameInfo = Class_ReplaceMethod( "GameInfo", "OnCreate",
 	
 	end)
 
--- This should be rewritten properly with the mod updater stuff to apply setting changes efficiently
-local showAvgSkill = false
-local function GameInfoUpdater()
-	if showAvgSkill ~= CHUDServerOptions["showavgteamskill"].currentValue then
-		showAvgSkill = CHUDServerOptions["showavgteamskill"].currentValue
-		GetGameInfoEntity().showAvgSkill = showAvgSkill
+CHUDServerOptions["showavgteamskill"].applyFunction = function()
+		GetGameInfoEntity().showAvgSkill = CHUDServerOptions["showavgteamskill"].currentValue
 	end
-end
-
-Event.Hook("UpdateServer", GameInfoUpdater)

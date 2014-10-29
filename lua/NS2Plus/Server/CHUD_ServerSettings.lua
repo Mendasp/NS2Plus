@@ -105,6 +105,10 @@ function CHUDSetServerOption(key, value)
 				setValue = option.currentValue
 			end
 		end
+		
+		if option.applyFunction then
+			option.applyFunction()
+		end
 
 		// Don't waste time saving settings we already have set like that
 		if oldValue ~= option.currentValue then
