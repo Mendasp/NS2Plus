@@ -5,7 +5,7 @@ originalGameInfo = Class_ReplaceMethod( "GameInfo", "OnCreate",
 		originalGameInfo(self)
 		
 		self.showAvgSkill = CHUDServerOptions["showavgteamskill"].currentValue == true
-		local showAvgSkill = ConditionalValue(self.showAvgSkill, "Disabled", "Enabled")
+		local showAvgSkill = ConditionalValue(self.showAvgSkill, "Enabled", "Disabled")
 		Shared.Message("[NS2+] Display team avg. skill: " .. showAvgSkill)
 		
 	end)
