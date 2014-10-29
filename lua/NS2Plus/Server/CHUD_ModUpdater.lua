@@ -22,7 +22,7 @@ if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
 else
 	DisableUpdater = CHUDServerOptions["modupdater"].currentValue == false
 	local modUpdStr = ConditionalValue(DisableUpdater, "Disabled", "Enabled")
-	Shared.Message("[NS2+] Mod updater is: " .. modUpdStr)
+	Shared.Message("[NS2+] Mod updater: " .. modUpdStr)
 end
 
 function CHUDParseModInfo(modInfo)
