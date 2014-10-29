@@ -6,6 +6,7 @@ Latest changes
 ==============
 - 31/10/2014
 	- Updated for Build 270.
+	- Added team average Hive skill to the scoreboard.
 	- Added pages to console help for NS2+ commands.
 
 - 12/10/2014

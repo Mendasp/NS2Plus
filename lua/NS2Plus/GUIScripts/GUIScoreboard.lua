@@ -4,10 +4,16 @@ function(self, updateTeam)
 	originalScoreboardUpdateTeam(self, updateTeam)
 	
 	local teamNumber = updateTeam["TeamNumber"]
-    local teamScores = updateTeam["GetScores"]()
+	local teamScores = updateTeam["GetScores"]()
+	local playerList = updateTeam["PlayerList"]
+	local teamNumber = updateTeam["TeamNumber"]
+	local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]
+	
+	local teamAvgSkill = 0
+	local numPlayers = table.count(teamScores)
 	
 	local currentPlayerIndex = 1
-	local playerList = updateTeam["PlayerList"]
+	
 	for index, player in pairs(playerList) do
 		local playerRecord = teamScores[currentPlayerIndex]
 		
@@ -18,7 +24,13 @@ function(self, updateTeam)
 			player["Deaths"]:SetPosition(temp)
 		end
 		
+		teamAvgSkill = teamAvgSkill + playerRecord.Skill
+		
 		currentPlayerIndex = currentPlayerIndex + 1
+	end
+	
+	if teamNumber == 1 or teamNumber == 2 and teamAvgSkill > 0 then
+		teamNameGUIItem:SetText(string.format("%s (Avg. skill: %d)", teamNameGUIItem:GetText(), teamAvgSkill/numPlayers))
 	end
 end)
 
