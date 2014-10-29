@@ -29,7 +29,9 @@ function(self, updateTeam)
 		currentPlayerIndex = currentPlayerIndex + 1
 	end
 	
-	if teamNumber == 1 or teamNumber == 2 and teamAvgSkill > 0 then
+	local showAvgSkill = GetGameInfoEntity().showAvgSkill
+	
+	if (teamNumber == 1 or teamNumber == 2) and teamAvgSkill > 0 and showAvgSkill then
 		teamNameGUIItem:SetText(string.format("%s (Avg. skill: %d)", teamNameGUIItem:GetText(), teamAvgSkill/numPlayers))
 	end
 end)

@@ -6,7 +6,7 @@ Latest changes
 ==============
 - 31/10/2014
 	- Updated for Build 270.
-	- Added team average Hive skill to the scoreboard.
+	- Added team average Hive skill to the scoreboard. Off by default. Servers can enable it by typing "sv_plus showavgteamskill true" in console or modifying NS2PlusServerConfig.json.
 	- Added pages to console help for NS2+ commands.
 
 - 12/10/2014

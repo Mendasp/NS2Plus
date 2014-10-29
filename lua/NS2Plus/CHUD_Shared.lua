@@ -109,3 +109,10 @@ CHUDTagBitmask = {
 	drawviewmodel = 0x10,
 	deathstats = 0x0,
 }
+
+local gameInfoNetworkVars =
+{
+	showAvgSkill = "boolean",
+}
+
+Class_Reload("GameInfo", gameInfoNetworkVars)

@@ -55,6 +55,12 @@ CHUDServerOptions =
 		minValue = 0,
 		maxValue = 999,
 		},
+	showavgteamskill = {
+		label   = "Show average team skills",
+		tooltip = "Shows the average team skill on the scoreboard for clients.",
+		valueType = "bool",
+		defaultValue = false,
+		},
 }
 
 for modNum = 1, Server.GetNumActiveMods() do
