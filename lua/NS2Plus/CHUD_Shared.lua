@@ -1,7 +1,7 @@
 kCHUDElixerVersion = 1.8
 // Version number is the amount of revisions in the Workshop
 // Try to update but only important when changing defaults
-kCHUDVersion = 225
+kCHUDVersion = 226
 
 Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
@@ -99,6 +99,13 @@ if not CHUDMainMenu then
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
+	
+	local gameInfoNetworkVars =
+	{
+		showAvgSkill = "boolean",
+	}
+
+	Class_Reload("GameInfo", gameInfoNetworkVars)
 end
 
 CHUDTagBitmask = {
@@ -109,10 +116,3 @@ CHUDTagBitmask = {
 	drawviewmodel = 0x10,
 	deathstats = 0x0,
 }
-
-local gameInfoNetworkVars =
-{
-	showAvgSkill = "boolean",
-}
-
-Class_Reload("GameInfo", gameInfoNetworkVars)
