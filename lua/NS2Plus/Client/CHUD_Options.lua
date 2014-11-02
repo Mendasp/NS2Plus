@@ -480,7 +480,7 @@ CHUDOptions =
 			},
 			minimapalpha = { 
 				name    = "CHUD_MinimapAlpha",
-				label   = "Overview transparency",
+				label   = "Overview opacity",
 				tooltip = "Sets the trasparency of the map overview.",
 				type    = "slider",
 				sliderCallback = CHUDMinimapSlider,
@@ -498,7 +498,7 @@ CHUDOptions =
 			},
 			locationalpha = { 
 				name    = "CHUD_LocationAlpha",
-				label   = "Location transparency",
+				label   = "Location text opacity",
 				tooltip = "Sets the trasparency of the location text on the minimap.",
 				type    = "slider",
 				sliderCallback = CHUDLocationSlider,
