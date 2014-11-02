@@ -199,9 +199,9 @@ CHUDMarineComm = 0
 
 local originalCommandStructureLoginPlayer
 originalCommandStructureLoginPlayer = Class_ReplaceMethod("CommandStructure", "LoginPlayer",
-	function(self, player)
+	function(self, player, forced)
 	
-		originalCommandStructureLoginPlayer(self, player)
+		originalCommandStructureLoginPlayer(self, player, forced)
 		
 		if player:isa("Marine") then
 			CHUDMarineComm = GetSteamIdForClientIndex(player.clientIndex)
