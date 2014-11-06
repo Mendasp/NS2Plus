@@ -15,14 +15,12 @@ local function CHUDDisplayModUpdateMessage()
 	SendCHUDMessage(modsStringList)
 end
 
-// Don't use this updater if the server is already using the Shine one
+-- Don't use this updater if the server is already using the Shine one
 if Shine and Shine:IsExtensionEnabled( "workshopupdater" ) then
-	Shared.Message("[NS2+] Shine workshop updater is enabled. Disabling NS2+ mod updater.")
 	DisableUpdater = true
+	CHUDServerOptions["modupdater"].shine = true
 else
 	DisableUpdater = CHUDServerOptions["modupdater"].currentValue == false
-	local modUpdStr = ConditionalValue(DisableUpdater, "Disabled", "Enabled")
-	Shared.Message("[NS2+] Mod updater: " .. modUpdStr)
 end
 
 function CHUDParseModInfo(modInfo)
@@ -34,7 +32,7 @@ function CHUDParseModInfo(modInfo)
 					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
 						AddCHUDTagBitmask(CHUDTagBitmask["mcr"])
 						mapChangeNeeded = true
-						// Repeat the mod update message
+						-- Repeat the mod update message
 						updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60
 						updatedMods[res["publishedfileid"]] = res["title"]
 					end
@@ -51,16 +49,16 @@ function CHUDParseModInfo(modInfo)
 end
 
 function CHUDModUpdater()
-	// Update values as soon as they are changed by console commands
+	-- Update values as soon as they are changed by console commands
 	DisableUpdater = CHUDServerOptions["modupdater"].currentValue == false
 	
-	// Change the check interval and reset the last time checked
+	-- Change the check interval and reset the last time checked
 	if not mapChangeNeeded and updateCheckInterval ~= CHUDServerOptions["modupdatercheckinterval"].currentValue*60 then
 		updateCheckInterval = CHUDServerOptions["modupdatercheckinterval"].currentValue*60
 		lastTimeChecked = Shared.GetTime()
 	end
 	
-	// Change the reminder interval (only needed if it's already reminding)
+	-- Change the reminder interval (only needed if it's already reminding)
 	if mapChangeNeeded and updateCheckInterval ~= CHUDServerOptions["modupdaterreminderinterval"].currentValue*60 then
 		updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60
 		lastTimeChecked = Shared.GetTime()
@@ -71,12 +69,12 @@ function CHUDModUpdater()
 		MapCycle_ChangeMap( Shared.GetMapName() )
 	end
 
-	// Even if the updater is disabled, keep running so it can notify players of outdated mods in the server browser
+	-- Even if the updater is disabled, keep running so it can notify players of outdated mods in the server browser
 	if lastTimeChecked < Shared.GetTime() - updateCheckInterval then
 		lastTimeChecked = Shared.GetTime()
 		
 		if mapChangeNeeded then
-			// If we set the reminder to 0, don't show this message anymore.
+			-- If we set the reminder to 0, don't show this message anymore.
 			if updateCheckInterval > 0 and not DisableUpdater then
 				CHUDDisplayModUpdateMessage()
 			end

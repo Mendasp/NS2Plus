@@ -4,8 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /11/2014
+- 07/11/2014
 	- Modified vanilla scoreboard to make it usable at low resolutions. It will automatically scroll to your position if you are in RR or in a team. You can use the mousewheel, home/end/pgup/pgdn or click and drag to scroll.
+	- Formatted server console output on load to display more of the current NS2+ settings.
 
 - 31/10/2014
 	- Updated for Build 270.
