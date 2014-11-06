@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /11/2014
+	- Modified vanilla scoreboard to make it usable at low resolutions. It will automatically scroll to your position if you are in RR or in a team. You can use the mousewheel, home/end/pgup/pgdn or click and drag to scroll.
+
 - 31/10/2014
 	- Updated for Build 270.
 	- Added team average Hive skill to the scoreboard. Off by default. Servers can enable it by typing "sv_plus showavgteamskill true" in console or modifying NS2PlusServerConfig.json.
