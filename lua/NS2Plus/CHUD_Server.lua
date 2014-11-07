@@ -34,8 +34,10 @@ if CHUDServerOptions["modupdater"].shine then
 else
 	local modUpdStr = ConditionalValue(CHUDServerOptions["modupdater"].currentValue == false, "Disabled", "Enabled")
 	Shared.Message("[NS2+] Mod updater: " .. modUpdStr)
-	Shared.Message("\t- Check every: " .. CHUDServerOptions["modupdatercheckinterval"].currentValue .. " min.")
-	Shared.Message("\t- Reminder interval: " .. CHUDServerOptions["modupdaterreminderinterval"].currentValue .. " min.")
+	if CHUDServerOptions["modupdater"].currentValue == true then
+		Shared.Message("\t- Check every: " .. CHUDServerOptions["modupdatercheckinterval"].currentValue .. " min.")
+		Shared.Message("\t- Reminder interval: " .. CHUDServerOptions["modupdaterreminderinterval"].currentValue .. " min.")
+	end
 end
 
 Shared.Message("")
