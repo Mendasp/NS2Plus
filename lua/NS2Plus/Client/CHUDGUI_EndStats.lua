@@ -49,7 +49,7 @@ local function AddString(self, string, isComm, isVisible)
 		end
 		
 		local pos = 0
-		local xSpacing = GUIScale(10)
+		local xSpacing = GUIScale(100)
 		totalSize = totalSize + (xSpacing * #self.commStringsTable)
 		
 		for _, textItem in ipairs(self.commStringsTable) do
@@ -243,7 +243,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			
 			local savedFile = io.open(lastRoundFile, "w+")
 			if savedFile then
-				savedFile:write(json.encode(statsTable))
+				savedFile:write(json.encode(statsTable, { indent = true }))
 				io.close(savedFile)
 			end
 			self.saved = true
