@@ -396,6 +396,12 @@ function GUIScoreboard:Uninitialize()
     GUI.DestroyItem(self.connectionProblemsIcon)
     self.connectionProblemsIcon = nil
     
+    GUI.DestroyItem(self.scoreboardBackground)
+    self.scoreboardBackground = nil
+    
+    GUI.DestroyItem(self.background)
+    self.background = nil
+    
 end
 
 local function SetMouseVisible(self, setVisible)
