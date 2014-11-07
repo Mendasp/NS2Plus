@@ -1,5 +1,6 @@
 
 local CHUDClientStats = {}
+local CHUDTeamStats = {}
 local CHUDResearchTree = {}
 
 local oldTechResearched = ResearchMixin.TechResearched
@@ -18,10 +19,13 @@ end
 // Function name 2 stronk
 local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 	if steamId > 0 then
-		if not CHUDClientStats[steamId] or (teamNumber ~= nil and CHUDClientStats[steamId].teamNumber ~= teamNumber) then
+		if not CHUDClientStats[steamId] or (teamNumber ~= nil and CHUDClientStats[steamId].teamNumber ~= teamNumber and (teamNumber == 1 or teamNumber == 2)) then
 			CHUDClientStats[steamId] = {}
 			CHUDClientStats[steamId].pdmg = 0
 			CHUDClientStats[steamId].sdmg = 0
+			CHUDClientStats[steamId].hits = 0
+			CHUDClientStats[steamId].onosHits = 0
+			CHUDClientStats[steamId].misses = 0
 			CHUDClientStats[steamId].killstreak = 0
 			CHUDClientStats[steamId].teamNumber = teamNumber
 			CHUDClientStats[steamId].timeBuilding = 0
@@ -61,18 +65,39 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 	if GetGamerules():GetGameStarted() and steamId > 0 then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
+		local overallStat = CHUDClientStats[steamId]
 		local stat = CHUDClientStats[steamId]["weapons"][wTechId]
 		local lastStat = CHUDClientStats[steamId]["last"]
 		
 		if wasHit then
+			overallStat.hits = overallStat.hits + 1
 			stat.hits = stat.hits + 1
 			lastStat.hits = lastStat.hits + 1
+			
+			if teamNumber == 1 then
+				CHUDTeamStats.team1Hits = CHUDTeamStats.team1Hits + 1
+			elseif teamNumber == 2 then
+				CHUDTeamStats.team2Hits = CHUDTeamStats.team2Hits + 1
+			end
+			
 			if isOnos then
+				overallStat.onosHits = overallStat.onosHits + 1
 				stat.onosHits = stat.onosHits + 1
+				
+				if teamNumber == 1 then
+					CHUDTeamStats.team1OnosHits = CHUDTeamStats.team1OnosHits + 1
+				end
 			end
 		else
+			overallStat.misses = overallStat.misses + 1
 			stat.misses = stat.misses + 1
 			lastStat.misses = lastStat.misses + 1
+			
+			if teamNumber == 1 then
+				CHUDTeamStats.team1Misses = CHUDTeamStats.team1Misses + 1
+			elseif teamNumber == 2 then
+				CHUDTeamStats.team2Misses = CHUDTeamStats.team2Misses + 1
+			end
 		end
 	end
 end
@@ -119,6 +144,23 @@ local function AddBuildTime(steamId, buildTime, teamNumber)
 		stat.timeBuilding = stat.timeBuilding + buildTime
 	end
 end
+
+local originalUpdateScore
+originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
+	function(self)
+		originalUpdateScore(self)
+		
+		local stat = CHUDClientStats[self.steamId]
+		
+		if stat then
+			stat.playerName = self.playerName
+			stat.kills = self.kills
+			stat.assists = self.assists
+			stat.deaths = self.deaths
+		end
+		
+		return true
+	end)
 
 local function OnSetCHUDOverkill(client, message)
 
@@ -177,6 +219,12 @@ function NS2Gamerules:ResetGame()
 
 	CHUDCommStats = {}
 	CHUDClientStats = {}
+	CHUDTeamStats = {}
+	CHUDTeamStats.team1Hits = 0
+	CHUDTeamStats.team1OnosHits = 0
+	CHUDTeamStats.team1Misses = 0
+	CHUDTeamStats.team2Hits = 0
+	CHUDTeamStats.team2Misses = 0
 	CHUDResearchTree[1] = {}
 	CHUDResearchTree[2] = {}
 	
@@ -192,6 +240,20 @@ function NS2Gamerules:ResetGame()
 	
 	end
 	
+end
+
+local function CHUDGetAccuracy(hits, misses, onosHits)
+	local accuracy = 0
+	local accuracyOnos = ConditionalValue(onosHits == 0, -1, 0)
+	
+	if hits > 0 or misses > 0 then
+		accuracy = hits/(hits+misses)*100
+		if onosHits and onosHits > 0 and hits ~= onosHits then
+			accuracyOnos = (hits-onosHits)/((hits-onosHits)+misses)*100
+		end
+	end
+	
+	return accuracy, accuracyOnos
 end
 
 CHUDCommStats = { }
@@ -276,18 +338,6 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 	
 		originalNS2GamerulesEndGame(self, winningTeam)
 		
-		local team1Accuracy = 0
-		local team1OnosAccuracy = -1
-		local team1Hits = 0
-		local team1OnosHits = 0
-		local team1Misses = 0
-		local team2Accuracy = 0
-		local team2Hits = 0
-		local team2Misses = 0
-		local finalStats = {}
-		finalStats[1] = {}
-		finalStats[2] = {}
-		
 		for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 			local client = Server.GetClientById(playerInfo.clientId)
 			
@@ -310,20 +360,20 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				for index, stats in pairs(CHUDCommStats[playerInfo.steamId]) do
 					if stats.hits > 0 or stats.misses > 0 then
 						if index == "medpack" then
-							msg.medpackAccuracy = (stats.hits/(stats.hits+stats.misses))*100 or 0
+							msg.medpackAccuracy = CHUDGetAccuracy(stats.hits, stats.misses)
 							msg.medpackResUsed = stats.picks*kMedPackCost
 							msg.medpackResExpired = stats.misses*kMedPackCost
-							msg.medpackEfficiency = (stats.picks/(stats.picks+stats.misses))*100 or 0
+							msg.medpackEfficiency = CHUDGetAccuracy(stats.picks, stats.misses)
 							msg.medpackRefill = stats.refilled
 						elseif index == "ammopack" then
 							msg.ammopackResUsed = stats.hits*kAmmoPackCost
 							msg.ammopackResExpired = stats.misses*kAmmoPackCost
-							msg.ammopackEfficiency = (stats.hits/(stats.hits+stats.misses))*100 or 0
+							msg.ammopackEfficiency = CHUDGetAccuracy(stats.hits, stats.misses)
 							msg.ammopackRefill = stats.refilled
 						elseif index == "catpack" then
 							msg.catpackResUsed = stats.hits*kCatPackCost
 							msg.catpackResExpired = stats.misses*kCatPackCost
-							msg.catpackEfficiency = (stats.hits/(stats.hits+stats.misses))*100 or 0
+							msg.catpackEfficiency = CHUDGetAccuracy(stats.hits, stats.misses)
 						end
 					end
 				end
@@ -335,26 +385,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			if CHUDClientStats[playerInfo.steamId] and client then
 				local stats = CHUDClientStats[playerInfo.steamId]
 				
-				local overallAccuracy = 0
-				local overallOnosAccuracy = -1
-				local overallHits = 0
-				local overallMisses = 0
-				local overallOnosHits = 0
-
 				for wTechId, wStats in pairs(stats["weapons"]) do
-					local accuracy = 0
-					local accuracyOnos = ConditionalValue(wStats.onosHits == 0, -1, 0)
-					
-					overallHits = overallHits + wStats.hits
-					overallMisses = overallMisses + wStats.misses
-					overallOnosHits = overallOnosHits + wStats.onosHits
-					
-					if wStats.hits > 0 or wStats.misses > 0 then
-						accuracy = wStats.hits/(wStats.hits+wStats.misses)*100
-						if wStats.onosHits > 0 and wStats.hits ~= wStats.onosHits then
-							accuracyOnos = (wStats.hits-wStats.onosHits)/((wStats.hits-wStats.onosHits)+wStats.misses)*100
-						end
-					end
+					local accuracy, accuracyOnos = CHUDGetAccuracy(wStats.hits, wStats.misses, wStats.onosHits)
 					
 					local msg = {}
 					msg.wTechId = wTechId
@@ -365,38 +397,11 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
 				end
 				
-				if overallHits > 0 or overallMisses > 0 then
-					overallAccuracy = overallHits/(overallHits+overallMisses)*100
-					if overallOnosHits > 0 and overallHits ~= overallOnosHits then
-						overallOnosAccuracy = (overallHits-overallOnosHits)/((overallHits-overallOnosHits)+overallMisses)*100
-					end
-				end
-				
-				local statEntry = {}
-				statEntry.isMarine = stats.teamNumber == 1
-				statEntry.playerName = playerInfo.playerName
-				statEntry.kills = playerInfo.kills
-				statEntry.assists = playerInfo.assists
-				statEntry.deaths = playerInfo.deaths
-				statEntry.accuracy = overallOnosAccuracy == -1 and overallAccuracy or overallOnosAccuracy
-				statEntry.pdmg = stats.pdmg
-				statEntry.sdmg = stats.sdmg
-				statEntry.minutesBuilding = stats.timeBuilding/60
-				
-				if stats.teamNumber == 1 then
-					team1Hits = team1Hits + overallHits
-					team1OnosHits = team1OnosHits + overallOnosHits
-					team1Misses = team1Misses + overallMisses
-					table.insert(finalStats[1], statEntry)
-				elseif stats.teamNumber == 2 then
-					team2Hits = team2Hits + overallHits
-					team2Misses = team2Misses + overallMisses
-					table.insert(finalStats[2], statEntry)
-				end
+				local accuracy, accuracyOnos = CHUDGetAccuracy(stats.hits, stats.misses, stats.onosHits)
 				
 				local msg = {}
-				msg.accuracy = overallAccuracy
-				msg.accuracyOnos = overallOnosAccuracy
+				msg.accuracy = accuracy
+				msg.accuracyOnos = accuracyOnos
 				msg.pdmg = stats.pdmg
 				msg.sdmg = stats.sdmg
 				msg.killstreak = stats.killstreak
@@ -406,17 +411,34 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			end
 		
 		end
+
+		local finalStats = {}
+		finalStats[1] = {}
+		finalStats[2] = {}
 		
-		if team1Hits > 0 or team1Misses > 0 then
-			team1Accuracy = team1Hits/(team1Hits+team1Misses)*100
-			if team1OnosHits > 0 and team1Hits ~= team1OnosHits then
-				team1OnosAccuracy = (team1Hits-team1OnosHits)/((team1Hits-team1OnosHits)+team1Misses)*100
+		for steamId, stats in pairs(CHUDClientStats) do
+			local statEntry = {}
+			
+			local accuracy, accuracyOnos = CHUDGetAccuracy(stats.hits, stats.misses, stats.onosHits)
+			
+			statEntry.playerName = stats.playerName
+			statEntry.kills = stats.kills
+			statEntry.assists = stats.assists
+			statEntry.deaths = stats.deaths
+			statEntry.accuracy = accuracyOnos == -1 and accuracy or accuracyOnos
+			statEntry.pdmg = stats.pdmg
+			statEntry.sdmg = stats.sdmg
+			statEntry.minutesBuilding = stats.timeBuilding/60
+			
+			if stats.teamNumber == 1 then
+				table.insert(finalStats[1], statEntry)
+			elseif stats.teamNumber == 2 then
+				table.insert(finalStats[2], statEntry)
 			end
 		end
 		
-		if team2Hits > 0 or team2Misses > 0 then
-			team2Accuracy = team2Hits/(team2Hits+team2Misses)*100
-		end
+		local team1Accuracy, team1OnosAccuracy = CHUDGetAccuracy(CHUDTeamStats.team1Hits, CHUDTeamStats.team1Misses, CHUDTeamStats.team1OnosHits)
+		local team2Accuracy = CHUDGetAccuracy(CHUDTeamStats.team2Hits, CHUDTeamStats.team2Misses)
 		
 		local msg = {}
 		msg.marineAcc = team1Accuracy
@@ -424,7 +446,6 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		msg.alienAcc = team2Accuracy
 		Server.SendNetworkMessage("CHUDAvgAccStats", msg, true)
 		
-		// This will probably kill the server...
 		for _, finalStat in pairs(finalStats) do
 			for _, entry in pairs(finalStat) do
 				Server.SendNetworkMessage("CHUDPlayerStats", entry, true)
