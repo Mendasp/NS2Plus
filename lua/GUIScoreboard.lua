@@ -296,7 +296,6 @@ function GUIScoreboard:Initialize()
     
     self.gameTimeBackground = GUIManager:CreateGraphicItem()
     self.gameTimeBackground:SetSize(GUIScoreboard.kGameTimeBackgroundSize)
-
     self.gameTimeBackground:SetAnchor(GUIItem.Middle, GUIItem.Top)
     self.gameTimeBackground:SetPosition( Vector(- GUIScoreboard.kGameTimeBackgroundSize.x / 2, 10, 0) )
     self.gameTimeBackground:SetIsVisible(false)
@@ -551,7 +550,6 @@ function GUIScoreboard:Update(deltaTime)
             sliderPos = self.slidebarBg:GetSize().y - self.slidebar:GetSize().y
         end
         
-        //self.background:SetSize(Vector(contentXSize, contentYSize, 0))
         self.background:SetPosition(Vector(0, 10+(-ySize/2+slideOffset), 0))
         self.scoreboardBackground:SetSize(Vector(contentXSize, ySize, 0))
         self.scoreboardBackground:SetPosition(Vector(-contentXSize/2, -ySize/2, 0))
