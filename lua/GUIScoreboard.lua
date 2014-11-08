@@ -19,6 +19,7 @@ GUIScoreboard.kClickForMouseTextSize = GUIScale(22)
 GUIScoreboard.kClickForMouseText = Locale.ResolveString("SB_CLICK_FOR_MOUSE")
 
 GUIScoreboard.kSlidebarSize = Vector(7.5, 25, 0)
+GUIScoreboard.kBgColor = Color(0, 0, 0, 0.5)
 GUIScoreboard.kBgMaxYSpace = Client.GetScreenHeight() - ((GUIScoreboard.kClickForMouseBackgroundSize.y + 5) + (GUIScoreboard.kGameTimeBackgroundSize.y + 6) + 20)
 
 local kIconSize = GUIScale(Vector(40, 40, 0))
@@ -263,13 +264,13 @@ function GUIScoreboard:Initialize()
     self.scoreboardBackground = GUIManager:CreateGraphicItem()
     self.scoreboardBackground:SetAnchor(GUIItem.Middle, GUIItem.Center)
     self.scoreboardBackground:SetLayer(kGUILayerScoreboard)
-    self.scoreboardBackground:SetColor(Color(0, 0, 0, 0.5))
+    self.scoreboardBackground:SetColor(GUIScoreboard.kBgColor)
     self.scoreboardBackground:SetIsVisible(false)
     
     self.background = GUIManager:CreateGraphicItem()
     self.background:SetAnchor(GUIItem.Middle, GUIItem.Center)
     self.background:SetLayer(kGUILayerScoreboard)
-    self.background:SetColor(Color(0, 0, 0, 0.5))
+    self.background:SetColor(GUIScoreboard.kBgColor)
     self.background:SetIsVisible(true)
     
     self.backgroundStencil = GUIManager:CreateGraphicItem()
@@ -558,6 +559,7 @@ function GUIScoreboard:Update(deltaTime)
         
         self.slidebar:SetPosition(Vector(0, sliderPos, 0))
         self.slidebarBg:SetIsVisible(showSlidebar)
+        self.scoreboardBackground:SetColor(ConditionalValue(showSlidebar, GUIScoreboard.kBgColor, Color(0, 0, 0, 0)))
         
         local mouseX, mouseY = Client.GetCursorPosScreen()
         if self.mousePressed["LMB"]["Down"] and self.isDragging then
