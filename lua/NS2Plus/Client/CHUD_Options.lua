@@ -1142,4 +1142,16 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "G8",
 			},
+			sbcenter = { 
+				name    = "CHUD_SBCenter",
+				label   = "Auto-center scoreboard",
+				tooltip = "Enable or disable the scoreboard locking onto your player automatically after opening it.",
+				type    = "select",
+				values  = { "Off", "On" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "G9",
+			},
 }

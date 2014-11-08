@@ -260,6 +260,7 @@ function GUIScoreboard:Initialize()
     self.teams = { }
     self.reusePlayerItems = { }
     self.slidePercentage = -1
+    self.centerOnPlayer = true -- For modding
     
     self.scoreboardBackground = GUIManager:CreateGraphicItem()
     self.scoreboardBackground:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -526,7 +527,7 @@ function GUIScoreboard:Update(deltaTime)
         if self.slidePercentage == -1 then
             self.slidePercentage = 0
             local teamNumber = Client.GetLocalPlayer():GetTeamNumber()
-            if showSlidebar and teamNumber ~= 3 then
+            if showSlidebar and teamNumber ~= 3 and self.centerOnPlayer then
                 local player = self.playerHighlightItem:GetParent()
                 local playerItem = player:GetPosition().y
                 local teamItem = player:GetParent():GetPosition().y

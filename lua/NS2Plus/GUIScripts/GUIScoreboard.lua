@@ -58,6 +58,8 @@ originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
 function(self, deltaTime)
 	originalScoreboardUpdate(self, deltaTime)
 	
+	self.centerOnPlayer = CHUDGetOption("sbcenter")
+	
 	if GetGameInfoEntity().showAvgSkill then
 		if not self.avgSkillItem then
 			self.avgSkillItem = GUIManager:CreateTextItem()
@@ -94,6 +96,7 @@ function(self, deltaTime)
 		end
 		
 		self.avgSkillItem:SetText(skillText)
+		
 	end
 end)
 

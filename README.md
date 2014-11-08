@@ -4,7 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /11/2014
+- 08/11/2014
+	- Added average skill (if enabled by the server) to the server name/game time UI element at the top of the scoreboard.
+	- Added toggle for the auto-centering on your player in the scoreboard. Available in Misc. tab.
 	- Fixed issue where players that left the server before the round ended wouldn't show up in the final stats.
 	- Fixed small issue with scoreboard element uninitialization.
 
