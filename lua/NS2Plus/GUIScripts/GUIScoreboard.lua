@@ -81,11 +81,11 @@ function(self, deltaTime)
 		local team2Players = #self.teams[3]["GetScores"]()
 		local skillText = ""
 
-		if team1Players > 0 and team2Players > 0 then
+		if team1Players > 0 and team2Players > 0 and team1Skill and team2Skill then
 			skillText = string.format("Avg. marine skill: %d | Avg. alien skill: %d", team1Skill, team2Skill)
-		elseif team1Players > 0 then
+		elseif team1Players > 0 and team1Skill then
 			skillText = string.format("Avg. marine skill: %d", team1Skill)
-		elseif team2Players > 0 then
+		elseif team2Players > 0 and team2Skill then
 			skillText = string.format("Avg. alien skill: %d", team2Skill)
 		end
 		
