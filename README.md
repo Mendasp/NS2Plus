@@ -9,6 +9,7 @@ Latest changes
 	- Added toggle for the auto-centering on your player in the scoreboard. Available in Misc. tab.
 	- Fixed issue where players that left the server before the round ended wouldn't show up in the final stats.
 	- Fixed small issue with scoreboard element uninitialization.
+	- Fixed bug where the killfeed was displaying behind the death screen.
 
 - 07/11/2014
 	- Modified vanilla scoreboard to make it usable at low resolutions. It will automatically scroll to your position if you are in RR or in a team. You can use the mousewheel, home/end/pgup/pgdn or click and drag to scroll.
