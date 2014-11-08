@@ -473,12 +473,6 @@ function GUIScoreboard:Update(deltaTime)
         
     end
     
-    -- update game time
-    self.gameTimeBackground:SetIsVisible(self.visible)
-    self.gameTime:SetIsVisible(self.visible)
-    self.scoreboardBackground:SetIsVisible(self.visible)
-    self.badgeNameTooltip:SetIsVisible(self.visible)
-    
     if self.visible then
     
         local gameTime = PlayerUI_GetGameLengthTime()
@@ -556,6 +550,11 @@ function GUIScoreboard:Update(deltaTime)
         self.scoreboardBackground:SetPosition(Vector(-contentXSize/2, -ySize/2, 0))
         self.backgroundStencil:SetSize(Vector(contentXSize, ySize-20, 0))
         self.backgroundStencil:SetPosition(Vector(0, 10, 0))
+        local gameTimeBgYSize = self.gameTimeBackground:GetSize().y
+        local gameTimeBgYPos = self.gameTimeBackground:GetPosition().y
+        
+        self.gameTimeBackground:SetSize(Vector(contentXSize, gameTimeBgYSize, 0))
+        self.gameTimeBackground:SetPosition(Vector(-contentXSize/2, gameTimeBgYPos, 0))
         
         self.slidebar:SetPosition(Vector(0, sliderPos, 0))
         self.slidebarBg:SetIsVisible(showSlidebar)
@@ -568,6 +567,12 @@ function GUIScoreboard:Update(deltaTime)
     else
         self.slidePercentage = -1
     end
+    
+    -- Show all the elements after sorting them so it doesn't appear to shift when we open
+    self.gameTimeBackground:SetIsVisible(self.visible)
+    self.gameTime:SetIsVisible(self.visible)
+    self.scoreboardBackground:SetIsVisible(self.visible)
+    self.badgeNameTooltip:SetIsVisible(self.visible)
     
     -- Detect connection problems and display the indicator.
     self.droppedMoves = self.droppedMoves or 0
