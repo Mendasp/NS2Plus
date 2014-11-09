@@ -1,7 +1,7 @@
 kCHUDElixerVersion = 1.8
 // Version number is the amount of revisions in the Workshop
 // Try to update but only important when changing defaults
-kCHUDVersion = 231
+kCHUDVersion = 232
 
 Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
