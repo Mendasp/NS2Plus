@@ -421,6 +421,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			
 			local accuracy, accuracyOnos = CHUDGetAccuracy(stats.hits, stats.misses, stats.onosHits)
 			
+			statEntry.isMarine = stats.teamNumber == 1
 			statEntry.playerName = stats.playerName
 			statEntry.kills = stats.kills
 			statEntry.assists = stats.assists
