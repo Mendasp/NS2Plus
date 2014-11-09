@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 09/11/2014
+	- Fixed server crash related to parented entities.
+	- Made scoreboard behave more like the old one at high resolutions.
+	- Made Commander player background yellow in the scoreboard as to identify rookie commanders.
+
 - 08/11/2014
 	- Added average skill (if enabled by the server) to the server name/game time UI element at the top of the scoreboard.
 	- Added toggle for the auto-centering on your player in the scoreboard. Available in Misc. tab.

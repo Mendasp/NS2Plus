@@ -50,7 +50,7 @@ GUIScoreboard.kTeamItemWidth = 600
 GUIScoreboard.kTeamItemHeight = GUIScoreboard.kTeamNameFontSize + GUIScoreboard.kTeamInfoFontSize + 8
 GUIScoreboard.kTeamSpacing = 32
 GUIScoreboard.kTeamScoreColumnStartX = 200
-GUIScoreboard.kTeamColumnSpacingX = 30
+GUIScoreboard.kTeamColumnSpacingX = ConditionalValue(Client.GetScreenWidth() < 1280, 30, 40)
 
 -- Player constants.
 GUIScoreboard.kPlayerStatsFontSize = 16
@@ -84,6 +84,10 @@ local kConnectionProblemsIcon = PrecacheAsset("ui/ethernet-connect.dds")
 
 function GUIScoreboard:OnResolutionChanged(oldX, oldY, newX, newY)
 
+    GUIScoreboard.screenWidth = newX
+
+    GUIScoreboard.kTeamColumnSpacingX = ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 40)
+    
     GUIScoreboard.kGameTimeBackgroundSize = Vector(640, GUIScale(32), 0)
     GUIScoreboard.kGameTimeTextSize = GUIScale(22)
     
@@ -97,9 +101,12 @@ function GUIScoreboard:OnResolutionChanged(oldX, oldY, newX, newY)
     
 end
 
--- Make this fixed size to adjust for all resolutions from 640x480 up to 1920x1080
 local function GetTeamItemWidth()
-    return 608 -- 640 * 0.95
+    if GUIScoreboard.screenWidth < 1280 then
+        return 608 -- 640 * 0.95
+    else
+        return GUIScoreboard.screenWidth/2 * 0.95
+    end
 end
 
 local function CreateTeamBackground(self, teamNumber)
@@ -153,7 +160,7 @@ local function CreateTeamBackground(self, teamNumber)
     teamInfoItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(teamInfoItem)
     
-    local currentColumnX = GUIScoreboard.kPlayerItemWidth
+    local currentColumnX = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth, GetTeamItemWidth() - GUIScoreboard.kTeamColumnSpacingX * 10)
     local playerDataRowY = 10
     
     -- Status text item.
@@ -260,6 +267,7 @@ function GUIScoreboard:Initialize()
     self.teams = { }
     self.reusePlayerItems = { }
     self.slidePercentage = -1
+    GUIScoreboard.screenWidth = Client.GetScreenWidth()
     self.centerOnPlayer = true -- For modding
     
     self.scoreboardBackground = GUIManager:CreateGraphicItem()
@@ -487,12 +495,12 @@ function GUIScoreboard:Update(deltaTime)
         
         -- Get sizes for everything so we can reposition correctly
         local contentYSize = 0
-        local contentXSize = 640
+        local contentXSize = GetTeamItemWidth()+GUIScale(50)
         local contentYSpacing = 20
         
         if teamGUISize[1] then
             -- If it doesn't fit horizontally or there is only one team put it below
-            if GetTeamItemWidth()*2 > Client.GetScreenWidth() or not teamGUISize[2] then
+            if GetTeamItemWidth()*2 > GUIScoreboard.screenWidth or not teamGUISize[2] then
                 self.teams[2].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() / 2, contentYSize, 0))
                 contentYSize = contentYSize + teamGUISize[1] + contentYSpacing
             else
@@ -502,7 +510,7 @@ function GUIScoreboard:Update(deltaTime)
         end
         if teamGUISize[2] then
             -- If it doesn't fit horizontally or there is only one team put it below
-            if GetTeamItemWidth()*2 > Client.GetScreenWidth() or not teamGUISize[1] then
+            if GetTeamItemWidth()*2 > GUIScoreboard.screenWidth or not teamGUISize[1] then
                 self.teams[3].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() / 2, contentYSize, 0))
                 contentYSize = contentYSize + teamGUISize[2] + contentYSpacing
             else
@@ -510,9 +518,9 @@ function GUIScoreboard:Update(deltaTime)
             end
         end
         -- If both teams fit horizontally then take only the biggest size
-        if teamGUISize[1] and teamGUISize[2] and GetTeamItemWidth()*2 < Client.GetScreenWidth() then
+        if teamGUISize[1] and teamGUISize[2] and GetTeamItemWidth()*2 < GUIScoreboard.screenWidth then
             contentYSize = math.max(teamGUISize[1], teamGUISize[2]) + contentYSpacing*2
-            contentXSize = 1260
+            contentXSize = GetTeamItemWidth()*2+GUIScale(50)
         end
         if teamGUISize[0] then
             self.teams[1].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() / 2, contentYSize, 0))
@@ -750,6 +758,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local isDead = isVisibleTeam and playerRecord.Status == deadString
         local isSteamFriend = playerRecord.IsSteamFriend
         local playerSkill = playerRecord.Skill
+        local commanderColor = GUIScoreboard.kCommanderFontColor
         
         if isVisibleTeam and teamNumber == kTeam1Index then
             local currentTech = GetTechIdsFromBitMask(playerRecord.Tech)
@@ -768,7 +777,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         
         currentPosition.y = currentY
         player["Background"]:SetPosition(currentPosition)
-        player["Background"]:SetColor(teamColor)
+        player["Background"]:SetColor(ConditionalValue(isCommander, commanderColor, teamColor))
         
         -- Handle local player highlight
         if ScoreboardUI_IsPlayerLocal(playerName) then
@@ -806,14 +815,9 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Ping"]:SetText(pingStr)
         
         local white = GUIScoreboard.kWhiteColor
-        local commanderColor = GUIScoreboard.kCommanderFontColor
         local baseColor, nameColor, statusColor = white, white, white
         
-        if isCommander then  
-        
-           baseColor, nameColor, statusColor = commanderColor, commanderColor, commanderColor
-           
-        elseif isDead and isVisibleTeam then
+        if isDead and isVisibleTeam then
         
             nameColor, statusColor = kDeadColor, kDeadColor 
             
@@ -973,7 +977,7 @@ function GUIScoreboard:CreatePlayerItem()
     playerNameItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(playerNameItem)
 
-    local currentColumnX = GUIScoreboard.kPlayerItemWidth
+    local currentColumnX = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth, GetTeamItemWidth() - GUIScoreboard.kTeamColumnSpacingX * 10)
     
     // Status text item.
     local statusItem = GUIManager:CreateTextItem()
@@ -981,7 +985,7 @@ function GUIScoreboard:CreatePlayerItem()
     statusItem:SetAnchor(GUIItem.Left, GUIItem.Center)
     statusItem:SetTextAlignmentX(GUIItem.Align_Min)
     statusItem:SetTextAlignmentY(GUIItem.Align_Center)
-    statusItem:SetPosition(Vector(currentColumnX + 30, 0, 0))
+    statusItem:SetPosition(Vector(currentColumnX + ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60), 0, 0))
     statusItem:SetColor(Color(1, 1, 1, 1))
     statusItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(statusItem)
