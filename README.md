@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /11/2014
+	- Fixed bug where end round stats would display all players as aliens.
+	- Made scoreboard not take up the entire width at high res.
+
 - 09/11/2014
 	- Fixed server crash related to parented entities.
 	- Made scoreboard behave more like the old one at high resolutions.

@@ -105,7 +105,7 @@ local function GetTeamItemWidth()
     if GUIScoreboard.screenWidth < 1280 then
         return 608 -- 640 * 0.95
     else
-        return GUIScoreboard.screenWidth/2 * 0.95
+        return math.min(800, GUIScoreboard.screenWidth/2 * 0.95)
     end
 end
 
@@ -495,7 +495,9 @@ function GUIScoreboard:Update(deltaTime)
         
         -- Get sizes for everything so we can reposition correctly
         local contentYSize = 0
-        local contentXSize = GetTeamItemWidth()+GUIScale(50)
+        local contentXOffset = GUIScale(50)
+        local contentXSize = GetTeamItemWidth() + contentXOffset
+        local contentExtraXOffset = (GUIScoreboard.screenWidth/2 - (GetTeamItemWidth() + contentXOffset/2))/2
         local contentYSpacing = 20
         
         if teamGUISize[1] then
@@ -504,7 +506,7 @@ function GUIScoreboard:Update(deltaTime)
                 self.teams[2].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() / 2, contentYSize, 0))
                 contentYSize = contentYSize + teamGUISize[1] + contentYSpacing
             else
-                self.teams[2].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() - 5, contentYSize, 0))
+                self.teams[2].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() - contentExtraXOffset/2, contentYSize, 0))
             end
             
         end
@@ -514,13 +516,13 @@ function GUIScoreboard:Update(deltaTime)
                 self.teams[3].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() / 2, contentYSize, 0))
                 contentYSize = contentYSize + teamGUISize[2] + contentYSpacing
             else
-                self.teams[3].GUIs.Background:SetPosition(Vector(5, contentYSize, 0))
+                self.teams[3].GUIs.Background:SetPosition(Vector(contentExtraXOffset/2, contentYSize, 0))
             end
         end
         -- If both teams fit horizontally then take only the biggest size
         if teamGUISize[1] and teamGUISize[2] and GetTeamItemWidth()*2 < GUIScoreboard.screenWidth then
             contentYSize = math.max(teamGUISize[1], teamGUISize[2]) + contentYSpacing*2
-            contentXSize = GetTeamItemWidth()*2+GUIScale(50)
+            contentXSize = GetTeamItemWidth()*2 + contentXOffset + contentExtraXOffset*2
         end
         if teamGUISize[0] then
             self.teams[1].GUIs.Background:SetPosition(Vector(-GetTeamItemWidth() / 2, contentYSize, 0))
