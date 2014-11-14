@@ -45,109 +45,6 @@ Latest changes
 	- Added map-specific prop blocking.
 	- Removed more props from biodome under the map particles setting.
 
-- 19/09/2014
-	- Made the viewmodel toggle available for aliens too, the option has been reset.
-
-- 18/09/2014
-	- Added option to make crosshairs scale with resolution. Available in HUD tab.
-	- Added viewmodel toggle for marines. It is always allowed on CompMod servers and disabled by default on vanilla servers (can be enabled by server admins).
-	- Server browser will now tell you the NS2+ options that are blocked by the server in conflict with your own settings.
-	- Added option for the marine commander alert queue to only respond to player alerts.
-
-- 10/09/2014
-	- Improved request menu option selection (Thanks remi.D!)
-	- Added the time spent building to the end round stats.
-	- Fixed some weapons not reporting the correct number of kills on round end.
-
-- 01/09/2014
-	- Added option to delay ending recording after releasing the microphone binding (default 0.15 seconds).
-	- Fixed issue with microphone being cut off when switching in/out of commander mode.
-
-- 31/08/2014
-	- Changed method of doing the player colors in the minimap to be more mod friendly.
-	- Fixed rounding error in HL2 style bars.
-	- Fixed white box around health/armor in marine HUD when not displaying the vanilla bars.
-	- Compatibility with build 269.
-
-- 24/08/2014
-	- Precached some textures to avoid potential hitching.
-	- Improved mucous display making it an extra ring in the health bars.
-	- Fixed super small rounding error caused by saving slider settings twice.
-	- Fixed phase gate lines not being applied correctly.
-	- Changed drop/select range circles from models to decals so they represent better the area that they cover.
-	- Reduced Fade Blink volume.
-
-- 22/08/2014
-	- Updated for Build 268. Removed all the stuff that is now part of vanilla.
-
-- 18/08/2014
-	- Made medpack accuracy stricter, pickups have to occur in 25ms for it to count as a hit instead of the previous 100ms.
-	- Enabled tvglare element in the main menu so the Fastload menu mods work again.
-	- Added kills per weapon and the longest killstreak to the endgame stats.
-	- Fixed bug where the follow mode would try to follow entities that weren't players.
-	- Made spectator follow mode keep following the player through class changes.
-
-- 16/08/2014
-	- Fixed amazing bug that made the Endgame Stats show every time the request key was released ignoring all laws of physics, common sense, and other stuff. Seriously, wtf.
-	- Added improved follow mode to Insight. When clicking on a player frame it will autofollow that player until it dies or changes classes (or the frame is clicked again).
-
-- 13/08/2014
-	- Added Gorge Spit accuracy back.
-	- Added some rounding to the options menu so people don't freak out about floating point precision.
-
-- 07/08/2014
-	- Fixed alien armor still showing up in rare instances for alien HUD bars.
-	- Made HL2 HUD bars thinner and slightly more transparent.
-
-- 05/08/2014
-	- Added NS2+ Options to the main menu if the mod is mounted.
-	- Autopickup Better Weapon option now keeps your current weapon as long as it's better than the LMG.
-	- Added HUD bars option. You can choose to have HUD info next to your crosshair (HL2 style) or to the sides at the bottom (NS1 style). Available in HUD tab. Thanks to rantology for the art!
-	- Fixed crosshair hit indicator fade time not being applied on map load properly.
-	- Added team specific sensitivities. Available in Misc. tab.
-	- Added team specific FOVs. Available in Misc. tab.
-	- Tweaked the rifle muzzleflash and some ricochet particles under Minimal Particles setting.
-
-- 20/07/2014
-	- Fixed vanilla bug where the Commander would log out attacking.
-	- Fixed vanilla bug that made trigger volumes bigger than their representation in the editor. This affected some map locations (power node issues).
-	- Made powered room effect for Commanders with the same accuracy as the actual volume they cover.
-
-- 16/07/2014
-	- Added a toggle for the low ammo warning. Available in HUD tab.
-
-- 15/07/2014
-	- Made endgame stats appear as soon as they are received.
-	- Endgame stats are now a toggle, tap the Request menu key (default: X) to see them.
-	- Commander stats now show up with the other endgame stats.
-	- Endgame stats now get saved locally so you can check them after map or server changes.
-	- You can now check the endgame stats as long as a new game hasn't started or you're in the ReadyRoom.
-
-- 12/07/2014
-	- Made weapons reload automatically after shooting the last bullet.
-	- Added option to make ragdolls dissolve instantly. Available in Misc. tab.
-	- Added weapon expire bars for Commanders.
-
-- 11/07/2014
-	- Fixed problem where going from overhead spectator to free cam would not apply the custom map atmospheric density.
-	- Added custom color option for players in the minimap to easily tell apart players from buildings. Available in HUD tab.
-	- Made weapon ammo displays flash red with low ammo counts.
-	- Classic ammo flashes red with low ammo counts.
-	- Added custom minimap icons for the unsocketed/blueprint Power Nodes.
-
-- 10/07/2014
-	- Unsocketed power nodes are now grey.
-	- Made alien energy bar for Commanders the same color as it is in Insight.
-
-- 09/07/2014
-	- Added Lerk Bite icon.
-	- Enabled hitsounds for Grenade Launcher.
-	- Made unsocketed/blueprint Power Nodes show up properly in the minimap.
-	- Added option to choose the color of the minimap arrow representing your position. Available in HUD tab.
-	- Alien Commanders can now see the energy of the players.
-	- Added high contrast colors for armor in Insight.
-	- Added max decal lifetime option. You can set how long decals last (still affected by the vanilla setting). Available in Visual tab.
-
 =================
 Credits/Thanks to
 =================
@@ -163,3 +60,67 @@ Credits/Thanks to
 	- [**Ghoul**](https://github.com/BrightPaul)
 	- **Sewlek**
 	- [**Person8880**](https://github.com/Person8880)
+	
+=================
+Past NS2+ features now included in vanilla NS2:
+=================
+- [270] Scoreboard displays the number of connecting players.
+- [270] In the voice request menu you can now select items by moving the mouse past them (similar to NS1).
+- [270] Building range circles now use decals instead of models.
+- [270] Added an option in the sound tab to continue recording after the microphone button has been released for a fraction of a second to help ensure your last word isn't cut off (defaults to 150ms).
+- [268] Marine weapons now reload automatically upon firing the last bullet.
+- [268] Commanders can marquee select enemy units when there's no friendly units in the marquee.
+- [268] Grenade collision radius is more representative of the visual model (proximity detonation radius is unchanged).
+- [268] You can click on the player frames on the sides to autofollow a player. Click again to stop following.
+- [268] Shotgun lights in the model reflect ammo count.
+- [268] Weapon displays flash red when low on ammo.
+- [268] Added unsocketed and blueprint states for Power Nodes in the minimap. You can now see all Power Node states.
+- [268] Alien Commanders can see the energy for their teammates.
+- [268] High contrast colors for health/armor in Insight spectator.
+- [267] Marine players and the Marine Commander can see the time until the weapon disappears when it's been dropped.
+- [267] Make the outline color yellow for parasited players and purple when they have received a catpack in overhead.
+- [267] Added bonewall icon to map.
+- [267] Items that disappear after some time on the ground now display an expiration bar for all Marine players (including the Marine Commander).
+- [267] Server-confirmed hitsounds.
+- [267] The armory and infantry portal arms don’t block bullets anymore.
+- [267] Lerks can see damage numbers for the poison bite's damage over time.
+- [267] When a structure bleeds out the killfeed will show the killer as whoever hit it last.
+- [267] You can see the class of your evolving teammates.
+- [267] The kill feed highlights your player kills. Icons in the killfeed are properly scaled too.
+- [267] Dropped weapons outlines are color coded for improved readability.
+- [267] Infantry Portals will show the name and progress of the player that is about to spawn.
+- [267] Evolving alien players will show their evolution progress for their teammates.
+- [267] Scoreboard keeps the time of the previous round until the next one starts.
+- [267] Dropped marine weapons are outlined for the marine commander and spectators.
+- [267] Spectators can see deployed mines highlighted with a blue outline, and the outline will turn yellow if the mine has been parasited.
+- [267] Added slight impulse to dropped weapons.
+- [267] Enabled weapon specific ammo models for dropped weapons.
+- [266] Marine commanders can see the marine ammo bar with the color that's used in the overview spectator mode to easily identify the weapon the marine is carrying.
+- [266] Commanders can see building ranges before dropping them.
+- [266] Adds player upgrades to the Insight player frames.
+- [266] Adds Lerk deaths to Insight alerts.
+- [266] Alltalk displays the correct team color/background for voice chat.
+- [266] Mods list is sorted automatically as Active > Subscribed > Alphabetically. You can also sort by column.
+- [266] Connections between Phase Gates or Gorge Tunnels are now colored depending on the team. If there’s more than 2 PGs it will switch to lines with animated arrows.
+- [265] Parasited players display their name yellow for teammates and spectators.
+
+=================
+Past NS2+ fixes now included in vanilla NS2:
+=================
+- [270] Fixed players having voice communication cut off while entering or exiting commander mode.
+- [270] Fixed occasional error when attempting to enter the Mods menu.
+- [268] Fixed bug that made trigger volumes bigger than their representation in the editor. This affected some map locations (power node issues).
+- [268] Fixed bug where the Commander would log out attacking.
+- [267] Made location text for marines left aligned so long location names can fit in the UI
+- [267] Fixed Bonewall not having pre-drop range.
+- [267] Fixed bug where Shotguns and Exo Minigun didn't shoot through soft targets.
+- [267] Fixed drifters trying to build structures they can't and fake-building them forever.
+- [266] Fixed sentries not being able to be dropped until the first sentry battery is finished.
+- [266] Fixed scoreboard not showing Spectators to players on teams.
+- [266] Fixed commander selection bug that made buildings selected with hotgroups not respond properly sometimes.
+- [266] Fixed lights staying red if the power node was under attack (infestation).
+- [266] Fixed bug where damage numbers wouldn't show the damage done in the killing blow.
+- [265] Fixed skulk jump sound loudness (50% reduced). 
+- [265] Fixed skulk growl sound when walking.
+- [265] Fixed inactive/unbuilt structures not blinking red when under attack.
+- [265] Fixed alien structures not blinking red when uncysted.
