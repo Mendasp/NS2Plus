@@ -26,14 +26,17 @@ function(self, updateTeam)
 			player["Deaths"]:SetPosition(temp)
 		end
 		
+		if self.showPlayerSkill then
+			player["Name"]:SetText(string.format("[%s] %s", playerRecord.Skill, player["Name"]:GetText()))
+			player["Status"]:SetText("")
+		end
+		
 		teamAvgSkill = teamAvgSkill + playerRecord.Skill
 		
 		currentPlayerIndex = currentPlayerIndex + 1
 	end
 	
-	local showAvgSkill = GetGameInfoEntity().showAvgSkill
-	
-	if (teamNumber == 1 or teamNumber == 2) and teamAvgSkill > 0 and showAvgSkill then
+	if (teamNumber == 1 or teamNumber == 2) and teamAvgSkill > 0 and self.showAvgSkill then
 		local skill = teamAvgSkill/numPlayers
 		if teamNumber == 1 then
 			team1Skill = skill
@@ -60,7 +63,10 @@ function(self, deltaTime)
 	
 	self.centerOnPlayer = CHUDGetOption("sbcenter")
 	
-	if GetGameInfoEntity().showAvgSkill then
+	self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and not PlayerUI_GetHasGameStarted()
+	self.showAvgSkill = GetGameInfoEntity().showAvgSkill
+	
+	if self.showAvgSkill == true then
 		if not self.avgSkillItem then
 			self.avgSkillItem = GUIManager:CreateTextItem()
 			self.avgSkillItem:SetFontName(GUIScoreboard.kGameTimeFontName)

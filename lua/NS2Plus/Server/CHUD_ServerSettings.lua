@@ -61,6 +61,12 @@ CHUDServerOptions =
 		valueType = "bool",
 		defaultValue = false,
 		},
+	showplayerskill = {
+		label   = "Show player skill pregame",
+		tooltip = "Shows the player's Hive skill on the scoreboard before the game starts.",
+		valueType = "bool",
+		defaultValue = false,
+		},
 }
 
 for modNum = 1, Server.GetNumActiveMods() do

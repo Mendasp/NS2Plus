@@ -104,6 +104,7 @@ if not CHUDMainMenu then
 	local gameInfoNetworkVars =
 	{
 		showAvgSkill = "boolean",
+		showPlayerSkill = "boolean",
 	}
 
 	Class_Reload("GameInfo", gameInfoNetworkVars)

@@ -28,7 +28,9 @@ if #CHUDClientOptions > 0 then
 end
 
 local showAvgSkill = ConditionalValue(CHUDServerOptions["showavgteamskill"].currentValue, "Enabled", "Disabled")
+local showPlayerSkill = ConditionalValue(CHUDServerOptions["showplayerskill"].currentValue, "Enabled", "Disabled")
 Shared.Message("[NS2+] Display team avg. skill: " .. showAvgSkill)
+Shared.Message("[NS2+] Display player skill pregame: " .. showPlayerSkill)
 
 -- Mod updater setting also depends on shine
 if CHUDServerOptions["modupdater"].shine then

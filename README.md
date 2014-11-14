@@ -4,10 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /11/2014
+- 14/11/2014
 	- Fixed bug where end round stats would display all players as aliens.
 	- Made scoreboard not take up the entire width at high res.
 	- Marine Commanders can now always see if a player has a welder.
+	- Added server option to display player skill pre-game on the scoreboard. Servers can enable it by typing "sv_plus showplayerskill true" in console or modifying NS2PlusServerConfig.json.
 
 - 09/11/2014
 	- Fixed server crash related to parented entities.
