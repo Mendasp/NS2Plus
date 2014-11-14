@@ -280,7 +280,7 @@ function GUIScoreboard:Initialize()
     self.background:SetAnchor(GUIItem.Middle, GUIItem.Center)
     self.background:SetLayer(kGUILayerScoreboard)
     self.background:SetColor(GUIScoreboard.kBgColor)
-    self.background:SetIsVisible(true)
+    self.background:SetIsVisible(false)
     
     self.backgroundStencil = GUIManager:CreateGraphicItem()
     self.backgroundStencil:SetIsStencil(true)
@@ -582,6 +582,7 @@ function GUIScoreboard:Update(deltaTime)
     -- Show all the elements after sorting them so it doesn't appear to shift when we open
     self.gameTimeBackground:SetIsVisible(self.visible)
     self.gameTime:SetIsVisible(self.visible)
+    self.background:SetIsVisible(self.visible)
     self.scoreboardBackground:SetIsVisible(self.visible)
     self.badgeNameTooltip:SetIsVisible(self.visible)
     
