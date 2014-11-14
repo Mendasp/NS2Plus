@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 15/11/2014
+	- Made the pregame skill display compatible with Pregame Plus.
+
 - 14/11/2014
 	- Fixed bug where end round stats would display all players as aliens.
 	- Made scoreboard not take up the entire width at high res.

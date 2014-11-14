@@ -62,8 +62,10 @@ function(self, deltaTime)
 	originalScoreboardUpdate(self, deltaTime)
 	
 	self.centerOnPlayer = CHUDGetOption("sbcenter")
-	
-	self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and not PlayerUI_GetHasGameStarted()
+	local _, pgp = Shine and Shine:IsExtensionEnabled( "pregameplus" )
+	local pgpEnabled = pgp and pgp.dt and pgp.dt.Enabled
+
+	self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and (pgpEnabled or not PlayerUI_GetHasGameStarted())
 	self.showAvgSkill = GetGameInfoEntity().showAvgSkill
 	
 	if self.showAvgSkill == true then
