@@ -7,6 +7,7 @@ Latest changes
 - /11/2014
 	- Fixed bug where end round stats would display all players as aliens.
 	- Made scoreboard not take up the entire width at high res.
+	- Marine Commanders can now always see if a player has a welder.
 
 - 09/11/2014
 	- Fixed server crash related to parented entities.

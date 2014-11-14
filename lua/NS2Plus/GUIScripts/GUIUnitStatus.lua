@@ -11,6 +11,9 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			blipData.IsCrossHairTarget = false
 			blipData.HealthFraction = 0
 		end
+		if CHUDBlipData.HasWelder then
+			blipData.HasWelder = CHUDBlipData.HasWelder
+		end
 	end
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
 	local isCrosshairTarget = blipData.IsCrossHairTarget

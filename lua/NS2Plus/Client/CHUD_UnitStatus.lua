@@ -21,6 +21,10 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 			end
 		end
 		
+		if self:isa("Marine") then
+			hintTable.HasWelder = self:GetHasWelder(player)
+		end
+		
 		return hintTable
 	end
 	
