@@ -206,15 +206,20 @@ function CHUDGUI_EndStats:Update(deltaTime)
 						Shared.Message("Aliens")
 					end
 					Shared.Message("------------")
-					Shared.Message("Player - K/A/D - Accuracy - PDMG / SDMG - Time building")
+					Shared.Message("Player - K/A/D - Accuracy / W/O Onos - PDMG / SDMG - Time building")
 					Shared.Message("------------")
 				end
 				
 				local minutes = math.floor(message.minutesBuilding)
 				local seconds = (message.minutesBuilding % 1)*60
 				
-				Shared.Message(string.format("%s - %d/%d/%d - %.2f%% - %.2f / %.2f - %d:%02d",
-					message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.pdmg, message.sdmg, minutes, seconds))
+				if message.accuracyOnos == -1 then
+					Shared.Message(string.format("%s - %d/%d/%d - %.2f%% / * - %.2f / %.2f - %d:%02d",
+						message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.pdmg, message.sdmg, minutes, seconds))
+				else
+					Shared.Message(string.format("%s - %d/%d/%d - %.2f%% / %.2f%% - %.2f / %.2f - %d:%02d",
+						message.playerName, message.kills, message.assists, message.deaths, message.accuracy, message.accuracyOnos, message.pdmg, message.sdmg, minutes, seconds))
+				end
 			
 			end
 		end

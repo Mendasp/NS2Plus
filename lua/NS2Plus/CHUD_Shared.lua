@@ -65,6 +65,7 @@ if not CHUDMainMenu then
 		assists = string.format("integer (0 to %d)", kMaxKills),
 		deaths = string.format("integer (0 to %d)", kMaxDeaths),
 		accuracy = "float (0 to 100 by 0.01)",
+		accuracyOnos = "float (-1 to 100 by 0.01)",
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
 		minutesBuilding = "float (0 to 1023 by 0.01)",

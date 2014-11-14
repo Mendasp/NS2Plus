@@ -426,7 +426,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			statEntry.kills = stats.kills
 			statEntry.assists = stats.assists
 			statEntry.deaths = stats.deaths
-			statEntry.accuracy = accuracyOnos == -1 and accuracy or accuracyOnos
+			statEntry.accuracy = accuracy
+			statEntry.accuracyOnos = accuracyOnos
 			statEntry.pdmg = stats.pdmg
 			statEntry.sdmg = stats.sdmg
 			statEntry.minutesBuilding = stats.timeBuilding/60
