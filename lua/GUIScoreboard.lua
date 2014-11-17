@@ -68,6 +68,8 @@ local kPlayerBadgeRightPadding = 4
 local kSkillBarSize = Vector(48, 15, 0)
 local kSkillBarPadding = 4
 
+local lastScoreboardVisState = false
+
 -- Color constants.
 GUIScoreboard.kBlueColor = ColorIntToColor(kMarineTeamColor)
 GUIScoreboard.kBlueHighlightColor = Color(0.30, 0.69, 1, 1)
@@ -584,7 +586,13 @@ function GUIScoreboard:Update(deltaTime)
     self.gameTime:SetIsVisible(self.visible)
     self.background:SetIsVisible(self.visible)
     self.scoreboardBackground:SetIsVisible(self.visible)
-    self.badgeNameTooltip:SetIsVisible(self.visible)
+    if lastScoreboardVisState ~= self.visible then
+        lastScoreboardVisState = self.visible
+        if self.visible == false then
+            self.badgeNameTooltip.background:FadeOut(0)
+            self.badgeNameTooltip.tooltip:FadeOut(0)
+        end
+    end
     
     -- Detect connection problems and display the indicator.
     self.droppedMoves = self.droppedMoves or 0
