@@ -1,5 +1,14 @@
 local team1Skill, team2Skill
 
+local originalScoreboardInit
+originalScoreboardInit = Class_ReplaceMethod( "GUIScoreboard", "Initialize",
+function(self)
+	originalScoreboardInit(self)
+	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
+	
+	self.hoverPlayerItem = 0
+end)
+
 local originalScoreboardUpdateTeam
 originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam",
 function(self, updateTeam)
@@ -10,12 +19,13 @@ function(self, updateTeam)
 	local playerList = updateTeam["PlayerList"]
 	local teamNumber = updateTeam["TeamNumber"]
 	local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]
+	local teamColor = updateTeam["Color"]
+	local mouseX, mouseY = Client.GetCursorPosScreen()
 	
 	local teamAvgSkill = 0
 	local numPlayers = table.count(teamScores)
 	
 	local currentPlayerIndex = 1
-	
 	for index, player in pairs(playerList) do
 		local playerRecord = teamScores[currentPlayerIndex]
 		
@@ -34,8 +44,27 @@ function(self, updateTeam)
 		teamAvgSkill = teamAvgSkill + playerRecord.Skill
 		
 		currentPlayerIndex = currentPlayerIndex + 1
+		
+		if MouseTracker_GetIsVisible() and GUIItemContainsPoint(player["Background"], mouseX, mouseY) and not GUIItemContainsPoint(player["Voice"], mouseX, mouseY) then
+			local color = Color(0.5,0.5,0.5,1)
+			if playerRecord.isCommander then
+				color = GUIScoreboard.kCommanderFontColor * 0.8
+			else
+				color = teamColor * 0.8
+			end
+			for i = 1, #player.BadgeItems do
+				local badgeItem = player.BadgeItems[i]
+				if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
+					self.hoverPlayerItem = 0
+					return
+				end
+			end
+			
+			self.hoverPlayerItem = GetSteamIdForClientIndex(playerRecord.ClientIndex) or 0
+			player["Background"]:SetColor(color)
+		end
 	end
-	
+
 	if (teamNumber == 1 or teamNumber == 2) and teamAvgSkill > 0 and self.showAvgSkill then
 		local skill = teamAvgSkill/numPlayers
 		if teamNumber == 1 then
@@ -59,7 +88,13 @@ end)
 local originalScoreboardUpdate
 originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
 function(self, deltaTime)
+	
+	self.hoverPlayerItem = 0
 	originalScoreboardUpdate(self, deltaTime)
+	
+	if not self.visible then
+		self.hoverMenu:Hide()
+	end
 	
 	self.centerOnPlayer = CHUDGetOption("sbcenter")
 	local _, pgp = Shine and Shine:IsExtensionEnabled( "pregameplus" )
@@ -106,6 +141,20 @@ function(self, deltaTime)
 		self.avgSkillItem:SetText(skillText)
 		
 	end
+end)
+
+local originalScoreboardSKE
+originalScoreboardSKE = Class_ReplaceMethod( "GUIScoreboard", "SendKeyEvent",
+function(self, key, down)
+	if key == InputKey.MouseButton0 and self.mousePressed["LMB"]["Down"] ~= down and down then
+		if self.hoverMenu.background:GetIsVisible() then
+			return false
+		elseif self.hoverPlayerItem ~= 0 then
+			self.hoverMenu:Show(self.hoverPlayerItem)
+		end
+	end
+	
+	return originalScoreboardSKE(self, key, down)
 end)
 
 local originalLocaleResolveString = Locale.ResolveString
