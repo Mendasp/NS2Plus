@@ -1,5 +1,8 @@
 local team1Skill, team2Skill
 
+local kSteamProfileURL = "http://steamcommunity.com/profiles/"
+local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
+
 local originalScoreboardInit
 originalScoreboardInit = Class_ReplaceMethod( "GUIScoreboard", "Initialize",
 function(self)
@@ -7,6 +10,17 @@ function(self)
 	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
 	
 	self.hoverPlayerItem = 0
+	
+	local function openSteamProf()
+		Client.ShowWebpage(string.format("%s[U:1:%s]", kSteamProfileURL, self.hoverPlayerItem))
+	end
+	local function openHiveProf()
+		Client.ShowWebpage(string.format("%s%s", kHiveProfileURL, self.hoverPlayerItem))
+	end
+	
+	self.hoverMenu:ResetButtons()
+	self.hoverMenu:AddButton("Steam profile", openSteamProf)
+	self.hoverMenu:AddButton("Hive profile", openHiveProf)
 end)
 
 local originalScoreboardUpdateTeam
@@ -45,22 +59,27 @@ function(self, updateTeam)
 		
 		currentPlayerIndex = currentPlayerIndex + 1
 		
-		if MouseTracker_GetIsVisible() and GUIItemContainsPoint(player["Background"], mouseX, mouseY) and not GUIItemContainsPoint(player["Voice"], mouseX, mouseY) then
-			local color = Color(0.5,0.5,0.5,1)
-			if playerRecord.isCommander then
-				color = GUIScoreboard.kCommanderFontColor * 0.8
-			else
-				color = teamColor * 0.8
-			end
-			for i = 1, #player.BadgeItems do
-				local badgeItem = player.BadgeItems[i]
-				if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
-					self.hoverPlayerItem = 0
-					return
+		local color = Color(0.5,0.5,0.5,1)
+		if playerRecord.isCommander then
+			color = GUIScoreboard.kCommanderFontColor * 0.8
+		else
+			color = teamColor * 0.8
+		end
+		
+		if not self.hoverMenu.background:GetIsVisible() then
+			if MouseTracker_GetIsVisible() and GUIItemContainsPoint(player["Background"], mouseX, mouseY) and not GUIItemContainsPoint(player["Voice"], mouseX, mouseY) then
+				for i = 1, #player.BadgeItems do
+					local badgeItem = player.BadgeItems[i]
+					if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
+						self.hoverPlayerItem = 0
+						return
+					end
 				end
+				
+				self.hoverPlayerItem = GetSteamIdForClientIndex(playerRecord.ClientIndex) or 0
+				player["Background"]:SetColor(color)
 			end
-			
-			self.hoverPlayerItem = GetSteamIdForClientIndex(playerRecord.ClientIndex) or 0
+		elseif GetSteamIdForClientIndex(playerRecord.ClientIndex) == self.hoverPlayerItem then
 			player["Background"]:SetColor(color)
 		end
 	end
@@ -89,7 +108,10 @@ local originalScoreboardUpdate
 originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
 function(self, deltaTime)
 	
-	self.hoverPlayerItem = 0
+	if not self.hoverMenu.background:GetIsVisible() then
+		self.hoverPlayerItem = 0
+	end
+	
 	originalScoreboardUpdate(self, deltaTime)
 	
 	if not self.visible then
@@ -150,7 +172,7 @@ function(self, key, down)
 		if self.hoverMenu.background:GetIsVisible() then
 			return false
 		elseif self.hoverPlayerItem ~= 0 then
-			self.hoverMenu:Show(self.hoverPlayerItem)
+			self.hoverMenu:Show()
 		end
 	end
 	

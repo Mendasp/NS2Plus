@@ -14,10 +14,7 @@ local kBackgroundColor = Color(0, 0.25, 1, 1)
 local kPadding = 10
 local kRowSize = 20
 local kRowPadding = 2
-local kBackgroundSize = Vector(100, kRowSize * 2 + kRowPadding * 3, 0)
-
-local kSteamProfileURL = "http://steamcommunity.com/profiles/"
-local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
+local kBackgroundSize = Vector(100, kRowPadding, 0)
 
 function GUIHoverMenu:Initialize()
     
@@ -30,47 +27,58 @@ function GUIHoverMenu:Initialize()
     self.background:SetSize(Vector(kBackgroundSize.x+4, kBackgroundSize.y+4, 0))
 	
     self.backgroundFiller = self:CreateAnimatedGraphicItem()
-    self.backgroundFiller:SetColor(kBackgroundColor*0.25)
+    self.backgroundFiller:SetColor(kMarineFontColor)
     self.backgroundFiller:SetIsScaling(false)
     self.backgroundFiller:SetSize(kBackgroundSize)
     self.backgroundFiller:SetPosition(Vector(2, 2, 0))
 	self.background:AddChild(self.backgroundFiller)
 	
-    self.steamLinkBg = self:CreateAnimatedGraphicItem()
-    self.steamLinkBg:SetSize(Vector(kBackgroundSize.x, kRowSize, 0))
-    self.steamLinkBg:SetAnchor(GUIItem.Left, GUIItem.Top)
-    self.steamLinkBg:SetPosition(Vector(0, kRowPadding, 0))
-    self.steamLinkBg:SetIsScaling(false)
-	self.backgroundFiller:AddChild(self.steamLinkBg)
-	
-    self.steamLink = self:CreateAnimatedTextItem()
-    self.steamLink:SetColor(Color(1,1,1,1))
-    self.steamLink:SetPosition(Vector(kPadding, 0, 0))
-    self.steamLink:SetText("Steam profile")
-    self.steamLink:SetAnchor(GUIItem.Left, GUIItem.Middle)
-    self.steamLink:SetTextAlignmentY(GUIItem.Align_Center)
-    self.steamLink:SetIsScaling(false)
-	self.steamLinkBg:AddChild(self.steamLink)
-	
-    self.hiveLinkBg = self:CreateAnimatedGraphicItem()
-    self.hiveLinkBg:SetSize(Vector(kBackgroundSize.x, kRowSize, 0))
-    self.hiveLinkBg:SetAnchor(GUIItem.Left, GUIItem.Top)
-    self.hiveLinkBg:SetPosition(Vector(0, kRowSize + kRowPadding + kRowPadding, 0))
-    self.hiveLinkBg:SetIsScaling(false)
-	self.backgroundFiller:AddChild(self.hiveLinkBg)
-	
-    self.hiveLink = self:CreateAnimatedTextItem()
-    self.hiveLink:SetColor(Color(1,1,1,1))
-    self.hiveLink:SetPosition(Vector(kPadding, 0, 0))
-    self.hiveLink:SetText("Hive profile")
-    self.hiveLink:SetAnchor(GUIItem.Left, GUIItem.Middle)
-    self.hiveLink:SetTextAlignmentY(GUIItem.Align_Center)
-    self.hiveLink:SetIsScaling(false)
-	self.hiveLinkBg:AddChild(self.hiveLink)
+	self.links = {}
 	
 	self.down = false
     
     self.mirrored = false
+end
+
+function GUIHoverMenu:AddButton(text, callback)
+	
+	local button = {}
+	
+	local background = self:CreateAnimatedGraphicItem()
+	background = self:CreateAnimatedGraphicItem()
+	background:SetSize(Vector(kBackgroundSize.x, kRowSize, 0))
+	background:SetAnchor(GUIItem.Left, GUIItem.Top)
+	background:SetIsScaling(false)
+	self.backgroundFiller:AddChild(background)
+	
+	local link = self:CreateAnimatedTextItem()
+	link = self:CreateAnimatedTextItem()
+	link:SetColor(Color(1,1,1,1))
+	link:SetPosition(Vector(kPadding, 0, 0))
+	link:SetText(text)
+	link:SetAnchor(GUIItem.Left, GUIItem.Middle)
+	link:SetTextAlignmentY(GUIItem.Align_Center)
+	link:SetIsScaling(false)
+	background:AddChild(link)
+	
+	button.background = background
+	button.link = link
+	button.callback = callback
+	
+	table.insert(self.links, button)
+	
+	local ySize = #self.links * kRowSize + (#self.links-1) * kRowPadding
+	
+	background:SetPosition(Vector(0, ySize - kRowSize, 0))
+	self.backgroundFiller:SetSize(Vector(kBackgroundSize.x, ySize, 0))
+	self.background:SetSize(Vector(kBackgroundSize.x + 4, ySize + 4, 0))
+end
+
+function GUIHoverMenu:ResetButtons()
+	for index, button in ipairs(self.links) do
+		button.background:Destroy()
+	end
+	self.links = {}
 end
 
 function GUIHoverMenu:Uninitialize()
@@ -89,12 +97,12 @@ function GUIHoverMenu:Update(deltaTime)
     if self.background:GetIsVisible() then
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
-		self.steamLinkBg:SetColor(kBackgroundColor*0.5)
-		self.hiveLinkBg:SetColor(kBackgroundColor*0.5)
-		if GUIItemContainsPoint(self.steamLinkBg, mouseX, mouseY) then
-			self.steamLinkBg:SetColor(kBackgroundColor*0.75)
-		elseif GUIItemContainsPoint(self.hiveLinkBg, mouseX, mouseY) then
-			self.hiveLinkBg:SetColor(kBackgroundColor*0.75)
+		for index, button in pairs(self.links) do
+			if GUIItemContainsPoint(button.background, mouseX, mouseY) then
+				button.background:SetColor(kBackgroundColor*0.75)
+			else
+				button.background:SetColor(kBackgroundColor*0.5)
+			end
 		end
 	end
 end
@@ -114,10 +122,10 @@ function GUIHoverMenu:SendKeyEvent(key, down)
 		if down and self.background:GetIsVisible() then
 			local mouseX, mouseY = Client.GetCursorPosScreen()
 			
-			if GUIItemContainsPoint(self.steamLinkBg, mouseX, mouseY) then
-				Client.ShowWebpage(kSteamProfileURL .. "[U:1:" .. self.steamId .. "]")
-			elseif GUIItemContainsPoint(self.hiveLinkBg, mouseX, mouseY) then
-				Client.ShowWebpage(kHiveProfileURL .. self.steamId)
+			for index, button in pairs(self.links) do
+				if GUIItemContainsPoint(button.background, mouseX, mouseY) and button.callback then
+					button.callback()
+				end
 			end
 			
 			self:Hide()
@@ -133,8 +141,7 @@ function GUIHoverMenu:SetIsVisible(visible)
     self.background:SetIsVisible(visible)
 end
 
-function GUIHoverMenu:Show(steamId)
-	self.steamId = steamId
+function GUIHoverMenu:Show()
     self.background:SetIsVisible(true)
     self.background:FadeIn(0.25, "MENU_SHOW")
     
