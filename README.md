@@ -6,6 +6,7 @@ Latest changes
 ==============
 - / /2014
 	- Added ability to click on a player's row in the scoreboard to check their Steam/Hive profiles.
+	- Added option to mute Text chat.
 
 - 15/11/2014
 	- Made the pregame skill display compatible with Pregame Plus.
