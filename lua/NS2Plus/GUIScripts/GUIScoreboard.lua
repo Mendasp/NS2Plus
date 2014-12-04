@@ -9,8 +9,7 @@ function(self)
 	originalScoreboardInit(self)
 	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
 	
-	self.hoverPlayerSteamId = 0
-	self.hoverPlayerClientIndex = -1
+	self.hoverPlayerClientIndex = 0
 end)
 
 local originalScoreboardUpdateTeam
@@ -61,16 +60,15 @@ function(self, updateTeam)
 				for i = 1, #player.BadgeItems do
 					local badgeItem = player.BadgeItems[i]
 					if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
-						self.hoverPlayerSteamId = 0
+						self.hoverPlayerClientIndex = 0
 						return
 					end
 				end
 				
 				self.hoverPlayerClientIndex = playerRecord.ClientIndex
-				self.hoverPlayerSteamId = GetSteamIdForClientIndex(playerRecord.ClientIndex) or 0
 				player["Background"]:SetColor(color)
 			end
-		elseif GetSteamIdForClientIndex(playerRecord.ClientIndex) == self.hoverPlayerSteamId then
+		elseif GetSteamIdForClientIndex(playerRecord.ClientIndex) == GetSteamIdForClientIndex(self.hoverPlayerClientIndex) then
 			player["Background"]:SetColor(color)
 		end
 	end
@@ -100,8 +98,7 @@ originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
 function(self, deltaTime)
 	
 	if not self.hoverMenu.background:GetIsVisible() then
-		self.hoverPlayerSteamId = 0
-		self.hoverPlayerClientIndex = -1
+		self.hoverPlayerClientIndex = 0
 	end
 	
 	originalScoreboardUpdate(self, deltaTime)
@@ -161,19 +158,20 @@ local originalScoreboardSKE
 originalScoreboardSKE = Class_ReplaceMethod( "GUIScoreboard", "SendKeyEvent",
 function(self, key, down)
 	if key == InputKey.MouseButton0 and self.mousePressed["LMB"]["Down"] ~= down and down then
+		local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex) or 0
 		if self.hoverMenu.background:GetIsVisible() then
 			return false
-		elseif self.hoverPlayerSteamId ~= 0 then
-			local isTextMuted = ChatUI_GetSteamIdTextMuted(self.hoverPlayerSteamId)
+		elseif steamId ~= 0 then
+			local isTextMuted = ChatUI_GetSteamIdTextMuted(steamId)
 			local isVoiceMuted = ChatUI_GetClientMuted(self.hoverPlayerClientIndex)
 			local function openSteamProf()
-				Client.ShowWebpage(string.format("%s[U:1:%s]", kSteamProfileURL, self.hoverPlayerSteamId))
+				Client.ShowWebpage(string.format("%s[U:1:%s]", kSteamProfileURL, steamId))
 			end
 			local function openHiveProf()
-				Client.ShowWebpage(string.format("%s%s", kHiveProfileURL, self.hoverPlayerSteamId))
+				Client.ShowWebpage(string.format("%s%s", kHiveProfileURL, steamId))
 			end
 			local function muteText()
-				ChatUI_SetSteamIdTextMuted(self.hoverPlayerSteamId, not isTextMuted)
+				ChatUI_SetSteamIdTextMuted(steamId, not isTextMuted)
 			end
 			local function muteVoice()
 				ChatUI_SetClientMuted(self.hoverPlayerClientIndex, not isVoiceMuted)
@@ -183,7 +181,7 @@ function(self, key, down)
 			self.hoverMenu:AddButton("Steam profile", openSteamProf)
 			self.hoverMenu:AddButton("Hive profile", openHiveProf)
 			
-			if Client.GetSteamId() ~= self.hoverPlayerSteamId then
+			if Client.GetSteamId() ~= steamId then
 				self.hoverMenu:AddButton(ConditionalValue(isVoiceMuted, "Unm", "M") .. "ute voice", muteVoice)
 				self.hoverMenu:AddButton(ConditionalValue(isTextMuted, "Unm", "M") .. "ute text", muteText)
 			end
