@@ -96,9 +96,9 @@ function(self, updateTeam)
 		
 		local statusPos = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth + 30, (GetTeamItemWidth() - GUIScoreboard.kTeamColumnSpacingX * 10) + 60)
 		local playerStatus = player["Status"]:GetText()
-		if playerStatus == "-" or playerStatus == "" then
+		if playerStatus == "-" or playerStatus == "" or (teamNumber ~= 1 and teamNumber ~= 2) then
 			player["Status"]:SetText("")
-			statusPos = statusPos + GUIScoreboard.kTeamColumnSpacingX * 1.7
+			statusPos = statusPos + GUIScoreboard.kTeamColumnSpacingX * 2 + 20
 		end
 		
 		local numBadges = math.min(#Badges_GetBadgeTextures(clientIndex, "scoreboard"), #player["BadgeItems"])
@@ -136,8 +136,11 @@ function(self, updateTeam)
 		pos = pos + kPlayerVoiceChatIconSize + kPlayerBadgeRightPadding
 		
 		local finalName = player["Name"]:GetText()
-		while nameRightPos + player["Name"]:GetTextWidth(finalName) > pos do
-			finalName = string.sub(finalName, 1, string.len(finalName)-2)
+		local finalNameWidth = player["Name"]:GetTextWidth(finalName)
+		local dotsWidth = player["Name"]:GetTextWidth("...")
+		while nameRightPos + finalNameWidth > pos do
+			finalName = string.sub(finalName, 1, string.len(finalName)-1)
+			finalNameWidth = player["Name"]:GetTextWidth(finalName) + dotsWidth
 			player["Name"]:SetText(finalName .. "...")
 		end
 		
@@ -333,6 +336,7 @@ function(self, key, down)
 			end
 		
 			self.hoverMenu:ResetButtons()
+			self.hoverMenu:AddButton(Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "Name"))
 			self.hoverMenu:AddButton("Steam profile", openSteamProf)
 			self.hoverMenu:AddButton("NS2 profile", openHiveProf)
 			
