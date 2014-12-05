@@ -98,7 +98,7 @@ function(self, updateTeam)
 		local playerStatus = player["Status"]:GetText()
 		if playerStatus == "-" or playerStatus == "" or (teamNumber ~= 1 and teamNumber ~= 2) then
 			player["Status"]:SetText("")
-			statusPos = statusPos + GUIScoreboard.kTeamColumnSpacingX * 2 + 20
+			statusPos = statusPos + GUIScoreboard.kTeamColumnSpacingX * ConditionalValue(GUIScoreboard.screenWidth < 1280, 2.75, 1.75)
 		end
 		
 		local numBadges = math.min(#Badges_GetBadgeTextures(clientIndex, "scoreboard"), #player["BadgeItems"])
@@ -109,6 +109,10 @@ function(self, updateTeam)
 		local voiceMuted = ChatUI_GetClientMuted(clientIndex)
 		local textMuted = ChatUI_GetSteamIdTextMuted(steamId)
 		local isSteamFriend = playerRecord.IsSteamFriend
+		
+		isSteamFriend = true
+		textMuted = true
+		voiceMuted = true
 		
 		local nameRightPos = pos + kPlayerBadgeRightPadding
 		
