@@ -17,27 +17,27 @@ local kRowPadding = 2
 local kBackgroundSize = Vector(100, kRowPadding, 0)
 
 function GUIHoverMenu:Initialize()
-    
-    GUIAnimatedScript.Initialize(self)
-
-    self.background = self:CreateAnimatedGraphicItem()
-    self.background:SetColor(kMarineFontColor)
-    self.background:SetLayer(kGUILayerOptionsTooltips)
-    self.background:SetIsScaling(false)
-    self.background:SetSize(Vector(kBackgroundSize.x+4, kBackgroundSize.y+4, 0))
 	
-    self.backgroundFiller = self:CreateAnimatedGraphicItem()
-    self.backgroundFiller:SetColor(kMarineFontColor)
-    self.backgroundFiller:SetIsScaling(false)
-    self.backgroundFiller:SetSize(kBackgroundSize)
-    self.backgroundFiller:SetPosition(Vector(2, 2, 0))
+	GUIAnimatedScript.Initialize(self)
+
+	self.background = self:CreateAnimatedGraphicItem()
+	self.background:SetColor(kMarineFontColor)
+	self.background:SetLayer(kGUILayerOptionsTooltips)
+	self.background:SetIsScaling(false)
+	self.background:SetSize(Vector(kBackgroundSize.x+4, kBackgroundSize.y+4, 0))
+	
+	self.backgroundFiller = self:CreateAnimatedGraphicItem()
+	self.backgroundFiller:SetColor(kMarineFontColor)
+	self.backgroundFiller:SetIsScaling(false)
+	self.backgroundFiller:SetSize(kBackgroundSize)
+	self.backgroundFiller:SetPosition(Vector(2, 2, 0))
 	self.background:AddChild(self.backgroundFiller)
 	
 	self.links = {}
 	
 	self.down = false
-    
-    self.mirrored = false
+	
+	self.mirrored = false
 end
 
 function GUIHoverMenu:AddButton(text, callback)
@@ -82,19 +82,19 @@ function GUIHoverMenu:ResetButtons()
 end
 
 function GUIHoverMenu:Uninitialize()
-    
-    GUIAnimatedScript.Uninitialize(self)
-    
-    GUI.DestroyItem(self.background)
-    self.background = nil
-    
+	
+	GUIAnimatedScript.Uninitialize(self)
+	
+	GUI.DestroyItem(self.background)
+	self.background = nil
+	
 end
 
 function GUIHoverMenu:Update(deltaTime)
-    
-    GUIAnimatedScript.Update(self, deltaTime)
 	
-    if self.background:GetIsVisible() then
+	GUIAnimatedScript.Update(self, deltaTime)
+	
+	if self.background:GetIsVisible() then
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
 		for index, button in pairs(self.links) do
@@ -110,7 +110,7 @@ end
 function GUIHoverMenu:SendKeyEvent(key, down)
 
 	local ret = false
-	if key == InputKey.Escape then
+	if key == InputKey.Escape and self.background:GetIsVisible() then
 		self:Hide()
 		
 		ret = true
@@ -138,23 +138,23 @@ function GUIHoverMenu:SendKeyEvent(key, down)
 end
 
 function GUIHoverMenu:SetIsVisible(visible)
-    self.background:SetIsVisible(visible)
+	self.background:SetIsVisible(visible)
 end
 
 function GUIHoverMenu:Show()
-    self.background:SetIsVisible(true)
-    self.background:FadeIn(0.25, "MENU_SHOW")
-    
-    local mouseX, mouseY = Client.GetCursorPosScreen()
-    if mouseX > Client.GetScreenWidth() - kBackgroundSize.x then
-        self.mirrored = true
-        self.background:SetPosition(Vector(mouseX - kBackgroundSize.x, mouseY, 0))
-    else
-        self.mirrored = false
-        self.background:SetPosition(Vector(mouseX + 20, mouseY, 0))
-    end
+	self.background:SetIsVisible(true)
+	self.background:FadeIn(0.25, "MENU_SHOW")
+	
+	local mouseX, mouseY = Client.GetCursorPosScreen()
+	if mouseX > Client.GetScreenWidth() - kBackgroundSize.x then
+		self.mirrored = true
+		self.background:SetPosition(Vector(mouseX - kBackgroundSize.x, mouseY, 0))
+	else
+		self.mirrored = false
+		self.background:SetPosition(Vector(mouseX + 20, mouseY, 0))
+	end
 end
 
 function GUIHoverMenu:Hide()
-    self.background:SetIsVisible(false)
+	self.background:SetIsVisible(false)
 end

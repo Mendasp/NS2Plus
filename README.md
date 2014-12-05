@@ -7,6 +7,8 @@ Latest changes
 - / /2014
 	- Added ability to click on a player's row in the scoreboard to check their Steam/Hive profiles.
 	- Added option to mute Text chat.
+	- Added icon to the scoreboard indicating if someone is your friend on Steam.
+	- Made it so the scoreboard shortens the player name if it overlaps.
 
 - 15/11/2014
 	- Made the pregame skill display compatible with Pregame Plus.

@@ -14,7 +14,7 @@ function(self, deltaTime)
 		local messageText = addChatMessages[currentIndex + 3]
 		local steamId = addChatMessages[currentIndex + 4]
 		
-		if steamId and steamId > 0 and not ChatUI_GetSteamIdTextMuted(steamId) then
+		if steamId and (IsNumber(steamId) and steamId > 0 and not ChatUI_GetSteamIdTextMuted(steamId)) or steamId == "" then
 			self:AddMessage(playerColor, playerName, messageColor, messageText)
 		end
 		currentIndex = currentIndex + numberElementsPerMessage
