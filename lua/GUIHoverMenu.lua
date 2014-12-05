@@ -6,9 +6,7 @@
 //
 // ========= For more information, visit us at http://www.unknownworlds.com =====================
 
-Script.Load("lua/GUIAnimatedScript.lua")
-
-class 'GUIHoverMenu' (GUIAnimatedScript)
+class 'GUIHoverMenu' (GUIScript)
 
 local kBackgroundColor = Color(0, 0, 0, 0.9)
 local kPadding = 10
@@ -18,12 +16,9 @@ local kBackgroundSize = Vector(100, kRowPadding, 0)
 
 function GUIHoverMenu:Initialize()
 	
-	GUIAnimatedScript.Initialize(self)
-	
-	self.background = self:CreateAnimatedGraphicItem()
+	self.background = GUIManager:CreateGraphicItem()
 	self.background:SetColor(kBackgroundColor)
 	self.background:SetLayer(kGUILayerOptionsTooltips)
-	self.background:SetIsScaling(false)
 	self.background:SetSize(Vector(kBackgroundSize.x+4, kBackgroundSize.y+4, 0))
 	
 	self.links = {}
@@ -39,18 +34,16 @@ function GUIHoverMenu:AddButton(text, bgColor, bgHighlightColor, textColor, call
 	
 	local button = {}
 	
-	local background = self:CreateAnimatedGraphicItem()
+	local background = GUIManager:CreateGraphicItem()
 	background:SetAnchor(GUIItem.Left, GUIItem.Top)
-	background:SetIsScaling(false)
 	self.background:AddChild(background)
 	
-	local link = self:CreateAnimatedTextItem()
+	local link = GUIManager:CreateTextItem()
 	link:SetColor(textColor)
 	link:SetPosition(Vector(kPadding, 0, 0))
 	link:SetText(text)
 	link:SetAnchor(GUIItem.Left, GUIItem.Middle)
 	link:SetTextAlignmentY(GUIItem.Align_Center)
-	link:SetIsScaling(false)
 	background:AddChild(link)
 	
 	button.background = background
@@ -85,14 +78,12 @@ end
 
 function GUIHoverMenu:ResetButtons()
 	for index, button in ipairs(self.links) do
-		button.background:Destroy()
+		GUI.DestroyItem(button.background)
 	end
 	self.links = {}
 end
 
 function GUIHoverMenu:Uninitialize()
-	
-	GUIAnimatedScript.Uninitialize(self)
 	
 	GUI.DestroyItem(self.background)
 	self.background = nil
@@ -100,8 +91,6 @@ function GUIHoverMenu:Uninitialize()
 end
 
 function GUIHoverMenu:Update(deltaTime)
-	
-	GUIAnimatedScript.Update(self, deltaTime)
 	
 	if self.background:GetIsVisible() then
 		local mouseX, mouseY = Client.GetCursorPosScreen()
@@ -144,10 +133,6 @@ function GUIHoverMenu:SendKeyEvent(key, down)
 	end
 	
 	return ret
-end
-
-function GUIHoverMenu:SetIsVisible(visible)
-	self.background:SetIsVisible(visible)
 end
 
 function GUIHoverMenu:Show()
