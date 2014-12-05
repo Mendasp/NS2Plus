@@ -110,34 +110,30 @@ function(self, updateTeam)
 		local textMuted = ChatUI_GetSteamIdTextMuted(steamId)
 		local isSteamFriend = playerRecord.IsSteamFriend
 		
-		isSteamFriend = true
-		textMuted = true
-		voiceMuted = true
-		
 		local nameRightPos = pos + kPlayerBadgeRightPadding
 		
 		pos = statusPos - kPlayerVoiceChatIconSize - kPlayerBadgeRightPadding
 		
 		if isSteamFriend then
 			player["SteamFriend"]:SetPosition(Vector(pos, -kPlayerVoiceChatIconSize/2, 0))
-			pos = pos - kPlayerVoiceChatIconSize - kPlayerBadgeRightPadding
+			pos = pos - kPlayerVoiceChatIconSize
 		end
 		player["SteamFriend"]:SetIsVisible(isSteamFriend)
 		
 		if voiceMuted then
 			player["Voice"]:SetPosition(Vector(pos, -kPlayerVoiceChatIconSize/2, 0))
-			pos = pos - kPlayerVoiceChatIconSize - kPlayerBadgeRightPadding
+			pos = pos - kPlayerVoiceChatIconSize
 		end
 		player["Voice"]:SetIsVisible(voiceMuted)
 		player["Voice"]:SetColor(GUIScoreboard.kVoiceMuteColor)
 		
 		if textMuted then
 			player["Text"]:SetPosition(Vector(pos, -kPlayerVoiceChatIconSize/2, 0))
-			pos = pos - kPlayerVoiceChatIconSize - kPlayerBadgeRightPadding
+			pos = pos - kPlayerVoiceChatIconSize
 		end
 		player["Text"]:SetIsVisible(textMuted)
 		
-		pos = pos + kPlayerVoiceChatIconSize + kPlayerBadgeRightPadding
+		pos = pos + kPlayerVoiceChatIconSize
 		
 		local finalName = player["Name"]:GetText()
 		local finalNameWidth = player["Name"]:GetTextWidth(finalName)
