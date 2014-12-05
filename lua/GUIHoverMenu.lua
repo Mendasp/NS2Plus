@@ -10,8 +10,7 @@ Script.Load("lua/GUIAnimatedScript.lua")
 
 class 'GUIHoverMenu' (GUIAnimatedScript)
 
-local kBackgroundColor = kMarineFontColor
-local kEntryBackgroundColor = Color(0, 0.25, 1, 1)
+local kBackgroundColor = Color(0, 0, 0, 0.9)
 local kPadding = 10
 local kRowSize = 20
 local kRowPadding = 2
@@ -27,29 +26,26 @@ function GUIHoverMenu:Initialize()
 	self.background:SetIsScaling(false)
 	self.background:SetSize(Vector(kBackgroundSize.x+4, kBackgroundSize.y+4, 0))
 	
-	self.backgroundFiller = self:CreateAnimatedGraphicItem()
-	self.backgroundFiller:SetColor(kBackgroundColor)
-	self.backgroundFiller:SetIsScaling(false)
-	self.backgroundFiller:SetSize(kBackgroundSize)
-	self.backgroundFiller:SetPosition(Vector(2, 2, 0))
-	self.background:AddChild(self.backgroundFiller)
-	
 	self.links = {}
 	
 	self.down = false
 end
 
-function GUIHoverMenu:AddButton(text, callback)
+function GUIHoverMenu:SetBackgroundColor(bgColor)
+	self.background:SetColor(bgColor)
+end
+
+function GUIHoverMenu:AddButton(text, bgColor, bgHighlightColor, textColor, callback)
 	
 	local button = {}
 	
 	local background = self:CreateAnimatedGraphicItem()
 	background:SetAnchor(GUIItem.Left, GUIItem.Top)
 	background:SetIsScaling(false)
-	self.backgroundFiller:AddChild(background)
+	self.background:AddChild(background)
 	
 	local link = self:CreateAnimatedTextItem()
-	link:SetColor(Color(1,1,1,1))
+	link:SetColor(textColor)
 	link:SetPosition(Vector(kPadding, 0, 0))
 	link:SetText(text)
 	link:SetAnchor(GUIItem.Left, GUIItem.Middle)
@@ -61,26 +57,29 @@ function GUIHoverMenu:AddButton(text, callback)
 	button.link = link
 	if callback then
 		button.callback = callback
-	else
-		link:SetColor(Color(0,0,0,1))
 	end
+	button.bgColor = bgColor
+	button.bgHighlightColor = bgHighlightColor
 	
 	table.insert(self.links, button)
 	
-	local ySize = #self.links * kRowSize + (#self.links-1) * kRowPadding
-	local xSize = link:GetTextWidth(text) + kPadding * 2
-	
-	if xSize > self.backgroundFiller:GetSize().x then
-		for _, entry in ipairs(self.links) do
-			entry.background:SetSize(Vector(xSize, kRowSize, 0))
+	local longest = 0
+	for _, entry in ipairs(self.links) do
+		local length = entry.link:GetTextWidth(entry.link:GetText())
+		if longest < length then
+			longest = length
 		end
-	else
-		xSize = self.backgroundFiller:GetSize().x
 	end
 	
-	background:SetPosition(Vector(0, ySize - kRowSize, 0))
+	local ySize = #self.links * kRowSize + (#self.links-1) * kRowPadding
+	local xSize = longest + kPadding * 2
+	
+	for _, entry in ipairs(self.links) do
+		entry.background:SetSize(Vector(xSize, kRowSize, 0))
+	end
+	
+	background:SetPosition(Vector(2, 2 + ySize - kRowSize, 0))
 	background:SetSize(Vector(xSize, kRowSize, 0))
-	self.backgroundFiller:SetSize(Vector(xSize, ySize, 0))
 	self.background:SetSize(Vector(xSize + 4, ySize + 4, 0))
 end
 
@@ -108,12 +107,10 @@ function GUIHoverMenu:Update(deltaTime)
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
 		for index, button in pairs(self.links) do
-			if not button.callback then
-				button.background:SetColor(kBackgroundColor)
-			elseif GUIItemContainsPoint(button.background, mouseX, mouseY) then
-				button.background:SetColor(kEntryBackgroundColor*0.75)
+			if GUIItemContainsPoint(button.background, mouseX, mouseY) then
+				button.background:SetColor(button.bgHighlightColor)
 			else
-				button.background:SetColor(kEntryBackgroundColor*0.5)
+				button.background:SetColor(button.bgColor)
 			end
 		end
 	end
@@ -155,7 +152,6 @@ end
 
 function GUIHoverMenu:Show()
 	self.background:SetIsVisible(true)
-	self.background:FadeIn(0.25, "MENU_SHOW")
 	
 	local mouseX, mouseY = Client.GetCursorPosScreen()
 	local xPos, yPos

@@ -85,7 +85,6 @@ function(self, updateTeam)
 		
 		if self.showPlayerSkill then
 			player["Name"]:SetText(string.format("[%s] %s", playerRecord.Skill, player["Name"]:GetText()))
-			player["Status"]:SetText("")
 		end
 		
 		teamAvgSkill = teamAvgSkill + playerRecord.Skill
@@ -96,7 +95,7 @@ function(self, updateTeam)
 		
 		local statusPos = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth + 30, (GetTeamItemWidth() - GUIScoreboard.kTeamColumnSpacingX * 10) + 60)
 		local playerStatus = player["Status"]:GetText()
-		if playerStatus == "-" or playerStatus == "" or (teamNumber ~= 1 and teamNumber ~= 2) then
+		if playerStatus == "-" or (playerStatus ~= Locale.ResolveString("STATUS_SPECTATOR") and teamNumber ~= 1 and teamNumber ~= 2) then
 			player["Status"]:SetText("")
 			statusPos = statusPos + GUIScoreboard.kTeamColumnSpacingX * ConditionalValue(GUIScoreboard.screenWidth < 1280, 2.75, 1.75)
 		end
@@ -336,13 +335,28 @@ function(self, key, down)
 			end
 		
 			self.hoverMenu:ResetButtons()
-			self.hoverMenu:AddButton(Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "Name"))
-			self.hoverMenu:AddButton("Steam profile", openSteamProf)
-			self.hoverMenu:AddButton("NS2 profile", openHiveProf)
+			local teamColor
+			local playerName = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "Name")
+			local teamNumber = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "EntityTeamNumber")
+			if teamNumber == 1 then
+				teamColor = GUIScoreboard.kBlueColor
+			elseif teamNumber == 2 then
+				teamColor = GUIScoreboard.kRedColor
+			else
+				teamColor = GUIScoreboard.kSpectatorColor
+			end
+			
+			local bgColor = teamColor * 0.1
+			bgColor.a = 0.9
+			
+			self.hoverMenu:SetBackgroundColor(bgColor)
+			self.hoverMenu:AddButton(playerName, Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(1, 1, 1, 1))
+			self.hoverMenu:AddButton("Steam profile", teamColor * 0.5, teamColor * 0.75, Color(1, 1, 1, 1), openSteamProf)
+			self.hoverMenu:AddButton("NS2 profile", teamColor * 0.5, teamColor * 0.75, Color(1, 1, 1, 1), openHiveProf)
 			
 			if Client.GetSteamId() ~= steamId then
-				self.hoverMenu:AddButton(ConditionalValue(isVoiceMuted, "Unm", "M") .. "ute voice", muteVoice)
-				self.hoverMenu:AddButton(ConditionalValue(isTextMuted, "Unm", "M") .. "ute text", muteText)
+				self.hoverMenu:AddButton(ConditionalValue(isVoiceMuted, "Unm", "M") .. "ute voice", teamColor, teamColor * 0.75, muteVoice)
+				self.hoverMenu:AddButton(ConditionalValue(isTextMuted, "Unm", "M") .. "ute text", teamColor, teamColor * 0.75, muteText)
 			end
 			
 			self.hoverMenu:Show()
