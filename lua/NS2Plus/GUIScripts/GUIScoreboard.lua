@@ -263,48 +263,49 @@ function(self, deltaTime)
 end)
 
 local function newHandlePlayerVoiceClicked(self)
-
-	local mouseX, mouseY = Client.GetCursorPosScreen()
-	for t = 1, #self.teams do
-	
-		local playerList = self.teams[t]["PlayerList"]
-		for p = 1, #playerList do
+	if MouseTracker_GetIsVisible() then
+		local mouseX, mouseY = Client.GetCursorPosScreen()
+		for t = 1, #self.teams do
 		
-			local playerItem = playerList[p]
-			if GUIItemContainsPoint(playerItem["Voice"], mouseX, mouseY) and playerItem["Voice"]:GetIsVisible() then
+			local playerList = self.teams[t]["PlayerList"]
+			for p = 1, #playerList do
 			
-				local clientIndex = playerItem["ClientIndex"]
-				ChatUI_SetClientMuted(clientIndex, not ChatUI_GetClientMuted(clientIndex))
+				local playerItem = playerList[p]
+				if GUIItemContainsPoint(playerItem["Voice"], mouseX, mouseY) and playerItem["Voice"]:GetIsVisible() then
+				
+					local clientIndex = playerItem["ClientIndex"]
+					ChatUI_SetClientMuted(clientIndex, not ChatUI_GetClientMuted(clientIndex))
+					
+				end
 				
 			end
 			
 		end
-		
 	end
 	
 end
 
 local function HandlePlayerTextClicked(self)
-
-	local mouseX, mouseY = Client.GetCursorPosScreen()
-	for t = 1, #self.teams do
-	
-		local playerList = self.teams[t]["PlayerList"]
-		for p = 1, #playerList do
+	if MouseTracker_GetIsVisible() then
+		local mouseX, mouseY = Client.GetCursorPosScreen()
+		for t = 1, #self.teams do
 		
-			local playerItem = playerList[p]
-			if GUIItemContainsPoint(playerItem["Text"], mouseX, mouseY) and playerItem["Text"]:GetIsVisible() then
+			local playerList = self.teams[t]["PlayerList"]
+			for p = 1, #playerList do
 			
-				local clientIndex = playerItem["ClientIndex"]
-				local steamId = GetSteamIdForClientIndex(clientIndex)
-				ChatUI_SetSteamIdTextMuted(steamId, not ChatUI_GetSteamIdTextMuted(steamId))
+				local playerItem = playerList[p]
+				if GUIItemContainsPoint(playerItem["Text"], mouseX, mouseY) and playerItem["Text"]:GetIsVisible() then
+				
+					local clientIndex = playerItem["ClientIndex"]
+					local steamId = GetSteamIdForClientIndex(clientIndex)
+					ChatUI_SetSteamIdTextMuted(steamId, not ChatUI_GetSteamIdTextMuted(steamId))
+					
+				end
 				
 			end
 			
 		end
-		
 	end
-	
 end
 
 ReplaceLocals(GUIScoreboard.SendKeyEvent, { HandlePlayerVoiceClicked = newHandlePlayerVoiceClicked })

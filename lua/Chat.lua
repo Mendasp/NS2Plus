@@ -15,14 +15,87 @@ local teamOnlyChat = false
 // Note: Nothing clears this out but it is probably safe to assume the player won't
 // mute enough clients to run out of memory.
 local mutedClients = { }
-local mutedClientsSteamId = { }
 local mutedTextClients = { }
+-- This is only a table with SteamIds for persistent mutes, muted voice uses clientIndex
+local mutedVoiceClients = { }
+local mutedPlayersFileName = "MutedPlayers.json"
+-- Mute for 6 hours
+local mutedTime = 6 * 3600
+
+local function SaveMutedPlayers()
+	local mutedPlayersFile = io.open("config://" .. mutedPlayersFileName, "w+")
+	
+	local savedMutes = {}
+	local textMutes = {}
+	local voiceMutes = {}
+	
+	for steamId, player in pairs(mutedTextClients) do
+		if player.isMuted and player.targetTime > Shared.GetSystemTime() then
+			textMutes[steamId] = player
+		end
+	end
+	
+	for steamId, player in pairs(mutedVoiceClients) do
+		if player.isMuted and player.targetTime > Shared.GetSystemTime() then
+			voiceMutes[steamId] = player
+		end
+	end
+	
+	savedMutes.textMutes = textMutes
+	savedMutes.voiceMutes = voiceMutes
+	
+	if mutedPlayersFile then
+		mutedPlayersFile:write(json.encode(savedMutes, { indent = true }))
+		
+		io.close(mutedPlayersFile)
+	end
+end
+
+local function OnLoadComplete()
+	local mutedPlayersFile = io.open("config://" .. mutedPlayersFileName, "r")
+	
+	if mutedPlayersFile then
+		local parsedFile, _, errStr = json.decode(mutedPlayersFile:read("*all"))
+		
+		if not errStr then
+			-- When saving this to file and back, it will assume the steamId is a string
+			-- When we do the table lookup, it won't match, because it's a number
+			-- So parse the index as a number and save properly to our local table
+			for steamId, player in pairs(parsedFile.textMutes) do
+				if IsNumber(tonumber(steamId)) and player.isMuted and player.targetTime and player.targetTime > Shared.GetSystemTime() then
+					mutedTextClients[tonumber(steamId)] = player
+				end
+			end
+			
+			for steamId, player in pairs(parsedFile.voiceMutes) do
+				if IsNumber(tonumber(steamId)) and player.isMuted and player.targetTime and player.targetTime > Shared.GetSystemTime() then
+					mutedVoiceClients[tonumber(steamId)] = player
+				end
+			end
+		end
+		
+		io.close(mutedPlayersFile)
+	end
+	
+	-- Save the table to cleanup old players that are no longer muted
+	SaveMutedPlayers()
+end
 
 /**
  * Returns true if the passed in client is currently speaking.
  */
 function ChatUI_GetIsClientSpeaking(clientIndex)
 
+	local steamId = GetSteamIdForClientIndex(clientIndex)
+	local currentPlayer = mutedVoiceClients[steamId]
+	if currentPlayer and currentPlayer.isMuted and currentPlayer.targetTime > Shared.GetSystemTime() then
+		if not mutedClients[clientIndex] then
+			local message = BuildMutePlayerMessage(clientIndex, true)
+			Client.SendNetworkMessage("MutePlayer", message, true)
+			mutedClients[clientIndex] = true
+		end
+	end
+	
     // Handle the local client specially.
     if Client.GetLocalClientIndex() == clientIndex then
         return Client.IsVoiceRecordingActive()
@@ -44,6 +117,15 @@ function ChatUI_SetClientMuted(muteClientIndex, setMute)
     Client.SendNetworkMessage("MutePlayer", message, true)
     mutedClients[muteClientIndex] = setMute
 
+	-- Persistent mutes
+	local steamId = GetSteamIdForClientIndex(muteClientIndex)
+	if not mutedVoiceClients[steamId] then
+		mutedVoiceClients[steamId] = { }
+	end
+	
+	mutedVoiceClients[steamId].isMuted = setMute
+	mutedVoiceClients[steamId].targetTime = ConditionalValue(setMute, Shared.GetSystemTime() + mutedTime, 0)
+	
 end
 
 function ChatUI_GetClientMuted(clientIndex)
@@ -57,12 +139,23 @@ function ChatUI_SetSteamIdTextMuted(steamId, setTextMute)
         return
     end
     
-    mutedTextClients[steamId] = setTextMute
+	if not mutedTextClients[steamId] then
+		mutedTextClients[steamId] = {}
+	end
+	
+	mutedTextClients[steamId].isMuted = setTextMute
+	mutedTextClients[steamId].targetTime = ConditionalValue(setTextMute, Shared.GetSystemTime() + mutedTime, 0)
 
+    SaveMutedPlayers()
 end
 
 function ChatUI_GetSteamIdTextMuted(steamId)
-    return mutedTextClients[steamId] == true
+	-- Bots and the client should never be muted
+	if steamId == Client.GetSteamId() or steamId == 0 then
+		return false
+	else
+		return mutedTextClients[steamId] and mutedTextClients[steamId].isMuted == true or false
+	end
 end
 
 function ChatUI_GetMessages()
@@ -276,3 +369,4 @@ function ChatUI_AddSystemMessage(msgText)
 end
 
 Client.HookNetworkMessage("Chat", OnMessageChat)
+Event.Hook("LoadComplete", OnLoadComplete)

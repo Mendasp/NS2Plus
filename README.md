@@ -9,6 +9,8 @@ Latest changes
 	- Added option to mute Text chat.
 	- Added icon to the scoreboard indicating if someone is your friend on Steam.
 	- Made it so the scoreboard shortens the player name if it overlaps.
+	- Muting a player's voice/text chat will last 6 hours so it's persistent across map changes.
+	- Rookies will always show the "(rookie)" tag in chat even if they're not in your own team.
 
 - 15/11/2014
 	- Made the pregame skill display compatible with Pregame Plus.
