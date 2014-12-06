@@ -15,6 +15,7 @@ local teamOnlyChat = false
 // Note: Nothing clears this out but it is probably safe to assume the player won't
 // mute enough clients to run out of memory.
 local mutedClients = { }
+local mutedClientsSteamId = { }
 local mutedTextClients = { }
 
 /**
@@ -156,6 +157,7 @@ local function OnMessageChat(message)
 
         local isCommander = false
         local drawRookie = false
+        local isRookie = false
         local steamId = 0
         
         local playerData = ScoreboardUI_GetAllScores()
@@ -164,7 +166,8 @@ local function OnMessageChat(message)
 
             if playerRecord.Name == message.playerName then
                 isCommander = playerRecord.IsCommander
-                drawRookie = playerRecord.IsRookie and ((player:GetTeamNumber() == playerRecord.EntityTeamNumber) or (player:GetTeamNumber() == kSpectatorIndex))
+                isRookie = playerRecord.IsRookie
+                drawRookie = isRookie and ((player:GetTeamNumber() == playerRecord.EntityTeamNumber) or (player:GetTeamNumber() == kSpectatorIndex))
                 steamId = GetSteamIdForClientIndex(playerRecord.ClientIndex)
                 break
             end
@@ -174,11 +177,17 @@ local function OnMessageChat(message)
         local rookieText = ""
         if isCommander then
             table.insert(chatMessages, kCommanderColor)
+        -- The scoreboard was changed to show enemy team rookies but the chat was still hiding this
+        -- Append the rookie text to chat so all teams can tell without looking at the scoreboard
+        -- We still only color the own team's rookies' names green
         elseif drawRookie then
             table.insert(chatMessages, kNewPlayerColor)
-            rookieText = " " .. Locale.ResolveString("ROOKIE_CHAT")
         else
             table.insert(chatMessages, GetColorForTeamNumber(message.teamNumber))
+        end
+        
+        if isRookie then
+            rookieText = " " .. Locale.ResolveString("ROOKIE_CHAT")
         end
         
         // Tack on location name if any
@@ -207,14 +216,14 @@ local function OnMessageChat(message)
         
         table.insert(chatMessages, message.message)
         
-        // Player steamId (for muting text)
-        table.insert(chatMessages, steamId)
+        // reserved for possible texture name
+        table.insert(chatMessages, "")
         // texture x
         table.insert(chatMessages, 0)
         // texture y
         table.insert(chatMessages, 0)
-        // entity id
-        table.insert(chatMessages, 0)
+        // Player steamId (for muting text)
+        table.insert(chatMessages, steamId)
         
         StartSoundEffect(player:GetChatSound())
         
@@ -257,7 +266,7 @@ function ChatUI_AddSystemMessage(msgText)
         table.insert(chatMessages, 0)
         // texture y
         table.insert(chatMessages, 0)
-        // entity id
+        // Player steamId (for muting text)
         table.insert(chatMessages, 0)
 
         StartSoundEffect(player:GetChatSound())

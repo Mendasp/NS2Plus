@@ -335,32 +335,38 @@ function(self, key, down)
 			end
 		
 			self.hoverMenu:ResetButtons()
-			local teamColor
+			local teamColorBg
+			local teamColorHighlight
 			local playerName = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "Name")
 			local teamNumber = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "EntityTeamNumber")
 			local isCommander = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "IsCommander")
+			local textColor = Color(1, 1, 1, 1)
+			local nameBgColor = Color(0, 0, 0, 0)
 			
 			if isCommander then
-				teamColor = GUIScoreboard.kCommanderFontColor
+				teamColorBg = GUIScoreboard.kCommanderFontColor
 			elseif teamNumber == 1 then
-				teamColor = GUIScoreboard.kBlueColor
+				teamColorBg = GUIScoreboard.kBlueColor
 			elseif teamNumber == 2 then
-				teamColor = GUIScoreboard.kRedColor
+				teamColorBg = GUIScoreboard.kRedColor
 			else
-				teamColor = GUIScoreboard.kSpectatorColor
+				teamColorBg = GUIScoreboard.kSpectatorColor
 			end
 			
-			local bgColor = teamColor * 0.1
+			local bgColor = teamColorBg * 0.1
 			bgColor.a = 0.9
 			
+			teamColorHighlight = teamColorBg * 0.75
+			teamColorBg = teamColorBg * 0.5
+			
 			self.hoverMenu:SetBackgroundColor(bgColor)
-			self.hoverMenu:AddButton(playerName, Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(1, 1, 1, 1))
-			self.hoverMenu:AddButton("Steam profile", teamColor * 0.5, teamColor * 0.75, Color(1, 1, 1, 1), openSteamProf)
-			self.hoverMenu:AddButton("NS2 profile", teamColor * 0.5, teamColor * 0.75, Color(1, 1, 1, 1), openHiveProf)
+			self.hoverMenu:AddButton(playerName, nameBgColor, nameBgColor, textColor)
+			self.hoverMenu:AddButton("Steam profile", teamColorBg, teamColorHighlight, textColor, openSteamProf)
+			self.hoverMenu:AddButton("NS2 profile", teamColorBg, teamColorHighlight, textColor, openHiveProf)
 			
 			if Client.GetSteamId() ~= steamId then
-				self.hoverMenu:AddButton(ConditionalValue(isVoiceMuted, "Unm", "M") .. "ute voice", teamColor, teamColor * 0.75, muteVoice)
-				self.hoverMenu:AddButton(ConditionalValue(isTextMuted, "Unm", "M") .. "ute text", teamColor, teamColor * 0.75, muteText)
+				self.hoverMenu:AddButton(ConditionalValue(isVoiceMuted, "Unm", "M") .. "ute voice", teamColorBg, teamColorHighlight, textColor, muteVoice)
+				self.hoverMenu:AddButton(ConditionalValue(isTextMuted, "Unm", "M") .. "ute text", teamColorBg, teamColorHighlight, textColor, muteText)
 			end
 			
 			self.hoverMenu:Show()
