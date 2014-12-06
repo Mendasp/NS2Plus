@@ -138,7 +138,7 @@ function(self, updateTeam)
 		local finalNameWidth = player["Name"]:GetTextWidth(finalName)
 		local dotsWidth = player["Name"]:GetTextWidth("...")
 		while nameRightPos + finalNameWidth > pos do
-			finalName = string.sub(finalName, 1, string.len(finalName)-1)
+			finalName = string.UTF8Sub(finalName, 1, string.UTF8Length(finalName)-1)
 			finalNameWidth = player["Name"]:GetTextWidth(finalName) + dotsWidth
 			player["Name"]:SetText(finalName .. "...")
 		end
