@@ -319,7 +319,8 @@ function(self, key, down)
 		local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex) or 0
 		if self.hoverMenu.background:GetIsVisible() then
 			return false
-		elseif steamId ~= 0 then
+		-- Display the menu for bots if dev mode is on (steamId 0 but have a proper clientIndex)
+		elseif steamId ~= 0 or self.hoverPlayerClientIndex ~= 0 and Shared.GetDevMode() then
 			local isTextMuted = ChatUI_GetSteamIdTextMuted(steamId)
 			local isVoiceMuted = ChatUI_GetClientMuted(self.hoverPlayerClientIndex)
 			local function openSteamProf()
