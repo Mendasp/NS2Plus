@@ -16,6 +16,7 @@ end)
 local kPlayerItemLeftMargin = 10
 local kPlayerVoiceChatIconSize = 20
 local kPlayerBadgeRightPadding = 4
+local kPlayerNumberWidth = 20
 
 local originalScoreboardCreatePlayerItem
 originalScoreboardCreatePlayerItem = Class_ReplaceMethod( "GUIScoreboard", "CreatePlayerItem",
@@ -44,10 +45,18 @@ function(self)
 		steamFriendIcon:SetTexture("ui/steamfriend.dds")
 		steamFriendIcon:SetStencilFunc(GUIItem.NotEqual)
 		steamFriendIcon:SetIsVisible(false)
+		steamFriendIcon.allowHighlight = true
 		playerItem["Background"]:AddChild(steamFriendIcon)
 		
 		playerItem["Text"] = playerTextIcon
 		playerItem["SteamFriend"] = steamFriendIcon
+		
+		-- Let's do a table here to easily handle the highlighting/clicking of icons
+		-- It also makes it easy for other mods to add icons afterwards
+		playerItem["IconTable"] = {}
+		table.insert(playerItem["IconTable"], playerItem["SteamFriend"])
+		table.insert(playerItem["IconTable"], playerItem["Voice"])
+		table.insert(playerItem["IconTable"], playerItem["Text"])
 	end
 	
 	return playerItem
@@ -78,7 +87,7 @@ function(self, updateTeam)
 		local clientIndex = playerRecord.ClientIndex
 		local steamId = GetSteamIdForClientIndex(clientIndex)
 		
-		// Swap KDA/KAD
+		-- Swap KDA/KAD
 		if CHUDGetOption("kda") and player["Assists"]:GetPosition().x < player["Deaths"]:GetPosition().x then
 			local temp = player["Assists"]:GetPosition()
 			player["Assists"]:SetPosition(player["Deaths"]:GetPosition())
@@ -91,8 +100,15 @@ function(self, updateTeam)
 		
 		teamAvgSkill = teamAvgSkill + playerRecord.Skill
 		
+		-- New scoreboard positioning
+		
+		local numberSize = 0
+		if player["Number"]:GetIsVisible() then
+			numberSize = kPlayerNumberWidth
+		end
+		
 		for i = 1, #player["BadgeItems"] do
-			player["BadgeItems"][i]:SetPosition(Vector(kPlayerItemLeftMargin + (i-1) * kPlayerVoiceChatIconSize + (i-1) * kPlayerBadgeRightPadding, -kPlayerVoiceChatIconSize/2, 0))
+			player["BadgeItems"][i]:SetPosition(Vector(numberSize + kPlayerItemLeftMargin + (i-1) * kPlayerVoiceChatIconSize + (i-1) * kPlayerBadgeRightPadding, -kPlayerVoiceChatIconSize/2, 0))
 		end
 		
 		local statusPos = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth + 30, (GetTeamItemWidth() - GUIScoreboard.kTeamColumnSpacingX * 10) + 60)
@@ -103,38 +119,29 @@ function(self, updateTeam)
 		end
 		
 		local numBadges = math.min(#Badges_GetBadgeTextures(clientIndex, "scoreboard"), #player["BadgeItems"])
-		local pos = kPlayerItemLeftMargin + numBadges * kPlayerVoiceChatIconSize + numBadges * kPlayerBadgeRightPadding
+		local pos = numberSize + kPlayerItemLeftMargin + numBadges * kPlayerVoiceChatIconSize + numBadges * kPlayerBadgeRightPadding
 		
 		player["Name"]:SetPosition(Vector(pos, 0, 0))
 		
-		local voiceMuted = ChatUI_GetClientMuted(clientIndex)
-		local textMuted = ChatUI_GetSteamIdTextMuted(steamId)
-		local isSteamFriend = playerRecord.IsSteamFriend
+		-- Icons on the right side of the player name
+		player["SteamFriend"]:SetIsVisible(playerRecord.IsSteamFriend)
+		
+		player["Voice"]:SetIsVisible(ChatUI_GetClientMuted(clientIndex))
+		player["Voice"]:SetColor(GUIScoreboard.kVoiceMuteColor)
+		
+		player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 		
 		local nameRightPos = pos + kPlayerBadgeRightPadding
 		
-		pos = statusPos - kPlayerVoiceChatIconSize - kPlayerBadgeRightPadding
+		pos = statusPos - kPlayerBadgeRightPadding
 		
-		if isSteamFriend then
-			player["SteamFriend"]:SetPosition(Vector(pos, -kPlayerVoiceChatIconSize/2, 0))
-			pos = pos - kPlayerVoiceChatIconSize
+		for _, icon in ipairs(player["IconTable"]) do
+			if icon:GetIsVisible() then
+				local iconSize = icon:GetSize()
+				pos = pos - iconSize.x
+				icon:SetPosition(Vector(pos, -iconSize.y/2, 0))
+			end
 		end
-		player["SteamFriend"]:SetIsVisible(isSteamFriend)
-		
-		if voiceMuted then
-			player["Voice"]:SetPosition(Vector(pos, -kPlayerVoiceChatIconSize/2, 0))
-			pos = pos - kPlayerVoiceChatIconSize
-		end
-		player["Voice"]:SetIsVisible(voiceMuted)
-		player["Voice"]:SetColor(GUIScoreboard.kVoiceMuteColor)
-		
-		if textMuted then
-			player["Text"]:SetPosition(Vector(pos, -kPlayerVoiceChatIconSize/2, 0))
-			pos = pos - kPlayerVoiceChatIconSize
-		end
-		player["Text"]:SetIsVisible(textMuted)
-		
-		pos = pos + kPlayerVoiceChatIconSize
 		
 		local finalName = player["Name"]:GetText()
 		local finalNameWidth = player["Name"]:GetTextWidth(finalName)
@@ -160,16 +167,19 @@ function(self, updateTeam)
 		end
 		
 		if not self.hoverMenu.background:GetIsVisible() then
-			if MouseTracker_GetIsVisible() and
-				GUIItemContainsPoint(player["Background"], mouseX, mouseY) and
-				not (GUIItemContainsPoint(player["Voice"], mouseX, mouseY) and player["Voice"]:GetIsVisible()) and 
-				not (GUIItemContainsPoint(player["Text"], mouseX, mouseY) and player["Text"]:GetIsVisible()) then
+			if MouseTracker_GetIsVisible() and GUIItemContainsPoint(player["Background"], mouseX, mouseY) then
 				local canHighlight = true
+				for _, icon in ipairs(player["IconTable"]) do
+					if icon:GetIsVisible() and GUIItemContainsPoint(icon, mouseX, mouseY) and not icon.allowHighlight then
+						canHighlight = false
+						break
+					end
+				end
+
 				for i = 1, #player.BadgeItems do
 					local badgeItem = player.BadgeItems[i]
 					if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
 						canHighlight = false
-						self.hoverPlayerClientIndex = 0
 						break
 					end
 				end
@@ -177,6 +187,8 @@ function(self, updateTeam)
 				if canHighlight then
 					self.hoverPlayerClientIndex = clientIndex
 					player["Background"]:SetColor(color)
+				else
+					self.hoverPlayerClientIndex = 0
 				end
 			end
 		elseif steamId == GetSteamIdForClientIndex(self.hoverPlayerClientIndex) then
@@ -322,7 +334,7 @@ function(self, key, down)
 		local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex) or 0
 		if self.hoverMenu.background:GetIsVisible() then
 			return false
-		-- Display the menu for bots if dev mode is on (steamId 0 but have a proper clientIndex)
+		-- Display the menu for bots if dev mode is on (steamId is 0 but they have a proper clientIndex)
 		elseif steamId ~= 0 or self.hoverPlayerClientIndex ~= 0 and Shared.GetDevMode() then
 			local isTextMuted = ChatUI_GetSteamIdTextMuted(steamId)
 			local isVoiceMuted = ChatUI_GetClientMuted(self.hoverPlayerClientIndex)
