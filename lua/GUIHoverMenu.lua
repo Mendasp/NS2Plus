@@ -12,6 +12,8 @@ local kBackgroundColor = Color(0, 0, 0, 0.9)
 local kPadding = 10
 local kRowSize = 20
 local kRowPadding = 2
+local kSeparatorSize = 4
+local kDiffSepRow = kRowSize-kSeparatorSize
 local kBackgroundSize = Vector(100, kRowPadding, 0)
 
 function GUIHoverMenu:Initialize()
@@ -28,6 +30,38 @@ end
 
 function GUIHoverMenu:SetBackgroundColor(bgColor)
 	self.background:SetColor(bgColor)
+end
+
+function GUIHoverMenu:AdjustMenuSize()
+	local longest = 0
+	local separatorsSize = 0
+	for _, entry in ipairs(self.links) do
+		if not entry.isSeparator then
+			local length = entry.link:GetTextWidth(entry.link:GetText())
+			if longest < length then
+				longest = length
+			end
+		else
+			separatorsSize = separatorsSize + kDiffSepRow
+		end
+	end
+	
+	local ySize = #self.links * kRowSize + (#self.links-1) * kRowPadding - separatorsSize
+	local xSize = longest + kPadding * 2
+	
+	local yPos = 0
+	
+	for _, entry in ipairs(self.links) do
+		if entry.isSeparator then
+			yPos = yPos + kSeparatorSize
+		else
+			entry.background:SetPosition(Vector(kRowPadding, kRowPadding + yPos, 0))
+			entry.background:SetSize(Vector(xSize, kRowSize, 0))
+			yPos = yPos + kRowSize + kRowPadding
+		end
+	end
+	
+	self.background:SetSize(Vector(xSize + 4, ySize + 4, 0))
 end
 
 function GUIHoverMenu:AddButton(text, bgColor, bgHighlightColor, textColor, callback)
@@ -56,29 +90,53 @@ function GUIHoverMenu:AddButton(text, bgColor, bgHighlightColor, textColor, call
 	
 	table.insert(self.links, button)
 	
-	local longest = 0
-	for _, entry in ipairs(self.links) do
-		local length = entry.link:GetTextWidth(entry.link:GetText())
-		if longest < length then
-			longest = length
+	self:AdjustMenuSize()
+end
+
+-- Just to add some extra space between option blocks
+function GUIHoverMenu:AddSeparator(name)
+	
+	local separator = {}
+	separator.isSeparator = true
+	separator.name = name
+	
+	table.insert(self.links, separator)
+	
+	self:AdjustMenuSize()
+	
+end
+
+-- Only remove the first result in the table
+-- Separators have a name so we can delete those too
+-- Return the result of the operation in case someone wants to do a while loop
+-- with this to remove all entries with the same text
+function GUIHoverMenu:RemoveButtonByText(text)
+	local indexToRemove
+	for index, entry in ipairs(self.links) do
+		if entry.isSeparator and entry.name == text then
+			indexToRemove = index
+			break
+		elseif entry.link and entry.link:GetText() == text then
+			GUI.DestroyItem(entry.background)
+			indexToRemove = index
+			break
 		end
 	end
 	
-	local ySize = #self.links * kRowSize + (#self.links-1) * kRowPadding
-	local xSize = longest + kPadding * 2
-	
-	for _, entry in ipairs(self.links) do
-		entry.background:SetSize(Vector(xSize, kRowSize, 0))
+	if indexToRemove then
+		table.remove(self.links, indexToRemove)
+		self:AdjustMenuSize()
 	end
 	
-	background:SetPosition(Vector(2, 2 + ySize - kRowSize, 0))
-	background:SetSize(Vector(xSize, kRowSize, 0))
-	self.background:SetSize(Vector(xSize + 4, ySize + 4, 0))
+	-- Return the result of the operation
+	return indexToRemove ~= nil
 end
 
 function GUIHoverMenu:ResetButtons()
-	for index, button in ipairs(self.links) do
-		GUI.DestroyItem(button.background)
+	for _, button in ipairs(self.links) do
+		if not button.isSeparator then
+			GUI.DestroyItem(button.background)
+		end
 	end
 	self.links = {}
 end
@@ -95,11 +153,13 @@ function GUIHoverMenu:Update(deltaTime)
 	if self.background:GetIsVisible() then
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
-		for index, button in pairs(self.links) do
-			if GUIItemContainsPoint(button.background, mouseX, mouseY) then
-				button.background:SetColor(button.bgHighlightColor)
-			else
-				button.background:SetColor(button.bgColor)
+		for _, button in pairs(self.links) do
+			if not button.isSeparator then
+				if GUIItemContainsPoint(button.background, mouseX, mouseY) then
+					button.background:SetColor(button.bgHighlightColor)
+				else
+					button.background:SetColor(button.bgColor)
+				end
 			end
 		end
 	end
@@ -120,8 +180,8 @@ function GUIHoverMenu:SendKeyEvent(key, down)
 		if down and self.background:GetIsVisible() then
 			local mouseX, mouseY = Client.GetCursorPosScreen()
 			
-			for index, button in pairs(self.links) do
-				if GUIItemContainsPoint(button.background, mouseX, mouseY) and button.callback then
+			for _, button in pairs(self.links) do
+				if not button.isSeparator and GUIItemContainsPoint(button.background, mouseX, mouseY) and button.callback then
 					button.callback()
 				end
 			end

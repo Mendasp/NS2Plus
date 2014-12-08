@@ -2,6 +2,7 @@ local team1Skill, team2Skill
 
 local kSteamProfileURL = "http://steamcommunity.com/profiles/"
 local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
+local kMinTruncatedNameLength = 8
 
 local originalScoreboardInit
 originalScoreboardInit = Class_ReplaceMethod( "GUIScoreboard", "Initialize",
@@ -23,6 +24,7 @@ function(self)
 	local reusedItems = table.count(self.reusePlayerItems) > 0
 	local playerItem = originalScoreboardCreatePlayerItem(self)
 	
+	-- If the item already is being reused we don't need to create these again
 	if not reusedItems then
 		playerItem["Number"]:SetIsVisible(false)
 		playerItem["Voice"]:SetIsVisible(false)
@@ -137,7 +139,8 @@ function(self, updateTeam)
 		local finalName = player["Name"]:GetText()
 		local finalNameWidth = player["Name"]:GetTextWidth(finalName)
 		local dotsWidth = player["Name"]:GetTextWidth("...")
-		while nameRightPos + finalNameWidth > pos do
+		-- The minimum truncated length for the name also includes the "..."
+		while nameRightPos + finalNameWidth > pos and string.UTF8Length(finalName) > kMinTruncatedNameLength do
 			finalName = string.UTF8Sub(finalName, 1, string.UTF8Length(finalName)-1)
 			finalNameWidth = player["Name"]:GetTextWidth(finalName) + dotsWidth
 			player["Name"]:SetText(finalName .. "...")
@@ -367,6 +370,7 @@ function(self, key, down)
 			self.hoverMenu:AddButton("NS2 profile", teamColorBg, teamColorHighlight, textColor, openHiveProf)
 			
 			if Client.GetSteamId() ~= steamId then
+				self.hoverMenu:AddSeparator("muteOptions")
 				self.hoverMenu:AddButton(ConditionalValue(isVoiceMuted, "Unm", "M") .. "ute voice", teamColorBg, teamColorHighlight, textColor, muteVoice)
 				self.hoverMenu:AddButton(ConditionalValue(isTextMuted, "Unm", "M") .. "ute text", teamColorBg, teamColorHighlight, textColor, muteText)
 			end
