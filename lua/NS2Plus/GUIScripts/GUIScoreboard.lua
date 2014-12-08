@@ -2,6 +2,7 @@ local team1Skill, team2Skill
 
 local kSteamProfileURL = "http://steamcommunity.com/profiles/"
 local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
+local kNS2StatsProfileURL = "http://ns2stats.com/player/ns2id/"
 local kMinTruncatedNameLength = 8
 
 local originalScoreboardInit
@@ -344,6 +345,9 @@ function(self, key, down)
 			local function openHiveProf()
 				Client.ShowWebpage(string.format("%s%s", kHiveProfileURL, steamId))
 			end
+			local function openNS2StatsProf()
+				Client.ShowWebpage(string.format("%s%s", kNS2StatsProfileURL, steamId))
+			end
 			local function muteText()
 				ChatUI_SetSteamIdTextMuted(steamId, not isTextMuted)
 			end
@@ -379,7 +383,8 @@ function(self, key, down)
 			self.hoverMenu:SetBackgroundColor(bgColor)
 			self.hoverMenu:AddButton(playerName, nameBgColor, nameBgColor, textColor)
 			self.hoverMenu:AddButton("Steam profile", teamColorBg, teamColorHighlight, textColor, openSteamProf)
-			self.hoverMenu:AddButton("NS2 profile", teamColorBg, teamColorHighlight, textColor, openHiveProf)
+			self.hoverMenu:AddButton("Hive profile", teamColorBg, teamColorHighlight, textColor, openHiveProf)
+			self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf)
 			
 			if Client.GetSteamId() ~= steamId then
 				self.hoverMenu:AddSeparator("muteOptions")
