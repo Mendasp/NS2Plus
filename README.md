@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- / /2014
+- 08/12/2014
 	- Added ability to click on a player's row in the scoreboard to check their Steam/Hive profiles.
 	- Added option to mute Text chat.
 	- Added icon to the scoreboard indicating if someone is your friend on Steam.

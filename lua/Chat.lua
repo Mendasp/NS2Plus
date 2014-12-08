@@ -30,13 +30,13 @@ local function SaveMutedPlayers()
 	local voiceMutes = {}
 	
 	for steamId, player in pairs(mutedTextClients) do
-		if player.isMuted and player.targetTime > Shared.GetSystemTime() then
+		if steamId > 0 and player.isMuted and player.targetTime > Shared.GetSystemTime() then
 			textMutes[steamId] = player
 		end
 	end
 	
 	for steamId, player in pairs(mutedVoiceClients) do
-		if player.isMuted and player.targetTime > Shared.GetSystemTime() then
+		if steamId > 0 and player.isMuted and player.targetTime > Shared.GetSystemTime() then
 			voiceMutes[steamId] = player
 		end
 	end
