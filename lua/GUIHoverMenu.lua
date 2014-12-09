@@ -180,13 +180,18 @@ function GUIHoverMenu:SendKeyEvent(key, down)
 		if down and self.background:GetIsVisible() then
 			local mouseX, mouseY = Client.GetCursorPosScreen()
 			
+			-- Only hide the menu when clicking something with a callback
 			for _, button in pairs(self.links) do
 				if not button.isSeparator and GUIItemContainsPoint(button.background, mouseX, mouseY) and button.callback then
 					button.callback()
+					self:Hide()
 				end
 			end
 			
-			self:Hide()
+			-- Or clicking outside the menu
+			if not GUIItemContainsPoint(self.background, mouseX, mouseY) then
+				self:Hide()
+			end
 			
 			ret = true
 		end
