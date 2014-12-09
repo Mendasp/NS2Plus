@@ -141,7 +141,8 @@ function GetCHUDSettings()
 			end
 		end
 		
-		if lastCHUD < kCHUDVersion and option.resetSettingInBuild and kCHUDVersion >= option.resetSettingInBuild then
+		if lastCHUD < kCHUDVersion and option.resetSettingInBuild and kCHUDVersion >= option.resetSettingInBuild and lastCHUD < option.resetSettingInBuild then
+			Shared.Message(string.format("[NS2+] The default setting for \"%s\" was changed in NS2+ build %d, resetting to default.", option.label, option.resetSettingInBuild))
 			CHUDSetOption(name, option.defaultValue)
 		end
 		

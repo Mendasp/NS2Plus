@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- / /
+	- Fixed bug that would reset certain settings to default every time NS2+ updated.
+	- Added console message when NS2+ force-resets a setting because of updated defaults.
+
 - 09/12/2014
 	- Added ability to click on a player's row in the scoreboard to check their Steam/Hive/NS2Stats profiles.
 	- Added option to mute Text chat.
