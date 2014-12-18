@@ -151,6 +151,10 @@ function CHUDGUI_MenuNews:SetIsVisible(visible)
     self.webContainer:SetIsVisible(visible)
     self.logo:SetIsVisible(visible)
     self.isVisible = visible
+	
+    if visible == false then
+        SetKeyEventBlocker(nil)
+    end
 end
 
 function CHUDGUI_MenuNews:LoadURL(url)
