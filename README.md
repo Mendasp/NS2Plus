@@ -4,7 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- / /
+- 18/12/2014
+	- Updated for build 272
+	- Fixed unresponsive menu bug. (Thanks Samusdroid!)
 	- Fixed bug that would reset certain settings to default every time NS2+ updated.
 	- Added console message when NS2+ force-resets a setting because of updated defaults.
 
@@ -79,6 +81,9 @@ Credits/Thanks to
 =================
 Past NS2+ features now included in vanilla NS2:
 =================
+- [272] Modified vanilla scoreboard to make it usable at low resolutions. It will automatically scroll to your position if you are in RR or in a team. You can use the mousewheel, home/end/pgup/pgdn or click and drag to scroll.
+- [272] Scoreboard shows the Commander background in yellow instead of the name, so you can identify rookie players that are commanding.
+- [272] Medpacks, ammo, and catpacks can be picked up from any height difference.
 - [270] Scoreboard displays the number of connecting players.
 - [270] In the voice request menu you can now select items by moving the mouse past them (similar to NS1).
 - [270] Building range circles now use decals instead of models.
@@ -122,6 +127,8 @@ Past NS2+ features now included in vanilla NS2:
 =================
 Past NS2+ fixes now included in vanilla NS2:
 =================
+- [272] Fixed server crash related to picking up a jetpack and a weapon at the same time.
+- [272] Fixed kill feed being obscured by the death screen fade to black.
 - [270] Fixed players having voice communication cut off while entering or exiting commander mode.
 - [270] Fixed occasional error when attempting to enter the Mods menu.
 - [268] Fixed bug that made trigger volumes bigger than their representation in the editor. This affected some map locations (power node issues).
