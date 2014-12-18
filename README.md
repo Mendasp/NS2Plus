@@ -5,7 +5,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - 18/12/2014
-	- Updated for build 272
+	- Updated for build 272.
 	- Fixed unresponsive menu bug. (Thanks Samusdroid!)
 	- Fixed bug that would reset certain settings to default every time NS2+ updated.
 	- Added console message when NS2+ force-resets a setting because of updated defaults.
