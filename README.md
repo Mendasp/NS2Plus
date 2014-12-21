@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- / /
+	- Added location name and power node status to the power icon when dropping marine buildings.
+
 - 18/12/2014
 	- Updated for build 272.
 	- Fixed unresponsive menu bug. (Thanks Samusdroid!)

@@ -27,3 +27,4 @@ Script.Load("lua/NS2Plus/GUIScripts/GUIChat.lua")
 
 // I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/NS2Plus/GUIScripts/GhostModel.lua")
+Script.Load("lua/NS2Plus/GUIScripts/MarineGhostModel.lua")
