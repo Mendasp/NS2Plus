@@ -9,11 +9,9 @@ oldMarineGhostModelInit = Class_ReplaceMethod("MarineGhostModel", "Initialize",
 		
 		if not self.powerLocationText then    
 			self.powerLocationText = GetGUIManager():CreateTextItem()
-			self.powerLocationText:SetAnchor(GUIItem.Right, GUIItem.Middle)
 			self.powerLocationText:SetTextAlignmentY(GUIItem.Align_Center)
 			self.powerLocationText:SetFontName(kTextName)
 			self.powerLocationText:SetScale(GetScaledVector())
-			self.powerLocationText:SetPosition(GUIScale(Vector(10, 0, 0)))
 			
 			self.powerIcon:AddChild(self.powerLocationText)
 		end
@@ -28,6 +26,8 @@ oldMarineGhostModelUpdate = Class_ReplaceMethod("MarineGhostModel", "Update",
 		local location = modelCoords and GetLocationForPoint(modelCoords.origin)
 		
 		if location and self.powerIcon and self.powerIcon:GetIsVisible() then
+			local screenPos = Client.WorldToScreen(modelCoords.origin)
+			local textPos = self.powerIcon:GetPosition()
 			local powerPoint = GetPowerPointForLocation(location:GetName())
 			local text = string.format("%s", location:GetName())
 			local builtFraction = powerPoint:GetBuiltFraction()
@@ -39,6 +39,16 @@ oldMarineGhostModelUpdate = Class_ReplaceMethod("MarineGhostModel", "Update",
 			end
 			self.powerLocationText:SetText(text)
 			self.powerLocationText:SetColor(self.powerIcon:GetColor())
+			
+			if screenPos.x > textPos.x then
+				self.powerLocationText:SetAnchor(GUIItem.Left, GUIItem.Middle)
+				self.powerLocationText:SetTextAlignmentX(GUIItem.Align_Max)
+				self.powerLocationText:SetPosition(GUIScale(Vector(-10, 0, 0)))
+			else
+				self.powerLocationText:SetAnchor(GUIItem.Right, GUIItem.Middle)
+				self.powerLocationText:SetTextAlignmentX(GUIItem.Align_Min)
+				self.powerLocationText:SetPosition(GUIScale(Vector(10, 0, 0)))
+			end
 		else
 			self.powerLocationText:SetText("")
 		end
