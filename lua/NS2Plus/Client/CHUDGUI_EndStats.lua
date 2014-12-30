@@ -802,6 +802,22 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 		end)
 		
+		table.sort(cardsTable, function(a, b)
+			if a.teamNumber == b.teamNumber and a.message.kills and b.message.kills then
+				local accuracyA = a.message.accuracyOnos ~= -1 and a.message.accuracy or a.message.accuracyOnos
+				local accuracyB = b.message.accuracyOnos ~= -1 and b.message.accuracy or b.message.accuracyOnos
+				if a.message.kills == b.message.kills then
+					return accuracyA > accuracyB
+				else
+					return a.message.kills > b.message.kills
+				end
+			elseif a.teamNumber == b.teamNumber and a.message.medpackResUsed and b.message.medpackResUsed then
+				return a.order < b.order
+			else
+				return a.teamNumber > b.teamNumber
+			end
+		end)
+		
 		if #finalStatsTable > 0 then
 			local totalKills1 = 0
 			local totalKills2 = 0
@@ -1066,6 +1082,7 @@ local function CHUDSetWeaponStats(message)
 	cardEntry.logoCoords = { GetTexCoordsForTechId(wTechId) }
 	cardEntry.logoSizeX = 64
 	cardEntry.logoSizeY = 32
+	cardEntry.message = message
 	
 	cardEntry.rows = {}
 	
@@ -1103,6 +1120,8 @@ local function CHUDSetCommStats(message)
 			cardEntry.logoCoords = GetTextureCoordinatesForIcon(kTechId.MedPack)
 			cardEntry.logoSizeX = 32
 			cardEntry.logoSizeY = 32
+			cardEntry.message = message
+			cardEntry.order = 1
 			
 			cardEntry.rows = {}
 			
@@ -1142,6 +1161,8 @@ local function CHUDSetCommStats(message)
 			cardEntry.logoCoords = GetTextureCoordinatesForIcon(kTechId.AmmoPack)
 			cardEntry.logoSizeX = 32
 			cardEntry.logoSizeY = 32
+			cardEntry.message = message
+			cardEntry.order = 2
 			
 			cardEntry.rows = {}
 			
@@ -1176,6 +1197,8 @@ local function CHUDSetCommStats(message)
 			cardEntry.logoCoords = GetTextureCoordinatesForIcon(kTechId.CatPack)
 			cardEntry.logoSizeX = 32
 			cardEntry.logoSizeY = 32
+			cardEntry.message = message
+			cardEntry.order = 3
 			
 			cardEntry.rows = {}
 			
