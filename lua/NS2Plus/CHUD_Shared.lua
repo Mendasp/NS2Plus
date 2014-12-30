@@ -22,16 +22,7 @@ if not CHUDMainMenu then
 		accuracy = "float (0 to 100 by 0.01)",
 		accuracyOnos = "float (-1 to 100 by 0.01)",
 		kills = "integer (0 to 1023)",
-	}
-
-	local kCHUDEndStatsOverallMessage =
-	{
-		accuracy = "float (0 to 100 by 0.01)",
-		accuracyOnos = "float (-1 to 100 by 0.01)",
-		pdmg = "float (0 to 524287 by 0.01)",
-		sdmg = "float (0 to 524287 by 0.01)",
-		killstreak = "integer (0 to 254)",
-		minutesBuilding = "float (0 to 1023 by 0.01)",
+		teamNumber = "integer (1 to 2)",
 	}
 
 	local kCHUDMarineCommStatsMessage =
@@ -69,6 +60,7 @@ if not CHUDMainMenu then
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
 		minutesBuilding = "float (0 to 1023 by 0.01)",
+		killstreak = "integer (0 to 254)",
 	}
 
 	local kCHUDOptionMessage =
@@ -92,7 +84,6 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "SetCHUDOverkill", kCHUDOverkillMessage)
 	Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
-	Shared.RegisterNetworkMessage( "CHUDEndStatsOverall", kCHUDEndStatsOverallMessage)
 	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDPlayerStats", kCHUDPlayerStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDAvgAccStats", kCHUDAvgAccMessage)

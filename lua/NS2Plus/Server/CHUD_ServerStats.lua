@@ -393,21 +393,10 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					msg.accuracy = accuracy
 					msg.accuracyOnos = accuracyOnos
 					msg.kills = wStats.kills
+					msg.teamNumber = stats.teamNumber
 					
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
 				end
-				
-				local accuracy, accuracyOnos = CHUDGetAccuracy(stats.hits, stats.misses, stats.onosHits)
-				
-				local msg = {}
-				msg.accuracy = accuracy
-				msg.accuracyOnos = accuracyOnos
-				msg.pdmg = stats.pdmg
-				msg.sdmg = stats.sdmg
-				msg.killstreak = stats.killstreak
-				msg.minutesBuilding = stats.timeBuilding/60
-				
-				Server.SendNetworkMessage(client, "CHUDEndStatsOverall", msg, true)
 			end
 		
 		end
@@ -424,6 +413,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			statEntry.isMarine = stats.teamNumber == 1
 			statEntry.playerName = stats.playerName
 			statEntry.kills = stats.kills
+			statEntry.killstreak = stats.killstreak
 			statEntry.assists = stats.assists
 			statEntry.deaths = stats.deaths
 			statEntry.accuracy = accuracy
@@ -508,10 +498,23 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 			else
 				killerWeapon = doer:GetTechId()
 			end
-			
 		elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
+			local deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
 			if doer.GetWeaponTechId then
 				killerWeapon = doer:GetWeaponTechId()
+			elseif doer.techId then
+				if deathIcon == kDeathMessageIcon.Mine then
+					killerWeapon = kTechId.LayMines
+				elseif deathIcon == kDeathMessageIcon.PulseGrenade then
+					killerWeapon = kTechId.PulseGrenade
+				-- I don't think you can get kills with gas grenades, but it has a kill icon...
+				elseif deathIcon == kDeathMessageIcon.GasGrenade then
+					killerWeapon = kTechId.GasGrenade
+				elseif deathIcon == kDeathMessageIcon.ClusterGrenade then
+					killerWeapon = kTechId.ClusterGrenade
+				elseif deathIcon == kDeathMessageIcon.Flamethrower then
+					killerWeapon = kTechId.Flamethrower
+				end
 			end
 		end
 		

@@ -4,7 +4,11 @@ local originalGUIRequestUpdate
 originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 	function(self, deltaTime)
 		originalGUIRequestUpdate(self, deltaTime)
-			
+		
+		if CHUDEndStatsVisible then
+			self:SetIsVisible(false)
+		end
+		
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
 		if CHUDGetOption("mingui") then
@@ -27,7 +31,7 @@ originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 			end
 			self.voteConcedeButton.Background:SetTexture("ui/transparent.dds")
 				
-			for _, button in pairs(self.menuButtons) do					
+			for _, button in pairs(self.menuButtons) do
 				if self.selectedButton == button then
 					button.Description:SetColor(highlightColor)
 				else

@@ -6,6 +6,7 @@ Latest changes
 ==============
 - / /
 	- Added location name and power node status to the power icon when dropping marine buildings.
+	- Revamped end-game stats UI.
 
 - 18/12/2014
 	- Updated for build 272.

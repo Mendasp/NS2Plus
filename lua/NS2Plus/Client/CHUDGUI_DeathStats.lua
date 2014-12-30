@@ -156,13 +156,13 @@ local originalAlienSpecUpdate
 originalAlienSpecUpdate = Class_ReplaceMethod( "GUIAlienSpectatorHUD", "Update",
 	function(self, deltaTime)
 		originalAlienSpecUpdate(self, deltaTime)
-		self.eggIcon:SetIsVisible(self.eggIcon:GetIsVisible() and not CHUDStatsVisible and not CHUDEndStatsVisible)
+		self.eggIcon:SetIsVisible(self.eggIcon:GetIsVisible() and not CHUDStatsVisible)
 	end)
 		
 local originalBalanceUpdate
 originalBalanceUpdate = Class_ReplaceMethod( "GUIWaitingForAutoTeamBalance", "Update",
 	function(self, deltaTime)
-		self.waitingText:SetIsVisible(PlayerUI_GetIsWaitingForTeamBalance() and not CHUDStatsVisible and not CHUDEndStatsVisible)
+		self.waitingText:SetIsVisible(PlayerUI_GetIsWaitingForTeamBalance() and not CHUDStatsVisible)
 	end)
 
 Client.HookNetworkMessage("CHUDDeathStats", CHUDGetStatsString)
