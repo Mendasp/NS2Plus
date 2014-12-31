@@ -811,7 +811,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				else
 					return a.message.kills > b.message.kills
 				end
-			elseif a.teamNumber == b.teamNumber and a.message.medpackResUsed and b.message.medpackResUsed then
+			elseif a.teamNumber == b.teamNumber and a.order and b.order then
 				return a.order < b.order
 			else
 				return a.teamNumber > b.teamNumber
