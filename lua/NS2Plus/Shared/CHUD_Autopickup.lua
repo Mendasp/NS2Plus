@@ -133,7 +133,7 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
                         StartSoundEffectAtOrigin(Marine.kGunPickupSound, self:GetOrigin())
 						
 						// Fixes problem where if a marine drops all weapons and picks a welder the axe remains active
-						if not active and lastActiveHUD > -1 then
+						if not active and lastActiveHUD and lastActiveHUD > -1 then
 							self:SetHUDSlotActive(lastActiveHUD)
 						end
                         
