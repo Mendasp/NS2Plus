@@ -33,6 +33,7 @@ local kRowFontName = Fonts.kArial_17
 local widthPercentage = ConditionalValue(aspectRatio < 1.5, 0.95, 0.75)
 local kTitleSize = Vector(screenWidth*widthPercentage, GUILinearScale(74), 0)
 local kCardSize = Vector(kTitleSize.x/3.5, GUILinearScale(74), 0)
+local kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
 local scaledVector = GUILinearScale(Vector(1,1,1))
 local kTopOffset = GUILinearScale(32)
 
@@ -521,6 +522,23 @@ function CHUDGUI_EndStats:Initialize()
 	self.header:SetSize(kTitleSize)
 	self.header:SetPosition(Vector(-kTitleSize.x/2, kTopOffset, 0))
 	
+	self.closeButton = GUIManager:CreateGraphicItem()
+	self.closeButton:SetAnchor(GUIItem.Right, GUIItem.Top)
+	self.closeButton:SetSize(kCloseButtonSize)
+	self.closeButton:SetPosition(Vector(GUILinearScale(8), 0, 0))
+	self.header:AddChild(self.closeButton)
+	
+	self.closeText = GUIManager:CreateTextItem()
+	self.closeText:SetColor(Color(1, 1, 1, 1))
+	self.closeText:SetAnchor(GUIItem.Center, GUIItem.Center)
+	self.closeText:SetText("X")
+	self.closeText:SetScale(scaledVector)
+	self.closeText:SetFontName(kSubTitleFontName)
+	self.closeText:SetTextAlignmentX(GUIItem.Align_Center)
+	self.closeText:SetTextAlignmentY(GUIItem.Align_Center)
+	self.closeText:SetPosition(Vector(0, GUILinearScale(2), 0))
+	self.closeButton:AddChild(self.closeText)
+	
 	self.roundDate = GUIManager:CreateTextItem()
 	self.roundDate:SetFontName(kSubTitleFontName)
 	self.roundDate:SetColor(Color(1,1,1,1))
@@ -656,6 +674,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.prevScoreKey = false
 	self.isDragging = false
 	self.slidePercentage = 0
+	self.displayed = false
 	
 	if not loadedLastRound then
 		local openedFile = io.open(lastRoundFile, "r")
@@ -774,14 +793,19 @@ end
 
 function CHUDGUI_EndStats:Update(deltaTime)
 	
-	SetMouseVisible(self, self.sliderBarBg:GetIsVisible() and self:GetIsVisible())
+	SetMouseVisible(self, self:GetIsVisible())
 	
 	local timeSinceRoundEnd = Shared.GetTime() - lastGameEnd
 	
-	if timeSinceRoundEnd < 7.5 and timeSinceRoundEnd > 2.5 then
+	if timeSinceRoundEnd < 7.5 and timeSinceRoundEnd > 2.5 and CHUDGetOption("deathstats") > 0 then
 		self.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last round stats", nil)
 	else
 		self.actionIconGUI:Hide()
+	end
+	
+	if lastGameEnd > 0 and timeSinceRoundEnd > 7.5 and not self.displayed and CHUDGetOption("deathstats") > 0 then
+		self:SetIsVisible(true)
+		self.displayed = true
 	end
 	
 	if PlayerUI_GetHasGameStarted() and Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom then
@@ -992,6 +1016,16 @@ function CHUDGUI_EndStats:Update(deltaTime)
 	end
 	self.slider:SetPosition(Vector(-GUILinearScale(8), sliderPos, 0))
 	self.sliderBarBg:SetIsVisible(showSlidebar)
+	
+	if self:GetIsVisible() then
+		local mouseX, mouseY = Client.GetCursorPosScreen()
+		
+		if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
+			self.closeButton:SetColor(Color(1, 0, 0, 0.5))
+		else
+			self.closeButton:SetColor(Color(0, 0, 0, 0.5))
+		end
+	end
 end
 
 Script.Load("lua/GUIGameEnd.lua")
@@ -1235,7 +1269,20 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 		end
 		
 	end
-
+	
+	if self:GetIsVisible() then
+		if key == InputKey.Escape and down then
+			self:SetIsVisible(false)
+			return true
+		elseif key == InputKey.MouseButton0 and down then
+			local mouseX, mouseY = Client.GetCursorPosScreen()
+			
+			if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
+				self:SetIsVisible(false)
+			end
+		end
+	end
+	
 	if GetIsBinding(key, "Scoreboard") and self.prevScoreKey ~= down then
 		self.prevScoreKey = down
 		if down then
@@ -1299,6 +1346,7 @@ function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
 	kTableContainerOffset = GUILinearScale(5)
 	kRowBorderSize = GUILinearScale(2)
 	kRowPlayerNameOffset = GUILinearScale(10)
+	kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
 	
 	-- Mark the last round as not loaded so it loads it back when we destroy the current UI
 	loadedLastRound = false
