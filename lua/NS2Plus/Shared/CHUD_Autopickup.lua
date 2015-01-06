@@ -108,9 +108,10 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
                 // First check for a nearby weapon to pickup.
                 local nearbyDroppedWeapon = ConditionalValue(autoPickup, self:FindNearbyAutoPickupWeapon(), self:GetNearbyPickupableWeapon())
 
-                if nearbyDroppedWeapon then
+				// Make sure the weapon hasn't been destroyed when we do the autopickup
+                if nearbyDroppedWeapon and nearbyDroppedWeapon:isa("Weapon") and not nearbyDroppedWeapon:GetIsDestroyed() then
 
-					local lastActiveHUD = self:GetActiveWeapon():GetHUDSlot()
+					local lastActiveHUD = self:GetActiveWeapon() and self:GetActiveWeapon():GetHUDSlot() or -1
                 
                     if self.lastDroppedWeapon ~= nearbyDroppedWeapon or Shared.GetTime() > self.timeOfLastPickUpWeapon + kPickupWeaponTimeLimit then
                     
@@ -132,7 +133,7 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
                         StartSoundEffectAtOrigin(Marine.kGunPickupSound, self:GetOrigin())
 						
 						// Fixes problem where if a marine drops all weapons and picks a welder the axe remains active
-						if not active then
+						if not active and lastActiveHUD > -1 then
 							self:SetHUDSlotActive(lastActiveHUD)
 						end
                         
