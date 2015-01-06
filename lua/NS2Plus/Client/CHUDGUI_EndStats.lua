@@ -676,7 +676,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.slidePercentage = 0
 	self.displayed = false
 	
-	if not loadedLastRound then
+	if not loadedLastRound and GetFileExists(lastRoundFile) then
 		local openedFile = io.open(lastRoundFile, "r")
 		if openedFile then
 		

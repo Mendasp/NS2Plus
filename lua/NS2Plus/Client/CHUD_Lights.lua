@@ -44,10 +44,14 @@ end
 
 local function LoadLightData(filename)
 	local LoadData
-	local file = io.open("lights/" .. filename .. ".json", "r")
-	if file then
-		LoadData = json.decode(file:read("*all"))
-		file:close()
+	local filePath = "lights/" .. filename .. ".json"
+	local fileExists = GetFileExists(filePath)
+	if fileExists then
+		local file = io.open(filePath, "r")
+		if file then
+			LoadData = json.decode(file:read("*all"))
+			file:close()
+		end
 	end
 	return LoadData
 end
