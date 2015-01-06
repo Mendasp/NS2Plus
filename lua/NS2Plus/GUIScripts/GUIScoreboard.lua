@@ -135,11 +135,9 @@ function(self, key, down)
 		
 		local teamColorBg
 		local teamColorHighlight
-		local playerName = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "Name")
 		local teamNumber = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "EntityTeamNumber")
 		local isCommander = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "IsCommander")
 		local textColor = Color(1, 1, 1, 1)
-		local nameBgColor = Color(0, 0, 0, 0)
 		
 		if isCommander then
 			teamColorBg = GUIScoreboard.kCommanderFontColor
