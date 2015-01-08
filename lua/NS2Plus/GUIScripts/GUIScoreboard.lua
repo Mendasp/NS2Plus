@@ -122,35 +122,21 @@ function(self, key, down)
 		
 		local found = 0
 		local added = false
+		local teamColorBg = Color(0.5, 0.5, 0.5, 0.5)
+		local teamColorHighlight = Color(0.75, 0.75, 0.75, 0.75)
+		local textColor = Color(1, 1, 1, 1)
 		for index, entry in ipairs(self.hoverMenu.links) do
 			if not entry.isSeparator then
 				local text = entry.link:GetText()
 				if text == Locale.ResolveString("SB_MENU_HIVE_PROFILE") then
+					teamColorBg = entry.bgColor
+					teamColorHighlight = entry.bgHighlightColor
 					found = index
 				elseif text == "NS2Stats profile" then
 					added = true
 				end
 			end
 		end
-		
-		local teamColorBg
-		local teamColorHighlight
-		local teamNumber = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "EntityTeamNumber")
-		local isCommander = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "IsCommander")
-		local textColor = Color(1, 1, 1, 1)
-		
-		if isCommander then
-			teamColorBg = GUIScoreboard.kCommanderFontColor
-		elseif teamNumber == 1 then
-			teamColorBg = GUIScoreboard.kBlueColor
-		elseif teamNumber == 2 then
-			teamColorBg = GUIScoreboard.kRedColor
-		else
-			teamColorBg = GUIScoreboard.kSpectatorColor
-		end
-		
-		teamColorHighlight = teamColorBg * 0.75
-		teamColorBg = teamColorBg * 0.5
 		
 		if not added then
 			if found > 0 then
@@ -159,7 +145,10 @@ function(self, key, down)
 				found = nil
 			end
 			
-			self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
+			-- Don't add the button if we can't find the one we expect
+			if found then
+				self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
+			end
 		end
 	end
 	
