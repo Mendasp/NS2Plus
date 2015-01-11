@@ -691,7 +691,6 @@ function CHUDGUI_EndStats:Initialize()
 			end
 			
 			self.saved = true
-			
 			loadedLastRound = true
 		end
 	end
@@ -717,6 +716,16 @@ function CHUDGUI_EndStats:Uninitialize()
 
 end
 
+local oldMainMenuGetIsOpened = MainMenu_GetIsOpened
+
+function MainMenu_GetIsOpened()
+	if CHUDEndStatsVisible then
+		return true
+	else
+		return oldMainMenuGetIsOpened()
+	end
+end
+
 function CHUDGUI_EndStats:SetIsVisible(visible)
 	self.background:SetIsVisible(visible)
 	self.header:SetIsVisible(visible)
@@ -725,6 +734,9 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 	self.contentStencil:SetIsVisible(visible)
 	
 	CHUDEndStatsVisible = visible
+	CHUDEvaluateGUIVis()
+	ClientUI.EvaluateUIVisibility(Client.GetLocalPlayer())
+	self.slidePercentage = 0
 end
 
 function CHUDGUI_EndStats:GetIsVisible()
@@ -1261,7 +1273,7 @@ end
 local lastDisplayStatus = false
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) and not ChatUI_EnteringChatMessage() and not oldMainMenuGetIsOpened() and self.prevRequestKey ~= down then
 		
 		self.prevRequestKey = down
 		if not down then
@@ -1279,6 +1291,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			
 			if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
 				self:SetIsVisible(false)
+				return true
 			end
 		end
 	end
@@ -1299,7 +1312,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			self.mousePressed = down
 			if down then
 				local mouseX, mouseY = Client.GetCursorPosScreen()
-				self.isDragging = GUIItemContainsPoint(self.sliderBarBg, mouseX, mouseY)
+				self.isDragging = GUIItemContainsPoint(self.sliderBarBg, mouseX, mouseY) or GUIItemContainsPoint(self.slider, mouseX, mouseY)
 				
 				return true
 			end

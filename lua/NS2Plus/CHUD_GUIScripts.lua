@@ -24,5 +24,8 @@ Script.Load("lua/NS2Plus/GUIScripts/GUIHoverTooltip.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUICommanderAlerts.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_Overhead.lua")
 
+GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
+GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
+
 // I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/NS2Plus/GUIScripts/GhostModel.lua")

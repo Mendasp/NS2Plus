@@ -1,13 +1,7 @@
-
-
 local originalGUIRequestUpdate
 originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 	function(self, deltaTime)
 		originalGUIRequestUpdate(self, deltaTime)
-		
-		if CHUDEndStatsVisible then
-			self:SetIsVisible(false)
-		end
 		
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
@@ -50,7 +44,7 @@ local impulseTypes =
 	embryoType = set { "Embryo" },
 }
 
-local impulseMap = {	
+local impulseMap = {
 	Taunt = 
 	{ 
 		marineType = kVoiceId.MarineTaunt,
