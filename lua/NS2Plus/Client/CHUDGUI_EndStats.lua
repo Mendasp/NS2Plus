@@ -820,7 +820,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		self.displayed = true
 	end
 	
-	if PlayerUI_GetHasGameStarted() and Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom then
+	if self:GetIsVisible() and PlayerUI_GetHasGameStarted() and Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom then
 		self:SetIsVisible(false)
 		self.actionIconGUI:Hide()
 	end
