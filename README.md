@@ -7,6 +7,7 @@ Latest changes
 - / /
 	- Added location name and power node status to the power icon when dropping marine buildings.
 	- Revamped end-game stats UI.
+	- Reset the Alien Vision setting as the Vanilla AV has changed and added the old Fanta Vision to the list of selectable AVs.
 
 - 18/12/2014
 	- Updated for build 272.
