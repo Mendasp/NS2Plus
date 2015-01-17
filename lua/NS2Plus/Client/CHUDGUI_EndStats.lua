@@ -74,7 +74,7 @@ local avgAccTable = {}
 local miscDataTable = {}
 local cardsTable = {}
 
-local lastStatsMsg = 0
+local lastStatsMsg = -100
 local lastGameEnd = 0
 local kMaxAppendTime = 2.5
 local loadedLastRound = false
@@ -807,17 +807,19 @@ function CHUDGUI_EndStats:Update(deltaTime)
 	
 	SetMouseVisible(self, self:GetIsVisible())
 	
-	local timeSinceRoundEnd = Shared.GetTime() - lastGameEnd
-	
-	if timeSinceRoundEnd < 7.5 and timeSinceRoundEnd > 2.5 and CHUDGetOption("deathstats") > 0 then
-		self.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last round stats", nil)
-	else
-		self.actionIconGUI:Hide()
-	end
-	
-	if lastGameEnd > 0 and timeSinceRoundEnd > 7.5 and not self.displayed and CHUDGetOption("deathstats") > 0 then
-		self:SetIsVisible(true)
-		self.displayed = true
+	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
+
+	if timeSinceRoundEnd > 2.5 and Shared.GetTime() > lastStatsMsg + kMaxAppendTime then
+		if CHUDGetOption("deathstats") > 0 and timeSinceRoundEnd < 7.5 and not self.displayed then
+			self.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last round stats", nil)
+		else
+			self.actionIconGUI:Hide()
+		end
+		
+		if CHUDGetOption("deathstats") > 0 and timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
+			self:SetIsVisible(true)
+			self.displayed = true
+		end
 	end
 	
 	if self:GetIsVisible() and PlayerUI_GetHasGameStarted() and Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom then
@@ -827,7 +829,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 	
 	self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
 	
-	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime then
+	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and #finalStatsTable > 0 then
 		table.sort(finalStatsTable, function(a, b)
 			a.teamNumber = a.isMarine and 1 or 2
 			b.teamNumber = b.isMarine and 1 or 2
@@ -854,141 +856,139 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 		end)
 		
-		if #finalStatsTable > 0 then
-			local totalKills1 = 0
-			local totalKills2 = 0
-			local totalAssists1 = 0
-			local totalAssists2 = 0
-			local totalDeaths1 = 0
-			local totalDeaths2 = 0
-			local totalPdmg1 = 0
-			local totalPdmg2 = 0
-			local totalSdmg1 = 0
-			local totalSdmg2 = 0
-			local totalTimeBuilding1 = 0
-			local totalTimeBuilding2 = 0
-			local avgAccuracy1 = 0
-			local avgAccuracy1Onos = 0
-			local avgAccuracy2 = 0
+		local totalKills1 = 0
+		local totalKills2 = 0
+		local totalAssists1 = 0
+		local totalAssists2 = 0
+		local totalDeaths1 = 0
+		local totalDeaths2 = 0
+		local totalPdmg1 = 0
+		local totalPdmg2 = 0
+		local totalSdmg1 = 0
+		local totalSdmg2 = 0
+		local totalTimeBuilding1 = 0
+		local totalTimeBuilding2 = 0
+		local avgAccuracy1 = 0
+		local avgAccuracy1Onos = 0
+		local avgAccuracy2 = 0
+		
+		self:Uninitialize()
+		self:Initialize()
+		
+		for _, message in ipairs(finalStatsTable) do
+			local minutes = math.floor(message.minutesBuilding)
+			local seconds = (message.minutesBuilding % 1)*60
 			
-			self:Uninitialize()
-			self:Initialize()
+			local isMarine = message.isMarine
 			
-			for _, message in ipairs(finalStatsTable) do
-				local minutes = math.floor(message.minutesBuilding)
-				local seconds = (message.minutesBuilding % 1)*60
-				
-				local isMarine = message.isMarine
-				
-				local teamObj
-				
-				if isMarine then
-					teamObj = self.team1UI
-					totalKills1 = totalKills1 + message.kills
-					totalAssists1 = totalAssists1 + message.assists
-					totalDeaths1 = totalDeaths1 + message.deaths
-					totalPdmg1 = totalPdmg1 + message.pdmg
-					totalSdmg1 = totalSdmg1 + message.sdmg
-					totalTimeBuilding1 = totalTimeBuilding1 + message.minutesBuilding
-					avgAccuracy1 = avgAccTable.marineAcc
-					avgAccuracy1Onos = avgAccTable.marineOnosAcc
-				else
-					teamObj = self.team2UI
-					totalKills2 = totalKills2 + message.kills
-					totalAssists2 = totalAssists2 + message.assists
-					totalDeaths2 = totalDeaths2 + message.deaths
-					totalPdmg2 = totalPdmg2 + message.pdmg
-					totalSdmg2 = totalSdmg2 + message.sdmg
-					totalTimeBuilding2 = totalTimeBuilding2 + message.minutesBuilding
-					avgAccuracy2 = avgAccTable.alienAcc
-				end
-				
-				local playerCount = #teamObj.playerRows
-				local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
-				if playerCount % 2 == 0 then
-					bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
-				end
-				
-				table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds)))
-				
-				local yPos = GUILinearScale(48)
-				yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
-				self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
-				yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
-				self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-				self.contentSize = math.max(self.contentSize, yPos + GUILinearScale(32))
+			local teamObj
+			
+			if isMarine then
+				teamObj = self.team1UI
+				totalKills1 = totalKills1 + message.kills
+				totalAssists1 = totalAssists1 + message.assists
+				totalDeaths1 = totalDeaths1 + message.deaths
+				totalPdmg1 = totalPdmg1 + message.pdmg
+				totalSdmg1 = totalSdmg1 + message.sdmg
+				totalTimeBuilding1 = totalTimeBuilding1 + message.minutesBuilding
+				avgAccuracy1 = avgAccTable.marineAcc
+				avgAccuracy1Onos = avgAccTable.marineOnosAcc
+			else
+				teamObj = self.team2UI
+				totalKills2 = totalKills2 + message.kills
+				totalAssists2 = totalAssists2 + message.assists
+				totalDeaths2 = totalDeaths2 + message.deaths
+				totalPdmg2 = totalPdmg2 + message.pdmg
+				totalSdmg2 = totalSdmg2 + message.sdmg
+				totalTimeBuilding2 = totalTimeBuilding2 + message.minutesBuilding
+				avgAccuracy2 = avgAccTable.alienAcc
 			end
 			
-			local numPlayers1 = #self.team1UI.playerRows-1
-			local numPlayers2 = #self.team2UI.playerRows-1
-			self:SetPlayerCount(self.team1UI, numPlayers1)
-			self:SetPlayerCount(self.team2UI, numPlayers2)
-			miscDataTable.team1PlayerCount = numPlayers1
-			miscDataTable.team2PlayerCount = numPlayers2
-			self:SetTeamName(self.team1UI, miscDataTable.team1Name or "Frontiersmen")
-			self:SetTeamName(self.team2UI, miscDataTable.team2Name or "Kharaa")
-			local team1Result, team2Result = "DRAW", "DRAW"
-			if miscDataTable.winningTeam > 0 then
-				team1Result = miscDataTable.winningTeam == kMarineTeamType and "WINNER" or "LOSER"
-				team2Result = miscDataTable.winningTeam == kAlienTeamType and "WINNER" or "LOSER"
-			end
-			self:SetGameResult(self.team1UI, team1Result)
-			self:SetGameResult(self.team2UI, team2Result)
-			
-			local minutes1 = math.floor(totalTimeBuilding1)
-			local seconds1 = (totalTimeBuilding1 % 1)*60
-			totalTimeBuilding1 = totalTimeBuilding1/numPlayers1
-			local minutes1Avg = math.floor(totalTimeBuilding1)
-			local seconds1Avg = (totalTimeBuilding1 % 1)*60
-			local minutes2 = math.floor(totalTimeBuilding2)
-			local seconds2 = (totalTimeBuilding2 % 1)*60
-			totalTimeBuilding2 = totalTimeBuilding2/numPlayers2
-			local minutes2Avg = math.floor(totalTimeBuilding2)
-			local seconds2Avg = (totalTimeBuilding2 % 1)*60
-			
-			-- When there's only one player in a team, the total and the average will be the same
-			-- Don't even bother displaying this, it looks odd
-			if numPlayers1 > 1 then
-				table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
-				table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, Color(0.9,0.9,0.9,1), Color(0,0,0,1), "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg)))
-			end
-			if numPlayers2 > 1 then
-				table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
-				table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(0.5,0.5,0.5,1), Color(1,1,1,1), "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
+			local playerCount = #teamObj.playerRows
+			local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+			if playerCount % 2 == 0 then
+				bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
 			end
 			
-			self.roundDate:SetText("Round date: " .. miscDataTable.roundDateString)
-			self.gameLength:SetText("Game length: " .. miscDataTable.gameLength)
-			self.serverName:SetText("Server name: " .. miscDataTable.serverName)
-			self.mapName:SetText("Map: " .. miscDataTable.mapName)
+			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds)))
 			
-			for _, card in ipairs(cardsTable) do
-				local bgColor
+			local yPos = GUILinearScale(48)
+			yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
+			self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+			yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
+			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+			self.contentSize = math.max(self.contentSize, yPos + GUILinearScale(32))
+		end
+		
+		local numPlayers1 = #self.team1UI.playerRows-1
+		local numPlayers2 = #self.team2UI.playerRows-1
+		self:SetPlayerCount(self.team1UI, numPlayers1)
+		self:SetPlayerCount(self.team2UI, numPlayers2)
+		miscDataTable.team1PlayerCount = numPlayers1
+		miscDataTable.team2PlayerCount = numPlayers2
+		self:SetTeamName(self.team1UI, miscDataTable.team1Name or "Frontiersmen")
+		self:SetTeamName(self.team2UI, miscDataTable.team2Name or "Kharaa")
+		local team1Result, team2Result = "DRAW", "DRAW"
+		if miscDataTable.winningTeam > 0 then
+			team1Result = miscDataTable.winningTeam == kMarineTeamType and "WINNER" or "LOSER"
+			team2Result = miscDataTable.winningTeam == kAlienTeamType and "WINNER" or "LOSER"
+		end
+		self:SetGameResult(self.team1UI, team1Result)
+		self:SetGameResult(self.team2UI, team2Result)
+		
+		local minutes1 = math.floor(totalTimeBuilding1)
+		local seconds1 = (totalTimeBuilding1 % 1)*60
+		totalTimeBuilding1 = totalTimeBuilding1/numPlayers1
+		local minutes1Avg = math.floor(totalTimeBuilding1)
+		local seconds1Avg = (totalTimeBuilding1 % 1)*60
+		local minutes2 = math.floor(totalTimeBuilding2)
+		local seconds2 = (totalTimeBuilding2 % 1)*60
+		totalTimeBuilding2 = totalTimeBuilding2/numPlayers2
+		local minutes2Avg = math.floor(totalTimeBuilding2)
+		local seconds2Avg = (totalTimeBuilding2 % 1)*60
+		
+		-- When there's only one player in a team, the total and the average will be the same
+		-- Don't even bother displaying this, it looks odd
+		if numPlayers1 > 1 then
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, Color(0.9,0.9,0.9,1), Color(0,0,0,1), "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg)))
+		end
+		if numPlayers2 > 1 then
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(0.5,0.5,0.5,1), Color(1,1,1,1), "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
+		end
+		
+		self.roundDate:SetText("Round date: " .. miscDataTable.roundDateString)
+		self.gameLength:SetText("Game length: " .. miscDataTable.gameLength)
+		self.serverName:SetText("Server name: " .. miscDataTable.serverName)
+		self.mapName:SetText("Map: " .. miscDataTable.mapName)
+		
+		for _, card in ipairs(cardsTable) do
+			local bgColor
+			if card.teamNumber == 1 then
+				bgColor = kMarineStatsColor
+			elseif card.teamNumber == 2 then
+				bgColor = kAlienStatsColor
+			else
+				bgColor = kCommanderStatsColor
+			end
+			local statCard = self:CreateGraphicHeader(card.text, bgColor, card.logoTexture, card.logoCoords, card.logoSizeX, card.logoSizeY)
+			statCard.rows = {}
+			
+			for index, row in ipairs(card.rows) do
 				if card.teamNumber == 1 then
-					bgColor = kMarineStatsColor
+					bgColor = ConditionalValue(index % 2 == 0, kMarinePlayerStatsEvenColor, kMarinePlayerStatsOddColor)
 				elseif card.teamNumber == 2 then
-					bgColor = kAlienStatsColor
+					bgColor = ConditionalValue(index % 2 == 0, kAlienPlayerStatsEvenColor, kAlienPlayerStatsOddColor)
 				else
-					bgColor = kCommanderStatsColor
+					bgColor = ConditionalValue(index % 2 == 0, kCommanderStatsEvenColor, kCommanderStatsOddColor)
 				end
-				local statCard = self:CreateGraphicHeader(card.text, bgColor, card.logoTexture, card.logoCoords, card.logoSizeX, card.logoSizeY)
-				statCard.rows = {}
 				
-				for index, row in ipairs(card.rows) do
-					if card.teamNumber == 1 then
-						bgColor = ConditionalValue(index % 2 == 0, kMarinePlayerStatsEvenColor, kMarinePlayerStatsOddColor)
-					elseif card.teamNumber == 2 then
-						bgColor = ConditionalValue(index % 2 == 0, kAlienPlayerStatsEvenColor, kAlienPlayerStatsOddColor)
-					else
-						bgColor = ConditionalValue(index % 2 == 0, kCommanderStatsEvenColor, kCommanderStatsOddColor)
-					end
-					
-					table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.title, row.value))
-				end
-				table.insert(self.statsCards, statCard)
-				
-				repositionStatsCards(self)
+				table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.title, row.value))
 			end
+			table.insert(self.statsCards, statCard)
+			
+			repositionStatsCards(self)
 		end
 		
 		if not self.saved then

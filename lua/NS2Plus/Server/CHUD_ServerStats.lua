@@ -436,7 +436,10 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		msg.marineAcc = team1Accuracy
 		msg.marineOnosAcc = team1OnosAccuracy
 		msg.alienAcc = team2Accuracy
-		Server.SendNetworkMessage("CHUDAvgAccStats", msg, true)
+		
+		if #CHUDClientStats > 0 then
+			Server.SendNetworkMessage("CHUDAvgAccStats", msg, true)
+		end
 		
 		for _, finalStat in pairs(finalStats) do
 			for _, entry in pairs(finalStat) do
