@@ -4,6 +4,13 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 23/01/2015
+	- Fixed Average/Total stats being covered up for Marines.
+	- Fixed Average/Total stats only showing NaN%.
+	- Fixed cursor disappearing when looking at the stats as a Spectator.
+	- Fixed not being able to bring up the stats mid-round as Spectator.
+	- Fixed script error when killing an Exo with Bilebomb.
+
 - 22/01/2015
 	- Updated for build 273.
 	- Revamped end-game stats UI.

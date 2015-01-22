@@ -516,6 +516,9 @@ function CHUDGUI_EndStats:SetTeamName(teamItem, teamName)
 end
 
 function CHUDGUI_EndStats:Initialize()
+
+	self.mouseVisible = MouseTracker_GetIsVisible()
+	
 	self.header = GUIManager:CreateGraphicItem()
 	self.header:SetColor(Color(0, 0, 0, 0.5))
 	self.header:SetAnchor(GUIItem.Center, GUIItem.Top)
@@ -726,6 +729,17 @@ function MainMenu_GetIsOpened()
 	end
 end
 
+local function SetMouseVisible(self, setVisible)
+
+	if self.mouseVisible ~= setVisible then
+	
+		self.mouseVisible = setVisible
+		
+		MouseTracker_SetIsVisible(self.mouseVisible, "ui/Cursor_MenuDefault.dds", true)
+	end
+	
+end
+
 function CHUDGUI_EndStats:SetIsVisible(visible)
 	self.background:SetIsVisible(visible)
 	self.header:SetIsVisible(visible)
@@ -737,6 +751,14 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 	CHUDEvaluateGUIVis()
 	ClientUI.EvaluateUIVisibility(Client.GetLocalPlayer())
 	self.slidePercentage = 0
+	
+	SetMouseVisible(self, visible)
+	
+	-- Fix bug where toggling as spectator would make the cursor invisible
+	if PlayerUI_IsOverhead() then
+		SetMouseVisible(self, false)
+		SetMouseVisible(self, true)
+	end
 end
 
 function CHUDGUI_EndStats:GetIsVisible()
@@ -791,22 +813,14 @@ local function HandleSlidebarClicked(self)
 	
 end
 
-local function SetMouseVisible(self, setVisible)
-
-	if self.mouseVisible ~= setVisible then
-	
-		self.mouseVisible = setVisible
-		
-		MouseTracker_SetIsVisible(self.mouseVisible, "ui/Cursor_MenuDefault.dds", true)
-		
-	end
-	
-end
-
 function CHUDGUI_EndStats:Update(deltaTime)
-	
-	SetMouseVisible(self, self:GetIsVisible())
-	
+
+	-- When going back to the RR sometimes we'll lose the cursor
+	if self:GetIsVisible() and self.mouseVisible and not MouseTracker_GetIsVisible() then
+		SetMouseVisible(self, false)
+		SetMouseVisible(self, true)
+	end
+
 	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
 
 	if timeSinceRoundEnd > 2.5 and Shared.GetTime() > lastStatsMsg + kMaxAppendTime then
@@ -822,7 +836,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		end
 	end
 	
-	if self:GetIsVisible() and PlayerUI_GetHasGameStarted() and Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom then
+	if self:GetIsVisible() and PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
 		self:SetIsVisible(false)
 		self.actionIconGUI:Hide()
 	end
@@ -911,13 +925,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 			
 			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds)))
-			
-			local yPos = GUILinearScale(48)
-			yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
-			self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
-			yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
-			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			self.contentSize = math.max(self.contentSize, yPos + GUILinearScale(32))
 		end
 		
 		local numPlayers1 = #self.team1UI.playerRows-1
@@ -957,6 +964,13 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
 			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(0.5,0.5,0.5,1), Color(1,1,1,1), "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
 		end
+		
+		local yPos = GUILinearScale(48)
+		yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
+		self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+		yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
+		self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		self.contentSize = math.max(self.contentSize, yPos + GUILinearScale(32))
 		
 		self.roundDate:SetText("Round date: " .. miscDataTable.roundDateString)
 		self.gameLength:SetText("Game length: " .. miscDataTable.gameLength)
@@ -1273,7 +1287,7 @@ end
 local lastDisplayStatus = false
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom) and not ChatUI_EnteringChatMessage() and not oldMainMenuGetIsOpened() and self.prevRequestKey ~= down then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not oldMainMenuGetIsOpened() and self.prevRequestKey ~= down then
 		
 		self.prevRequestKey = down
 		if not down then

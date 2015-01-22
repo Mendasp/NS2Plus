@@ -437,7 +437,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		msg.marineOnosAcc = team1OnosAccuracy
 		msg.alienAcc = team2Accuracy
 		
-		if #CHUDClientStats > 0 then
+		if #finalStats[1] > 0 or #finalStats[2] > 0 then
 			Server.SendNetworkMessage("CHUDAvgAccStats", msg, true)
 		end
 		
@@ -502,10 +502,17 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 				killerWeapon = doer:GetTechId()
 			end
 		elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
-			local deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
 			if doer.GetWeaponTechId then
 				killerWeapon = doer:GetWeaponTechId()
 			elseif doer.techId then
+				local deathIcon = nil
+				
+				if doer.GetDamageType and doer:GetDamageType() == kBileBombDamageType then
+					killerWeapon = kTechId.BileBomb
+				else
+					deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
+				end
+				
 				if deathIcon == kDeathMessageIcon.Mine then
 					killerWeapon = kTechId.LayMines
 				elseif deathIcon == kDeathMessageIcon.PulseGrenade then
