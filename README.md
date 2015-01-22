@@ -4,8 +4,8 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- / /
-	- Added location name and power node status to the power icon when dropping marine buildings.
+- 22/01/2015
+	- Updated for build 273.
 	- Revamped end-game stats UI.
 	- Reset the Alien Vision setting as the Vanilla AV has changed and added the old Fanta Vision to the list of selectable AVs.
 
@@ -86,6 +86,10 @@ Credits/Thanks to
 =================
 Past NS2+ features now included in vanilla NS2:
 =================
+- [273] You can click on the scoreboard to check a player's Steam/NS2 profile.
+- [273] Scoreboard displays if someone is your steam friend.
+- [273] You can mute voice/text independently and it's persistent across map changes up to 6 hours.
+- [273] The scoreboard now truncates player names if they overlap with the rest of the elements.
 - [272] Modified vanilla scoreboard to make it usable at low resolutions. It will automatically scroll to your position if you are in RR or in a team. You can use the mousewheel, home/end/pgup/pgdn or click and drag to scroll.
 - [272] Scoreboard shows the Commander background in yellow instead of the name, so you can identify rookie players that are commanding.
 - [272] Medpacks, ammo, and catpacks can be picked up from any height difference.
