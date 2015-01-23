@@ -1314,8 +1314,10 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 		self.prevScoreKey = down
 		if down then
 			lastDisplayStatus = self:GetIsVisible()
-			self:SetIsVisible(false)
-		else
+			if lastDisplayStatus then
+				self:SetIsVisible(false)
+			end
+		elseif lastDisplayStatus then
 			self:SetIsVisible(lastDisplayStatus)
 		end
 	end

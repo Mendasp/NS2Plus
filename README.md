@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /01/2015
+	- Fixed bug where opening/closing the scoreboard would reset the HUD.
+
 - 23/01/2015
 	- Fixed Average/Total stats being covered up for Marines.
 	- Fixed Average/Total stats only showing NaN%.
