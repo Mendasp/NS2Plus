@@ -10,6 +10,7 @@ Latest changes
 	- Fixed cursor disappearing when looking at the stats as a Spectator.
 	- Fixed not being able to bring up the stats mid-round as Spectator.
 	- Fixed script error when killing an Exo with Bilebomb.
+	- Fixed cursor still being visible after logging out of the CC after seeing the stats UI.
 
 - 22/01/2015
 	- Updated for build 273.

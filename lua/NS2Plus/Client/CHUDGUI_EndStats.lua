@@ -755,7 +755,7 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 	SetMouseVisible(self, visible)
 	
 	-- Fix bug where toggling as spectator would make the cursor invisible
-	if PlayerUI_IsOverhead() then
+	if PlayerUI_IsOverhead() and Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex then
 		SetMouseVisible(self, false)
 		SetMouseVisible(self, true)
 	end
