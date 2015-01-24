@@ -886,10 +886,10 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		
 		table.sort(cardsTable, function(a, b)
 			if a.teamNumber == b.teamNumber and a.message.kills and b.message.kills then
-				local accuracyA = a.message.accuracyOnos ~= -1 and a.message.accuracy or a.message.accuracyOnos
-				local accuracyB = b.message.accuracyOnos ~= -1 and b.message.accuracy or b.message.accuracyOnos
+				a.message.realAccuracy = a.message.accuracyOnos == -1 and a.message.accuracy or a.message.accuracyOnos
+				b.message.realAccuracy = b.message.accuracyOnos == -1 and b.message.accuracy or b.message.accuracyOnos
 				if a.message.kills == b.message.kills then
-					return accuracyA > accuracyB
+					return a.message.realAccuracy > b.message.realAccuracy
 				else
 					return a.message.kills > b.message.kills
 				end
