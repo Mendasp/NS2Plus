@@ -10,8 +10,8 @@ local function ScreenSmallAspect()
 end
 
 local function GUILinearScale(size)
-	-- 25% bigger so it's similar size to the "normal" GUIScale
-	return (ScreenSmallAspect() / kScreenScaleAspect)*size*1.25
+	-- 50% bigger so it's similar size to the "normal" GUIScale
+	return (ScreenSmallAspect() / kScreenScaleAspect)*size*1.5
 end
 
 -- To avoid printing 200.00 or things like that
@@ -847,8 +847,38 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		table.sort(finalStatsTable, function(a, b)
 			a.teamNumber = a.isMarine and 1 or 2
 			b.teamNumber = b.isMarine and 1 or 2
+			a.realAccuracy = a.accuracyOnos == -1 and a.accuracy or a.accuracyOnos
+			b.realAccuracy = b.accuracyOnos == -1 and b.accuracy or b.accuracyOnos
 			if a.teamNumber == b.teamNumber then
-				return a.accuracy > b.accuracy
+				if a.kills == b.kills then
+					if a.assists == b.assists then
+						if a.deaths == b.deaths then
+							if a.realAccuracy == b.realAccuracy then
+								if a.pdmg == b.pdmg then
+									if a.sdmg == b.sdmg then
+										if a.timeBuilding == b.timeBuilding then
+											return a.playerName > b.playerName
+										else
+											return a.timeBuilding > b.timeBuilding
+										end
+									else
+										return a.sdmg > b.sdmg
+									end
+								else
+									return a.pdmg > b.pdmg
+								end
+							else
+								return a.accuracy > b.accuracy
+							end
+						else
+							return a.deaths < b.deaths
+						end
+					else
+						return a.assists > b.assists
+					end
+				else
+					return a.kills > b.kills
+				end
 			else
 				return a.teamNumber < b.teamNumber
 			end

@@ -6,6 +6,8 @@ Latest changes
 ==============
 - /01/2015
 	- Fixed bug where opening/closing the scoreboard would reset the HUD.
+	- Changed the way the stats were sorted from Accuracy > Kills to Kills > Assists.
+	- Improved readability of the stats UI on 1280x720.
 
 - 23/01/2015
 	- Fixed Average/Total stats being covered up for Marines.
