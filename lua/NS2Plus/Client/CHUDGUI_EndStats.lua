@@ -5,13 +5,22 @@ local screenWidth = Client.GetScreenWidth()
 local screenHeight = Client.GetScreenHeight()
 local aspectRatio = screenWidth/screenHeight
 
+local kSteamProfileURL = "http://steamcommunity.com/profiles/"
+local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
+local kNS2StatsProfileURL = "http://ns2stats.com/player/ns2id/"
+
 local function ScreenSmallAspect()
 	return ConditionalValue(screenWidth > screenHeight, screenHeight, screenWidth)
 end
 
 local function GUILinearScale(size)
-	-- 50% bigger so it's similar size to the "normal" GUIScale
-	return (ScreenSmallAspect() / kScreenScaleAspect)*size*1.5
+	-- 25% bigger so it's similar size to the "normal" GUIScale
+	local scale = 1.25
+	-- Text is hard to read on lower res, so make it bigger for them
+	if screenWidth < 1920 then
+		scale = 1.5
+	end
+	return (ScreenSmallAspect() / kScreenScaleAspect)*size*scale
 end
 
 -- To avoid printing 200.00 or things like that
@@ -220,7 +229,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 
 end
 
-local function CreateScoreboardRow(container, bgColor, textColor, playerName, kills, assists, deaths, acc, pdmg, sdmg, timeBuilding)
+local function CreateScoreboardRow(container, bgColor, textColor, playerName, kills, assists, deaths, acc, pdmg, sdmg, timeBuilding, steamId)
 	
 	local containerSize = container:GetSize()
 	container:SetSize(Vector(containerSize.x, containerSize.y + kRowSize.y, 0))
@@ -234,6 +243,10 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.background:SetPosition(Vector(kRowBorderSize, containerSize.y - kRowBorderSize, 0))
 	item.background:SetLayer(kGUILayerScoreboard)
 	item.background:SetSize(kRowSize)
+	
+	if steamId then
+		item.steamId = steamId
+	end
 	
 	container:AddChild(item.background)
 	
@@ -704,6 +717,9 @@ function CHUDGUI_EndStats:Initialize()
 	self.actionIconGUI:Hide()
 	
 	self:SetIsVisible(false)
+	
+	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
+	self.lastRow = nil
 end
 
 function CHUDGUI_EndStats:Uninitialize()
@@ -752,12 +768,15 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 	ClientUI.EvaluateUIVisibility(Client.GetLocalPlayer())
 	self.slidePercentage = 0
 	
-	SetMouseVisible(self, visible)
+	-- Changing resolutions would disable the mouse because we hide it on init
+	if not oldMainMenuGetIsOpened() then
+		SetMouseVisible(self, visible)
 	
-	-- Fix bug where toggling as spectator would make the cursor invisible
-	if PlayerUI_IsOverhead() and Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex then
-		SetMouseVisible(self, false)
-		SetMouseVisible(self, true)
+		-- Fix bug where toggling as spectator would make the cursor invisible
+		if PlayerUI_IsOverhead() and Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex then
+			SetMouseVisible(self, false)
+			SetMouseVisible(self, true)
+		end
 	end
 end
 
@@ -813,12 +832,47 @@ local function HandleSlidebarClicked(self)
 	
 end
 
+local function CheckRowHighlight(self, row, mouseX, mouseY)
+	if GUIItemContainsPoint(row.background, mouseX, mouseY) and row.steamId then
+		if not row.originalColor then
+			row.originalColor = row.background:GetColor()
+		end
+		local color = row.originalColor * 0.75
+		color.a = 1
+		row.background:SetColor(color)
+		self.lastRow = row
+	elseif row.originalColor then
+		row.background:SetColor(row.originalColor)
+		row.originalColor = nil
+	end
+end
+
 function CHUDGUI_EndStats:Update(deltaTime)
 
 	-- When going back to the RR sometimes we'll lose the cursor
-	if self:GetIsVisible() and self.mouseVisible and not MouseTracker_GetIsVisible() then
-		SetMouseVisible(self, false)
-		SetMouseVisible(self, true)
+	if self:GetIsVisible() then
+		if self.mouseVisible and not MouseTracker_GetIsVisible() then
+			SetMouseVisible(self, false)
+			SetMouseVisible(self, true)
+		end
+		
+		if PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
+			self:SetIsVisible(false)
+			self.actionIconGUI:Hide()
+		end
+		
+		if not self.hoverMenu.background:GetIsVisible() then
+			self.lastRow = nil
+			local mouseX, mouseY = Client.GetCursorPosScreen()
+			for _, row in ipairs(self.team1UI.playerRows) do
+				CheckRowHighlight(self, row, mouseX, mouseY)
+			end
+			for _, row in ipairs(self.team2UI.playerRows) do
+				CheckRowHighlight(self, row, mouseX, mouseY)
+			end
+		end
+	else
+		self.lastRow = nil
 	end
 
 	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
@@ -834,11 +888,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self:SetIsVisible(true)
 			self.displayed = true
 		end
-	end
-	
-	if self:GetIsVisible() and PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
-		self:SetIsVisible(false)
-		self.actionIconGUI:Hide()
 	end
 	
 	self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
@@ -954,7 +1003,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
 			end
 			
-			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds)))
+			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
 		end
 		
 		local numPlayers1 = #self.team1UI.playerRows-1
@@ -1337,6 +1386,39 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				self:SetIsVisible(false)
 				return true
 			end
+			
+			if self.lastRow and not self.hoverMenu.background:GetIsVisible() then
+				local function openSteamProf()
+					Client.ShowWebpage(string.format("%s[U:1:%s]", kSteamProfileURL, self.lastRow.steamId))
+				end
+				local function openHiveProf()
+					Client.ShowWebpage(string.format("%s%s", kHiveProfileURL, self.lastRow.steamId))
+				end
+				local function openNS2StatsProf()
+					Client.ShowWebpage(string.format("%s%s", kNS2StatsProfileURL, self.lastRow.steamId))
+				end
+				
+				self.hoverMenu:ResetButtons()
+				
+				local textColor = Color(1, 1, 1, 1)
+				local nameBgColor = Color(0, 0, 0, 0)
+				local teamColorHighlight = self.lastRow.originalColor * 0.5
+				teamColorHighlight.a = 1
+				local teamColorBg = self.lastRow.originalColor * 0.75
+				teamColorBg.a = 1
+				local bgColor = self.lastRow.originalColor
+				bgColor.a = 0.9
+				
+				self.hoverMenu:SetBackgroundColor(bgColor)
+				self.hoverMenu:AddButton(self.lastRow.playerName:GetText(), nameBgColor, nameBgColor, textColor)
+				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_STEAM_PROFILE"), teamColorBg, teamColorHighlight, textColor, openSteamProf)
+				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_HIVE_PROFILE"), teamColorBg, teamColorHighlight, textColor, openHiveProf)
+				self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
+				
+				self.hoverMenu:Show()
+				
+				return true
+			end
 		end
 	end
 	
@@ -1346,6 +1428,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			lastDisplayStatus = self:GetIsVisible()
 			if lastDisplayStatus then
 				self:SetIsVisible(false)
+				self.hoverMenu:Hide()
 			end
 		elseif lastDisplayStatus then
 			self:SetIsVisible(lastDisplayStatus)

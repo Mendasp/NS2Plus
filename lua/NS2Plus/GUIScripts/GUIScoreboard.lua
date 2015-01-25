@@ -109,12 +109,17 @@ function(self, deltaTime)
 	end
 end)
 
+local SetMouseVisible = GetUpValue( GUIScoreboard.SendKeyEvent, "SetMouseVisible", { LocateRecurse = true } )
 local originalScoreboardSKE
 originalScoreboardSKE = Class_ReplaceMethod( "GUIScoreboard", "SendKeyEvent",
 function(self, key, down)
 	local ret = originalScoreboardSKE(self, key, down)
 	
-	if self.hoverMenu.background:GetIsVisible() then
+	if GetIsBinding(key, "Scoreboard") and not down then
+		self.hoverMenu:Hide()
+	end
+	
+	if self.visible and self.hoverMenu.background:GetIsVisible() then
 		local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex) or 0
 		local function openNS2StatsProf()
 			Client.ShowWebpage(string.format("%s%s", kNS2StatsProfileURL, steamId))

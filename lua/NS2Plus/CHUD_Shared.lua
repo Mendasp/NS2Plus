@@ -61,6 +61,7 @@ if not CHUDMainMenu then
 		sdmg = "float (0 to 524287 by 0.01)",
 		minutesBuilding = "float (0 to 1023 by 0.01)",
 		killstreak = "integer (0 to 254)",
+		steamId = "integer",
 	}
 
 	local kCHUDOptionMessage =

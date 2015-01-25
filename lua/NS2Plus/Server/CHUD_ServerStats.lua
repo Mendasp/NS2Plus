@@ -421,6 +421,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			statEntry.pdmg = stats.pdmg
 			statEntry.sdmg = stats.sdmg
 			statEntry.minutesBuilding = stats.timeBuilding/60
+			statEntry.steamId = steamId
 			
 			if stats.teamNumber == 1 then
 				table.insert(finalStats[1], statEntry)
