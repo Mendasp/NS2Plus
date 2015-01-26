@@ -110,7 +110,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.background:SetTexturePixelCoordinates(unpack(kHeaderCoordsMiddle))
 	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
 	item.background:SetInheritsParentAlpha(false)
-	item.background:SetLayer(kGUILayerScoreboard)
+	item.background:SetLayer(kGUILayerMainMenu)
 	item.background:SetSize(Vector(kTitleSize.x-GUILinearScale(64), kTitleSize.y, 0))
 	
 	item.backgroundLeft = GUIManager:CreateGraphicItem()
@@ -120,7 +120,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.backgroundLeft:SetTexturePixelCoordinates(unpack(kHeaderCoordsLeft))
 	item.backgroundLeft:SetAnchor(GUIItem.Left, GUIItem.Top)
 	item.backgroundLeft:SetInheritsParentAlpha(false)
-	item.backgroundLeft:SetLayer(kGUILayerScoreboard)
+	item.backgroundLeft:SetLayer(kGUILayerMainMenu)
 	item.backgroundLeft:SetSize(Vector(GUILinearScale(16), kTitleSize.y, 0))
 	item.backgroundLeft:SetPosition(Vector(-GUILinearScale(16), 0, 0))
 	item.background:AddChild(item.backgroundLeft)
@@ -132,7 +132,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.backgroundRight:SetTexturePixelCoordinates(unpack(kHeaderCoordsRight))
 	item.backgroundRight:SetAnchor(GUIItem.Right, GUIItem.Top)
 	item.backgroundRight:SetInheritsParentAlpha(false)
-	item.backgroundRight:SetLayer(kGUILayerScoreboard)
+	item.backgroundRight:SetLayer(kGUILayerMainMenu)
 	item.backgroundRight:SetSize(Vector(GUILinearScale(16), kTitleSize.y, 0))
 	item.background:AddChild(item.backgroundRight)
 	
@@ -141,14 +141,14 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.tableBackground:SetColor(color)
 	item.tableBackground:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
 	item.tableBackground:SetPosition(Vector(-(kRowSize.x+kRowBorderSize*2)/2, -kTableContainerOffset, 0))
-	item.tableBackground:SetLayer(kGUILayerScoreboard)
+	item.tableBackground:SetLayer(kGUILayerMainMenu)
 	item.tableBackground:SetSize(Vector(kRowSize.x + kRowBorderSize*2, kRowBorderSize*2, 0))
 	item.background:AddChild(item.tableBackground)
 	
 	item.logo = GUIManager:CreateGraphicItem()
 	item.logo:SetStencilFunc(GUIItem.NotEqual)
 	item.logo:SetAnchor(GUIItem.Left, GUIItem.Center)
-	item.logo:SetLayer(kGUILayerScoreboard)
+	item.logo:SetLayer(kGUILayerMainMenu)
 	item.logo:SetIsVisible(true)
 	item.logo:SetSize(kLogoSize)
 	item.logo:SetPosition(Vector(kLogoOffset, -kLogoSize.y/2, 0))
@@ -164,6 +164,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.teamNameTextShadow:SetText(teamName)
 	item.teamNameTextShadow:SetTextAlignmentY(GUIItem.Align_Center)
 	item.teamNameTextShadow:SetPosition(Vector(kLogoSize.x + kTeamNameOffset + kTextShadowOffset, kTitleSize.y/2 + kTextShadowOffset, 0))
+	item.teamNameTextShadow:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.teamNameTextShadow)
 	
 	item.teamNameText = GUIManager:CreateTextItem()
@@ -175,6 +176,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.teamNameText:SetText(teamName)
 	item.teamNameText:SetTextAlignmentY(GUIItem.Align_Center)
 	item.teamNameText:SetPosition(Vector(kLogoSize.x + kTeamNameOffset, kTitleSize.y/2, 0))
+	item.teamNameText:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.teamNameText)
 	
 	item.teamGameStatusShadow = GUIManager:CreateTextItem()
@@ -187,6 +189,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.teamGameStatusShadow:SetTextAlignmentY(GUIItem.Align_Center)
 	item.teamGameStatusShadow:SetTextAlignmentX(GUIItem.Align_Center)
 	item.teamGameStatusShadow:SetPosition(Vector(kTextShadowOffset, kTextShadowOffset, 0))
+	item.teamGameStatusShadow:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.teamGameStatusShadow)
 	
 	item.teamGameStatus = GUIManager:CreateTextItem()
@@ -199,6 +202,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.teamGameStatus:SetTextAlignmentY(GUIItem.Align_Center)
 	item.teamGameStatus:SetTextAlignmentX(GUIItem.Align_Center)
 	item.teamGameStatus:SetPosition(Vector(0, 0, 0))
+	item.teamGameStatus:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.teamGameStatus)
 	
 	item.teamPlayerCountShadow = GUIManager:CreateTextItem()
@@ -211,6 +215,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.teamPlayerCountShadow:SetTextAlignmentY(GUIItem.Align_Center)
 	item.teamPlayerCountShadow:SetTextAlignmentX(GUIItem.Align_Max)
 	item.teamPlayerCountShadow:SetPosition(Vector(kPlayerCountOffset + kTextShadowOffset, kTextShadowOffset, 0))
+	item.teamPlayerCountShadow:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.teamPlayerCountShadow)
 	
 	item.teamPlayerCount = GUIManager:CreateTextItem()
@@ -223,6 +228,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 	item.teamPlayerCount:SetTextAlignmentY(GUIItem.Align_Center)
 	item.teamPlayerCount:SetTextAlignmentX(GUIItem.Align_Max)
 	item.teamPlayerCount:SetPosition(Vector(kPlayerCountOffset, 0, 0))
+	item.teamPlayerCount:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.teamPlayerCount)
 
 	return item
@@ -241,7 +247,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.background:SetColor(bgColor)
 	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
 	item.background:SetPosition(Vector(kRowBorderSize, containerSize.y - kRowBorderSize, 0))
-	item.background:SetLayer(kGUILayerScoreboard)
+	item.background:SetLayer(kGUILayerMainMenu)
 	item.background:SetSize(kRowSize)
 	
 	if steamId then
@@ -259,6 +265,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.playerName:SetTextAlignmentY(GUIItem.Align_Center)
 	item.playerName:SetPosition(Vector(kRowPlayerNameOffset, 0, 0))
 	item.playerName:SetText(playerName)
+	item.playerName:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.playerName)
 	
 	local kItemSize = GUILinearScale(50)
@@ -279,6 +286,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.timeBuilding:SetTextAlignmentX(GUIItem.Align_Center)
 	item.timeBuilding:SetPosition(Vector(xOffset, 0, 0))
 	item.timeBuilding:SetText(timeBuilding)
+	item.timeBuilding:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.timeBuilding)
 	
 	xOffset = xOffset - kItemSize - kItemPaddingLarge
@@ -293,6 +301,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.sdmg:SetTextAlignmentX(GUIItem.Align_Center)
 	item.sdmg:SetPosition(Vector(xOffset, 0, 0))
 	item.sdmg:SetText(sdmg)
+	item.sdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.sdmg)
 	
 	xOffset = xOffset - kItemSize - kItemPaddingLarge
@@ -307,6 +316,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.pdmg:SetTextAlignmentX(GUIItem.Align_Center)
 	item.pdmg:SetPosition(Vector(xOffset, 0, 0))
 	item.pdmg:SetText(pdmg)
+	item.pdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.pdmg)
 	
 	xOffset = xOffset - kItemSize - kItemPaddingLarge
@@ -321,6 +331,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.acc:SetTextAlignmentX(GUIItem.Align_Center)
 	item.acc:SetPosition(Vector(xOffset, 0, 0))
 	item.acc:SetText(acc)
+	item.acc:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.acc)
 	
 	xOffset = xOffset - kItemSize - kItemPaddingMedium
@@ -335,6 +346,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.deaths:SetTextAlignmentX(GUIItem.Align_Center)
 	item.deaths:SetPosition(Vector(xOffset, 0, 0))
 	item.deaths:SetText(deaths)
+	item.deaths:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.deaths)
 	
 	xOffset = xOffset - kItemSize - kItemPaddingSmall
@@ -349,6 +361,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.assists:SetTextAlignmentX(GUIItem.Align_Center)
 	item.assists:SetPosition(Vector(xOffset, 0, 0))
 	item.assists:SetText(assists)
+	item.assists:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.assists)
 	
 	xOffset = xOffset - kItemSize - kItemPaddingSmall
@@ -363,6 +376,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.kills:SetTextAlignmentX(GUIItem.Align_Center)
 	item.kills:SetPosition(Vector(xOffset, 0, 0))
 	item.kills:SetText(kills)
+	item.kills:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.kills)
 	
 	return item
@@ -380,7 +394,7 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.background:SetTexturePixelCoordinates(unpack(kHeaderCoordsMiddle))
 	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
 	item.background:SetInheritsParentAlpha(false)
-	item.background:SetLayer(kGUILayerScoreboard)
+	item.background:SetLayer(kGUILayerMainMenu)
 	item.background:SetSize(Vector(kCardSize.x-GUILinearScale(32), kCardSize.y, 0))
 	self.background:AddChild(item.background)
 	
@@ -391,7 +405,7 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.backgroundLeft:SetTexturePixelCoordinates(unpack(kHeaderCoordsLeft))
 	item.backgroundLeft:SetAnchor(GUIItem.Left, GUIItem.Top)
 	item.backgroundLeft:SetInheritsParentAlpha(false)
-	item.backgroundLeft:SetLayer(kGUILayerScoreboard)
+	item.backgroundLeft:SetLayer(kGUILayerMainMenu)
 	item.backgroundLeft:SetSize(Vector(GUILinearScale(16), kCardSize.y, 0))
 	item.backgroundLeft:SetPosition(Vector(-GUILinearScale(16), 0, 0))
 	item.background:AddChild(item.backgroundLeft)
@@ -403,7 +417,7 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.backgroundRight:SetTexturePixelCoordinates(unpack(kHeaderCoordsRight))
 	item.backgroundRight:SetAnchor(GUIItem.Right, GUIItem.Top)
 	item.backgroundRight:SetInheritsParentAlpha(false)
-	item.backgroundRight:SetLayer(kGUILayerScoreboard)
+	item.backgroundRight:SetLayer(kGUILayerMainMenu)
 	item.backgroundRight:SetSize(Vector(GUILinearScale(16), kCardSize.y, 0))
 	item.background:AddChild(item.backgroundRight)
 	
@@ -413,7 +427,7 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 		item.logo = GUIManager:CreateGraphicItem()
 		item.logo:SetStencilFunc(GUIItem.NotEqual)
 		item.logo:SetAnchor(GUIItem.Left, GUIItem.Center)
-		item.logo:SetLayer(kGUILayerScoreboard)
+		item.logo:SetLayer(kGUILayerMainMenu)
 		item.logo:SetIsVisible(true)
 		item.logo:SetSize(Vector(logoSizeX, logoSizeY, 0))
 		item.logo:SetPosition(Vector(kLogoOffset, -logoSizeY/2, 0))
@@ -435,6 +449,7 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.textShadow:SetText(text)
 	item.textShadow:SetTextAlignmentY(GUIItem.Align_Center)
 	item.textShadow:SetPosition(Vector(xOffset + kTextShadowOffset, kCardSize.y/2 + kTextShadowOffset, 0))
+	item.textShadow:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.textShadow)
 	
 	item.text = GUIManager:CreateTextItem()
@@ -446,6 +461,7 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.text:SetText(text)
 	item.text:SetTextAlignmentY(GUIItem.Align_Center)
 	item.text:SetPosition(Vector(xOffset, kCardSize.y/2, 0))
+	item.text:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.text)
 	
 	item.tableBackground = GUIManager:CreateGraphicItem()
@@ -453,7 +469,7 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.tableBackground:SetColor(color)
 	item.tableBackground:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
 	item.tableBackground:SetPosition(Vector(-(kCardRowSize.x+kRowBorderSize*2)/2, -kTableContainerOffset, 0))
-	item.tableBackground:SetLayer(kGUILayerScoreboard)
+	item.tableBackground:SetLayer(kGUILayerMainMenu)
 	item.tableBackground:SetSize(Vector(kCardRowSize.x + kRowBorderSize*2, kRowBorderSize*2, 0))
 	item.background:AddChild(item.tableBackground)
 	
@@ -472,7 +488,7 @@ local function CreateHeaderRow(container, bgColor, textColor, leftText, rightTex
 	item.background:SetColor(bgColor)
 	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
 	item.background:SetPosition(Vector(kRowBorderSize, containerSize.y - kRowBorderSize, 0))
-	item.background:SetLayer(kGUILayerScoreboard)
+	item.background:SetLayer(kGUILayerMainMenu)
 	item.background:SetSize(kCardRowSize)
 	
 	container:AddChild(item.background)
@@ -486,6 +502,7 @@ local function CreateHeaderRow(container, bgColor, textColor, leftText, rightTex
 	item.leftText:SetTextAlignmentY(GUIItem.Align_Center)
 	item.leftText:SetPosition(Vector(GUILinearScale(5), 0, 0))
 	item.leftText:SetText(leftText)
+	item.leftText:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.leftText)
 	
 	item.rightText = GUIManager:CreateTextItem()
@@ -498,6 +515,7 @@ local function CreateHeaderRow(container, bgColor, textColor, leftText, rightTex
 	item.rightText:SetTextAlignmentY(GUIItem.Align_Center)
 	item.rightText:SetPosition(Vector(-GUILinearScale(5), 0, 0))
 	item.rightText:SetText(rightText)
+	item.rightText:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.rightText)
 	
 	return item
@@ -537,11 +555,13 @@ function CHUDGUI_EndStats:Initialize()
 	self.header:SetAnchor(GUIItem.Center, GUIItem.Top)
 	self.header:SetSize(kTitleSize)
 	self.header:SetPosition(Vector(-kTitleSize.x/2, kTopOffset, 0))
+	self.header:SetLayer(kGUILayerMainMenu)
 	
 	self.closeButton = GUIManager:CreateGraphicItem()
 	self.closeButton:SetAnchor(GUIItem.Right, GUIItem.Top)
 	self.closeButton:SetSize(kCloseButtonSize)
 	self.closeButton:SetPosition(Vector(GUILinearScale(8), 0, 0))
+	self.closeButton:SetLayer(kGUILayerMainMenu)
 	self.header:AddChild(self.closeButton)
 	
 	self.closeText = GUIManager:CreateTextItem()
@@ -553,6 +573,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.closeText:SetTextAlignmentX(GUIItem.Align_Center)
 	self.closeText:SetTextAlignmentY(GUIItem.Align_Center)
 	self.closeText:SetPosition(Vector(0, GUILinearScale(2), 0))
+	self.closeText:SetLayer(kGUILayerMainMenu)
 	self.closeButton:AddChild(self.closeText)
 	
 	self.roundDate = GUIManager:CreateTextItem()
@@ -561,6 +582,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.roundDate:SetScale(scaledVector)
 	self.roundDate:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.roundDate:SetPosition(Vector(GUILinearScale(10), GUILinearScale(4), 0))
+	self.roundDate:SetLayer(kGUILayerMainMenu)
 	self.header:AddChild(self.roundDate)
 	
 	self.serverName = GUIManager:CreateTextItem()
@@ -570,6 +592,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.serverName:SetAnchor(GUIItem.Left, GUIItem.Bottom)
 	self.serverName:SetPosition(Vector(GUILinearScale(10), GUILinearScale(-4), 0))
 	self.serverName:SetTextAlignmentY(GUIItem.Align_Max)
+	self.serverName:SetLayer(kGUILayerMainMenu)
 	self.header:AddChild(self.serverName)
 	
 	self.gameLength = GUIManager:CreateTextItem()
@@ -579,6 +602,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.gameLength:SetAnchor(GUIItem.Right, GUIItem.Top)
 	self.gameLength:SetPosition(Vector(GUILinearScale(-10), GUILinearScale(4), 0))
 	self.gameLength:SetTextAlignmentX(GUIItem.Align_Max)
+	self.gameLength:SetLayer(kGUILayerMainMenu)
 	self.header:AddChild(self.gameLength)
 	
 	self.mapName = GUIManager:CreateTextItem()
@@ -589,6 +613,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.mapName:SetPosition(Vector(GUILinearScale(-10), GUILinearScale(-4), 0))
 	self.mapName:SetTextAlignmentX(GUIItem.Align_Max)
 	self.mapName:SetTextAlignmentY(GUIItem.Align_Max)
+	self.mapName:SetLayer(kGUILayerMainMenu)
 	self.header:AddChild(self.mapName)
 	
 	self.team1UI = self:CreateTeamBackground(1)
@@ -603,11 +628,13 @@ function CHUDGUI_EndStats:Initialize()
 	self.sliderBarBg:SetSize(Vector(GUILinearScale(8), kContentMaxYSize, 0))
 	self.sliderBarBg:SetAnchor(GUIItem.Center, GUIItem.Top)
 	self.sliderBarBg:SetPosition(Vector((kTitleSize.x+GUILinearScale(32))/2, GUILinearScale(128), 0))
+	self.sliderBarBg:SetLayer(kGUILayerMainMenu)
 	
 	self.slider = GUIManager:CreateGraphicItem()
 	self.slider:SetColor(Color(1,1,1,1))
 	self.slider:SetSize(Vector(GUILinearScale(16), GUILinearScale(8), 0))
 	self.slider:SetAnchor(GUIItem.Center, GUIItem.Top)
+	self.slider:SetLayer(kGUILayerMainMenu)
 	self.sliderBarBg:AddChild(self.slider)
 	
 	self.contentBackground = GUIManager:CreateGraphicItem()
@@ -615,6 +642,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.contentBackground:SetAnchor(GUIItem.Center, GUIItem.Top)
 	self.contentBackground:SetPosition(Vector(-kTitleSize.x/2, GUILinearScale(128), 0))
 	self.contentBackground:SetSize(Vector(kTitleSize.x, kContentMaxYSize, 0))
+	self.contentBackground:SetLayer(kGUILayerMainMenu)
 	
 	self.contentStencil = GUIManager:CreateGraphicItem()
 	self.contentStencil:SetAnchor(GUIItem.Center, GUIItem.Top)
@@ -622,11 +650,13 @@ function CHUDGUI_EndStats:Initialize()
 	self.contentStencil:SetSize(Vector(kTitleSize.x, kContentMaxYSize, 0))
 	self.contentStencil:SetIsStencil(true)
 	self.contentStencil:SetClearsStencilBuffer(true)
+	self.contentStencil:SetLayer(kGUILayerMainMenu)
 	
 	self.background = GUIManager:CreateGraphicItem()
 	self.background:SetColor(Color(0,0,0,0))
 	self.background:SetAnchor(GUIItem.Center, GUIItem.Top)
 	self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(128), 0))
+	self.background:SetLayer(kGUILayerMainMenu)
 	self.background:AddChild(self.team1UI.background)
 	self.background:AddChild(self.team2UI.background)
 	
@@ -638,6 +668,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.teamStatsTextShadow:SetText("TEAM STATS")
 	self.teamStatsTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.teamStatsTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
+	self.teamStatsTextShadow:SetLayer(kGUILayerMainMenu)
 	self.background:AddChild(self.teamStatsTextShadow)
 	
 	self.teamStatsText = GUIManager:CreateTextItem()
@@ -649,6 +680,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.teamStatsText:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.teamStatsText:SetTextAlignmentX(GUIItem.Align_Center)
 	self.teamStatsText:SetPosition(Vector(-kTextShadowOffset, -kTextShadowOffset, 0))
+	self.teamStatsText:SetLayer(kGUILayerMainMenu)
 	self.teamStatsTextShadow:AddChild(self.teamStatsText)
 	
 	self.yourStatsTextShadow = GUIManager:CreateTextItem()
@@ -660,6 +692,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.yourStatsTextShadow:SetIsVisible(false)
 	self.yourStatsTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.yourStatsTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
+	self.yourStatsTextShadow:SetLayer(kGUILayerMainMenu)
 	self.background:AddChild(self.yourStatsTextShadow)
 	
 	self.yourStatsText = GUIManager:CreateTextItem()
@@ -671,6 +704,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.yourStatsText:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.yourStatsText:SetTextAlignmentX(GUIItem.Align_Center)
 	self.yourStatsText:SetPosition(Vector(-kTextShadowOffset, -kTextShadowOffset, 0))
+	self.yourStatsText:SetLayer(kGUILayerMainMenu)
 	self.yourStatsTextShadow:AddChild(self.yourStatsText)
 	
 	self.teamStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(16), 0))
@@ -735,16 +769,6 @@ function CHUDGUI_EndStats:Uninitialize()
 
 end
 
-local oldMainMenuGetIsOpened = MainMenu_GetIsOpened
-
-function MainMenu_GetIsOpened()
-	if CHUDEndStatsVisible then
-		return true
-	else
-		return oldMainMenuGetIsOpened()
-	end
-end
-
 local function SetMouseVisible(self, setVisible)
 
 	if self.mouseVisible ~= setVisible then
@@ -764,12 +788,10 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 	self.contentStencil:SetIsVisible(visible)
 	
 	CHUDEndStatsVisible = visible
-	CHUDEvaluateGUIVis()
-	ClientUI.EvaluateUIVisibility(Client.GetLocalPlayer())
 	self.slidePercentage = 0
 	
 	-- Changing resolutions would disable the mouse because we hide it on init
-	if not oldMainMenuGetIsOpened() then
+	if not MainMenu_GetIsOpened() then
 		SetMouseVisible(self, visible)
 	
 		-- Fix bug where toggling as spectator would make the cursor invisible
@@ -1366,7 +1388,7 @@ end
 local lastDisplayStatus = false
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not oldMainMenuGetIsOpened() and self.prevRequestKey ~= down then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
 		
 		self.prevRequestKey = down
 		if not down then

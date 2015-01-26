@@ -5,6 +5,10 @@ originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 		
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
+		if CHUDEndStatsVisible then
+			self:SetIsVisible(false)
+		end
+		
 		if CHUDGetOption("mingui") then
 			local highlightColor = Color(1,1,0,1)
 			local defaultColor = Color(1,1,1,1)
