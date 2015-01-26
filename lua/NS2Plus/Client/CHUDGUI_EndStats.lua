@@ -548,8 +548,6 @@ end
 
 function CHUDGUI_EndStats:Initialize()
 
-	self.mouseVisible = MouseTracker_GetIsVisible()
-	
 	self.header = GUIManager:CreateGraphicItem()
 	self.header:SetColor(Color(0, 0, 0, 0.5))
 	self.header:SetAnchor(GUIItem.Center, GUIItem.Top)
@@ -750,10 +748,10 @@ function CHUDGUI_EndStats:Initialize()
 	self.actionIconGUI.pickupIcon:SetLayer(kGUILayerPlayerHUD)
 	self.actionIconGUI:Hide()
 	
-	self:SetIsVisible(false)
-	
 	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
 	self.lastRow = nil
+	
+	self:SetIsVisible(false)
 end
 
 function CHUDGUI_EndStats:Uninitialize()
@@ -769,17 +767,6 @@ function CHUDGUI_EndStats:Uninitialize()
 
 end
 
-local function SetMouseVisible(self, setVisible)
-
-	if self.mouseVisible ~= setVisible then
-	
-		self.mouseVisible = setVisible
-		
-		MouseTracker_SetIsVisible(self.mouseVisible, "ui/Cursor_MenuDefault.dds", true)
-	end
-	
-end
-
 function CHUDGUI_EndStats:SetIsVisible(visible)
 	self.background:SetIsVisible(visible)
 	self.header:SetIsVisible(visible)
@@ -790,15 +777,13 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 	CHUDEndStatsVisible = visible
 	self.slidePercentage = 0
 	
+	if not visible then
+		self.hoverMenu:Hide()
+	end
+	
 	-- Changing resolutions would disable the mouse because we hide it on init
 	if not MainMenu_GetIsOpened() then
-		SetMouseVisible(self, visible)
-	
-		-- Fix bug where toggling as spectator would make the cursor invisible
-		if PlayerUI_IsOverhead() and Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex then
-			SetMouseVisible(self, false)
-			SetMouseVisible(self, true)
-		end
+		MouseTracker_SetIsVisible(visible)
 	end
 end
 
@@ -871,11 +856,10 @@ end
 
 function CHUDGUI_EndStats:Update(deltaTime)
 
-	-- When going back to the RR sometimes we'll lose the cursor
 	if self:GetIsVisible() then
-		if self.mouseVisible and not MouseTracker_GetIsVisible() then
-			SetMouseVisible(self, false)
-			SetMouseVisible(self, true)
+		-- When going back to the RR sometimes we'll lose the cursor
+		if not MouseTracker_GetIsVisible() then
+			MouseTracker_SetIsVisible(true)
 		end
 		
 		if PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
@@ -1450,7 +1434,6 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			lastDisplayStatus = self:GetIsVisible()
 			if lastDisplayStatus then
 				self:SetIsVisible(false)
-				self.hoverMenu:Hide()
 			end
 		elseif lastDisplayStatus then
 			self:SetIsVisible(lastDisplayStatus)
@@ -1487,7 +1470,6 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			return true
 		end
 	end
-
 end
 
 function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
