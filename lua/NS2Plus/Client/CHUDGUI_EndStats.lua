@@ -58,6 +58,10 @@ local kAlienPlayerStatsEvenColor = Color(0.45,0.321,0.16,1)
 local kAlienPlayerStatsOddColor = Color(0.37,0.25,0.1,1)
 local kCommanderStatsEvenColor = kMarinePlayerStatsEvenColor
 local kCommanderStatsOddColor = kMarinePlayerStatsOddColor
+local kHeaderRowColor = Color(1, 1, 1, 1)
+local kHeaderRowTextColor = Color(0, 0, 0, 1)
+local kAverageRowColor = Color(0.9, 0.9, 0.9, 1)
+local kAverageRowTextColor = Color(0, 0, 0, 1)
 
 local kHeaderTexture = PrecacheAsset("ui/statsheader.dds")
 local kHeaderCoordsLeft = { 0, 0, 15, 64 }
@@ -616,10 +620,10 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.team1UI = self:CreateTeamBackground(1)
 	self.team1UI.playerRows = {}
-	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Player name", "Kills", "Assists", "Deaths", "Acc. (No Onos)", "Player dmg", "Structure dmg", "Time building"))
+	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Acc. (No Onos)", "Player dmg", "Structure dmg", "Time building"))
 	self.team2UI = self:CreateTeamBackground(2)
 	self.team2UI.playerRows = {}
-	table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Player name", "Kills", "Assists", "Deaths", "Accuracy", "Player dmg", "Structure dmg", "Time building"))
+	table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Accuracy", "Player dmg", "Structure dmg", "Time building"))
 	
 	self.sliderBarBg = GUIManager:CreateGraphicItem()
 	self.sliderBarBg:SetColor(Color(0,0,0,0.5))
@@ -1042,12 +1046,12 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		-- When there's only one player in a team, the total and the average will be the same
 		-- Don't even bother displaying this, it looks odd
 		if numPlayers1 > 1 then
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, Color(0.9,0.9,0.9,1), Color(0,0,0,1), "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg)))
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg)))
 		end
 		if numPlayers2 > 1 then
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(1,1,1,1), Color(0,0,0,1), "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, Color(0.5,0.5,0.5,1), Color(1,1,1,1), "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
 		end
 		
 		local yPos = GUILinearScale(48)
@@ -1132,9 +1136,9 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		local mouseX, mouseY = Client.GetCursorPosScreen()
 		
 		if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
-			self.closeButton:SetColor(Color(1, 0, 0, 0.5))
+			self.closeButton:SetColor(Color(1, 0, 0, 0.75))
 		else
-			self.closeButton:SetColor(Color(0, 0, 0, 0.5))
+			self.closeButton:SetColor(Color(1, 0, 0, 0.5))
 		end
 	end
 end
