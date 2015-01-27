@@ -890,7 +890,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.actionIconGUI:Hide()
 		end
 		
-		if CHUDGetOption("deathstats") > 0 and timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
+		if CHUDGetOption("deathstats") > 1 and timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
 			self:SetIsVisible(true)
 			self.displayed = true
 		end
