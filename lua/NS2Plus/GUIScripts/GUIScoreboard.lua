@@ -62,54 +62,54 @@ function(self, deltaTime)
 	
 	originalScoreboardUpdate(self, deltaTime)
 	
-	self.centerOnPlayer = CHUDGetOption("sbcenter")
-	local _, pgp = Shine and Shine:IsExtensionEnabled( "pregameplus" )
-	local pgpEnabled = pgp and pgp.dt and pgp.dt.Enabled
+	if self.visible then
+		self.centerOnPlayer = CHUDGetOption("sbcenter")
+		local _, pgp = Shine and Shine:IsExtensionEnabled( "pregameplus" )
+		local pgpEnabled = pgp and pgp.dt and pgp.dt.Enabled
 
-	self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and (pgpEnabled or not PlayerUI_GetHasGameStarted())
-	self.showAvgSkill = GetGameInfoEntity().showAvgSkill
-	
-	if self.showAvgSkill == true then
-		if not self.avgSkillItem then
-			self.avgSkillItem = GUIManager:CreateTextItem()
-			self.avgSkillItem:SetFontName(GUIScoreboard.kGameTimeFontName)
-			self.avgSkillItem:SetAnchor(GUIItem.Middle, GUIItem.Center)
-			self.avgSkillItem:SetTextAlignmentX(GUIItem.Align_Center)
-			self.avgSkillItem:SetTextAlignmentY(GUIItem.Align_Center)
-			self.avgSkillItem:SetColor(Color(1, 1, 1, 1))
-			self.avgSkillItem:SetText("")
-			self.gameTimeBackground:AddChild(self.avgSkillItem)
+		self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and (pgpEnabled or not PlayerUI_GetHasGameStarted())
+		self.showAvgSkill = GetGameInfoEntity().showAvgSkill
+
+		if self.showAvgSkill == true then
+			if not self.avgSkillItem then
+				self.avgSkillItem = GUIManager:CreateTextItem()
+				self.avgSkillItem:SetFontName(GUIScoreboard.kGameTimeFontName)
+				self.avgSkillItem:SetAnchor(GUIItem.Middle, GUIItem.Center)
+				self.avgSkillItem:SetTextAlignmentX(GUIItem.Align_Center)
+				self.avgSkillItem:SetTextAlignmentY(GUIItem.Align_Center)
+				self.avgSkillItem:SetColor(Color(1, 1, 1, 1))
+				self.avgSkillItem:SetText("")
+				self.gameTimeBackground:AddChild(self.avgSkillItem)
+				
+				GUIScoreboard.kGameTimeBackgroundSize.y = GUIScale(48)
+				self.gameTimeBackground:SetSize(GUIScoreboard.kGameTimeBackgroundSize)
+				self.slidebarBg:SetSize(Vector(GUIScoreboard.kSlidebarSize.x, GUIScoreboard.kBgMaxYSpace-20-GUIScale(32), 0))
+				self.avgSkillItem:SetPosition(Vector(0, GUIScale(12), 0))
+			end
 			
-			GUIScoreboard.kGameTimeBackgroundSize.y = GUIScale(48)
-			self.gameTimeBackground:SetSize(GUIScoreboard.kGameTimeBackgroundSize)
-			self.slidebarBg:SetSize(Vector(GUIScoreboard.kSlidebarSize.x, GUIScoreboard.kBgMaxYSpace-20-GUIScale(32), 0))
-			self.avgSkillItem:SetPosition(Vector(0, GUIScale(12), 0))
-		end
-		
-		local team1Players = #self.teams[2]["GetScores"]()
-		local team2Players = #self.teams[3]["GetScores"]()
-		local skillText = ""
+			local team1Players = #self.teams[2]["GetScores"]()
+			local team2Players = #self.teams[3]["GetScores"]()
+			local skillText = ""
 
-		if team1Players > 0 and team2Players > 0 and team1Skill and team2Skill then
-			skillText = string.format("Avg. marine skill: %d | Avg. alien skill: %d", team1Skill, team2Skill)
-		elseif team1Players > 0 and team1Skill then
-			skillText = string.format("Avg. marine skill: %d", team1Skill)
-		elseif team2Players > 0 and team2Skill then
-			skillText = string.format("Avg. alien skill: %d", team2Skill)
+			if team1Players > 0 and team2Players > 0 and team1Skill and team2Skill then
+				skillText = string.format("Avg. marine skill: %d | Avg. alien skill: %d", team1Skill, team2Skill)
+			elseif team1Players > 0 and team1Skill then
+				skillText = string.format("Avg. marine skill: %d", team1Skill)
+			elseif team2Players > 0 and team2Skill then
+				skillText = string.format("Avg. alien skill: %d", team2Skill)
+			end
+			
+			if skillText == "" then
+				self.gameTime:SetPosition(Vector(0, 0, 0))
+			else
+				self.gameTime:SetPosition(Vector(0, -GUIScale(12), 0))
+			end
+			
+			self.avgSkillItem:SetText(skillText)
 		end
-		
-		if skillText == "" then
-			self.gameTime:SetPosition(Vector(0, 0, 0))
-		else
-			self.gameTime:SetPosition(Vector(0, -GUIScale(12), 0))
-		end
-		
-		self.avgSkillItem:SetText(skillText)
-		
 	end
 end)
 
-local SetMouseVisible = GetUpValue( GUIScoreboard.SendKeyEvent, "SetMouseVisible", { LocateRecurse = true } )
 local originalScoreboardSKE
 originalScoreboardSKE = Class_ReplaceMethod( "GUIScoreboard", "SendKeyEvent",
 function(self, key, down)
