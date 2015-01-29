@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- 28/01/2015
+- 29/01/2015
 	- Fixed bug where opening/closing the scoreboard would reset the HUD.
 	- Changed the way the stats were sorted from Accuracy first to Kills first.
 	- Improved readability of the stats UI on resolutions lower than 1920x1080.
