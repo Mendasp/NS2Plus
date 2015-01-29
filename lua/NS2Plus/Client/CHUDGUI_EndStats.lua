@@ -1441,7 +1441,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			if lastDisplayStatus then
 				self:SetIsVisible(false)
 			end
-		elseif lastDisplayStatus then
+		elseif lastDisplayStatus and not self:GetIsVisible() then
 			self:SetIsVisible(lastDisplayStatus)
 		end
 	end
