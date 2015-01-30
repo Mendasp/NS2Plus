@@ -7,7 +7,7 @@ Latest changes
 - 31/01/2015
 	- Fixed bug where opening the stats before they'd show up automatically at end-round would leave the mouse cursor stuck on the screen.
 	- Fixed edge case where if the only stats available were Marine Commander drops, the client would not display any stats even after receiving them.
-	- Made the stats add the Commanders to the final stats regardless of their field player stats.
+	- The Commanders now show up in the final stats regardless of their field player stats.
 	- Made the stats UI highlight your own row.
 	- Added a way for server operators to disable autoshowing the end game stats (clients can still bring them up with the Request/Voiceover key, default X). Servers can toggle it with "sv_plus autodisplayendstats true/false" in console or modifying NS2PlusServerConfig.json.
 	
