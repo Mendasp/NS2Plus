@@ -33,6 +33,12 @@ CHUDServerOptions =
 		defaultValue = false,
 		},
 
+	autodisplayendstats = {
+		label   = "End game stats autodisplay",
+		tooltip = "Enables or disables the end game stats displaying automatically upon game end.",
+		valueType = "bool",
+		defaultValue = true,
+		},
 	modupdater = {
 		label   = "Mod updater",
 		tooltip = "Enables or disables the mod update checker.",

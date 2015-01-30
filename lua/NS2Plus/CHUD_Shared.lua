@@ -97,6 +97,7 @@ if not CHUDMainMenu then
 	{
 		showAvgSkill = "boolean",
 		showPlayerSkill = "boolean",
+		showEndStatsAuto = "boolean",
 	}
 
 	Class_Reload("GameInfo", gameInfoNetworkVars)

@@ -774,22 +774,24 @@ function CHUDGUI_EndStats:Uninitialize()
 end
 
 function CHUDGUI_EndStats:SetIsVisible(visible)
-	self.background:SetIsVisible(visible)
-	self.header:SetIsVisible(visible)
-	self.sliderBarBg:SetIsVisible(visible)
-	self.contentBackground:SetIsVisible(visible)
-	self.contentStencil:SetIsVisible(visible)
-	
-	CHUDEndStatsVisible = visible
-	self.slidePercentage = 0
-	
-	if not visible then
-		self.hoverMenu:Hide()
-	end
-	
-	-- Changing resolutions would disable the mouse because we hide it on init
-	if not MainMenu_GetIsOpened() then
-		MouseTracker_SetIsVisible(visible)
+	if visible ~= self:GetIsVisible() then
+		self.background:SetIsVisible(visible)
+		self.header:SetIsVisible(visible)
+		self.sliderBarBg:SetIsVisible(visible)
+		self.contentBackground:SetIsVisible(visible)
+		self.contentStencil:SetIsVisible(visible)
+		
+		CHUDEndStatsVisible = visible
+		self.slidePercentage = 0
+		
+		if not visible then
+			self.hoverMenu:Hide()
+		end
+		
+		-- Changing resolutions would disable the mouse because we hide it on init
+		if not MainMenu_GetIsOpened() then
+			MouseTracker_SetIsVisible(visible)
+		end
 	end
 end
 
@@ -896,15 +898,15 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.actionIconGUI:Hide()
 		end
 		
-		if CHUDGetOption("deathstats") > 1 and timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
-			self:SetIsVisible(true)
+		if timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
+			self:SetIsVisible(GetGameInfoEntity().showEndStatsAuto and CHUDGetOption("deathstats") > 1)
 			self.displayed = true
 		end
 	end
 	
 	self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
 	
-	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and #finalStatsTable > 0 then
+	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and (#finalStatsTable > 0 or #cardsTable > 0 or #miscDataTable > 0) then
 		table.sort(finalStatsTable, function(a, b)
 			a.teamNumber = a.isMarine and 1 or 2
 			b.teamNumber = b.isMarine and 1 or 2
@@ -1013,6 +1015,11 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
 			if playerCount % 2 == 0 then
 				bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+			end
+			
+			-- Color our own row in a different color
+			if message.steamId == Client.GetSteamId() then
+				bgColor = kCommanderStatsColor
 			end
 			
 			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
@@ -1257,6 +1264,8 @@ local function CHUDSetWeaponStats(message)
 	end
 
 	table.insert(cardsTable, cardEntry)
+	
+	lastStatsMsg = Shared.GetTime()
 end
 
 local function CHUDSetCommStats(message)
@@ -1372,7 +1381,8 @@ local function CHUDSetCommStats(message)
 		end
 		
 	end
-
+	
+	lastStatsMsg = Shared.GetTime()
 end
 
 local lastDisplayStatus = false
@@ -1430,6 +1440,8 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				self.hoverMenu:Show()
 				
 				return true
+			elseif self.lastRow and self.hoverMenu.background:GetIsVisible() and not GUIItemContainsPoint(self.hoverMenu.background, mouseX, mouseY) then
+				self.hoverMenu:Hide()
 			end
 		end
 	end

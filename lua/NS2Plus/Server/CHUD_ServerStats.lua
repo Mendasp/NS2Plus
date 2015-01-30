@@ -233,9 +233,12 @@ function NS2Gamerules:ResetGame()
 	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 	
-		if playerInfo.teamNumber == kTeam1Index and playerInfo.isCommander then
-			CHUDResetCommStats(playerInfo.steamId)
-			break
+		if playerInfo.isCommander then
+			if playerInfo.teamNumber == kTeam1Index then
+				CHUDResetCommStats(playerInfo.steamId)
+			end
+			-- Init the commander player stats so they show up at the end-game stats
+			MaybeInitCHUDClientStats(playerInfo.steamId, nil, playerInfo.teamNumber)
 		end
 	
 	end
@@ -265,7 +268,12 @@ originalCommandStructureLoginPlayer = Class_ReplaceMethod("CommandStructure", "L
 	
 		originalCommandStructureLoginPlayer(self, player, forced)
 		
-		if player:isa("Marine") then
+		local teamNumber = player:isa("Marine") and 1 or player:isa("Alien") and 2 or -1
+		
+		-- Init the player stats in case they haven't attacked at all so they still show up in the stats
+		MaybeInitCHUDClientStats(GetSteamIdForClientIndex(player.clientIndex), nil, teamNumber)
+		
+		if teamNumber == kTeam1Index then
 			CHUDMarineComm = GetSteamIdForClientIndex(player.clientIndex)
 
 			if not CHUDCommStats[CHUDMarineComm] then
