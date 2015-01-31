@@ -4,6 +4,8 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+	- Added a way for server operators to disable showing the team stats section of the end game stats. Servers can toggle it with "sv_plus endstatsteambreakdown true/false" in console or modifying NS2PlusServerConfig.json.
+    
 - 31/01/2015
 	- Fixed bug where opening the stats before they'd show up automatically at end-round would leave the mouse cursor stuck on the screen.
 	- Fixed edge case where if the only stats available were Marine Commander drops, the client would not display any stats even after receiving them.

@@ -7,6 +7,7 @@ originalGameInfo = Class_ReplaceMethod( "GameInfo", "OnCreate",
 		self.showAvgSkill = CHUDServerOptions["showavgteamskill"].currentValue == true
 		self.showPlayerSkill = CHUDServerOptions["showplayerskill"].currentValue == true
 		self.showEndStatsAuto = CHUDServerOptions["autodisplayendstats"].currentValue == true
+		self.showEndStatsTeamBreakdown = CHUDServerOptions["endstatsteambreakdown"].currentValue == true
 		
 	end)
 
@@ -18,4 +19,7 @@ CHUDServerOptions["showavgteamskill"].applyFunction = function()
 	end
 CHUDServerOptions["autodisplayendstats"].applyFunction = function()
 		GetGameInfoEntity().showEndStatsAuto = CHUDServerOptions["autodisplayendstats"].currentValue
+	end
+CHUDServerOptions["endstatsteambreakdown"].applyFunction = function()
+		GetGameInfoEntity().showEndStatsTeamBreakdown = CHUDServerOptions["endstatsteambreakdown"].currentValue
 	end

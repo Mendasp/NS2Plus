@@ -98,6 +98,7 @@ if not CHUDMainMenu then
 		showAvgSkill = "boolean",
 		showPlayerSkill = "boolean",
 		showEndStatsAuto = "boolean",
+		showEndStatsTeamBreakdown = "boolean",
 	}
 
 	Class_Reload("GameInfo", gameInfoNetworkVars)

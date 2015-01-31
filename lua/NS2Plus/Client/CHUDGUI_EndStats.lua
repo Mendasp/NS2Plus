@@ -861,7 +861,7 @@ local function CheckRowHighlight(self, row, mouseX, mouseY)
 		row.originalColor = nil
 	end
 end
-
+    
 function CHUDGUI_EndStats:Update(deltaTime)
 
 	if self:GetIsVisible() then
@@ -906,7 +906,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 	
 	self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
 	
-	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and (#finalStatsTable > 0 or #cardsTable > 0 or #miscDataTable > 0) then
+    local gameInfo = GetGameInfoEntity()
+	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and (#finalStatsTable > 0 or #cardsTable > 0 or #miscDataTable > 0) and gameInfo then
 		table.sort(finalStatsTable, function(a, b)
 			a.teamNumber = a.isMarine and 1 or 2
 			b.teamNumber = b.isMarine and 1 or 2
@@ -1021,8 +1022,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			if message.steamId == Client.GetSteamId() then
 				bgColor = kCommanderStatsColor
 			end
-			
-			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
+            
+            table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
 		end
 		
 		local numPlayers1 = #self.team1UI.playerRows-1
@@ -1063,10 +1064,24 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
 		end
 		
-		local yPos = GUILinearScale(48)
-		yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
-		self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
-		yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
+		local yPos = 0
+
+		if gameInfo.showEndStatsTeamBreakdown then
+			self.team1UI.background:SetIsVisible( true )
+			self.team2UI.background:SetIsVisible( true )
+			self.teamStatsTextShadow:SetIsVisible( true )
+			
+			yPos = yPos + GUILinearScale(48) -- for padding and team header
+			yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
+			self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+			yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
+		else
+			yPos = yPos + GUILinearScale(16) -- for padding
+			self.team1UI.background:SetIsVisible( false )
+			self.team2UI.background:SetIsVisible( false )
+			self.teamStatsTextShadow:SetIsVisible( false )
+		end
+
 		self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
 		self.contentSize = math.max(self.contentSize, yPos + GUILinearScale(32))
 		
