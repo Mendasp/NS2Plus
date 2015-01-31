@@ -861,7 +861,7 @@ local function CheckRowHighlight(self, row, mouseX, mouseY)
 		row.originalColor = nil
 	end
 end
-    
+
 function CHUDGUI_EndStats:Update(deltaTime)
 
 	if self:GetIsVisible() then
@@ -890,6 +890,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 	end
 
 	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
+	local gameInfo = GetGameInfoEntity()
 
 	if timeSinceRoundEnd > 2.5 and Shared.GetTime() > lastStatsMsg + kMaxAppendTime then
 		if CHUDGetOption("deathstats") > 0 and timeSinceRoundEnd < 7.5 and not self.displayed then
@@ -899,14 +900,13 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		end
 		
 		if timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
-			self:SetIsVisible(GetGameInfoEntity().showEndStatsAuto and CHUDGetOption("deathstats") > 1)
+			self:SetIsVisible(gameInfo and gameInfo.showEndStatsAuto and CHUDGetOption("deathstats") > 1)
 			self.displayed = true
 		end
 	end
 	
 	self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
 	
-    local gameInfo = GetGameInfoEntity()
 	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and (#finalStatsTable > 0 or #cardsTable > 0 or #miscDataTable > 0) and gameInfo then
 		table.sort(finalStatsTable, function(a, b)
 			a.teamNumber = a.isMarine and 1 or 2
@@ -1022,8 +1022,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			if message.steamId == Client.GetSteamId() then
 				bgColor = kCommanderStatsColor
 			end
-            
-            table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
+			
+			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
 		end
 		
 		local numPlayers1 = #self.team1UI.playerRows-1

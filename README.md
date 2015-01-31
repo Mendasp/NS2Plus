@@ -4,6 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /02/2015
 	- Added a way for server operators to disable showing the team stats section of the end game stats. Servers can toggle it with "sv_plus endstatsteambreakdown true/false" in console or modifying NS2PlusServerConfig.json.
     
 - 31/01/2015
@@ -72,25 +73,6 @@ Latest changes
 - 07/11/2014
 	- Modified vanilla scoreboard to make it usable at low resolutions. It will automatically scroll to your position if you are in RR or in a team. You can use the mousewheel, home/end/pgup/pgdn or click and drag to scroll.
 	- Formatted server console output on load to display more of the current NS2+ settings.
-
-- 31/10/2014
-	- Updated for Build 270.
-	- Added team average Hive skill to the scoreboard. Off by default. Servers can enable it by typing "sv_plus showavgteamskill true" in console or modifying NS2PlusServerConfig.json.
-	- Added pages to console help for NS2+ commands.
-
-- 12/10/2014
-	- Added reload indicator to Classic Ammo and HL2 HUD bar options. (Thanks Bi()ha2arD!)
-	- Added indicators for scan/obs, cloaking, umbra and enzyme when using the no viewmodel option.
-	- Added build/weld percentage to Classic Ammo and HL2 HUD bar options.
-	- Added stats for all the players at round end in the console with average team accuracies.
-	- Improved tunnel collision. It is now slightly higher and more closely matches the shape of the tunnel. (Thanks Samusdroid!)
-	- Grenade Launcher rounds are now highlighted in Alien vision and the visual model is slightly larger (collision is still the same). (Thanks Samusdroid!)
-	- Clogs no longer have decals projected onto them. (Thanks Samusdroid!)
-	- Added option to allow spectators to keep auto-following a player without reselecting it on respawn.
-
-- 20/09/2014
-	- Added map-specific prop blocking.
-	- Removed more props from biodome under the map particles setting.
 
 =================
 Credits/Thanks to
