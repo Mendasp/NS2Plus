@@ -11,7 +11,7 @@ Script.Load("lua/NS2Plus/Server/CHUD_DropPack.lua")
 
 Script.Load("lua/NS2Plus/Server/CHUD_GameInfo.lua")
 
-Shared.Message("")
+Shared.Message("------[NS2+ Server Settings]------")
 
 if #CHUDClientOptions > 0 then
 	local blockedString = ""
@@ -23,24 +23,28 @@ if #CHUDClientOptions > 0 then
 		end
 	end
 
-	Shared.Message("[NS2+] Blocked client options: " .. blockedString)
+	Shared.Message("Blocked client options: " .. blockedString)
 end
 
 local showAvgSkill = ConditionalValue(CHUDServerOptions["showavgteamskill"].currentValue, "Enabled", "Disabled")
 local showPlayerSkill = ConditionalValue(CHUDServerOptions["showplayerskill"].currentValue, "Enabled", "Disabled")
-Shared.Message("[NS2+] Display team avg. skill: " .. showAvgSkill)
-Shared.Message("[NS2+] Display player skill pregame: " .. showPlayerSkill)
+local showEndStatsAuto = ConditionalValue(CHUDServerOptions["autodisplayendstats"].currentValue, "Enabled", "Disabled")
+local showEndStatsTeamBreakdown = ConditionalValue(CHUDServerOptions["endstatsteambreakdown"].currentValue, "Enabled", "Disabled")
+Shared.Message("Display team avg. skill: " .. showAvgSkill)
+Shared.Message("Display player skill pregame: " .. showPlayerSkill)
+Shared.Message("Display end game stats automatically on round end: " .. showEndStatsAuto)
+Shared.Message("End game team stats scoreboard: " .. showEndStatsTeamBreakdown)
 
 -- Mod updater setting also depends on shine
 if CHUDServerOptions["modupdater"].shine then
-	Shared.Message("[NS2+] Shine workshop updater is enabled. Disabling NS2+ mod updater.")
+	Shared.Message("Shine workshop updater is enabled. Disabling NS2+ mod updater.")
 else
 	local modUpdStr = ConditionalValue(CHUDServerOptions["modupdater"].currentValue == false, "Disabled", "Enabled")
-	Shared.Message("[NS2+] Mod updater: " .. modUpdStr)
+	Shared.Message("Mod updater: " .. modUpdStr)
 	if CHUDServerOptions["modupdater"].currentValue == true then
 		Shared.Message("\t- Check every: " .. CHUDServerOptions["modupdatercheckinterval"].currentValue .. " min.")
 		Shared.Message("\t- Reminder interval: " .. CHUDServerOptions["modupdaterreminderinterval"].currentValue .. " min.")
 	end
 end
 
-Shared.Message("")
+Shared.Message("----------------------------------")

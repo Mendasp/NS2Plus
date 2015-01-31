@@ -1,5 +1,12 @@
 class 'CHUDGUI_EndStats' (GUIScript)
 
+local kButtonClickSound = "sound/NS2.fev/common/button_click"
+local kMouseHoverSound = "sound/NS2.fev/common/hovar"
+local kSlideSound = "sound/NS2.fev/marine/commander/hover_ui"
+Client.PrecacheLocalSound(kButtonClickSound)
+Client.PrecacheLocalSound(kMouseHoverSound)
+Client.PrecacheLocalSound(kSlideSound)
+
 local kScreenScaleAspect = 1280
 local screenWidth = Client.GetScreenWidth()
 local screenHeight = Client.GetScreenHeight()
@@ -693,7 +700,6 @@ function CHUDGUI_EndStats:Initialize()
 	self.yourStatsTextShadow:SetColor(Color(0,0,0,1))
 	self.yourStatsTextShadow:SetScale(scaledVector)
 	self.yourStatsTextShadow:SetText("YOUR STATS")
-	self.yourStatsTextShadow:SetIsVisible(false)
 	self.yourStatsTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.yourStatsTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
 	self.yourStatsTextShadow:SetLayer(kGUILayerMainMenu)
@@ -774,7 +780,9 @@ function CHUDGUI_EndStats:Uninitialize()
 end
 
 function CHUDGUI_EndStats:SetIsVisible(visible)
-	if visible ~= self:GetIsVisible() then
+	-- Don't try to display it if there is no content visible
+	local visibleStats = self.teamStatsTextShadow:GetIsVisible() or self.yourStatsTextShadow:GetIsVisible()
+	if visible ~= self:GetIsVisible() and (visible and visibleStats or not visible) then
 		self.background:SetIsVisible(visible)
 		self.header:SetIsVisible(visible)
 		self.sliderBarBg:SetIsVisible(visible)
@@ -864,20 +872,28 @@ end
 
 function CHUDGUI_EndStats:Update(deltaTime)
 
+	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
+	local gameInfo = GetGameInfoEntity()
+
 	if self:GetIsVisible() then
+		local mouseX, mouseY = Client.GetCursorPosScreen()
+		
 		-- When going back to the RR sometimes we'll lose the cursor
 		if not MouseTracker_GetIsVisible() then
 			MouseTracker_SetIsVisible(true)
 		end
 		
+		self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
+		
+		-- Hide the stats when the game starts if we're on a team
 		if PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
 			self:SetIsVisible(false)
 			self.actionIconGUI:Hide()
 		end
 		
+		-- Handle row highlighting
 		if not self.hoverMenu.background:GetIsVisible() then
 			self.lastRow = nil
-			local mouseX, mouseY = Client.GetCursorPosScreen()
 			for _, row in ipairs(self.team1UI.playerRows) do
 				CheckRowHighlight(self, row, mouseX, mouseY)
 			end
@@ -885,13 +901,48 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				CheckRowHighlight(self, row, mouseX, mouseY)
 			end
 		end
+		
+		-- Handle sliderbar position and display
+		if self.sliderBarBg:GetIsVisible() and self.mousePressed and self.isDragging then
+			HandleSlidebarClicked(self)
+		end
+		
+		local showSlidebar = self.contentSize > kContentMaxYSize
+		local slideOffset = -(self.slidePercentage * self.contentSize/100)+(self.slidePercentage * kContentMaxYSize/100)
+		local sliderPos = (self.slidePercentage * kContentMaxYSize/100)
+		self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(128)+slideOffset, 0))
+		if sliderPos < self.slider:GetSize().y/2 then
+			sliderPos = 0
+		end
+		if sliderPos > kContentMaxYSize - self.slider:GetSize().y then
+			sliderPos = kContentMaxYSize - self.slider:GetSize().y
+		end
+		
+		if math.abs(self.slider:GetPosition().y - sliderPos) > 2.5 then
+			StartSoundEffect(kSlideSound)
+		end
+		
+		self.slider:SetPosition(Vector(-GUILinearScale(8), sliderPos, 0))
+		self.sliderBarBg:SetIsVisible(showSlidebar)
+		
+		-- Close button
+		local kCloseButtonColor = Color(1, 0, 0, 0.5)
+		local kCloseButtonHighlightColor = Color(1, 0, 0, 0.75)
+		
+		if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
+			if self.closeButton:GetColor() ~= kCloseButtonHighlightColor then
+				self.closeButton:SetColor(kCloseButtonHighlightColor)
+				StartSoundEffect(kMouseHoverSound)
+			end
+		elseif self.closeButton:GetColor() ~= kCloseButtonColor then
+			self.closeButton:SetColor(kCloseButtonColor)
+			StartSoundEffect(kMouseHoverSound)
+		end
 	else
 		self.lastRow = nil
 	end
 
-	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
-	local gameInfo = GetGameInfoEntity()
-
+	-- Automatic data display on round end
 	if timeSinceRoundEnd > 2.5 and Shared.GetTime() > lastStatsMsg + kMaxAppendTime then
 		if CHUDGetOption("deathstats") > 0 and timeSinceRoundEnd < 7.5 and not self.displayed then
 			self.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last round stats", nil)
@@ -905,8 +956,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		end
 	end
 	
-	self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
-	
+	-- Enough time has passed, so let's save the stats we received
 	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and (#finalStatsTable > 0 or #cardsTable > 0 or #miscDataTable > 0) and gameInfo then
 		table.sort(finalStatsTable, function(a, b)
 			a.teamNumber = a.isMarine and 1 or 2
@@ -1067,9 +1117,9 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		local yPos = 0
 
 		if gameInfo.showEndStatsTeamBreakdown then
-			self.team1UI.background:SetIsVisible( true )
-			self.team2UI.background:SetIsVisible( true )
-			self.teamStatsTextShadow:SetIsVisible( true )
+			self.team1UI.background:SetIsVisible(true)
+			self.team2UI.background:SetIsVisible(true)
+			self.teamStatsTextShadow:SetIsVisible(true)
 			
 			yPos = yPos + GUILinearScale(48) -- for padding and team header
 			yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
@@ -1077,9 +1127,9 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
 		else
 			yPos = yPos + GUILinearScale(16) -- for padding
-			self.team1UI.background:SetIsVisible( false )
-			self.team2UI.background:SetIsVisible( false )
-			self.teamStatsTextShadow:SetIsVisible( false )
+			self.team1UI.background:SetIsVisible(false)
+			self.team2UI.background:SetIsVisible(false)
+			self.teamStatsTextShadow:SetIsVisible(false)
 		end
 
 		self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
@@ -1137,33 +1187,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		avgAccTable = {}
 		miscDataTable = {}
 		cardsTable = {}
-	end
-	
-	if self.sliderBarBg:GetIsVisible() and self.mousePressed and self.isDragging then
-		HandleSlidebarClicked(self)
-	end
-	
-	local showSlidebar = self.contentSize > kContentMaxYSize and self:GetIsVisible()
-	local slideOffset = -(self.slidePercentage * self.contentSize/100)+(self.slidePercentage * kContentMaxYSize/100)
-	local sliderPos = (self.slidePercentage * kContentMaxYSize/100)
-	self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(128)+slideOffset, 0))
-	if sliderPos < self.slider:GetSize().y/2 then
-		sliderPos = 0
-	end
-	if sliderPos > kContentMaxYSize - self.slider:GetSize().y then
-		sliderPos = kContentMaxYSize - self.slider:GetSize().y
-	end
-	self.slider:SetPosition(Vector(-GUILinearScale(8), sliderPos, 0))
-	self.sliderBarBg:SetIsVisible(showSlidebar)
-	
-	if self:GetIsVisible() then
-		local mouseX, mouseY = Client.GetCursorPosScreen()
-		
-		if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
-			self.closeButton:SetColor(Color(1, 0, 0, 0.75))
-		else
-			self.closeButton:SetColor(Color(1, 0, 0, 0.5))
-		end
 	end
 end
 
@@ -1420,6 +1443,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			local mouseX, mouseY = Client.GetCursorPosScreen()
 			
 			if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
+				StartSoundEffect(kButtonClickSound)
 				self:SetIsVisible(false)
 				return true
 			end
@@ -1452,6 +1476,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_HIVE_PROFILE"), teamColorBg, teamColorHighlight, textColor, openHiveProf)
 				self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
 				
+				StartSoundEffect(kButtonClickSound)
 				self.hoverMenu:Show()
 				
 				return true
@@ -1475,12 +1500,10 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 	
 	if self.sliderBarBg:GetIsVisible() then
 		if key == InputKey.MouseButton0 and self.mousePressed ~= down then
-			
 			self.mousePressed = down
 			if down then
 				local mouseX, mouseY = Client.GetCursorPosScreen()
 				self.isDragging = GUIItemContainsPoint(self.sliderBarBg, mouseX, mouseY) or GUIItemContainsPoint(self.slider, mouseX, mouseY)
-				
 				return true
 			end
 		elseif key == InputKey.MouseWheelDown then
