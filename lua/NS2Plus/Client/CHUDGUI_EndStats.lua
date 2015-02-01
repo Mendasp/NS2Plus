@@ -53,22 +53,25 @@ local kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
 local scaledVector = GUILinearScale(Vector(1,1,1))
 local kTopOffset = GUILinearScale(32)
 
-local kMarineStatsColor = ColorIntToColor(0x00BBE0)
-local kAlienStatsColor = ColorIntToColor(0xD87C2B)
-local kCommanderStatsColor = Color(0.75, 0.75, 0, 1)
-local kStatsHeaderBgColor = Color(1, 1, 1, 1)
-local kStatsHeaderTextColor = Color(0, 0, 0, 1)
+local kMarineStatsColor = Color(0, 0.75, 0.88, 0.65)
+local kAlienStatsColor = Color(0.84, 0.48, 0.17, 0.65)
+local kCommanderStatsColor = Color(0.75, 0.75, 0, 0.65)
+local kStatsHeaderBgColor = Color(0, 0, 0, 0.9)
+local kStatsHeaderTextColor = Color(1, 1, 1, 1)
 local kPlayerStatsTextColor = Color(1, 1, 1, 1)
-local kMarinePlayerStatsEvenColor = Color(0.195,0.35,0.48,1)
-local kMarinePlayerStatsOddColor = Color(0.12,0.3,0.4,1)
-local kAlienPlayerStatsEvenColor = Color(0.45,0.321,0.16,1)
-local kAlienPlayerStatsOddColor = Color(0.37,0.25,0.1,1)
+local kMarinePlayerStatsEvenColor = Color(0, 0, 0, 0.75)
+local kMarinePlayerStatsOddColor = Color(0, 0, 0, 0.65)
+local kAlienPlayerStatsEvenColor = Color(0, 0, 0, 0.75)
+local kAlienPlayerStatsOddColor = Color(0, 0, 0, 0.65)
+local kCurrentPlayerStatsColor = Color(1, 1, 1, 0.75)
+local kCurrentPlayerStatsTextColor = Color(0, 0, 0, 1)
 local kCommanderStatsEvenColor = kMarinePlayerStatsEvenColor
 local kCommanderStatsOddColor = kMarinePlayerStatsOddColor
-local kHeaderRowColor = Color(1, 1, 1, 1)
-local kHeaderRowTextColor = Color(0, 0, 0, 1)
-local kAverageRowColor = Color(0.9, 0.9, 0.9, 1)
-local kAverageRowTextColor = Color(0, 0, 0, 1)
+local kHeaderRowColor = Color(0, 0, 0, 0)
+local kMarineHeaderRowTextColor = Color(1, 1, 1, 1)
+local kAlienHeaderRowTextColor = Color(1, 1, 1, 1)
+local kAverageRowColor = Color(0.05, 0.05, 0.05, 0.25)
+local kAverageRowTextColor = Color(1, 1, 1, 1)
 
 local kHeaderTexture = PrecacheAsset("ui/statsheader.dds")
 local kHeaderCoordsLeft = { 0, 0, 15, 64 }
@@ -629,10 +632,10 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.team1UI = self:CreateTeamBackground(1)
 	self.team1UI.playerRows = {}
-	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Acc. (No Onos)", "Player dmg", "Structure dmg", "Time building"))
+	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Acc. (No Onos)", "Player dmg", "Structure dmg", "Time building"))
 	self.team2UI = self:CreateTeamBackground(2)
 	self.team2UI.playerRows = {}
-	table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Accuracy", "Player dmg", "Structure dmg", "Time building"))
+	table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Accuracy", "Player dmg", "Structure dmg", "Time building"))
 	
 	self.sliderBarBg = GUIManager:CreateGraphicItem()
 	self.sliderBarBg:SetColor(Color(0,0,0,0.5))
@@ -861,7 +864,6 @@ local function CheckRowHighlight(self, row, mouseX, mouseY)
 			row.originalColor = row.background:GetColor()
 		end
 		local color = row.originalColor * 0.75
-		color.a = 1
 		row.background:SetColor(color)
 		self.lastRow = row
 	elseif row.originalColor then
@@ -1064,16 +1066,18 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			
 			local playerCount = #teamObj.playerRows
 			local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+			local playerTextColor = kPlayerStatsTextColor
 			if playerCount % 2 == 0 then
 				bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
 			end
 			
 			-- Color our own row in a different color
 			if message.steamId == Client.GetSteamId() then
-				bgColor = kCommanderStatsColor
+				bgColor = kCurrentPlayerStatsColor
+				playerTextColor = kCurrentPlayerStatsTextColor
 			end
 			
-			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, kPlayerStatsTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
+			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
 		end
 		
 		local numPlayers1 = #self.team1UI.playerRows-1
@@ -1106,11 +1110,11 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		-- When there's only one player in a team, the total and the average will be the same
 		-- Don't even bother displaying this, it looks odd
 		if numPlayers1 > 1 then
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
 			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg)))
 		end
 		if numPlayers2 > 1 then
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
 			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
 		end
 		
@@ -1463,11 +1467,11 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				
 				local textColor = Color(1, 1, 1, 1)
 				local nameBgColor = Color(0, 0, 0, 0)
-				local teamColorHighlight = self.lastRow.originalColor * 0.5
+				local teamColorHighlight = self.lastRow.background:GetParent():GetColor() * 0.25
 				teamColorHighlight.a = 1
-				local teamColorBg = self.lastRow.originalColor * 0.75
+				local teamColorBg = self.lastRow.background:GetParent():GetColor() * 0.5
 				teamColorBg.a = 1
-				local bgColor = self.lastRow.originalColor
+				local bgColor = self.lastRow.background:GetParent():GetColor() * 0.75
 				bgColor.a = 0.9
 				
 				self.hoverMenu:SetBackgroundColor(bgColor)
