@@ -33,15 +33,15 @@ CHUDServerOptions =
 		defaultValue = false,
 		},
 
-	endstatsteambreakdown = {
-		label   = "End game stats team breakdown",
-		tooltip = "Enables or disables the end game stats displaying the full team breakdown.",
-		valueType = "bool",
-		defaultValue = true,
-		},
 	autodisplayendstats = {
 		label   = "End game stats autodisplay",
 		tooltip = "Enables or disables the end game stats displaying automatically upon game end.",
+		valueType = "bool",
+		defaultValue = true,
+		},
+	endstatsteambreakdown = {
+		label   = "End game stats team breakdown",
+		tooltip = "Enables or disables the end game stats displaying the full team breakdown.",
 		valueType = "bool",
 		defaultValue = true,
 		},

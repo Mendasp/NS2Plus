@@ -472,6 +472,20 @@ function GUIScoreboard:Update(deltaTime)
 
     PROFILE("GUIScoreboard:Update")
     
+    -- Show all the elements the frame after sorting them
+    -- so it doesn't appear to shift when we open
+    local displayScoreboard = self.slidePercentage > -1
+    self.gameTimeBackground:SetIsVisible(displayScoreboard)
+    self.gameTime:SetIsVisible(displayScoreboard)
+    self.background:SetIsVisible(displayScoreboard)
+    self.scoreboardBackground:SetIsVisible(displayScoreboard)
+    if lastScoreboardVisState ~= displayScoreboard then
+        lastScoreboardVisState = displayScoreboard
+        if self.visible == false then
+            self.badgeNameTooltip:Hide(0)
+        end
+    end
+    
     if not self.visible then
         SetMouseVisible(self, false)
     end
@@ -609,18 +623,6 @@ function GUIScoreboard:Update(deltaTime)
         end
     else
         self.slidePercentage = -1
-    end
-    
-    -- Show all the elements after sorting them so it doesn't appear to shift when we open
-    self.gameTimeBackground:SetIsVisible(self.visible)
-    self.gameTime:SetIsVisible(self.visible)
-    self.background:SetIsVisible(self.visible)
-    self.scoreboardBackground:SetIsVisible(self.visible)
-    if lastScoreboardVisState ~= self.visible then
-        lastScoreboardVisState = self.visible
-        if self.visible == false then
-            self.badgeNameTooltip:Hide(0)
-        end
     end
     
     -- Detect connection problems and display the indicator.
