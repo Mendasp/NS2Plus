@@ -1432,8 +1432,10 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
 	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
 		
+		local requestScript = ClientUI.GetScript("GUIRequestMenu")
+		
 		self.prevRequestKey = down
-		if not down then
+		if not down and requestScript and not requestScript.selectedButton then
 			self:SetIsVisible(not self:GetIsVisible())
 		end
 		
