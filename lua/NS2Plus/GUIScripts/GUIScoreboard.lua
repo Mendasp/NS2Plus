@@ -51,13 +51,13 @@ function(self)
 	originalScoreboardInit(self)
 	
 	self.avgSkillItemBg = GUIManager:CreateGraphicItem()
-	self.avgSkillItemBg:SetColor(GUIScoreboard.kBgColor)
+	self.avgSkillItemBg:SetColor(Color(0, 0, 0, 0.75))
 	self.avgSkillItemBg:SetLayer(kGUILayerScoreboard)
 	self.avgSkillItemBg:SetAnchor(GUIItem.Center, GUIItem.Top)
 	self.scoreboardBackground:AddChild(self.avgSkillItemBg)
 	
 	self.avgSkillItem2Bg = GUIManager:CreateGraphicItem()
-	self.avgSkillItem2Bg:SetColor(GUIScoreboard.kBgColor)
+	self.avgSkillItem2Bg:SetColor(Color(0, 0, 0, 0.75))
 	self.avgSkillItem2Bg:SetLayer(kGUILayerScoreboard)
 	self.avgSkillItem2Bg:SetAnchor(GUIItem.Center, GUIItem.Top)
 	self.scoreboardBackground:AddChild(self.avgSkillItem2Bg)
@@ -123,7 +123,7 @@ function(self, deltaTime)
 				if isVerticalSB then
 					self.avgSkillItem:SetPosition(Vector(-20-self.avgSkillItem:GetTextWidth(team1Text)/2, textHeight, 0))
 					self.avgSkillItem2:SetPosition(Vector(20+self.avgSkillItem2:GetTextWidth(team2Text)/2,textHeight, 0))
-					
+					self.avgSkillItem2Bg:SetIsVisible(false)
 				else
 					self.avgSkillItem:SetPosition(Vector(self.teams[2].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, textHeight, 0))
 					self.avgSkillItem2:SetPosition(Vector(self.teams[3].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, textHeight, 0))
@@ -154,22 +154,33 @@ function(self, deltaTime)
 			
 			local sliderbarBgYSize = GUIScoreboard.kBgMaxYSpace-20
 			if hasText then
-				local ySize = textHeight + 10
-				self.background:SetPosition(Vector(self.background:GetPosition().x, self.background:GetPosition().y+ySize, 0))
-				self.backgroundStencil:SetPosition(Vector(self.backgroundStencil:GetPosition().x, self.backgroundStencil:GetPosition().y+ySize, 0))
+				self.background:SetPosition(Vector(self.background:GetPosition().x, self.background:GetPosition().y+textHeight, 0))
+				self.backgroundStencil:SetPosition(Vector(self.backgroundStencil:GetPosition().x, self.backgroundStencil:GetPosition().y+textHeight, 0))
 				if self.slidebarBg:GetIsVisible() then
-					self.backgroundStencil:SetSize(Vector(self.backgroundStencil:GetSize().x, self.backgroundStencil:GetSize().y-ySize, 0))
-					sliderbarBgYSize = sliderbarBgYSize-ySize
+					self.backgroundStencil:SetSize(Vector(self.backgroundStencil:GetSize().x, self.backgroundStencil:GetSize().y-textHeight, 0))
+					sliderbarBgYSize = sliderbarBgYSize-textHeight
 				end
 				
 				local team1TextWidth = self.avgSkillItem:GetTextWidth(self.avgSkillItem:GetText())
 				local team2TextWidth = self.avgSkillItem2:GetTextWidth(self.avgSkillItem2:GetText())
+				local team1Width = self.teams[2].GUIs.Background:GetSize().x
+				local team2Width = self.teams[3].GUIs.Background:GetSize().x
 				
-				self.avgSkillItemBg:SetSize(Vector(team1TextWidth+10, textHeight+5, 0))
-				self.avgSkillItem2Bg:SetSize(Vector(team2TextWidth+10, textHeight+5, 0))
+				self.avgSkillItemBg:SetSize(Vector(team1Width, textHeight+5, 0))
+				self.avgSkillItem2Bg:SetSize(Vector(team2Width, textHeight+5, 0))
 				
-				self.avgSkillItemBg:SetPosition(Vector(self.avgSkillItem:GetPosition().x-(team1TextWidth+10)/2, 5, 0))
-				self.avgSkillItem2Bg:SetPosition(Vector(self.avgSkillItem2:GetPosition().x-(team2TextWidth+10)/2, 5, 0))
+				self.avgSkillItemBg:SetPosition(Vector(-(team1Width/2)+self.teams[2].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, 5, 0))
+				self.avgSkillItem2Bg:SetPosition(Vector(-(team2Width/2)+self.teams[3].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, 5, 0))
+				
+				-- Reposition the slider
+				local sliderPos = (self.slidePercentage * self.slidebarBg:GetSize().y/100)
+				if sliderPos < self.slidebar:GetSize().y/2 then
+					sliderPos = 0
+				end
+				if sliderPos > self.slidebarBg:GetSize().y - self.slidebar:GetSize().y then
+					sliderPos = self.slidebarBg:GetSize().y - self.slidebar:GetSize().y
+				end
+				self.slidebar:SetPosition(Vector(0, sliderPos, 0))
 			end
 		end
 	end
