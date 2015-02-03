@@ -11,7 +11,6 @@ function(self, updateTeam)
 	local teamNumber = updateTeam["TeamNumber"]
 	local teamScores = updateTeam["GetScores"]()
 	local playerList = updateTeam["PlayerList"]
-	local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]
 	
 	local teamAvgSkill = 0
 	local numPlayers = table.count(teamScores)
@@ -43,8 +42,6 @@ function(self, updateTeam)
 		elseif teamNumber == 2 then
 			team2Skill = skill
 		end
-		
-		teamNameGUIItem:SetText(string.format("%s (Avg. skill: %d)", teamNameGUIItem:GetText(), skill))
 	end
 end)
 
