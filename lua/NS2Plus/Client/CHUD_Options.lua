@@ -250,6 +250,23 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "E3",
 			},
+			serverblood = {
+				name    = "CHUD_ServerBlood",
+				label   = "Server-side blood hits",
+				tooltip = "Disables predicted blood on the client and turns it into server-confirmed blood.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "func",
+				valueType = "bool",
+				applyFunction = function()
+					local message = { }
+					message.serverblood = CHUDGetOption("serverblood")
+					Client.SendNetworkMessage("SetCHUDServerBlood", message)
+				end,
+				sort = "E4",
+			},
 			maxdecallifetime = {
 				name    = "CHUD_MaxDecalLifeTime",
 				label   = "Max decal lifetime (minutes)",
@@ -262,7 +279,7 @@ CHUDOptions =
 				multiplier = 1,
 				category = "func",
 				valueType = "float",
-				sort = "E4",
+				sort = "E5",
 			},
 
 

@@ -79,10 +79,16 @@ if not CHUDMainMenu then
 	{
 		overkill = "boolean",
 	}
+	
+	local kCHUDServerBloodMessage =
+	{
+		serverblood = "boolean",
+	}
 
 	Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 	Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 	Shared.RegisterNetworkMessage( "SetCHUDOverkill", kCHUDOverkillMessage)
+	Shared.RegisterNetworkMessage( "SetCHUDServerBlood", kCHUDServerBloodMessage)
 	Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
@@ -92,6 +98,7 @@ if not CHUDMainMenu then
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_PredictedBlood.lua")
 	
 	local gameInfoNetworkVars =
 	{

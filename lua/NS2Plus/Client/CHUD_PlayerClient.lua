@@ -116,6 +116,10 @@ originalPlayerOnInit = Class_ReplaceMethod("Player", "OnInitialized",
 		local message = { }
 		message.overkill = CHUDGetOption("overkilldamagenumbers")
 		Client.SendNetworkMessage("SetCHUDOverkill", message)
+		
+		local message = { }
+		message.serverblood = CHUDGetOption("serverblood")
+		Client.SendNetworkMessage("SetCHUDServerBlood", message)
 	end)
 
 // Bandaid fix for players crashing when they run Client.RefreshServer
