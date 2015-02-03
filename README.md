@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /02/2015
+- 03/02/2015
 	- Added a way for server operators to disable showing the team stats section of the end game stats. Servers can toggle it with "sv_plus endstatsteambreakdown true/false" in console or modifying NS2PlusServerConfig.json.
 	- Adjusted stats UI colors and added a few sounds.
 	- Changed stats UI so it only shows up when tapping the request key instead of whenever it was released.
