@@ -6,6 +6,7 @@ Latest changes
 ==============
 - /02/2015
 	- Added option to enable or disable server-side hit effects. Available in Visual tab.
+	- Fixed bug where scroll bar could be stuck on the screen if the game restarted immediatly after round end.
 
 - 03/02/2015
 	- Added a way for server operators to disable showing the team stats section of the end game stats. Servers can toggle it with "sv_plus endstatsteambreakdown true/false" in console or modifying NS2PlusServerConfig.json.

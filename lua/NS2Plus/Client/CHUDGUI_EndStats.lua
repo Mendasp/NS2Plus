@@ -909,7 +909,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			HandleSlidebarClicked(self)
 		end
 		
-		local showSlidebar = self.contentSize > kContentMaxYSize
+		-- Check if it's visible again since we hide the menu if the game starts
+		local showSlidebar = self.contentSize > kContentMaxYSize and self:GetIsVisible()
 		local slideOffset = -(self.slidePercentage * self.contentSize/100)+(self.slidePercentage * kContentMaxYSize/100)
 		local sliderPos = (self.slidePercentage * kContentMaxYSize/100)
 		self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(128)+slideOffset, 0))
