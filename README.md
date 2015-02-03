@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /02/2015
+- 04/02/2015
 	- Added option to enable or disable server-side hit effects. Available in Visual tab.
 	- Added option to choose the order of the stats UI from Team first to Personal first. Available in Misc tab.
 	- Fixed bug where scroll bar could be stuck on the screen if the game restarted immediatly after round end.
