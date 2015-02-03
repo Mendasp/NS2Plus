@@ -8,6 +8,7 @@ Latest changes
 	- Added a way for server operators to disable showing the team stats section of the end game stats. Servers can toggle it with "sv_plus endstatsteambreakdown true/false" in console or modifying NS2PlusServerConfig.json.
 	- Adjusted stats UI colors and added a few sounds.
 	- Disabled display of stats UI when actually selecting something inside the request menu.
+	- Reworked average skill display so it looks more integrated with the scoreboard.
     
 - 31/01/2015
 	- Fixed bug where opening the stats before they'd show up automatically at end-round would leave the mouse cursor stuck on the screen.
