@@ -1428,15 +1428,26 @@ local function CHUDSetCommStats(message)
 end
 
 local lastDisplayStatus = false
+local lastDown = 0
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
 	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
 		
 		local requestScript = ClientUI.GetScript("GUIRequestMenu")
-		
 		self.prevRequestKey = down
-		if not down and requestScript and not requestScript.selectedButton then
-			self:SetIsVisible(not self:GetIsVisible())
+		
+		if down then
+			lastDown = Shared.GetTime()
+			
+		-- Only show stats when the player hasn't selected something from the request menu first
+		-- Disable for fullscreen windowed until the bug where the cursor is not centered is fixed
+		elseif not down and requestScript and (not requestScript.selectedButton or OptionsDialogUI_GetWindowModeId() == "fullscreen-windowed") then
+			local isVisible = self:GetIsVisible()
+			if isVisible then
+				self:SetIsVisible(false)
+			elseif lastDown+0.3 > Shared.GetTime() then
+				self:SetIsVisible(true)
+			end
 		end
 		
 	end
@@ -1504,7 +1515,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 		end
 	end
 	
-	if self.sliderBarBg:GetIsVisible() then
+	if self.sliderBarBg:GetIsVisible() and not self.hoverMenu.background:GetIsVisible() then
 		if key == InputKey.MouseButton0 and self.mousePressed ~= down then
 			self.mousePressed = down
 			if down then
@@ -1532,6 +1543,8 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			return true
 		end
 	end
+	
+	return false
 end
 
 function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
