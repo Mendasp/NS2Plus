@@ -784,8 +784,10 @@ end
 
 function CHUDGUI_EndStats:SetIsVisible(visible)
 	-- Don't try to display it if there is no content visible
-	local visibleStats = self.teamStatsTextShadow:GetIsVisible() or self.yourStatsTextShadow:GetIsVisible()
-	if visible ~= self:GetIsVisible() and (visible and visibleStats or not visible) then
+	local gameInfo = GetGameInfoEntity()
+	local teamStatsVisible = gameInfo and gameInfo.showEndStatsTeamBreakdown
+	local visibleStats = teamStatsVisible and self.teamStatsTextShadow:GetIsVisible() or #self.statsCards > 0
+	if visible ~= self:GetIsVisible() and ((visible and visibleStats) or not visible) then
 		self.background:SetIsVisible(visible)
 		self.header:SetIsVisible(visible)
 		self.sliderBarBg:SetIsVisible(visible)
@@ -819,31 +821,61 @@ local function repositionStatsCards(self)
 	local cardSize = (kCardSize.x-GUILinearScale(32))
 	local row = 0
 	local tallestElem = 0
-	local yPos = self.yourStatsTextShadow:GetPosition().y + GUILinearScale(32)
+	local yPos = 0
 	local xPos = 0
 	local remainingElems = 0
-	for index, card in ipairs(self.statsCards) do
-		local curRow = math.ceil(index/3)
-		local relativeIndex = index-((curRow-1)*numItemsPerRow)
-		local ySize = card.tableBackground:GetSize().y + card.background:GetSize().y + GUILinearScale(16)
-		if row == curRow and ySize > tallestElem then
-			tallestElem = ySize
-		elseif row ~= curRow then
-			row = curRow
-			yPos = yPos + tallestElem
-			tallestElem = ySize
-			remainingElems = #self.statsCards - index + 1
+	
+	if #self.statsCards > 0 then
+		yPos = self.yourStatsTextShadow:GetPosition().y + GUILinearScale(32)
+		for index, card in ipairs(self.statsCards) do
+			local curRow = math.ceil(index/3)
+			local relativeIndex = index-((curRow-1)*numItemsPerRow)
+			local ySize = card.tableBackground:GetSize().y + card.background:GetSize().y + GUILinearScale(16)
+			if row == curRow and ySize > tallestElem then
+				tallestElem = ySize
+			elseif row ~= curRow then
+				row = curRow
+				yPos = yPos + tallestElem
+				tallestElem = ySize
+				remainingElems = #self.statsCards - index + 1
+			end
+			if index <= last3Row or remainingElems == 3 then
+				xPos = (relativeIndex-2)*GUILinearScale(32)-cardSize*1.5+(relativeIndex-1)*cardSize
+			elseif remainingElems == 2 then
+				xPos = -cardSize+(2-relativeIndex)*cardSize+ConditionalValue(relativeIndex == 1, 1, -1)*GUILinearScale(32)
+			else
+				xPos = -cardSize/2
+			end
+			card.background:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2 + xPos, yPos, 0))
 		end
-		if index <= last3Row or remainingElems == 3 then
-			xPos = (relativeIndex-2)*GUILinearScale(32)-cardSize*1.5+(relativeIndex-1)*cardSize
-		elseif remainingElems == 2 then
-			xPos = -cardSize+(2-relativeIndex)*cardSize+ConditionalValue(relativeIndex == 1, 1, -1)*GUILinearScale(32)
-		else
-			xPos = -cardSize/2
-		end
-		card.background:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2 + xPos, yPos, 0))
 	end
-	self.contentSize = math.max(self.contentSize, yPos + tallestElem)
+	
+	return yPos + tallestElem
+end
+
+local function repositionStats(self)
+		local yPos = GUILinearScale(16)
+		
+		if CHUDGetOption("endstatsorder") == 1 then
+			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+			yPos = yPos + repositionStatsCards(self)
+		end
+		
+		if self.team1UI.background:GetIsVisible() then
+			self.teamStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+			yPos = yPos + GUILinearScale(32)
+			self.team1UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+			yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
+			self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+			yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
+		end
+		
+		if CHUDGetOption("endstatsorder") == 0 then
+			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+			yPos = repositionStatsCards(self)
+		end
+		
+		self.contentSize = math.max(self.contentSize, yPos)
 end
 
 local function HandleSlidebarClicked(self)
@@ -1119,26 +1151,11 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
 		end
 		
-		local yPos = 0
+		local teamStatsVisible = gameInfo.showEndStatsTeamBreakdown
 
-		if gameInfo.showEndStatsTeamBreakdown then
-			self.team1UI.background:SetIsVisible(true)
-			self.team2UI.background:SetIsVisible(true)
-			self.teamStatsTextShadow:SetIsVisible(true)
-			
-			yPos = yPos + GUILinearScale(48) -- for padding and team header
-			yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
-			self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
-			yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
-		else
-			yPos = yPos + GUILinearScale(16) -- for padding
-			self.team1UI.background:SetIsVisible(false)
-			self.team2UI.background:SetIsVisible(false)
-			self.teamStatsTextShadow:SetIsVisible(false)
-		end
-
-		self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-		self.contentSize = math.max(self.contentSize, yPos + GUILinearScale(32))
+		self.team1UI.background:SetIsVisible(teamStatsVisible)
+		self.team2UI.background:SetIsVisible(teamStatsVisible)
+		self.teamStatsTextShadow:SetIsVisible(teamStatsVisible)
 		
 		self.roundDate:SetText("Round date: " .. miscDataTable.roundDateString)
 		self.gameLength:SetText("Game length: " .. miscDataTable.gameLength)
@@ -1169,9 +1186,9 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.title, row.value))
 			end
 			table.insert(self.statsCards, statCard)
-			
-			repositionStatsCards(self)
 		end
+		
+		repositionStats(self)
 		
 		if not self.saved then
 			local savedStats = {}
@@ -1442,11 +1459,11 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			
 		-- Only show stats when the player hasn't selected something from the request menu first
 		-- Disable for fullscreen windowed until the bug where the cursor is not centered is fixed
-		elseif not down and requestScript and (not requestScript.selectedButton or OptionsDialogUI_GetWindowModeId() == "fullscreen-windowed") then
+		elseif not down then
 			local isVisible = self:GetIsVisible()
 			if isVisible then
 				self:SetIsVisible(false)
-			elseif lastDown+0.3 > Shared.GetTime() then
+			elseif lastDown+0.3 > Shared.GetTime() and requestScript and (not requestScript.selectedButton or OptionsDialogUI_GetWindowModeId() == "fullscreen-windowed") then
 				self:SetIsVisible(true)
 			end
 		end

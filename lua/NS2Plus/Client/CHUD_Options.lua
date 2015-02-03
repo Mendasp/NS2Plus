@@ -926,6 +926,18 @@ CHUDOptions =
 				valueType = "int",
 				sort = "D1",
 			},
+			endstatsorder = { 
+				name    = "CHUD_EndStatsOrder",
+				label   = "End Game Stats UI Order",
+				tooltip = "Sets the order in which the stats after a round ends are displayed.",
+				type    = "select",
+				values  = { "Team stats first", "Personal stats first" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "comp",
+				valueType = "int",
+				sort = "D2",
+			},
 			autopickup = { 
 				name    = "CHUD_AutoPickup",
 				label   = "Weapon autopickup",
