@@ -322,6 +322,16 @@ function MainMenu_GetMapNameList()
     return mapnames
 end
 
+function MainMenu_GetMenuBackgrounds()
+    local menus = { "Default", "Eclipse", "Kodiak", "Biodome", "Descent", "Docking", "Mineshaft", "Refinery", "Summit", "Tram", "Veil", "Random" }
+    return menus
+end
+
+function MainMenu_GetMusicList()
+    local menuMusic = {"Default", "Eclipse Remix", "Exo (Original Music)", "Beta", "NS1", "Random" }
+    return menuMusic
+end
+
 function MainMenu_OnServerRefreshed(serverIndex)
     gMainMenu:OnServerRefreshed(serverIndex)
 end
