@@ -229,6 +229,8 @@ function(self, key, down)
 			-- Don't add the button if we can't find the one we expect
 			if found then
 				self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
+				-- Calling the show function will reposition the menu (in case we're out of the window)
+				self.hoverMenu:Show()
 			end
 		end
 	end
