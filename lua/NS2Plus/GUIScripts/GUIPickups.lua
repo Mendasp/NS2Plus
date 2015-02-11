@@ -8,7 +8,7 @@ originalGUIPickupsUpdate = Class_ReplaceMethod( "GUIPickups", "Update",
 		if localPlayer then
 			for i, pickupGraphic in ipairs(self.allPickupGraphics) do
 				if pickupGraphic:GetIsVisible() then
-					local isVisible = CHUDGetOption("pickupexpire") > 0 and pickupGraphic.isWeapon or CHUDGetOption("pickupexpire") == 2
+					local isVisible = pickupGraphic.expireFraction > 0 and (CHUDGetOption("pickupexpire") > 0 and pickupGraphic.isWeapon or CHUDGetOption("pickupexpire") == 2)
 					pickupGraphic.expireBar:SetIsVisible(isVisible)
 					pickupGraphic.expireBarBg:SetIsVisible(isVisible)
 					

@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /02/2015
+	- Fixed expiration bar being visible for items without an expiration time.
+
 - 04/02/2015
 	- Added option to enable or disable server-side hit effects. Available in Visual tab.
 	- Added option to choose the order of the stats UI from Team first to Personal first. Available in Misc tab.
