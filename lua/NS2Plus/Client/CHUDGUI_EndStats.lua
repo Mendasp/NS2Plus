@@ -766,11 +766,21 @@ function CHUDGUI_EndStats:Initialize()
 	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
 	self.lastRow = nil
 	
-	self:SetIsVisible(false)
+	self.background:SetIsVisible(false)
+	self.header:SetIsVisible(false)
+	self.sliderBarBg:SetIsVisible(false)
+	self.contentBackground:SetIsVisible(false)
+	self.contentStencil:SetIsVisible(false)
+	
+	CHUDEndStatsVisible = false
 end
 
 function CHUDGUI_EndStats:Uninitialize()
 
+	if self:GetIsVisible() then
+		MouseTracker_SetIsVisible(false)
+	end
+	
 	GUI.DestroyItem(self.background)
 	GUI.DestroyItem(self.header)
 	GUI.DestroyItem(self.sliderBarBg)
@@ -801,10 +811,7 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 			self.hoverMenu:Hide()
 		end
 		
-		-- Changing resolutions would disable the mouse because we hide it on init
-		if not MainMenu_GetIsOpened() then
-			MouseTracker_SetIsVisible(visible)
-		end
+		MouseTracker_SetIsVisible(visible)
 	end
 end
 
@@ -1447,11 +1454,13 @@ end
 
 local lastDisplayStatus = false
 local lastDown = 0
+local kKeyTapTiming = 0.2
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
+	local _, pgp = Shine and Shine:IsExtensionEnabled( "pregameplus" )
+	local pgpEnabled = pgp and pgp.dt and pgp.dt.Enabled
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or pgpEnabled or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
 		
-		local requestScript = ClientUI.GetScript("GUIRequestMenu")
 		self.prevRequestKey = down
 		
 		if down then
@@ -1463,11 +1472,10 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			local isVisible = self:GetIsVisible()
 			if isVisible then
 				self:SetIsVisible(false)
-			elseif lastDown+0.3 > Shared.GetTime() and requestScript and (not requestScript.selectedButton or OptionsDialogUI_GetWindowModeId() == "fullscreen-windowed") then
+			elseif lastDown+kKeyTapTiming > Shared.GetTime() then
 				self:SetIsVisible(true)
 			end
 		end
-		
 	end
 	
 	if self:GetIsVisible() then
@@ -1592,6 +1600,11 @@ function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
 	
 	self:Uninitialize()
 	self:Initialize()
+end
+
+local oldGetCanDisplayReqMenu = PlayerUI_GetCanDisplayRequestMenu
+function PlayerUI_GetCanDisplayRequestMenu()
+	return oldGetCanDisplayReqMenu() and not CHUDEndStatsVisible and lastDown+kKeyTapTiming < Shared.GetTime()
 end
 
 Client.HookNetworkMessage("CHUDPlayerStats", CHUDSetPlayerStats)

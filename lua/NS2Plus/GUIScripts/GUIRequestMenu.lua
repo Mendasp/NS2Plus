@@ -3,10 +3,6 @@ originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 	function(self, deltaTime)
 		originalGUIRequestUpdate(self, deltaTime)
 		
-		if CHUDEndStatsVisible then
-			self:SetIsVisible(false)
-		end
-		
 		if self.background:GetIsVisible() and CHUDGetOption("mingui") then
 			local highlightColor = Color(1,1,0,1)
 			local defaultColor = Color(1,1,1,1)
