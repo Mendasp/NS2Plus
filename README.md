@@ -7,6 +7,7 @@ Latest changes
 - /02/2015
 	- Fixed expiration bar being visible for items without an expiration time.
 	- Fixed mouse cursor disappearing for Commanders on round end.
+	- Added ability to sort by columns in the stats UI.
 
 - 04/02/2015
 	- Added option to enable or disable server-side hit effects. Available in Visual tab.

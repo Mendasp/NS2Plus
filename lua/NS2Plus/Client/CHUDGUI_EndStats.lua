@@ -69,7 +69,9 @@ local kCommanderStatsEvenColor = kMarinePlayerStatsEvenColor
 local kCommanderStatsOddColor = kMarinePlayerStatsOddColor
 local kHeaderRowColor = Color(0, 0, 0, 0)
 local kMarineHeaderRowTextColor = Color(1, 1, 1, 1)
+local kMarineHeaderRowTextHighlightColor = Color(0, 0, 0, 1)
 local kAlienHeaderRowTextColor = Color(1, 1, 1, 1)
+local kAlienHeaderRowTextHighlightColor = Color(0, 0, 0, 1)
 local kAverageRowColor = Color(0.05, 0.05, 0.05, 0.25)
 local kAverageRowTextColor = Color(1, 1, 1, 1)
 
@@ -102,6 +104,13 @@ local lastGameEnd = 0
 local kMaxAppendTime = 2.5
 local loadedLastRound = false
 local lastRoundFile = "config://NS2Plus/LastRoundStats.json"
+
+local highlightedField = nil
+local highlightedFieldMarine = nil
+local lastSortedT1 = "kills"
+local lastSortedT1WasInv = false
+local lastSortedT2 = "kills"
+local lastSortedT2WasInv = false
 
 function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 
@@ -739,6 +748,11 @@ function CHUDGUI_EndStats:Initialize()
 	self.slidePercentage = 0
 	self.displayed = false
 	
+	lastSortedT1 = "kills"
+	lastSortedT1WasInv = false
+	lastSortedT2 = "kills"
+	lastSortedT2WasInv = false
+	
 	if not loadedLastRound and GetFileExists(lastRoundFile) then
 		local openedFile = io.open(lastRoundFile, "r")
 		if openedFile then
@@ -911,6 +925,39 @@ local function CheckRowHighlight(self, row, mouseX, mouseY)
 	end
 end
 
+local function SortByColumn(self, isMarine, sortField, inv)
+	local playerRows = isMarine and self.team1UI.playerRows or self.team2UI.playerRows
+	local sortTable = {}
+	for _, row in ipairs(playerRows) do
+		if row.originalOrder and row.message then
+			table.insert(sortTable, row)
+		end
+	end
+	
+	table.sort(sortTable, function(a, b)
+		if a.message[sortField] == b.message[sortField] then
+			return a.originalOrder < b.originalOrder
+		elseif sortField == "lowerCaseName" and not inv or sortField ~= "lowerCaseName" and inv then
+			return a.message[sortField] < b.message[sortField]
+		else
+			return a.message[sortField] > b.message[sortField]
+		end
+	end)
+	
+	for index, row in ipairs(sortTable) do
+		local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+		if index % 2 == 0 then
+			bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+		end
+		
+		row.background:SetPosition(Vector(kRowBorderSize, kRowBorderSize + index*kRowSize.y, 0))
+		-- Our own row is colored correctly already
+		if row.message.steamId ~= Client.GetSteamId() then
+			row.background:SetColor(bgColor)
+		end
+	end
+end
+
 function CHUDGUI_EndStats:Update(deltaTime)
 
 	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
@@ -935,11 +982,53 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		-- Handle row highlighting
 		if not self.hoverMenu.background:GetIsVisible() then
 			self.lastRow = nil
-			for _, row in ipairs(self.team1UI.playerRows) do
-				CheckRowHighlight(self, row, mouseX, mouseY)
+			highlightedField = nil
+			for index, row in ipairs(self.team1UI.playerRows) do
+				if index == 1 then
+					local highlightColor = kMarineHeaderRowTextHighlightColor
+					local textColor = kMarineHeaderRowTextColor
+					for fieldName, item in pairs(row) do
+						if item.GetText and item:GetText() ~= "" then
+							if GUIItemContainsPoint(item, mouseX, mouseY) then
+								highlightedField = fieldName
+								highlightedFieldMarine = true
+								item:SetColor(highlightColor)
+							else
+								item:SetColor(textColor)
+							end
+						end
+					end
+				else
+					CheckRowHighlight(self, row, mouseX, mouseY)
+				end
 			end
-			for _, row in ipairs(self.team2UI.playerRows) do
-				CheckRowHighlight(self, row, mouseX, mouseY)
+			for index, row in ipairs(self.team2UI.playerRows) do
+				if index == 1 then
+					local highlightColor = kAlienHeaderRowTextHighlightColor
+					local textColor = kAlienHeaderRowTextColor
+					for fieldName, item in pairs(row) do
+						if item.GetText and item:GetText() ~= "" then
+							if GUIItemContainsPoint(item, mouseX, mouseY) then
+								highlightedField = fieldName
+								highlightedFieldMarine = false
+								item:SetColor(highlightColor)
+							else
+								item:SetColor(textColor)
+							end
+						end
+					end
+				else
+					CheckRowHighlight(self, row, mouseX, mouseY)
+				end
+			end
+			
+			-- Change it to the field name on the message table for proper sorting
+			if highlightedField == "acc" then
+				highlightedField = "realAccuracy"
+			elseif highlightedField == "timeBuilding" then
+				highlightedField = "minutesBuilding"
+			elseif highlightedField == "playerName" then
+				highlightedField = "lowerCaseName"
 			end
 		end
 		
@@ -1005,6 +1094,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			b.teamNumber = b.isMarine and 1 or 2
 			a.realAccuracy = a.accuracyOnos == -1 and a.accuracy or a.accuracyOnos
 			b.realAccuracy = b.accuracyOnos == -1 and b.accuracy or b.accuracyOnos
+			a.lowerCaseName = string.UTF8Lower(a.playerName)
+			b.lowerCaseName = string.UTF8Lower(b.playerName)
 			if a.teamNumber == b.teamNumber then
 				if a.kills == b.kills then
 					if a.assists == b.assists then
@@ -1012,10 +1103,10 @@ function CHUDGUI_EndStats:Update(deltaTime)
 							if a.realAccuracy == b.realAccuracy then
 								if a.pdmg == b.pdmg then
 									if a.sdmg == b.sdmg then
-										if a.timeBuilding == b.timeBuilding then
-											return a.playerName > b.playerName
+										if a.minutesBuilding == b.minutesBuilding then
+											return a.lowerCaseName < b.lowerCaseName
 										else
-											return a.timeBuilding > b.timeBuilding
+											return a.minutesBuilding > b.minutesBuilding
 										end
 									else
 										return a.sdmg > b.sdmg
@@ -1118,6 +1209,9 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 			
 			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
+			-- Store some of the original info so we can sort afterwards
+			teamObj.playerRows[#teamObj.playerRows].originalOrder = playerCount
+			teamObj.playerRows[#teamObj.playerRows].message = message
 		end
 		
 		local numPlayers1 = #self.team1UI.playerRows-1
@@ -1525,6 +1619,28 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				return true
 			elseif self.lastRow and self.hoverMenu.background:GetIsVisible() and not GUIItemContainsPoint(self.hoverMenu.background, mouseX, mouseY) then
 				self.hoverMenu:Hide()
+			end
+			
+			if highlightedField ~= nil then
+				if highlightedFieldMarine then
+					if lastSortedT1 == highlightedField then
+						lastSortedT1WasInv = not lastSortedT1WasInv
+					else
+						lastSortedT1WasInv = false
+						lastSortedT1 = highlightedField
+					end
+				else
+					if lastSortedT2 == highlightedField then
+						lastSortedT2WasInv = not lastSortedT2WasInv
+					else
+						lastSortedT2WasInv = false
+						lastSortedT2 = highlightedField
+					end
+				end
+				
+				StartSoundEffect(kButtonClickSound)
+				SortByColumn(self, highlightedFieldMarine, highlightedField, highlightedFieldMarine and lastSortedT1WasInv or lastSortedT2WasInv)
+				return true
 			end
 		end
 	end
