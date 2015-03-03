@@ -15,7 +15,7 @@ originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRend
 	end)
 
 local function OnLoadComplete()
-	swalkModeEnabled = Client.GetSteamId() == 2582259
+	//swalkModeEnabled = Client.GetSteamId() == 2582259
 end
 
 local roll = 0
