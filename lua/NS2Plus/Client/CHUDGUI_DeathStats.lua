@@ -29,7 +29,7 @@ function CHUDGUI_DeathStats:Initialize()
 	
 	self.titleShadow = GetGUIManager():CreateTextItem()
 	self.titleShadow:SetFontName(kTitleFontName)
-	self.titleShadow:SetAnchor(GUIItem.Middle, GUIItem.Middle)
+	self.titleShadow:SetAnchor(GUIItem.Middle, GUIItem.Center)
 	self.titleShadow:SetTextAlignmentX(GUIItem.Align_Center)
 	self.titleShadow:SetTextAlignmentY(GUIItem.Align_Center)
 	self.titleShadow:SetPosition(GUIScale(Vector(0, 3, 0)))

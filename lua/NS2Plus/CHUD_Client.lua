@@ -133,18 +133,10 @@ function Badges_GetBadgeTextures( clientId, usecase )
 			badges[#badges+1] = kNS2PlusDevBadgeTexture
 			badgeNames[#badgeNames+1] = "ns2plus_dev"
 		end
-		-- Smurf mode, activated
-		if steamid == 39843 then
+		if steamid == 39843 and not table.contains(badgeNames, "ns2plus_god") then
 			-- mendasp
-			if string.find(playerName, "mendasp") then
-				if not table.contains(badgeNames, "ns2plus_god") then
-					badges[#badges+1] = kNS2PlusDevBadgeTexture
-					badgeNames[#badgeNames+1] = "ns2plus_god"
-				end
-			else
-				badges = {}
-				badgeNames = {}
-			end
+			badges[#badges+1] = kNS2PlusDevBadgeTexture
+			badgeNames[#badgeNames+1] = "ns2plus_god"
 		end
 	end
 	return badges, badgeNames
