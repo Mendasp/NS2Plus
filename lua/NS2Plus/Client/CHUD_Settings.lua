@@ -371,22 +371,7 @@ local function OnCommandPlusExport()
 			PrintSetting(option)
 		end
 		
-		local systemTime = Shared.GetSystemTime()
-		local tmpDate = os.date("*t", systemTime)
-		local ordinal = "th"
-		
-		local lastDig = tmpDate.day % 10
-		if (tmpDate.day < 11 or tmpDate.day > 13) and lastDig > 0 and lastDig < 4 then
-			if lastDig == 1 then
-				ordinal = "st"
-			elseif lastDig == 2 then
-				ordinal = "nd"
-			else
-				ordinal = "rd"
-			end
-		end
-		
-		settingsFile:write("\r\nDate exported: " .. string.format("%s%s, %d @ %d:%02d", os.date("%A, %B %d", systemTime), ordinal, tmpDate.year, tmpDate.hour, tmpDate.min))
+		settingsFile:write("\r\nDate exported: " .. CHUDFormatDateTimeString(Shared.GetSystemTime()))
 		
 		Shared.Message("Exported NS2+ config. You can find it in \"%APPDATA%\\Natural Selection 2\\NS2Plus\\ExportedSettings.txt\"")
 		io.close(settingsFile)

@@ -122,6 +122,24 @@ function CHUDGetGameTime()
 
 end
 
+function CHUDFormatDateTimeString(dateTime)
+	local tmpDate = os.date("*t", dateTime)
+	local ordinal = "th"
+	
+	local lastDig = tmpDate.day % 10
+	if (tmpDate.day < 11 or tmpDate.day > 13) and lastDig > 0 and lastDig < 4 then
+		if lastDig == 1 then
+			ordinal = "st"
+		elseif lastDig == 2 then
+			ordinal = "nd"
+		else
+			ordinal = "rd"
+		end
+	end
+	
+	return string.format("%s%s, %d @ %d:%02d", os.date("%A, %B %d", dateTime), ordinal, tmpDate.year, tmpDate.hour, tmpDate.min)
+end
+
 if Client then
 	function CHUDEvaluateGUIVis()
 		local player = Client.GetLocalPlayer()

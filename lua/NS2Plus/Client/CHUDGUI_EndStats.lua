@@ -1329,22 +1329,7 @@ originalGameEnded = Class_ReplaceMethod( "GUIGameEnd", "SetGameEnded",
 			miscDataTable.winningTeam = playerIsMarine and kAlienTeamType or kMarineTeamType
 		end
 		
-		local systemTime = Shared.GetSystemTime()
-		local tmpDate = os.date("*t", systemTime)
-		local ordinal = "th"
-		
-		local lastDig = tmpDate.day % 10
-		if (tmpDate.day < 11 or tmpDate.day > 13) and lastDig > 0 and lastDig < 4 then
-			if lastDig == 1 then
-				ordinal = "st"
-			elseif lastDig == 2 then
-				ordinal = "nd"
-			else
-				ordinal = "rd"
-			end
-		end
-		
-		miscDataTable.roundDateString = string.format("%s%s, %d @ %d:%02d", os.date("%A, %B %d", systemTime), ordinal, tmpDate.year, tmpDate.hour, tmpDate.min)
+		miscDataTable.roundDateString = CHUDFormatDateTimeString(Shared.GetSystemTime())
 		miscDataTable.gameLength = CHUDGetGameTime()
 		miscDataTable.serverName = Client.GetServerIsHidden() and "Hidden" or Client.GetConnectedServerName()
 		miscDataTable.mapName = Shared.GetMapName()
