@@ -4,10 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- //2015
+- 12/03/2015
 	- Added button to NS2+ options menu to reset values individually.
 	- Replaced Changelog button that noone ever noticed with "Reset all NS2+ settings" in the NS2+ options menu.
 	- Added console command to export NS2+ settings to a text file (plus_export). The file will be in %APPDATA%\Natural Selection 2\NS2Plus\ExportedSettings.txt
+	- Added server option to disable all connections to Hive. Disabling this will break the Force Even Teams vote, badges, player skill display and player skill reporting. It's an option purely just in case Hive is acting up. Servers can toggle it with "sv_plus hiveconnection true/false" in console or modifying NS2PlusServerConfig.json.
 
 - 18/02/2015
 	- Fixed expiration bar being visible for items without an expiration time.

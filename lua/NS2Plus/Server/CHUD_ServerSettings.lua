@@ -79,6 +79,12 @@ CHUDServerOptions =
 		valueType = "bool",
 		defaultValue = false,
 		},
+	hiveconnection = {
+		label   = "Hive HTTP Requests",
+		tooltip = "Enables or disables the server trying to contact the Hive server. Which has info about player skill and badges. This will set everyone to 0 skill so FET voting will be broken.",
+		valueType = "bool",
+		defaultValue = true,
+		},
 }
 
 for modNum = 1, Server.GetNumActiveMods() do

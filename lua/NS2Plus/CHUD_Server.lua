@@ -8,6 +8,7 @@ Script.Load("lua/NS2Plus/Server/CHUD_ModUpdater.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_ServerStats.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_ClientOptions.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_DropPack.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_HiveRanking.lua")
 
 Script.Load("lua/NS2Plus/Server/CHUD_GameInfo.lua")
 
@@ -30,10 +31,12 @@ local showAvgSkill = ConditionalValue(CHUDServerOptions["showavgteamskill"].curr
 local showPlayerSkill = ConditionalValue(CHUDServerOptions["showplayerskill"].currentValue, "Enabled", "Disabled")
 local showEndStatsAuto = ConditionalValue(CHUDServerOptions["autodisplayendstats"].currentValue, "Enabled", "Disabled")
 local showEndStatsTeamBreakdown = ConditionalValue(CHUDServerOptions["endstatsteambreakdown"].currentValue, "Enabled", "Disabled")
+local hiveConnection = ConditionalValue(CHUDServerOptions["hiveconnection"].currentValue, "Enabled", "Disabled")
 Shared.Message("Display team avg. skill: " .. showAvgSkill)
 Shared.Message("Display player skill pregame: " .. showPlayerSkill)
 Shared.Message("Display end game stats automatically on round end: " .. showEndStatsAuto)
 Shared.Message("End game team stats scoreboard: " .. showEndStatsTeamBreakdown)
+Shared.Message("Hive HTTP Requests (badges, player skill): " .. hiveConnection)
 
 -- Mod updater setting also depends on shine
 if CHUDServerOptions["modupdater"].shine then
