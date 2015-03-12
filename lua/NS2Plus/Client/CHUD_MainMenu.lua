@@ -78,6 +78,35 @@ function CHUDSaveMenuSettings()
 	end
 end
 	
+local function ResetMenuOption(option)
+	if mainMenu ~= nil then
+		if option.type == "select" then
+			local optionDefaultValue = option.defaultValue
+			if option.valueType == "bool" then
+				optionDefaultValue = option.defaultValue == true and 1 or 0
+			end
+			mainMenu.CHUDOptionElements[option.name]:SetOptionActive(optionDefaultValue+1)
+			CHUDSetOption(mainMenu.CHUDOptionElements[option.name].index, option.defaultValue)
+		elseif option.type == "slider" then
+			local multiplier = option.multiplier or 1
+			local minValue = option.minValue or 0
+			local maxValue = option.maxValue or 1
+			local value = (option.defaultValue - minValue) / (maxValue - minValue)
+			mainMenu.CHUDOptionElements[option.name]:SetValue(value)
+			CHUDSetOption(mainMenu.CHUDOptionElements[option.name].index, option.defaultValue * multiplier)
+		end
+	end
+end
+
+local function ResetAllCHUDSettings()
+	if mainMenu ~= nil then
+		for _, option in pairs(mainMenu.CHUDOptionElements) do
+			local CHUDOption = CHUDOptions[option.index]
+			ResetMenuOption(CHUDOption)
+		end
+	end
+end
+
 local function BoolToIndex(value)
 	if value then
 		return 2
@@ -232,12 +261,34 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	self.fpsDisplay = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
 	self.fpsDisplay:SetCSSClass("fps")
 	
-	local changelogButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
-	changelogButton:SetCSSClass("apply")
-	changelogButton:SetLeftOffset(0)
-	changelogButton:SetText("CHANGELOG")
-	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/135458820"
-	changelogButton:AddEventCallbacks( { OnClick = function() Client.ShowWebpage(kChangeURL) end } )
+	local resetCallbacks = { 
+		OnMouseOver = function(self)
+			if mainMenu ~= nil then
+				mainMenu.optionTooltip:SetText("WARNING: This will reset all the NS2+ options to default values.")
+				mainMenu.optionTooltip:Show()
+			else
+				mainMenu.optionTooltip:Hide()
+			end
+		end,
+		
+		OnMouseOut = function(self)
+			if mainMenu ~= nil then
+				mainMenu.optionTooltip:Hide()
+			end
+		end,
+		
+		OnClick = function(self)
+			ResetAllCHUDSettings()
+		end,
+		}
+	
+	local resetButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
+	resetButton:SetCSSClass("apply")
+	resetButton:SetLeftOffset(0)
+	resetButton:SetText("RESET NS2+ VALUES")
+	resetButton:SetBorderColor(Color(1, 0, 0, 0.7))
+	resetButton:SetTextColor(Color(1, 0, 0, 0.7))
+	resetButton:AddEventCallbacks(resetCallbacks)
 	
 	self.warningLabel = CreateMenuElement(self.CHUDOptionWindow, "MenuButton", false)
 	self.warningLabel:SetCSSClass("warning_label")
@@ -262,7 +313,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 			table.insert(CompOptionsMenu, CHUDOptions[idx])
 		end
 		
-		function CHUDOptionsSort(a, b)
+		local function CHUDOptionsSort(a, b)
 			if a.sort == nil then
 				a.sort = "Z" .. a.name
 			end
@@ -324,7 +375,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 			ShowTab()
 		end
 		
-	end        
+	end
 	
 	InitOptionWindow()
   
@@ -347,11 +398,54 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		local minValue = option.minValue or 0
 		local maxValue = option.maxValue or 1
 		
+		local resetOption = CreateMenuElement(form, "MenuButton", false)
+		resetOption:SetCSSClass("clear_keybind")
+		resetOption:SetBorderColor(Color(1, 0, 0, 0.7))
+		resetOption:SetTextColor(Color(1, 0, 0, 0.7))
+		resetOption:SetText("X")
+		resetOption:SetTopOffset(y)
+		
+		local tooltipCallbacks = { 
+			OnMouseOver = function(self)
+				if mainMenu ~= nil then
+					local defaultValue = option.defaultValue
+					if option.valueType == "float" then
+						defaultValue = tostring(defaultValue * (option.multiplier or 1))
+					elseif option.valueType == "bool" then
+						if option.defaultValue == true then
+							defaultValue = option.values[2]
+						else
+							defaultValue = option.values[1]
+						end
+					elseif option.valueType == "int" then
+						defaultValue = option.values[defaultValue+1]
+					end
+					mainMenu.optionTooltip:SetText("Reset to default value (" .. defaultValue .. ").")
+					mainMenu.optionTooltip:Show()
+				else
+					mainMenu.optionTooltip:Hide()
+				end
+			end,
+			
+			OnMouseOut = function(self)
+				if mainMenu ~= nil then
+					mainMenu.optionTooltip:Hide()
+				end
+			end,
+			
+			OnClick = function(self)
+				ResetMenuOption(option)
+			end,
+			}
+
+		resetOption:AddEventCallbacks(tooltipCallbacks)
+		
 		if option.type == "select" then
 			input = form:CreateFormElement(Form.kElementType.DropDown, option.name, option.value)
 			if option.values then
 				input:SetOptions(option.values)
 			end
+			
 			if option.name == "CHUD_Hitsounds" then
 				local soundPreview = CreateMenuElement(form, "MenuButton", false)
 				soundPreview:SetCSSClass("clear_keybind")
@@ -364,6 +458,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					HitSounds_PlayHitsound( 1 )
 				end
 				
+				resetOption:SetCSSClass("clear_keybind_hitsounds")
 			elseif option.name == "CHUD_HitsoundsPitch" then
 				local soundPreview = CreateMenuElement(form, "MenuButton", false)
 				soundPreview:SetCSSClass("clear_keybind")
@@ -375,12 +470,14 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				function soundPreview:OnClick()
 					HitSounds_PlayHitsound( 3 )
 				end
+				
+				resetOption:SetCSSClass("clear_keybind_hitsounds")
 			end
 			
 		elseif option.type == "slider" then
 			input = form:CreateFormElement(Form.kElementType.SlideBar, option.name, option.value)
 			input_display = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
-			input_display:SetNumbersOnly(true)	
+			input_display:SetNumbersOnly(true)
 			input_display:SetXAlignment(GUIItem.Align_Min)
 			input_display:SetMarginLeft(5)
 			if option.formName and option.formName == "sound" then
@@ -424,6 +521,9 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 						end
 					}, SLIDE_HORIZONTAL)
 			end
+			
+			resetOption:SetCSSClass("clear_keybind_slider")
+			resetOption:SetTopOffset(y+5)
 		elseif option.type == "progress" then
 			input = form:CreateFormElement(Form.kElementType.ProgressBar, option.name, option.value)       
 		elseif option.type == "checkbox" then

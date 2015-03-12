@@ -8,5 +8,25 @@ font.option_label_disabled
     width: 200px; 
     left: 30px; 
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
-} 
+}
+button.clear_keybind_hitsounds
+{ 
+    opacity: 0; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    text-align: left; 
+    width: 30px; 
+    height: 30px;
+    left: 440px;
+    hover-background-color: rgba(0.5,0.5,0.5,0.4); 
+}
+button.clear_keybind_slider
+{ 
+    opacity: 0; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    text-align: left; 
+    width: 30px; 
+    height: 30px;
+    left: 430px;
+    hover-background-color: rgba(0.5,0.5,0.5,0.4); 
+}
 ]] 

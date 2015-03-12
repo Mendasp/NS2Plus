@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- //2015
+	- Added button to NS2+ options menu to reset values individually.
+	- Replaced Changelog button that noone ever noticed with "Reset all NS2+ settings" in the NS2+ options menu.
+	- Added console command to export NS2+ settings to a text file (plus_export). The file will be in %APPDATA%\Natural Selection 2\NS2Plus\ExportedSettings.txt
+
 - 18/02/2015
 	- Fixed expiration bar being visible for items without an expiration time.
 	- Fixed mouse cursor disappearing for Commanders on round end.

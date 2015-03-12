@@ -236,7 +236,7 @@ local function CHUDHelp(optionName)
 				helpStr = option.values[option.currentValue+1]
 			end
 		else
-			helpStr = tostring(option.currentValue * multiplier)
+			helpStr = tostring(Round(option.currentValue * multiplier), 4)
 		end
 		Shared.Message("Current value: " .. helpStr)
 		Shared.Message("-------------------------------------")
@@ -306,6 +306,94 @@ local function OnCHUDOption(msg)
 		end
 	end
 end
+
+local function OnCommandPlusExport()
+	local settingsFileName = "config://NS2Plus/ExportedSettings.txt"
+	local settingsFile = io.open(settingsFileName, "w+")
+	if settingsFile then
+		local HUDOptionsMenu = { }
+		local FuncOptionsMenu = { }
+		local CompOptionsMenu = { }
+		
+		for idx, option in pairs(CHUDOptions) do
+			if option.category == "hud" then
+				table.insert(HUDOptionsMenu, CHUDOptions[idx])
+			elseif option.category == "func" then
+				table.insert(FuncOptionsMenu, CHUDOptions[idx])
+			elseif option.category == "comp" then
+				table.insert(CompOptionsMenu, CHUDOptions[idx])
+			end
+			
+			local function CHUDOptionsSort(a, b)
+				if a.sort == nil then
+					a.sort = "Z" .. a.name
+				end
+				if b.sort == nil then
+					b.sort = "Z" .. b.name
+				end
+				
+				return a.sort < b.sort
+			end
+			table.sort(HUDOptionsMenu, CHUDOptionsSort)
+			table.sort(FuncOptionsMenu, CHUDOptionsSort)
+			table.sort(CompOptionsMenu, CHUDOptionsSort)
+		end
+		
+		local function PrintSetting(optionIdx)
+			local currentValue = optionIdx.currentValue
+			if optionIdx.valueType == "float" then
+				currentValue = tostring(Round(currentValue * (optionIdx.multiplier or 1), 4))
+			elseif optionIdx.valueType == "bool" then
+				if optionIdx.currentValue == true then
+					currentValue = optionIdx.values[2]
+				else
+					currentValue = optionIdx.values[1]
+				end
+			elseif optionIdx.valueType == "int" then
+				currentValue = optionIdx.values[currentValue+1]
+			end
+			local optionString = optionIdx.label .. ": " .. currentValue .. "\r\n"
+			settingsFile:write(optionString)
+		end
+		
+		settingsFile:write("VISUAL TAB:\r\n-----------\r\n")
+		for _, option in ipairs(FuncOptionsMenu) do
+			PrintSetting(option)
+		end
+		
+		settingsFile:write("\r\nHUD TAB:\r\n-----------\r\n")
+		for _, option in ipairs(HUDOptionsMenu) do
+			PrintSetting(option)
+		end
+		
+		settingsFile:write("\r\nMISC TAB:\r\n-----------\r\n")
+		for _, option in ipairs(CompOptionsMenu) do
+			PrintSetting(option)
+		end
+		
+		local systemTime = Shared.GetSystemTime()
+		local tmpDate = os.date("*t", systemTime)
+		local ordinal = "th"
+		
+		local lastDig = tmpDate.day % 10
+		if (tmpDate.day < 11 or tmpDate.day > 13) and lastDig > 0 and lastDig < 4 then
+			if lastDig == 1 then
+				ordinal = "st"
+			elseif lastDig == 2 then
+				ordinal = "nd"
+			else
+				ordinal = "rd"
+			end
+		end
+		
+		settingsFile:write("\r\nDate exported: " .. string.format("%s%s, %d @ %d:%02d", os.date("%A, %B %d", systemTime), ordinal, tmpDate.year, tmpDate.hour, tmpDate.min))
+		
+		Shared.Message("Exported NS2+ config. You can find it in \"%APPDATA%\\Natural Selection 2\\NS2Plus\\ExportedSettings.txt\"")
+		io.close(settingsFile)
+	end
+end
+
+Event.Hook("Console_plus_export", OnCommandPlusExport)
 
 Event.Hook("Console_plus", OnCommandCHUD)
 if not CHUDMainMenu then
