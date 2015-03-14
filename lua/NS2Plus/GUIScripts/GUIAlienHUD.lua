@@ -55,7 +55,6 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 	
 		originalAlienInit(self)
 		
-
 		self.gameTime = self:CreateAnimatedTextItem()
 		self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 		self.gameTime:SetFontIsBold(true)
@@ -133,6 +132,18 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 				self.secondaryAbilityBackground:SetPosition(Vector(-50, -125, 0))
 			end
 		end
+		
+		self.gorgeBuiltText = GUIManager:CreateTextItem()
+		self.gorgeBuiltText:SetFontName(Fonts.kStamp_Large)
+		self.gorgeBuiltText:SetScale(GetScaledVector())
+		self.gorgeBuiltText:SetAnchor(GUIItem.Middle, GUIItem.Center)
+		self.gorgeBuiltText:SetTextAlignmentX(GUIItem.Align_Center)
+		self.gorgeBuiltText:SetTextAlignmentY(GUIItem.Align_Center)
+		self.gorgeBuiltText:SetColor(kAlienFontColor)
+		self.gorgeBuiltText:SetInheritsParentAlpha(true)
+		self.gorgeBuiltText:SetIsVisible(false)
+		
+		self.energyBall:GetBackground():AddChild(self.gorgeBuiltText)
 		
 		self:CHUDRepositionGUI()
 	end)
@@ -245,6 +256,29 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 			self.mucousBall:SetPercentage(shieldFraction)
 			self.mucousBall:Update()
 		end
+		
+		local player = Client.GetLocalPlayer()
+		local gorgeBuiltTextVisible = false
+		if player and player:isa("Gorge") then
+			local activeWeapon = player:GetActiveWeapon()
+			if activeWeapon and activeWeapon:isa("DropStructureAbility") then
+				local dropStructureAbility = player:GetWeapon(DropStructureAbility.kMapName)
+				if dropStructureAbility then
+					local structure = dropStructureAbility:GetActiveStructure()
+					local structureId = structure and structure:GetDropStructureId() or -1
+					local maxStructures = GorgeBuild_GetMaxNumStructure(structureId)
+					local numBuilt = dropStructureAbility:GetNumStructuresBuilt(structureId)
+					
+					gorgeBuiltTextVisible = structureId ~= -1
+					if gorgeBuiltTextVisible then
+						self.gorgeBuiltText:SetText(numBuilt .. "/" .. maxStructures)
+						self.gorgeBuiltText:SetColor(GorgeBuild_GetCanAffordAbility(structureId) and kAlienFontColor or kRed)
+					end
+				end
+			end
+		end
+		self.gorgeBuiltText:SetIsVisible(gorgeBuiltTextVisible)
+		self.activeAbilityIcon:SetIsVisible(not gorgeBuiltTextVisible)
 	end)
 	
 local originalAlienReset
