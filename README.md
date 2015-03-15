@@ -6,7 +6,8 @@ Latest changes
 ==============
 - /03/2015
 	- Added a structure counter (current/max) for the Gorge building "weapon" inside the energy circle.
-
+	- Added player and structure damage stats per-weapon to the end stats.
+	
 - 12/03/2015
 	- Added button to NS2+ options menu to reset values individually.
 	- Replaced Changelog button that noone ever noticed with "Reset all NS2+ settings" in the NS2+ options menu.

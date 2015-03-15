@@ -44,6 +44,8 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 			CHUDClientStats[steamId]["weapons"][wTechId].onosHits = 0
 			CHUDClientStats[steamId]["weapons"][wTechId].misses = 0
 			CHUDClientStats[steamId]["weapons"][wTechId].kills = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].pdmg = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].sdmg = 0
 		end
 	end
 end
@@ -102,18 +104,21 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 	end
 end
 
-local function AddDamageStat(steamId, damage, isPlayer)
+local function AddDamageStat(steamId, damage, isPlayer, wTechId, teamNumber)
 	if GetGamerules():GetGameStarted() and steamId > 0 then
-		MaybeInitCHUDClientStats(steamId)
+		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
 		local stat = CHUDClientStats[steamId]
+		local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
 		local lastStat = CHUDClientStats[steamId]["last"]
 		
 		if isPlayer then
 			stat.pdmg = stat.pdmg + damage
+			weaponStat.pdmg = weaponStat.pdmg + damage
 			lastStat.pdmg = lastStat.pdmg + damage
 		else
 			stat.sdmg = stat.sdmg + damage
+			weaponStat.sdmg = weaponStat.sdmg + damage
 			lastStat.sdmg = lastStat.sdmg + damage
 		end
 	end
@@ -143,6 +148,50 @@ local function AddBuildTime(steamId, buildTime, teamNumber)
 		local stat = CHUDClientStats[steamId]
 		stat.timeBuilding = stat.timeBuilding + buildTime
 	end
+end
+
+local function GetAttackerWeapon(attacker, doer)
+
+		local attackerTeam = attacker and attacker:isa("Player") and attacker:GetTeamNumber() or nil
+		local attackerSteamId = attacker and attacker:isa("Player") and GetSteamIdForClientIndex(attacker:GetClientIndex()) or nil
+		local attackerWeapon = doer and doer:isa("Weapon") and doer:GetTechId() or kTechId.None
+		
+		if attacker and doer and doer:GetParent() and doer:GetParent():isa("Player") then
+			if attacker:isa("Alien") and (doer.secondaryAttacking or doer.shootingSpikes) then
+				attackerWeapon = attacker:GetActiveWeapon():GetSecondaryTechId()
+			else
+				attackerWeapon = doer:GetTechId()
+			end
+		elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
+			if doer.GetWeaponTechId then
+				attackerWeapon = doer:GetWeaponTechId()
+			elseif doer.techId then
+				local deathIcon = nil
+				
+				if doer.GetDamageType and doer:GetDamageType() == kBileBombDamageType then
+					attackerWeapon = kTechId.BileBomb
+				else
+					deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
+				end
+				
+				-- Translate the deathicon into a techid we can use for the end-game stats
+				if deathIcon == kDeathMessageIcon.Mine then
+					attackerWeapon = kTechId.LayMines
+				elseif deathIcon == kDeathMessageIcon.PulseGrenade then
+					attackerWeapon = kTechId.PulseGrenade
+				-- I don't think you can get kills with gas grenades, but it has a kill icon...
+				elseif deathIcon == kDeathMessageIcon.GasGrenade then
+					attackerWeapon = kTechId.GasGrenade
+				elseif deathIcon == kDeathMessageIcon.ClusterGrenade then
+					attackerWeapon = kTechId.ClusterGrenade
+				elseif deathIcon == kDeathMessageIcon.Flamethrower then
+					attackerWeapon = kTechId.Flamethrower
+				end
+			end
+		end
+		
+		return attackerSteamId, attackerWeapon, attackerTeam
+
 end
 
 local originalUpdateScore
@@ -180,17 +229,28 @@ Server.HookNetworkMessage("SetCHUDOverkill", OnSetCHUDOverkill)
 local oldSendDamageMessage = SendDamageMessage
 function SendDamageMessage( attacker, target, amount, point, overkill )
 		
-	local steamId = GetSteamIdForClientIndex(attacker:GetClientIndex())
-	if steamId then
-		AddDamageStat(steamId, amount or 0, target and target:isa("Player") and not (target:isa("Hallucination") or target.isHallucination))
-	end
-	
 	if attacker.overkill == true then
 		amount = overkill
 	end
 	
 	oldSendDamageMessage( attacker, target, amount, point, overkill )
 	
+end
+
+local oldTakeDamage = LiveMixin.TakeDamage
+function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUsed, healthUsed, damageType, preventAlert)
+		killedFromDamage, damageDone = oldTakeDamage(self, damage, attacker, doer, point, direction, armorUsed, healthUsed, damageType, preventAlert)
+		
+		local attackerSteamId, attackerWeapon, attackerTeam = GetAttackerWeapon(attacker, doer)
+		if attackerSteamId then
+			local targetTeam = self:GetTeamNumber()
+			-- Don't count friendly fire towards damage counts
+			if attackerTeam ~= targetTeam and damageDone and damageDone > 0 then
+				AddDamageStat(attackerSteamId, damageDone or 0, self and self:isa("Player") and not (self:isa("Hallucination") or self.isHallucination), attackerWeapon, attackerTeam)
+			end
+		end
+		
+		return killedFromDamage, damageDone
 end
 
 local function CHUDResetCommStats(commSteamId)
@@ -401,6 +461,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					msg.accuracy = accuracy
 					msg.accuracyOnos = accuracyOnos
 					msg.kills = wStats.kills
+					msg.pdmg = wStats.pdmg
+					msg.sdmg = wStats.sdmg
 					msg.teamNumber = stats.teamNumber
 					
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
@@ -500,45 +562,10 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 		end
 		
 		-- Now save the attacker weapon
-		local killerTeam = killer and killer:isa("Player") and killer:GetTeamNumber()
-		local killerSteamId = killer and killer:isa("Player") and GetSteamIdForClientIndex(killer:GetClientIndex())
-		local killerWeapon = doer and doer:isa("Weapon") and doer:GetTechId()
-		
-		if killer and doer and doer:GetParent() and doer:GetParent():isa("Player") then
-			if killer:isa("Alien") and (doer.secondaryAttacking or doer.shootingSpikes) then
-				killerWeapon = killer:GetActiveWeapon():GetSecondaryTechId()
-			else
-				killerWeapon = doer:GetTechId()
-			end
-		elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
-			if doer.GetWeaponTechId then
-				killerWeapon = doer:GetWeaponTechId()
-			elseif doer.techId then
-				local deathIcon = nil
-				
-				if doer.GetDamageType and doer:GetDamageType() == kBileBombDamageType then
-					killerWeapon = kTechId.BileBomb
-				else
-					deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
-				end
-				
-				if deathIcon == kDeathMessageIcon.Mine then
-					killerWeapon = kTechId.LayMines
-				elseif deathIcon == kDeathMessageIcon.PulseGrenade then
-					killerWeapon = kTechId.PulseGrenade
-				-- I don't think you can get kills with gas grenades, but it has a kill icon...
-				elseif deathIcon == kDeathMessageIcon.GasGrenade then
-					killerWeapon = kTechId.GasGrenade
-				elseif deathIcon == kDeathMessageIcon.ClusterGrenade then
-					killerWeapon = kTechId.ClusterGrenade
-				elseif deathIcon == kDeathMessageIcon.Flamethrower then
-					killerWeapon = kTechId.Flamethrower
-				end
-			end
-		end
+		local killerSteamId, killerWeapon, killerTeam = GetAttackerWeapon(killer, doer)
 		
 		if killerSteamId then
-			AddWeaponKill(killerSteamId, killerWeapon or kTechId.None, killerTeam)
+			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
 		end
 		
 	end)

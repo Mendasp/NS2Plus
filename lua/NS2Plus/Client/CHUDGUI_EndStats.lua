@@ -1396,17 +1396,31 @@ local function CHUDSetWeaponStats(message)
 	table.insert(cardEntry.rows, row)
 	
 	if message.accuracy > 0 then
-		local row = {}
+		row = {}
 		row.title = "Accuracy"
 		row.value = printNum(message.accuracy) .. "%"
 		table.insert(cardEntry.rows, row)
 		
 		if message.accuracyOnos > -1 then
-			local row = {}
+			row = {}
 			row.title = "Accuracy (No Onos)"
 			row.value = printNum(message.accuracyOnos) .. "%"
 			table.insert(cardEntry.rows, row)
 		end
+	end
+	
+	if message.pdmg > 0 then
+		row = {}
+		row.title = "Player damage"
+		row.value = printNum(message.pdmg)
+		table.insert(cardEntry.rows, row)
+	end
+	
+	if message.sdmg > 0 then
+		row = {}
+		row.title = "Structure damage"
+		row.value = printNum(message.sdmg)
+		table.insert(cardEntry.rows, row)
 	end
 
 	table.insert(cardsTable, cardEntry)

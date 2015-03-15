@@ -23,6 +23,8 @@ if not CHUDMainMenu then
 		accuracyOnos = "float (-1 to 100 by 0.01)",
 		kills = "integer (0 to 1023)",
 		teamNumber = "integer (1 to 2)",
+		pdmg = "float (0 to 524287 by 0.01)",
+		sdmg = "float (0 to 524287 by 0.01)",
 	}
 
 	local kCHUDMarineCommStatsMessage =
