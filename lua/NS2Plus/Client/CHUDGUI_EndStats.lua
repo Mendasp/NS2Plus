@@ -1358,6 +1358,7 @@ kFriendlyWeaponNames[kTechId.LayMines] = "Mines"
 kFriendlyWeaponNames[kTechId.PulseGrenade] = "Pulse grenade"
 kFriendlyWeaponNames[kTechId.ClusterGrenade] = "Cluster grenade"
 kFriendlyWeaponNames[kTechId.GasGrenade] = "Gas grenade"
+kFriendlyWeaponNames[kTechId.WhipBomb] = "Whip bilebomb"
 if rawget( kTechId, "HeavyMachineGun" ) then
 	kFriendlyWeaponNames[kTechId.HeavyMachineGun] = "Heavy Machine Gun"
 end
@@ -1721,6 +1722,16 @@ local oldGetCanDisplayReqMenu = PlayerUI_GetCanDisplayRequestMenu
 function PlayerUI_GetCanDisplayRequestMenu()
 	return oldGetCanDisplayReqMenu() and not CHUDEndStatsVisible and lastDown+kKeyTapTiming < Shared.GetTime()
 end
+
+-- Add the missing icons so they display correctly
+-- We have to call the function first so it creates the array
+GetTexCoordsForTechId(kTechId.None)
+
+gTechIdPosition[kTechId.Sentry] = kDeathMessageIcon.Sentry
+gTechIdPosition[kTechId.ARC] = kDeathMessageIcon.ARC
+gTechIdPosition[kTechId.Whip] = kDeathMessageIcon.Whip
+gTechIdPosition[kTechId.Babbler] = kDeathMessageIcon.Babbler
+gTechIdPosition[kTechId.Hydra] = kDeathMessageIcon.HydraSpike
 
 Client.HookNetworkMessage("CHUDPlayerStats", CHUDSetPlayerStats)
 Client.HookNetworkMessage("CHUDAvgAccStats", CHUDSetPlayerStats)

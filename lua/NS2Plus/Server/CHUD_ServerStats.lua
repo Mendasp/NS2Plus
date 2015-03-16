@@ -150,42 +150,45 @@ local function AddBuildTime(steamId, buildTime, teamNumber)
 	end
 end
 
+local classNameToTechId = {}
+classNameToTechId["SporeCloud"] = kTechId.Spores
+classNameToTechId["NerveGasCloud"] = kTechId.GasGrenade
+classNameToTechId["WhipBomb"] = kTechId.WhipBomb
+classNameToTechId["DotMarker"] = kTechId.BileBomb
+
 local function GetAttackerWeapon(attacker, doer)
 
 		local attackerTeam = attacker and attacker:isa("Player") and attacker:GetTeamNumber() or nil
 		local attackerSteamId = attacker and attacker:isa("Player") and GetSteamIdForClientIndex(attacker:GetClientIndex()) or nil
 		local attackerWeapon = doer and doer:isa("Weapon") and doer:GetTechId() or kTechId.None
 		
-		if attacker and doer and doer:GetParent() and doer:GetParent():isa("Player") then
-			if attacker:isa("Alien") and (doer.secondaryAttacking or doer.shootingSpikes) then
-				attackerWeapon = attacker:GetActiveWeapon():GetSecondaryTechId()
-			else
-				attackerWeapon = doer:GetTechId()
-			end
-		elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
-			if doer.GetWeaponTechId then
-				attackerWeapon = doer:GetWeaponTechId()
-			elseif doer.techId then
-				local deathIcon = nil
-				
-				if doer.GetDamageType and doer:GetDamageType() == kBileBombDamageType then
-					attackerWeapon = kTechId.BileBomb
+		if attacker and doer then
+			if doer.GetClassName and classNameToTechId[doer:GetClassName()] then
+				attackerWeapon = classNameToTechId[doer:GetClassName()]
+			elseif doer:GetParent() and doer:GetParent():isa("Player") then
+				if attacker:isa("Alien") and (doer.secondaryAttacking or doer.shootingSpikes) then
+					attackerWeapon = attacker:GetActiveWeapon():GetSecondaryTechId()
 				else
-					deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
+					attackerWeapon = doer:GetTechId()
 				end
-				
-				-- Translate the deathicon into a techid we can use for the end-game stats
-				if deathIcon == kDeathMessageIcon.Mine then
-					attackerWeapon = kTechId.LayMines
-				elseif deathIcon == kDeathMessageIcon.PulseGrenade then
-					attackerWeapon = kTechId.PulseGrenade
-				-- I don't think you can get kills with gas grenades, but it has a kill icon...
-				elseif deathIcon == kDeathMessageIcon.GasGrenade then
-					attackerWeapon = kTechId.GasGrenade
-				elseif deathIcon == kDeathMessageIcon.ClusterGrenade then
-					attackerWeapon = kTechId.ClusterGrenade
-				elseif deathIcon == kDeathMessageIcon.Flamethrower then
-					attackerWeapon = kTechId.Flamethrower
+			elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
+				if doer.GetWeaponTechId then
+					attackerWeapon = doer:GetWeaponTechId()
+				elseif doer.techId then
+					local deathIcon = nil
+					attackerWeapon = doer.techId
+					deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
+					
+					-- Translate the deathicon into a techid we can use for the end-game stats
+					if deathIcon == kDeathMessageIcon.Mine then
+						attackerWeapon = kTechId.LayMines
+					elseif deathIcon == kDeathMessageIcon.PulseGrenade then
+						attackerWeapon = kTechId.PulseGrenade
+					elseif deathIcon == kDeathMessageIcon.ClusterGrenade then
+						attackerWeapon = kTechId.ClusterGrenade
+					elseif deathIcon == kDeathMessageIcon.Flamethrower then
+						attackerWeapon = kTechId.Flamethrower
+					end
 				end
 			end
 		end
