@@ -88,16 +88,39 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 		
 		self.lowAmmoOverlay:SetColor(Color(1, 0, 0, alpha))
 
-	else
-		if activeWeapon and (activeWeapon:isa("Builder") or activeWeapon:isa("Welder")) then
-			self.ammoText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
-			self.lowAmmoOverlay:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
-			self.ammoText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
-			self.lowAmmoOverlay:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
-		else
-			self.ammoText:SetIsVisible(false)
-			self.lowAmmoOverlay:SetIsVisible(false)
+	elseif activeWeapon and (activeWeapon:isa("Builder") or activeWeapon:isa("Welder")) then
+		self.ammoText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
+		self.lowAmmoOverlay:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
+		self.ammoText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
+		self.lowAmmoOverlay:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
+	elseif activeWeapon and player:isa("Exo") and activeWeapon:isa("ExoWeaponHolder") then
+		local leftWeapon = Shared.GetEntity(activeWeapon.leftWeaponId)
+		local rightWeapon = Shared.GetEntity(activeWeapon.rightWeaponId)
+		local leftAmmo = -1
+		local rightAmmo = -1
+		if rightWeapon:isa("Railgun") then
+			rightAmmo = rightWeapon:GetChargeAmount() * 100
+			if leftWeapon:isa("Railgun") then
+				leftAmmo = leftWeapon:GetChargeAmount() * 100
+			end
+		elseif rightWeapon:isa("Minigun") then
+			rightAmmo = rightWeapon.heatAmount * 100
+			if leftWeapon:isa("Minigun") then
+				leftAmmo = leftWeapon.heatAmount * 100
+			end
 		end
+		if leftAmmo > -1 and rightAmmo > -1 then
+			self.ammoText:SetText(string.format("%d / %d", leftAmmo, rightAmmo))
+			self.lowAmmoOverlay:SetText(string.format("%d / %d", leftAmmo, rightAmmo))
+		elseif rightAmmo > -1 then
+			self.ammoText:SetText(string.format("%d", rightAmmo))
+			self.lowAmmoOverlay:SetText(string.format("%d", rightAmmo))
+		end
+		self.ammoText:SetIsVisible((leftAmmo > -1 and rightAmmo > -1) or rightAmmo > -1)
+		self.lowAmmoOverlay:SetIsVisible((leftAmmo > -1 and rightAmmo > -1) or rightAmmo > -1)
+	else
+		self.ammoText:SetIsVisible(false)
+		self.lowAmmoOverlay:SetIsVisible(false)
 	end
 	
 end

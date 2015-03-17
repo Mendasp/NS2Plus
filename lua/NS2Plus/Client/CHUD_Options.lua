@@ -602,7 +602,10 @@ CHUDOptions =
 				defaultValue = false,
 				category = "hud",
 				valueType = "bool",
-                sort = "D2",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
+				sort = "D2",
 			},
 			friends = {
 				name    = "CHUD_Friends",
@@ -1158,6 +1161,7 @@ CHUDOptions =
 				sort = "G7",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
+					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
 				end,
 				resetSettingInBuild = 214,
 			},
