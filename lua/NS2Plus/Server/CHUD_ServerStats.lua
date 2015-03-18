@@ -3,16 +3,52 @@ local CHUDClientStats = {}
 local CHUDTeamStats = {}
 local CHUDResearchTree = {}
 
+local function GetGameTime()
+	local gamerules = GetGamerules()
+	local gameTime
+	if gamerules then
+		gameTime = gamerules:GetGameTimeChanged()
+	end
+	
+	return gameTime
+end
+
+local function AddRTStat(teamNumber, isBuilt, isDestroyed)
+	if teamNumber == 1 or teamNumber == 2 then
+		local rtsTable = CHUDTeamStats[teamNumber].rts
+		local finishedBuilding = isBuilt and not isDestroyed
+		if isBuilt then
+			-- We're going to save this for the RT graph, we don't want unfinished nodes in the graph
+			-- We can reconstruct it considering that if destroyed is false it means it's a new one
+			-- This way we only send a bool instead of an int
+			table.insert(rtsTable.graph, {destroyed = isDestroyed or false, gameTime = GetGameTime()})
+		end
+		
+		-- The unfinished nodes will be computed on the overall built/lost data
+		rtsTable.lost = rtsTable.lost + ConditionalValue(isDestroyed, 1, 0)
+		rtsTable.built = rtsTable.built + ConditionalValue(finishedBuilding, 1, 0)
+	end
+end
+
 local oldTechResearched = ResearchMixin.TechResearched
 function ResearchMixin:TechResearched(structure, researchId)
 	oldTechResearched(self, structure, researchId)
 	if structure and structure:GetId() == self:GetId() then
-		local gamerules = GetGamerules()
-		local gameTime
-		if gamerules then
-			gameTime = gamerules:GetGameTimeChanged()
+		
+		if researchId == kTechId.Recycle and structure:isa("ResourceTower") then
+			AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true)
 		end
-		table.insert(CHUDResearchTree[structure:GetTeamNumber()], { researchId = researchId, researchFinished = gameTime })
+		
+		table.insert(CHUDResearchTree[structure:GetTeamNumber()], { researchId = researchId, researchFinished = GetGameTime() })
+	end
+end
+
+local oldConstructionComplete = ConstructMixin.OnConstructionComplete
+function ConstructMixin:OnConstructionComplete(builder)
+	oldConstructionComplete(self, builder)
+	
+	if self:isa("ResourceTower") then
+		AddRTStat(self:GetTeamNumber(), true, false)
 	end
 end
 
@@ -76,10 +112,8 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 			stat.hits = stat.hits + 1
 			lastStat.hits = lastStat.hits + 1
 			
-			if teamNumber == 1 then
-				CHUDTeamStats.team1Hits = CHUDTeamStats.team1Hits + 1
-			elseif teamNumber == 2 then
-				CHUDTeamStats.team2Hits = CHUDTeamStats.team2Hits + 1
+			if teamNumber == 1 or teamNumber == 2 then
+				CHUDTeamStats[teamNumber].hits = CHUDTeamStats[teamNumber].hits + 1
 			end
 			
 			if isOnos then
@@ -87,7 +121,7 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 				stat.onosHits = stat.onosHits + 1
 				
 				if teamNumber == 1 then
-					CHUDTeamStats.team1OnosHits = CHUDTeamStats.team1OnosHits + 1
+					CHUDTeamStats[1].onosHits = CHUDTeamStats[1].onosHits + 1
 				end
 			end
 		else
@@ -95,10 +129,8 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 			stat.misses = stat.misses + 1
 			lastStat.misses = lastStat.misses + 1
 			
-			if teamNumber == 1 then
-				CHUDTeamStats.team1Misses = CHUDTeamStats.team1Misses + 1
-			elseif teamNumber == 2 then
-				CHUDTeamStats.team2Misses = CHUDTeamStats.team2Misses + 1
+			if teamNumber == 1 or teamNumber == 2 then
+				CHUDTeamStats[teamNumber].misses = CHUDTeamStats[teamNumber].misses + 1
 			end
 		end
 	end
@@ -244,9 +276,14 @@ local oldTakeDamage = LiveMixin.TakeDamage
 function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUsed, healthUsed, damageType, preventAlert)
 		killedFromDamage, damageDone = oldTakeDamage(self, damage, attacker, doer, point, direction, armorUsed, healthUsed, damageType, preventAlert)
 		
+		local targetTeam = self:GetTeamNumber()
+		
+		if killedFromDamage and self:isa("ResourceTower") then
+			AddRTStat(targetTeam, self:GetIsBuilt(), true)
+		end
+		
 		local attackerSteamId, attackerWeapon, attackerTeam = GetAttackerWeapon(attacker, doer)
 		if attackerSteamId then
-			local targetTeam = self:GetTeamNumber()
 			-- Don't count friendly fire towards damage counts
 			if attackerTeam ~= targetTeam and damageDone and damageDone > 0 then
 				AddDamageStat(attackerSteamId, damageDone or 0, self and self:isa("Player") and not (self:isa("Hallucination") or self.isHallucination), attackerWeapon, attackerTeam)
@@ -276,18 +313,21 @@ local function CHUDResetCommStats(commSteamId)
 	end
 end
 
-local resetGame = NS2Gamerules.ResetGame
-function NS2Gamerules:ResetGame()
-	resetGame(self)
-
+local function CHUDResetStats()
 	CHUDCommStats = {}
 	CHUDClientStats = {}
-	CHUDTeamStats = {}
-	CHUDTeamStats.team1Hits = 0
-	CHUDTeamStats.team1OnosHits = 0
-	CHUDTeamStats.team1Misses = 0
-	CHUDTeamStats.team2Hits = 0
-	CHUDTeamStats.team2Misses = 0
+	
+	CHUDTeamStats[1] = {}
+	CHUDTeamStats[1].hits = 0
+	CHUDTeamStats[1].onosHits = 0
+	CHUDTeamStats[1].misses = 0
+	CHUDTeamStats[1].rts = {graph = {}, lost = 0, built = 0}
+	
+	CHUDTeamStats[2] = {}
+	CHUDTeamStats[2].hits = 0
+	CHUDTeamStats[2].misses = 0
+	CHUDTeamStats[2].rts = {graph = {}, lost = 0, built = 0}
+
 	CHUDResearchTree[1] = {}
 	CHUDResearchTree[2] = {}
 	
@@ -305,7 +345,14 @@ function NS2Gamerules:ResetGame()
 		end
 	
 	end
+end
+
+local oldNS2GamerulesResetGame = NS2Gamerules.ResetGame
+function NS2Gamerules:ResetGame()
+	-- Reset the stats before the actual game so we can get the RT counts correctly
+	CHUDResetStats()
 	
+	oldNS2GamerulesResetGame(self)
 end
 
 local function CHUDGetAccuracy(hits, misses, onosHits)
@@ -503,8 +550,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			end
 		end
 		
-		local team1Accuracy, team1OnosAccuracy = CHUDGetAccuracy(CHUDTeamStats.team1Hits, CHUDTeamStats.team1Misses, CHUDTeamStats.team1OnosHits)
-		local team2Accuracy = CHUDGetAccuracy(CHUDTeamStats.team2Hits, CHUDTeamStats.team2Misses)
+		local team1Accuracy, team1OnosAccuracy = CHUDGetAccuracy(CHUDTeamStats[1].hits, CHUDTeamStats[1].misses, CHUDTeamStats[1].onosHits)
+		local team2Accuracy = CHUDGetAccuracy(CHUDTeamStats[2].hits, CHUDTeamStats[2].misses)
 		
 		local msg = {}
 		msg.marineAcc = team1Accuracy
@@ -1320,3 +1367,6 @@ originalSpitTimeUp = Class_ReplaceMethod( "Spit", "TimeUp",
 	
 		originalSpitTimeUp(self)
 	end)
+	
+-- Initialize the arrays
+CHUDResetStats()
