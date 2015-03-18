@@ -285,7 +285,9 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 		local attackerSteamId, attackerWeapon, attackerTeam = GetAttackerWeapon(attacker, doer)
 		if attackerSteamId then
 			-- Don't count friendly fire towards damage counts
-			if attackerTeam ~= targetTeam and damageDone and damageDone > 0 then
+			-- Check if there is a doer, because when alien structures are off infestation
+			-- it will count as an attack for the last person that shot it, only log actual attacks
+			if attackerTeam ~= targetTeam and damageDone and damageDone > 0 and doer then
 				AddDamageStat(attackerSteamId, damageDone or 0, self and self:isa("Player") and not (self:isa("Hallucination") or self.isHallucination), attackerWeapon, attackerTeam)
 			end
 		end

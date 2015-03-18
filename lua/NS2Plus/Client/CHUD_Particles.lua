@@ -1,5 +1,3 @@
-// This file is a bit of a mess... needs a cleanup, just like the lights loading stuff
-
 local propCache = { }
 local propValuesCache = { }
 local propsRemoved = false
@@ -293,6 +291,11 @@ local viewModelCinematics = set {
 						"cinematics/marine/rifle/muzzle_flash3.cinematic",
 						"cinematics/marine/rifle/shell.cinematic",
 						"cinematics/marine/rifle/shell_looping_1p.cinematic",
+						"cinematics/marine/minigun/muzzle_flash.cinematic",
+						"cinematics/marine/minigun/muzzle_flash_loop.cinematic",
+						"cinematics/marine/railgun/muzzle_flash.cinematic",
+						"cinematics/marine/railgun/steam_1p_left.cinematic",
+						"cinematics/marine/railgun/steam_1p_right.cinematic",
 }
 
 // Precache all the new cinematics
