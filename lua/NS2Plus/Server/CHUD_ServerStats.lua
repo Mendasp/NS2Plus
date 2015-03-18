@@ -1,13 +1,18 @@
 
 local CHUDClientStats = {}
 local CHUDTeamStats = {}
+local CHUDRTGraph = {}
 local CHUDResearchTree = {}
 
-local function GetGameTime()
+local function GetGameTime(inMinutes)
 	local gamerules = GetGamerules()
 	local gameTime
 	if gamerules then
 		gameTime = gamerules:GetGameTimeChanged()
+	end
+	
+	if gameTime and inMinutes then
+		gameTime = gameTime/60
 	end
 	
 	return gameTime
@@ -21,7 +26,7 @@ local function AddRTStat(teamNumber, isBuilt, isDestroyed)
 			-- We're going to save this for the RT graph, we don't want unfinished nodes in the graph
 			-- We can reconstruct it considering that if destroyed is false it means it's a new one
 			-- This way we only send a bool instead of an int
-			table.insert(rtsTable.graph, {destroyed = isDestroyed or false, gameTime = GetGameTime()})
+			table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = isDestroyed or false, gameMinute = GetGameTime(true)})
 		end
 		
 		-- The unfinished nodes will be computed on the overall built/lost data
@@ -30,16 +35,26 @@ local function AddRTStat(teamNumber, isBuilt, isDestroyed)
 	end
 end
 
+local function AddTechStat(teamNumber, techId, isResearch)
+	if (teamNumber == 1 or teamNumber == 2) and techId then
+		local teamInfoEnt = GetTeamInfoEntity(teamNumber)
+		
+		table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = GetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources(), isResearch = isResearch})
+	end
+end
+
 local oldTechResearched = ResearchMixin.TechResearched
 function ResearchMixin:TechResearched(structure, researchId)
 	oldTechResearched(self, structure, researchId)
 	if structure and structure:GetId() == self:GetId() then
-		
-		if researchId == kTechId.Recycle and structure:isa("ResourceTower") then
-			AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true)
+		if researchId == kTechId.Recycle then
+			if structure:isa("ResourceTower") then
+				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true)
+			end
+		else
+			-- Don't add recycles to the tech log
+			AddTechStat(structure:GetTeamNumber(), researchId, true)
 		end
-		
-		table.insert(CHUDResearchTree[structure:GetTeamNumber()], { researchId = researchId, researchFinished = GetGameTime() })
 	end
 end
 
@@ -49,6 +64,9 @@ function ConstructMixin:OnConstructionComplete(builder)
 	
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false)
+	elseif not self:isa("PowerPoint") then
+		-- Don't log built power nodes...
+		AddTechStat(self:GetTeamNumber(), self:GetTechId(), false)
 	end
 end
 
@@ -319,19 +337,20 @@ local function CHUDResetStats()
 	CHUDCommStats = {}
 	CHUDClientStats = {}
 	
+	CHUDRTGraph = {}
+	
 	CHUDTeamStats[1] = {}
 	CHUDTeamStats[1].hits = 0
 	CHUDTeamStats[1].onosHits = 0
 	CHUDTeamStats[1].misses = 0
-	CHUDTeamStats[1].rts = {graph = {}, lost = 0, built = 0}
+	CHUDTeamStats[1].rts = {lost = 0, built = 0}
 	
 	CHUDTeamStats[2] = {}
 	CHUDTeamStats[2].hits = 0
 	CHUDTeamStats[2].misses = 0
-	CHUDTeamStats[2].rts = {graph = {}, lost = 0, built = 0}
+	CHUDTeamStats[2].rts = {lost = 0, built = 0}
 
-	CHUDResearchTree[1] = {}
-	CHUDResearchTree[2] = {}
+	CHUDResearchTree = {}
 	
 	// Do this so we can spawn items without a commander with cheats on
 	CHUDResetCommStats(0)
@@ -455,7 +474,8 @@ originalCatPackOnTouch = Class_ReplaceMethod("CatPack", "OnTouch",
 local originalNS2GamerulesEndGame
 originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 	function(self, winningTeam)
-	
+		local gameMinutes = GetGameTime(true)
+		
 		originalNS2GamerulesEndGame(self, winningTeam)
 		
 		for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
@@ -558,14 +578,30 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		local msg = {}
 		msg.marineAcc = team1Accuracy
 		msg.marineOnosAcc = team1OnosAccuracy
+		msg.marineRTsBuilt = CHUDTeamStats[1]["rts"].built
+		msg.marineRTsLost = CHUDTeamStats[1]["rts"].lost
 		msg.alienAcc = team2Accuracy
+		msg.alienRTsBuilt = CHUDTeamStats[2]["rts"].built
+		msg.alienRTsLost = CHUDTeamStats[2]["rts"].lost
+		msg.gameLengthMinutes = gameMinutes
 		
 		if #finalStats[1] > 0 or #finalStats[2] > 0 then
-			Server.SendNetworkMessage("CHUDAvgAccStats", msg, true)
+			Server.SendNetworkMessage("CHUDGameData", msg, true)
+			
+			for _, techLogEntry in ipairs(CHUDResearchTree) do
+				-- Exclude the initial buildings
+				if techLogEntry.finishedMinute > 0 or techLogEntry.teamRes > 0 then
+					Server.SendNetworkMessage("CHUDTechLog", techLogEntry, true)
+				end
+			end
+			
+			for _, RTGraphEntry in ipairs(CHUDRTGraph) do
+				Server.SendNetworkMessage("CHUDRTGraph", RTGraphEntry, true)
+			end
 		end
 		
-		for _, finalStat in pairs(finalStats) do
-			for _, entry in pairs(finalStat) do
+		for _, finalStat in ipairs(finalStats) do
+			for _, entry in ipairs(finalStat) do
 				Server.SendNetworkMessage("CHUDPlayerStats", entry, true)
 			end
 		end

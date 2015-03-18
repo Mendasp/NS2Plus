@@ -43,11 +43,33 @@ if not CHUDMainMenu then
 		catpackEfficiency = "float (0 to 100 by 0.01)",
 	}
 	
-	local kCHUDAvgAccMessage =
+	local kCHUDGameDataMessage =
 	{
 		marineAcc = "float (0 to 100 by 0.01)",
 		marineOnosAcc = "float (-1 to 100 by 0.01)",
+		marineRTsBuilt = "integer (0 to 255)",
+		marineRTsLost = "integer (0 to 255)",
 		alienAcc = "float (0 to 100 by 0.01)",
+		alienRTsBuilt = "integer (0 to 255)",
+		alienRTsLost = "integer (0 to 255)",
+		gameLengthMinutes = "float (0 to 1023 by 0.01)",
+	}
+	
+	local kCHUDRTGraphMessage =
+	{
+		teamNumber = "integer (1 to 2)",
+		destroyed = "boolean",
+		gameMinute = "float (0 to 1023 by 0.01)",
+	}
+	
+	local kCHUDTechLogMessage =
+	{
+		teamNumber = "integer (1 to 2)",
+		techId = "enum kTechId",
+		finishedMinute = "float (0 to 1023 by 0.01)",
+		activeRTs = "integer (0 to 23)",
+		isResearch = "boolean",
+		teamRes = "float (0 to " .. kMaxTeamResources .." by 0.01)",
 	}
 	
 	local kCHUDPlayerStatsMessage =
@@ -95,7 +117,9 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDPlayerStats", kCHUDPlayerStatsMessage)
-	Shared.RegisterNetworkMessage( "CHUDAvgAccStats", kCHUDAvgAccMessage)
+	Shared.RegisterNetworkMessage( "CHUDGameData", kCHUDGameDataMessage)
+	Shared.RegisterNetworkMessage( "CHUDRTGraph", kCHUDRTGraphMessage)
+	Shared.RegisterNetworkMessage( "CHUDTechLog", kCHUDTechLogMessage)
 
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")

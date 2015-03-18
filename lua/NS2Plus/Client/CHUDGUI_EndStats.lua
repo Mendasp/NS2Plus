@@ -98,6 +98,8 @@ local finalStatsTable = {}
 local avgAccTable = {}
 local miscDataTable = {}
 local cardsTable = {}
+local rtGraphTable = {}
+local techLogTable = {}
 
 local lastStatsMsg = -100
 local lastGameEnd = 0
@@ -765,6 +767,8 @@ function CHUDGUI_EndStats:Initialize()
 				avgAccTable = parsedFile.avgAccTable or {}
 				miscDataTable = parsedFile.miscDataTable or {}
 				cardsTable = parsedFile.cardsTable or {}
+				rtGraphTable = parsedFile.rtGraphTable or {}
+				techLogTable = parsedFile.techLogTable or {}
 			end
 			
 			self.saved = true
@@ -1297,6 +1301,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			savedStats.avgAccTable = avgAccTable
 			savedStats.miscDataTable = miscDataTable
 			savedStats.cardsTable = cardsTable
+			savedStats.rtGraphTable = rtGraphTable
+			savedStats.techLogTable = techLogTable
 			
 			local savedFile = io.open(lastRoundFile, "w+")
 			if savedFile then
@@ -1310,6 +1316,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		avgAccTable = {}
 		miscDataTable = {}
 		cardsTable = {}
+		rtGraphTable = {}
+		techLogTable = {}
 	end
 end
 
@@ -1330,7 +1338,6 @@ originalGameEnded = Class_ReplaceMethod( "GUIGameEnd", "SetGameEnded",
 		end
 		
 		miscDataTable.roundDateString = CHUDFormatDateTimeString(Shared.GetSystemTime())
-		miscDataTable.gameLength = CHUDGetGameTime()
 		miscDataTable.serverName = Client.GetServerIsHidden() and "Hidden" or Client.GetConnectedServerName()
 		miscDataTable.mapName = Shared.GetMapName()
 		
@@ -1341,8 +1348,28 @@ local function CHUDSetPlayerStats(message)
 	
 	if message and message.playerName then
 		table.insert(finalStatsTable, message)
-	elseif message and message.marineAcc then
-		avgAccTable = message
+	end
+	
+	lastStatsMsg = Shared.GetTime()
+end
+
+local function CHUDSetGameData(message)
+	if message and message.marineAcc then
+		local accTable = {}
+		table.insert(accTable, message.marineAcc)
+		table.insert(accTable, message.marineOnosAcc)
+		table.insert(accTable, message.alienAcc)
+		
+		avgAccTable = accTable
+		
+		local minutes = math.floor(message.gameLengthMinutes)
+		local seconds = (message.gameLengthMinutes % 1)*60
+		
+		miscDataTable.gameLength = string.format("%d:%.2d", minutes, seconds)
+		miscDataTable.marineRTsBuilt = message.marineRTsBuilt
+		miscDataTable.marineRTsLost = message.marineRTsLost
+		miscDataTable.alienRTsBuilt = message.alienRTsBuilt
+		miscDataTable.alienRTsLost = message.alienRTsLost
 	end
 	
 	lastStatsMsg = Shared.GetTime()
@@ -1546,6 +1573,34 @@ local function CHUDSetCommStats(message)
 	lastStatsMsg = Shared.GetTime()
 end
 
+local function CHUDSetRTGraph(message)
+	if message and message.gameMinute then
+		table.insert(rtGraphTable, message)
+	end
+	
+	lastStatsMsg = Shared.GetTime()
+end
+
+local function CHUDSetTechLog(message)
+	if message and message.finishedMinute then
+		local entry = {}
+		entry.iconTexture = "ui/buildmenu.dds"
+		entry.iconCoords = { GetTextureCoordinatesForIcon(message.techId) }
+		entry.iconSizeX = 24
+		entry.iconSizeY = 24
+		entry.teamNumber = message.teamNumber
+		entry.name = GetDisplayNameForTechId(message.techId)
+		entry.finishedMinute = message.finishedMinute
+		entry.activeRTs = message.activeRTs
+		entry.teamRes = message.teamRes
+		entry.isResearch = message.isResearch
+		
+		table.insert(techLogTable, entry)
+	end
+	
+	lastStatsMsg = Shared.GetTime()
+end
+
 local lastDisplayStatus = false
 local lastDown = 0
 local kKeyTapTiming = 0.2
@@ -1734,6 +1789,8 @@ gTechIdPosition[kTechId.Babbler] = kDeathMessageIcon.Babbler
 gTechIdPosition[kTechId.Hydra] = kDeathMessageIcon.HydraSpike
 
 Client.HookNetworkMessage("CHUDPlayerStats", CHUDSetPlayerStats)
-Client.HookNetworkMessage("CHUDAvgAccStats", CHUDSetPlayerStats)
+Client.HookNetworkMessage("CHUDGameData", CHUDSetGameData)
 Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetWeaponStats)
 Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetCommStats)
+Client.HookNetworkMessage("CHUDRTGraph", CHUDSetRTGraph)
+Client.HookNetworkMessage("CHUDTechLog", CHUDSetTechLog)
