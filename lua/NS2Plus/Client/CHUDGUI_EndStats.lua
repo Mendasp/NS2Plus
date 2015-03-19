@@ -1155,9 +1155,11 @@ local function repositionStatsCards(self)
 	local yPos = 0
 	local xPos = 0
 	local remainingElems = 0
+	local ySize = 0
 	
 	if #self.statsCards > 0 then
 		yPos = self.yourStatsTextShadow:GetPosition().y + GUILinearScale(32)
+		ySize = self.yourStatsTextShadow:GetPosition().y
 		for index, card in ipairs(self.statsCards) do
 			local curRow = math.ceil(index/3)
 			local relativeIndex = index-((curRow-1)*numItemsPerRow)
@@ -1181,7 +1183,7 @@ local function repositionStatsCards(self)
 		end
 	end
 	
-	return yPos + tallestElem
+	return (yPos + tallestElem) - ySize
 end
 
 local function repositionStats(self)
