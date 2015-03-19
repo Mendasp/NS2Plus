@@ -49,6 +49,7 @@ local kRowFontName = Fonts.kArial_17
 local widthPercentage = ConditionalValue(aspectRatio < 1.5, 0.95, 0.75)
 local kTitleSize = Vector(screenWidth*widthPercentage, GUILinearScale(74), 0)
 local kCardSize = Vector(kTitleSize.x/3.5, GUILinearScale(74), 0)
+local kTechLogTitleSize = Vector(kTitleSize.x/2-GUILinearScale(16), GUILinearScale(74), 0)
 local kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
 local scaledVector = GUILinearScale(Vector(1,1,1))
 local kTopOffset = GUILinearScale(32)
@@ -90,6 +91,7 @@ local kContentMaxYSize = screenHeight - GUILinearScale(128) - kTopOffset
 
 local kRowSize = Vector(kTitleSize.x-(kLogoSize.x+kTeamNameOffset)*2, GUILinearScale(24), 0)
 local kCardRowSize = Vector(kCardSize.x*0.85, GUILinearScale(24), 0)
+local kTechLogRowSize = Vector(kTechLogTitleSize.x*0.85, GUILinearScale(24), 0)
 local kTableContainerOffset = GUILinearScale(5)
 local kRowBorderSize = GUILinearScale(2)
 local kRowPlayerNameOffset = GUILinearScale(10)
@@ -549,6 +551,191 @@ local function CreateHeaderRow(container, bgColor, textColor, leftText, rightTex
 	
 end
 
+function CHUDGUI_EndStats:CreateTechLogHeader(teamNumber, teamName)
+
+	local item = {}
+	
+	local color = kMarineStatsColor
+	local teamLogo = kMarineStatsLogo
+	
+	if teamNumber == 2 then
+		color = kAlienStatsColor
+		teamLogo = kAlienStatsLogo
+	end
+	
+	item.background = GUIManager:CreateGraphicItem()
+	item.background:SetStencilFunc(GUIItem.NotEqual)
+	item.background:SetColor(color)
+	item.background:SetTexture(kHeaderTexture)
+	item.background:SetTexturePixelCoordinates(unpack(kHeaderCoordsMiddle))
+	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.background:SetInheritsParentAlpha(false)
+	item.background:SetLayer(kGUILayerMainMenu)
+	item.background:SetSize(Vector(kTechLogTitleSize.x-GUILinearScale(32), kTechLogTitleSize.y, 0))
+	self.background:AddChild(item.background)
+	
+	item.backgroundLeft = GUIManager:CreateGraphicItem()
+	item.backgroundLeft:SetStencilFunc(GUIItem.NotEqual)
+	item.backgroundLeft:SetColor(color)
+	item.backgroundLeft:SetTexture(kHeaderTexture)
+	item.backgroundLeft:SetTexturePixelCoordinates(unpack(kHeaderCoordsLeft))
+	item.backgroundLeft:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.backgroundLeft:SetInheritsParentAlpha(false)
+	item.backgroundLeft:SetLayer(kGUILayerMainMenu)
+	item.backgroundLeft:SetSize(Vector(GUILinearScale(16), kTechLogTitleSize.y, 0))
+	item.backgroundLeft:SetPosition(Vector(-GUILinearScale(16), 0, 0))
+	item.background:AddChild(item.backgroundLeft)
+	
+	item.backgroundRight = GUIManager:CreateGraphicItem()
+	item.backgroundRight:SetStencilFunc(GUIItem.NotEqual)
+	item.backgroundRight:SetColor(color)
+	item.backgroundRight:SetTexture(kHeaderTexture)
+	item.backgroundRight:SetTexturePixelCoordinates(unpack(kHeaderCoordsRight))
+	item.backgroundRight:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.backgroundRight:SetInheritsParentAlpha(false)
+	item.backgroundRight:SetLayer(kGUILayerMainMenu)
+	item.backgroundRight:SetSize(Vector(GUILinearScale(16), kTechLogTitleSize.y, 0))
+	item.backgroundRight:SetPosition(Vector(kTechLogTitleSize.x-GUILinearScale(32), 0, 0))
+	item.background:AddChild(item.backgroundRight)
+	
+	item.logo = GUIManager:CreateGraphicItem()
+	item.logo:SetStencilFunc(GUIItem.NotEqual)
+	item.logo:SetAnchor(GUIItem.Left, GUIItem.Center)
+	item.logo:SetLayer(kGUILayerMainMenu)
+	item.logo:SetIsVisible(true)
+	item.logo:SetSize(kLogoSize)
+	item.logo:SetPosition(Vector(kLogoOffset, -kLogoSize.y/2, 0))
+	item.logo:SetTexture(teamLogo)
+	item.background:AddChild(item.logo)
+	
+	item.teamNameTextShadow = GUIManager:CreateTextItem()
+	item.teamNameTextShadow:SetStencilFunc(GUIItem.NotEqual)
+	item.teamNameTextShadow:SetFontName(kTitleFontName)
+	item.teamNameTextShadow:SetColor(Color(0,0,0,1))
+	item.teamNameTextShadow:SetScale(scaledVector)
+	item.teamNameTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.teamNameTextShadow:SetText(teamName)
+	item.teamNameTextShadow:SetTextAlignmentY(GUIItem.Align_Center)
+	item.teamNameTextShadow:SetPosition(Vector(kLogoSize.x + kTeamNameOffset + kTextShadowOffset, kTechLogTitleSize.y/2 + kTextShadowOffset, 0))
+	item.teamNameTextShadow:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.teamNameTextShadow)
+	
+	item.teamNameText = GUIManager:CreateTextItem()
+	item.teamNameText:SetStencilFunc(GUIItem.NotEqual)
+	item.teamNameText:SetFontName(kTitleFontName)
+	item.teamNameText:SetColor(Color(1,1,1,1))
+	item.teamNameText:SetScale(scaledVector)
+	item.teamNameText:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.teamNameText:SetText(teamName)
+	item.teamNameText:SetTextAlignmentY(GUIItem.Align_Center)
+	item.teamNameText:SetPosition(Vector(kLogoSize.x + kTeamNameOffset, kTechLogTitleSize.y/2, 0))
+	item.teamNameText:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.teamNameText)
+	
+	item.tableBackground = GUIManager:CreateGraphicItem()
+	item.tableBackground:SetStencilFunc(GUIItem.NotEqual)
+	item.tableBackground:SetColor(color)
+	item.tableBackground:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
+	item.tableBackground:SetPosition(Vector(-(kTechLogRowSize.x+kRowBorderSize*2)/2, -kTableContainerOffset, 0))
+	item.tableBackground:SetLayer(kGUILayerMainMenu)
+	item.tableBackground:SetSize(Vector(kTechLogRowSize.x + kRowBorderSize*2, kRowBorderSize*2, 0))
+	item.background:AddChild(item.tableBackground)
+	
+	return item
+end
+
+local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techName, activeRTs, numRes, isResearch, logoTexture, logoCoords, logoSizeX, logoSizeY, logoColor)
+	
+	local containerSize = container:GetSize()
+	container:SetSize(Vector(containerSize.x, containerSize.y + kTechLogRowSize.y, 0))
+	
+	local item = {}
+	
+	item.background = GUIManager:CreateGraphicItem()
+	item.background:SetStencilFunc(GUIItem.NotEqual)
+	item.background:SetColor(bgColor)
+	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.background:SetPosition(Vector(kRowBorderSize, containerSize.y - kRowBorderSize, 0))
+	item.background:SetLayer(kGUILayerMainMenu)
+	item.background:SetSize(kTechLogRowSize)
+	
+	container:AddChild(item.background)
+	
+	item.timeBuilt = GUIManager:CreateTextItem()
+	item.timeBuilt:SetStencilFunc(GUIItem.NotEqual)
+	item.timeBuilt:SetFontName(kRowFontName)
+	item.timeBuilt:SetColor(textColor)
+	item.timeBuilt:SetScale(scaledVector)
+	item.timeBuilt:SetAnchor(GUIItem.Left, GUIItem.Center)
+	item.timeBuilt:SetTextAlignmentX(GUIItem.Align_Center)
+	item.timeBuilt:SetTextAlignmentY(GUIItem.Align_Center)
+	item.timeBuilt:SetPosition(Vector(GUILinearScale(30), 0, 0))
+	item.timeBuilt:SetText(timeBuilt)
+	item.timeBuilt:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.timeBuilt)
+	
+	local xOffset = GUILinearScale(70)
+	
+	if logoTexture then
+		item.logo = GUIManager:CreateGraphicItem()
+		item.logo:SetStencilFunc(GUIItem.NotEqual)
+		item.logo:SetAnchor(GUIItem.Left, GUIItem.Center)
+		item.logo:SetLayer(kGUILayerMainMenu)
+		item.logo:SetIsVisible(true)
+		item.logo:SetSize(Vector(logoSizeX, logoSizeY, 0))
+		item.logo:SetPosition(Vector(xOffset, -logoSizeY/2, 0))
+		item.logo:SetColor(logoColor)
+		item.logo:SetTexture(logoTexture)
+		if logoCoords then
+			item.logo:SetTexturePixelCoordinates(unpack(logoCoords))
+		end
+		item.background:AddChild(item.logo)
+		
+		xOffset = xOffset + logoSizeX + GUILinearScale(5)
+	end
+	
+	item.techName = GUIManager:CreateTextItem()
+	item.techName:SetStencilFunc(GUIItem.NotEqual)
+	item.techName:SetFontName(kRowFontName)
+	item.techName:SetColor(textColor)
+	item.techName:SetScale(scaledVector)
+	item.techName:SetAnchor(GUIItem.Left, GUIItem.Center)
+	item.techName:SetTextAlignmentY(GUIItem.Align_Center)
+	item.techName:SetPosition(Vector(xOffset, 0, 0))
+	item.techName:SetText(techName)
+	item.techName:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.techName)
+	
+	item.activeRTs = GUIManager:CreateTextItem()
+	item.activeRTs:SetStencilFunc(GUIItem.NotEqual)
+	item.activeRTs:SetFontName(kRowFontName)
+	item.activeRTs:SetColor(textColor)
+	item.activeRTs:SetScale(scaledVector)
+	item.activeRTs:SetAnchor(GUIItem.Right, GUIItem.Center)
+	item.activeRTs:SetTextAlignmentX(GUIItem.Align_Center)
+	item.activeRTs:SetTextAlignmentY(GUIItem.Align_Center)
+	item.activeRTs:SetPosition(Vector(GUILinearScale(-80), 0, 0))
+	item.activeRTs:SetText(tostring(activeRTs))
+	item.activeRTs:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.activeRTs)
+	
+	item.numRes = GUIManager:CreateTextItem()
+	item.numRes:SetStencilFunc(GUIItem.NotEqual)
+	item.numRes:SetFontName(kRowFontName)
+	item.numRes:SetColor(textColor)
+	item.numRes:SetScale(scaledVector)
+	item.numRes:SetAnchor(GUIItem.Right, GUIItem.Center)
+	item.numRes:SetTextAlignmentX(GUIItem.Align_Center)
+	item.numRes:SetTextAlignmentY(GUIItem.Align_Center)
+	item.numRes:SetPosition(Vector(GUILinearScale(-30), 0, 0))
+	item.numRes:SetText(tostring(numRes))
+	item.numRes:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.numRes)
+	
+	return item
+	
+end
+
 function CHUDGUI_EndStats:SetPlayerCount(teamItem, playerCount)
 	if playerCount and IsNumber(playerCount) then
 		local playerString = string.format("%d %s", playerCount, ConditionalValue(playerCount == 1, Locale.ResolveString("PLAYER"), Locale.ResolveString("PLAYERS")))
@@ -731,6 +918,29 @@ function CHUDGUI_EndStats:Initialize()
 	self.yourStatsText:SetLayer(kGUILayerMainMenu)
 	self.yourStatsTextShadow:AddChild(self.yourStatsText)
 	
+	self.techLogTextShadow = GUIManager:CreateTextItem()
+	self.techLogTextShadow:SetStencilFunc(GUIItem.NotEqual)
+	self.techLogTextShadow:SetFontName(kTitleFontName)
+	self.techLogTextShadow:SetColor(Color(0,0,0,1))
+	self.techLogTextShadow:SetScale(scaledVector)
+	self.techLogTextShadow:SetText("TECH LOG")
+	self.techLogTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
+	self.techLogTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
+	self.techLogTextShadow:SetLayer(kGUILayerMainMenu)
+	self.background:AddChild(self.techLogTextShadow)
+	
+	self.techLogText = GUIManager:CreateTextItem()
+	self.techLogText:SetStencilFunc(GUIItem.NotEqual)
+	self.techLogText:SetFontName(kTitleFontName)
+	self.techLogText:SetColor(Color(1,1,1,1))
+	self.techLogText:SetScale(scaledVector)
+	self.techLogText:SetText("TECH LOG")
+	self.techLogText:SetAnchor(GUIItem.Left, GUIItem.Top)
+	self.techLogText:SetTextAlignmentX(GUIItem.Align_Center)
+	self.techLogText:SetPosition(Vector(-kTextShadowOffset, -kTextShadowOffset, 0))
+	self.techLogText:SetLayer(kGUILayerMainMenu)
+	self.techLogTextShadow:AddChild(self.techLogText)
+	
 	self.teamStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(16), 0))
 	local yPos = GUILinearScale(48)
 	self.team1UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
@@ -742,6 +952,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.contentSize = yPos
 	
 	self.statsCards = {}
+	self.techLogs = {}
 	
 	self.saved = false
 	self.prevRequestKey = false
@@ -900,6 +1111,19 @@ local function repositionStats(self)
 			yPos = repositionStatsCards(self)
 		end
 		
+		if #self.techLogs > 0 then
+			self.techLogTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+			yPos = yPos + GUILinearScale(32)
+			
+			self.techLogs[1].header.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+			self.techLogs[2].header.background:SetPosition(Vector(kTechLogTitleSize.x + GUILinearScale(16), yPos, 0))
+			
+			local team1YSize = self.techLogs[1].header.background:GetSize().y + self.techLogs[1].header.tableBackground:GetSize().y
+			local team2YSize = self.techLogs[2].header.background:GetSize().y + self.techLogs[2].header.tableBackground:GetSize().y
+			
+			yPos = yPos + GUILinearScale(32) + math.max(team1YSize, team2YSize)
+		end
+		
 		self.contentSize = math.max(self.contentSize, yPos)
 end
 
@@ -976,6 +1200,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		end
 		
 		self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
+		self.techLogTextShadow:SetIsVisible(#self.techLogs > 0)
 		
 		-- Hide the stats when the game starts if we're on a team
 		if PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
@@ -1293,6 +1518,43 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			table.insert(self.statsCards, statCard)
 		end
 		
+		if #techLogTable > 0 then
+			table.sort(techLogTable, function(a, b)
+				if a.teamNumber == b.teamNumber then
+					return a.finishedMinute < b.finishedMinute
+				else
+					return a.teamNumber > b.teamNumber
+				end
+			end)
+			
+			local team1Name = miscDataTable.team1Name or "Frontiersmen"
+			local team2Name = miscDataTable.team2Name or "Kharaa"
+			
+			self.techLogs[1] = {}
+			self.techLogs[1].header = self:CreateTechLogHeader(1, team1Name)
+			self.techLogs[1].rows = {}
+			self.techLogs[1].ySize = 0
+			table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
+			
+			self.techLogs[2] = {}
+			self.techLogs[2].header = self:CreateTechLogHeader(2, team2Name)
+			self.techLogs[2].rows = {}
+			self.techLogs[2].ySize = 0
+			table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
+			
+			for index, techLogEntry in ipairs(techLogTable) do
+				local isMarine = techLogEntry.teamNumber == 1
+				local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
+				local logoColor = kIconColors[techLogEntry.teamNumber]
+				local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+				if index % 2 == 0 then
+					bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+				end
+				
+				table.insert(self.techLogs[techLogEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[techLogEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, techLogEntry.finishedTime, techLogEntry.name, techLogEntry.activeRTs, techLogEntry.teamRes, techLogEntry.isResearch, techLogEntry.iconTexture, techLogEntry.iconCoords, techLogEntry.iconSizeX, techLogEntry.iconSizeY, logoColor))
+			end
+		end
+		
 		repositionStats(self)
 		
 		if not self.saved then
@@ -1585,12 +1847,17 @@ local function CHUDSetTechLog(message)
 	if message and message.finishedMinute then
 		local entry = {}
 		entry.iconTexture = "ui/buildmenu.dds"
-		entry.iconCoords = { GetTextureCoordinatesForIcon(message.techId) }
+		entry.iconCoords = GetTextureCoordinatesForIcon(message.techId)
 		entry.iconSizeX = 24
 		entry.iconSizeY = 24
 		entry.teamNumber = message.teamNumber
 		entry.name = GetDisplayNameForTechId(message.techId)
+		
+		local minutes = math.floor(message.finishedMinute)
+		local seconds = (message.finishedMinute % 1)*60
+		
 		entry.finishedMinute = message.finishedMinute
+		entry.finishedTime = string.format("%d:%.2d", minutes, seconds)
 		entry.activeRTs = message.activeRTs
 		entry.teamRes = message.teamRes
 		entry.isResearch = message.isResearch
@@ -1765,6 +2032,8 @@ function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
 	kRowBorderSize = GUILinearScale(2)
 	kRowPlayerNameOffset = GUILinearScale(10)
 	kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
+	kTechLogTitleSize = Vector(kTitleSize.x/2-GUILinearScale(16), GUILinearScale(74), 0)
+	kTechLogRowSize = Vector(kTechLogTitleSize.x*0.85, GUILinearScale(24), 0)
 	
 	-- Mark the last round as not loaded so it loads it back when we destroy the current UI
 	loadedLastRound = false

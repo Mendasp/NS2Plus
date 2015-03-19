@@ -64,7 +64,7 @@ function ConstructMixin:OnConstructionComplete(builder)
 	
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false)
-	elseif not self:isa("PowerPoint") then
+	elseif not self:isa("PowerPoint") and not self:isa("Cyst") then
 		-- Don't log built power nodes...
 		AddTechStat(self:GetTeamNumber(), self:GetTechId(), false)
 	end
