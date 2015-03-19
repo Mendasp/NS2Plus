@@ -1205,7 +1205,7 @@ local function repositionStats(self)
 		
 		if CHUDGetOption("endstatsorder") == 0 then
 			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = repositionStatsCards(self)
+			yPos = yPos + repositionStatsCards(self)
 		end
 		
 		self.techLogTextShadow:SetIsVisible(#self.techLogs > 0)
