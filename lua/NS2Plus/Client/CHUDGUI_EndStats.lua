@@ -1120,7 +1120,7 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 	-- Don't try to display it if there is no content visible
 	local gameInfo = GetGameInfoEntity()
 	local teamStatsVisible = gameInfo and gameInfo.showEndStatsTeamBreakdown
-	local visibleStats = teamStatsVisible and self.teamStatsTextShadow:GetIsVisible() or #self.statsCards > 0
+	local visibleStats = teamStatsVisible and self.teamStatsTextShadow:GetIsVisible() or #self.statsCards > 0 or #self.rtGraphs > 0
 	if visible ~= self:GetIsVisible() and ((visible and visibleStats) or not visible) then
 		self.background:SetIsVisible(visible)
 		self.header:SetIsVisible(visible)
