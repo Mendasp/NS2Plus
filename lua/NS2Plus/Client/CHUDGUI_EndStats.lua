@@ -1,5 +1,8 @@
 class 'CHUDGUI_EndStats' (GUIScript)
 
+Script.Load("lua/NS2Plus/Client/CHUDGUI_StaticLineGraph.lua")
+Script.Load("lua/NS2Plus/Client/CHUDGUI_ComparisonBarGraph.lua")
+
 local kButtonClickSound = "sound/NS2.fev/common/button_click"
 local kMouseHoverSound = "sound/NS2.fev/common/hovar"
 local kSlideSound = "sound/NS2.fev/marine/commander/hover_ui"
@@ -46,13 +49,16 @@ end
 local kTitleFontName = Fonts.kAgencyFB_Medium
 local kSubTitleFontName = Fonts.kAgencyFB_Small
 local kRowFontName = Fonts.kArial_17
-local widthPercentage = ConditionalValue(aspectRatio < 1.5, 0.95, 0.75)
-local kTitleSize = Vector(screenWidth*widthPercentage, GUILinearScale(74), 0)
-local kCardSize = Vector(kTitleSize.x/3.5, GUILinearScale(74), 0)
-local kTechLogTitleSize = Vector(kTitleSize.x/2-GUILinearScale(16), GUILinearScale(74), 0)
-local kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
-local scaledVector = GUILinearScale(Vector(1,1,1))
-local kTopOffset = GUILinearScale(32)
+local widthPercentage
+local kTitleSize
+local kCardSize
+local kTechLogTitleSize
+local kCloseButtonSize
+local scaledVector
+local kTopOffset
+local rtGraphPadding
+local rtGraphSize
+local comparisonSize
 
 local kMarineStatsColor = Color(0, 0.75, 0.88, 0.65)
 local kAlienStatsColor = Color(0.84, 0.48, 0.17, 0.65)
@@ -82,19 +88,19 @@ local kHeaderCoordsMiddle = { 16, 0, 112, 64 }
 local kHeaderCoordsRight = { 113, 0, 128, 64 }
 local kMarineStatsLogo = PrecacheAsset("ui/logo_marine.dds")
 local kAlienStatsLogo = PrecacheAsset("ui/logo_alien.dds")
-local kLogoSize = GUILinearScale(Vector(52, 52, 0))
-local kLogoOffset = GUILinearScale(4)
-local kTeamNameOffset = GUILinearScale(10)
-local kTextShadowOffset = GUILinearScale(2)
-local kPlayerCountOffset = -GUILinearScale(20)
-local kContentMaxYSize = screenHeight - GUILinearScale(128) - kTopOffset
+local kLogoSize
+local kLogoOffset
+local kTeamNameOffset
+local kTextShadowOffset
+local kPlayerCountOffset
+local kContentMaxYSize
 
-local kRowSize = Vector(kTitleSize.x-(kLogoSize.x+kTeamNameOffset)*2, GUILinearScale(24), 0)
-local kCardRowSize = Vector(kCardSize.x*0.85, GUILinearScale(24), 0)
-local kTechLogRowSize = Vector(kTechLogTitleSize.x*0.85, GUILinearScale(24), 0)
-local kTableContainerOffset = GUILinearScale(5)
-local kRowBorderSize = GUILinearScale(2)
-local kRowPlayerNameOffset = GUILinearScale(10)
+local kRowSize
+local kCardRowSize
+local kTechLogRowSize
+local kTableContainerOffset
+local kRowBorderSize
+local kRowPlayerNameOffset
 
 local finalStatsTable = {}
 local avgAccTable = {}
@@ -115,6 +121,34 @@ local lastSortedT1 = "kills"
 local lastSortedT1WasInv = false
 local lastSortedT2 = "kills"
 local lastSortedT2WasInv = false
+
+local function UpdateSizeOfUI(self, screenWidth, screenHeight)
+	widthPercentage = ConditionalValue(aspectRatio < 1.5, 0.95, 0.75)
+	kTitleSize = Vector(screenWidth*widthPercentage, GUILinearScale(74), 0)
+	kCardSize = Vector(kTitleSize.x/3.5, GUILinearScale(74), 0)
+	kTechLogTitleSize = Vector(kTitleSize.x/2-GUILinearScale(16), GUILinearScale(74), 0)
+	kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
+	scaledVector = GUILinearScale(Vector(1,1,1))
+	kTopOffset = GUILinearScale(32)
+
+	kLogoSize = GUILinearScale(Vector(52, 52, 0))
+	kLogoOffset = GUILinearScale(4)
+	kTeamNameOffset = GUILinearScale(10)
+	kTextShadowOffset = GUILinearScale(2)
+	kPlayerCountOffset = -GUILinearScale(20)
+	kContentMaxYSize = screenHeight - GUILinearScale(128) - kTopOffset
+
+	kRowSize = Vector(kTitleSize.x-(kLogoSize.x+kTeamNameOffset)*2, GUILinearScale(24), 0)
+	kCardRowSize = Vector(kCardSize.x*0.85, GUILinearScale(24), 0)
+	kTechLogRowSize = Vector(kTechLogTitleSize.x*0.85, GUILinearScale(24), 0)
+	kTableContainerOffset = GUILinearScale(5)
+	kRowBorderSize = GUILinearScale(2)
+	kRowPlayerNameOffset = GUILinearScale(10)
+	
+	rtGraphPadding = GUILinearScale(50)
+	rtGraphSize = GUILinearScale(Vector(kTitleSize.x*0.85, 370, 0)) - Vector(2*rtGraphPadding,3*rtGraphPadding,0)
+	comparisonSize = GUILinearScale(Vector(400,30,0))
+end
 
 function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 
@@ -762,6 +796,8 @@ end
 
 function CHUDGUI_EndStats:Initialize()
 
+	UpdateSizeOfUI(self, screenWidth, screenHeight)
+
 	self.header = GUIManager:CreateGraphicItem()
 	self.header:SetColor(Color(0, 0, 0, 0.5))
 	self.header:SetAnchor(GUIItem.Middle, GUIItem.Top)
@@ -900,6 +936,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.yourStatsTextShadow:SetFontName(kTitleFontName)
 	self.yourStatsTextShadow:SetColor(Color(0,0,0,1))
 	self.yourStatsTextShadow:SetScale(scaledVector)
+	self.yourStatsTextShadow:SetIsVisible(false)
 	self.yourStatsTextShadow:SetText("YOUR STATS")
 	self.yourStatsTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.yourStatsTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
@@ -923,6 +960,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.techLogTextShadow:SetFontName(kTitleFontName)
 	self.techLogTextShadow:SetColor(Color(0,0,0,1))
 	self.techLogTextShadow:SetScale(scaledVector)
+	self.techLogTextShadow:SetIsVisible(false)
 	self.techLogTextShadow:SetText("TECH LOG")
 	self.techLogTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
 	self.techLogTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
@@ -941,6 +979,30 @@ function CHUDGUI_EndStats:Initialize()
 	self.techLogText:SetLayer(kGUILayerMainMenu)
 	self.techLogTextShadow:AddChild(self.techLogText)
 	
+	self.rtGraphTextShadow = GUIManager:CreateTextItem()
+	self.rtGraphTextShadow:SetStencilFunc(GUIItem.NotEqual)
+	self.rtGraphTextShadow:SetFontName(kTitleFontName)
+	self.rtGraphTextShadow:SetColor(Color(0,0,0,1))
+	self.rtGraphTextShadow:SetScale(scaledVector)
+	self.rtGraphTextShadow:SetIsVisible(false)
+	self.rtGraphTextShadow:SetText("RT GRAPH")
+	self.rtGraphTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
+	self.rtGraphTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
+	self.rtGraphTextShadow:SetLayer(kGUILayerMainMenu)
+	self.background:AddChild(self.rtGraphTextShadow)
+	
+	self.rtGraphText = GUIManager:CreateTextItem()
+	self.rtGraphText:SetStencilFunc(GUIItem.NotEqual)
+	self.rtGraphText:SetFontName(kTitleFontName)
+	self.rtGraphText:SetColor(Color(1,1,1,1))
+	self.rtGraphText:SetScale(scaledVector)
+	self.rtGraphText:SetText("RT GRAPH")
+	self.rtGraphText:SetAnchor(GUIItem.Left, GUIItem.Top)
+	self.rtGraphText:SetTextAlignmentX(GUIItem.Align_Center)
+	self.rtGraphText:SetPosition(Vector(-kTextShadowOffset, -kTextShadowOffset, 0))
+	self.rtGraphText:SetLayer(kGUILayerMainMenu)
+	self.rtGraphTextShadow:AddChild(self.rtGraphText)
+	
 	self.teamStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(16), 0))
 	local yPos = GUILinearScale(48)
 	self.team1UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
@@ -953,6 +1015,39 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.statsCards = {}
 	self.techLogs = {}
+	self.rtGraphs = {}
+	
+	self.rtGraph = _G["CHUDGUI_StaticLineGraph"]()
+	self.rtGraph:Initialize()
+	self.rtGraph:SetAnchor(GUIItem.Middle, GUIItem.Top)
+	self.rtGraph:SetSize(rtGraphSize)
+	self.rtGraph:SetYGridSpacing(1)
+	self.rtGraph:SetIsVisible(false)
+	self.rtGraph:SetXAxisIsTime(true)
+	self.rtGraph:ExtendXAxisToBounds(true)
+	self.rtGraph:GiveParent(self.background)
+	self.rtGraph:SetStencilFunc(GUIItem.NotEqual)
+	
+	self.rtGraph:StartLine(kTeam1Index, kBlueColor)
+	self.rtGraph:StartLine(kTeam2Index, kRedColor)
+	
+	self.builtRTsComp =  _G["CHUDGUI_ComparisonBarGraph"]()
+	self.builtRTsComp:Initialize()
+	self.builtRTsComp:SetAnchor(GUIItem.Middle, GUIItem.Top)
+	self.builtRTsComp:SetSize(comparisonSize)
+	self.builtRTsComp:SetValues(0,0)
+	self.builtRTsComp:SetStencilFunc(GUIItem.NotEqual)
+	self.builtRTsComp:SetTitle("Built RTs")
+	self.builtRTsComp:GiveParent(self.background)
+	
+	self.lostRTsComp =  _G["CHUDGUI_ComparisonBarGraph"]()
+	self.lostRTsComp:Initialize()
+	self.lostRTsComp:SetAnchor(GUIItem.Middle, GUIItem.Top)
+	self.lostRTsComp:SetSize(comparisonSize)
+	self.lostRTsComp:SetValues(0,0)
+	self.lostRTsComp:SetStencilFunc(GUIItem.NotEqual)
+	self.lostRTsComp:SetTitle("Lost RTs")
+	self.lostRTsComp:GiveParent(self.background)
 	
 	self.saved = false
 	self.prevRequestKey = false
@@ -1092,6 +1187,8 @@ end
 local function repositionStats(self)
 		local yPos = GUILinearScale(16)
 		
+		self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
+		
 		if CHUDGetOption("endstatsorder") == 1 then
 			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
 			yPos = yPos + repositionStatsCards(self)
@@ -1111,6 +1208,7 @@ local function repositionStats(self)
 			yPos = repositionStatsCards(self)
 		end
 		
+		self.techLogTextShadow:SetIsVisible(#self.techLogs > 0)
 		if #self.techLogs > 0 then
 			self.techLogTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
 			yPos = yPos + GUILinearScale(32)
@@ -1122,6 +1220,24 @@ local function repositionStats(self)
 			local team2YSize = self.techLogs[2].header.background:GetSize().y + self.techLogs[2].header.tableBackground:GetSize().y
 			
 			yPos = yPos + GUILinearScale(32) + math.max(team1YSize, team2YSize)
+		end
+		
+		self.rtGraphTextShadow:SetIsVisible(#self.rtGraphs > 0)
+		self.rtGraph:SetIsVisible(#self.rtGraphs > 0)
+		self.builtRTsComp:SetIsVisible(#self.rtGraphs > 0)
+		self.lostRTsComp:SetIsVisible(#self.rtGraphs > 0)
+		if #self.rtGraphs > 0 then
+			self.rtGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+			yPos = yPos + GUILinearScale(32)
+			
+			self.rtGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
+			yPos = yPos + rtGraphSize.y + GUILinearScale(72)
+			
+			self.builtRTsComp:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
+			yPos = yPos + comparisonSize.y + GUILinearScale(48)
+			
+			self.lostRTsComp:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
+			yPos = yPos + comparisonSize.y + GUILinearScale(48)
 		end
 		
 		self.contentSize = math.max(self.contentSize, yPos)
@@ -1198,9 +1314,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		if not MouseTracker_GetIsVisible() then
 			MouseTracker_SetIsVisible(true)
 		end
-		
-		self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
-		self.techLogTextShadow:SetIsVisible(#self.techLogs > 0)
 		
 		-- Hide the stats when the game starts if we're on a team
 		if PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
@@ -1555,6 +1668,76 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 		end
 		
+		self.rtGraphs = {}
+		if #rtGraphTable > 0 then
+			table.sort(rtGraphTable, function(a, b)
+				if a.teamNumber == b.teamNumber then
+					return a.gameMinute < b.gameMinute
+				else
+					return a.teamNumber > b.teamNumber
+				end
+			end)
+			
+			local rtCount = 0
+			local teamNumber = -1
+			self.rtGraphs[1] = {}
+			self.rtGraphs[2] = {}
+			local maxRTs = 0
+			for _, entry in ipairs(rtGraphTable) do
+				if teamNumber ~= entry.teamNumber then
+					teamNumber = entry.teamNumber
+					rtCount = 0
+				end
+				
+				if teamNumber == entry.teamNumber then
+					local adjustment = 0
+					if teamNumber == 2 then
+						adjustment = 0.05
+					end
+					table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount, 0))
+					rtCount = math.floor(rtCount + ConditionalValue(entry.destroyed, -1, 1)) + adjustment
+					maxRTs = math.max(rtCount, maxRTs)
+					table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount, 0))
+				end
+			end
+			self.rtGraph:SetPoints(1, self.rtGraphs[1])
+			self.rtGraph:SetPoints(2, self.rtGraphs[2])
+			self.rtGraph:SetYBounds(0, maxRTs+1, true)
+			local gameLength = miscDataTable.gameLengthMinutes*60
+			local xSpacing = 60
+			
+			if gameLength < 60 then
+				xSpacing = 10
+			elseif gameLength < 5*60 then
+				xSpacing = 30
+			elseif gameLength < 15*60 then
+				xSpacing = 60
+			elseif gameLength < 60*60 then
+				xSpacing = 300
+			else
+				xSpacing = 600
+			end
+			
+			self.rtGraph:SetXBounds(0, gameLength)
+			self.rtGraph:SetXGridSpacing(xSpacing)
+			
+			self.builtRTsComp:SetValues(miscDataTable.marineRTsBuilt, miscDataTable.alienRTsBuilt)
+			self.lostRTsComp:SetValues(miscDataTable.marineRTsLost, miscDataTable.alienRTsLost)
+			
+			if miscDataTable.marineRTsBuilt > 0 then
+				self.builtRTsComp:SetLeftText("(" .. printNum(miscDataTable.marineRTsBuilt/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(miscDataTable.marineRTsBuilt))
+			end
+			if miscDataTable.alienRTsBuilt > 0 then
+				self.builtRTsComp:SetRightText(tostring(miscDataTable.alienRTsBuilt) .. "  (" .. printNum(miscDataTable.alienRTsBuilt/miscDataTable.gameLengthMinutes) .. "/min)")
+			end
+			if miscDataTable.marineRTsLost > 0 then
+				self.lostRTsComp:SetLeftText("(" .. printNum(miscDataTable.marineRTsLost/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(miscDataTable.marineRTsLost))
+			end
+			if miscDataTable.alienRTsLost > 0 then
+				self.lostRTsComp:SetRightText(tostring(miscDataTable.alienRTsLost) .. "  (" .. printNum(miscDataTable.alienRTsLost/miscDataTable.gameLengthMinutes) .. "/min)")
+			end
+		end
+		
 		repositionStats(self)
 		
 		if not self.saved then
@@ -1627,6 +1810,7 @@ local function CHUDSetGameData(message)
 		local minutes = math.floor(message.gameLengthMinutes)
 		local seconds = (message.gameLengthMinutes % 1)*60
 		
+		miscDataTable.gameLengthMinutes = message.gameLengthMinutes
 		miscDataTable.gameLength = string.format("%d:%.2d", minutes, seconds)
 		miscDataTable.marineRTsBuilt = message.marineRTsBuilt
 		miscDataTable.marineRTsLost = message.marineRTsLost
@@ -2015,25 +2199,6 @@ function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
 	screenWidth = newX
 	screenHeight = newY
 	aspectRatio = screenWidth/screenHeight
-	widthPercentage = ConditionalValue(aspectRatio < 1.5, 0.95, 0.75)
-	kTitleSize = Vector(screenWidth*widthPercentage, GUILinearScale(74), 0)
-	kCardSize = Vector(kTitleSize.x/3.5, GUILinearScale(74), 0)
-	scaledVector = GUILinearScale(Vector(1,1,1))
-	kTopOffset = GUILinearScale(32)
-	kLogoSize = GUILinearScale(Vector(52, 52, 0))
-	kLogoOffset = GUILinearScale(4)
-	kTeamNameOffset = GUILinearScale(10)
-	kTextShadowOffset = GUILinearScale(2)
-	kPlayerCountOffset = -GUILinearScale(20)
-	kContentMaxYSize = screenHeight - GUILinearScale(128) - kTopOffset
-	kRowSize = Vector(kTitleSize.x-(kLogoSize.x+kTeamNameOffset)*2, GUILinearScale(24), 0)
-	kCardRowSize = Vector(kCardSize.x*0.85, GUILinearScale(24), 0)
-	kTableContainerOffset = GUILinearScale(5)
-	kRowBorderSize = GUILinearScale(2)
-	kRowPlayerNameOffset = GUILinearScale(10)
-	kCloseButtonSize = Vector(GUILinearScale(24), GUILinearScale(24), 0)
-	kTechLogTitleSize = Vector(kTitleSize.x/2-GUILinearScale(16), GUILinearScale(74), 0)
-	kTechLogRowSize = Vector(kTechLogTitleSize.x*0.85, GUILinearScale(24), 0)
 	
 	-- Mark the last round as not loaded so it loads it back when we destroy the current UI
 	loadedLastRound = false

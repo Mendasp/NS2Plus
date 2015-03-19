@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 19/03/2015
+	- Classic Ammo now supports the Exo.
+	- Added Tech Log and RT Graph to end game stats.
+
 - 16/03/2015
 	- Added a structure counter (current/max) for the Gorge building "weapon" inside the energy circle.
 	- Added player and structure damage stats per-weapon to the end stats.
