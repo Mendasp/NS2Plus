@@ -4,9 +4,12 @@ local mapChangeNeeded = false
 local modsTable = {}
 local updatedMods = {}
 local DisableUpdater = false
+local hasModBackup = #Server.GetConfigSetting("mod_backup_servers") > 0
 
 local function CHUDDisplayModUpdateMessage()
-	SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+	if not hasModBackup then
+		SendCHUDMessage("Detected mod update. New players won't be able to join until map change.")
+	end
 	local modsStringList = "Mods updated:"
 	local i = 0
 	for index, value in pairs(updatedMods) do
@@ -75,10 +78,10 @@ function CHUDModUpdater()
 		
 		if mapChangeNeeded then
 			-- If we set the reminder to 0, don't show this message anymore.
-			if updateCheckInterval > 0 and not DisableUpdater then
+			if updateCheckInterval > 0 and not DisableUpdater and not hasModBackup then
 				CHUDDisplayModUpdateMessage()
 			end
-		else	
+		else
 			local params = {}
 			params["itemcount"] = Server.GetNumActiveMods()
 			for modNum = 1, Server.GetNumActiveMods() do

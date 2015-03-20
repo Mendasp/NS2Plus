@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /03/2015
+	- Added Kill Graph to end game stats.
+	- Removed message about player not being able to join when detecting mod updates if the server has a mod backup server enabled.
+
 - 19/03/2015
 	- Classic Ammo now supports the Exo.
 	- Added Tech Log and RT Graph to end game stats.
