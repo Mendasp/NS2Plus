@@ -58,14 +58,23 @@ function ResearchMixin:TechResearched(structure, researchId)
 	end
 end
 
+local notLoggedBuildings = set {
+	"PowerPoint",
+	"Cyst",
+	"TunnelEntrance",
+	"TunnelExit",
+	"Hydra",
+	"BabblerEgg",
+}
+
 local oldConstructionComplete = ConstructMixin.OnConstructionComplete
 function ConstructMixin:OnConstructionComplete(builder)
 	oldConstructionComplete(self, builder)
 	
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false)
-	elseif not self:isa("PowerPoint") and not self:isa("Cyst") then
-		-- Don't log built power nodes...
+	elseif self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
+		-- Don't log built certain buildings...
 		AddTechStat(self:GetTeamNumber(), self:GetTechId(), false)
 	end
 end
