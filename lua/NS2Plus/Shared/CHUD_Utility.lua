@@ -208,4 +208,20 @@ if Client then
 			Client.SetOptionFloat("graphics/display/fov-adjustment", fov)
 		end
 	end
+	
+	local kScreenScaleAspect = 1280
+
+	local function ScreenSmallAspect()
+		return ConditionalValue(Client.GetScreenWidth() > Client.GetScreenHeight(), Client.GetScreenHeight(), Client.GetScreenWidth())
+	end
+
+	function GUILinearScale(size)
+		-- 25% bigger so it's similar size to the "normal" GUIScale
+		local scale = 1.25
+		-- Text is hard to read on lower res, so make it bigger for them
+		if Client.GetScreenWidth() < 1920 then
+			scale = 1.5
+		end
+		return (ScreenSmallAspect() / kScreenScaleAspect)*size*scale
+	end
 end

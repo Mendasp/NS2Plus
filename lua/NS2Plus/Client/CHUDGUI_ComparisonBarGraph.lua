@@ -12,9 +12,9 @@ class 'CHUDGUI_ComparisonBarGraph'
 local textureName = "ui/comparisonbar.dds"
 local textureSize = Vector(512,64,0)
 local kFontName = Fonts.kAgencyFB_Medium
-local kFontScale = GUIScale(Vector(1,1,0))
+local kFontScale = GUILinearScale(Vector(1,1,0))
 local fontColor = Color(1,1,1,1)
-local textPadding = GUIScale(Vector(15,0,0))
+local textPadding = GUILinearScale(Vector(15,0,0))
 
 function CHUDGUI_ComparisonBarGraph:toGameTimeString(timeInt)
     local startTime = PlayerUI_GetGameStartTime()
@@ -26,9 +26,9 @@ function CHUDGUI_ComparisonBarGraph:toGameTimeString(timeInt)
     return string.format("%d:%02d", minutes, seconds)
 end
 
-function CHUDGUI_ComparisonBarGraph:OnResolutionChanged()
-    kFontScale = GUIScale(Vector(1,1,0))
-    textPadding = GUIScale(Vector(15,0,0))
+function CHUDGUI_ComparisonBarGraph:OnResolutionChanged(oldX, oldY, newX, newY)
+    kFontScale = GUILinearScale(Vector(1,1,0))
+    textPadding = GUILinearScale(Vector(15,0,0))
 end
 
 function CHUDGUI_ComparisonBarGraph:refreshText()
@@ -85,7 +85,7 @@ end
 
 function CHUDGUI_ComparisonBarGraph:Initialize()
 
-    self.graphSize = GUIScale(Vector(400,40,0))
+    self.graphSize = GUILinearScale(Vector(400,40,0))
     self.leftValue = 0
     self.rightValue = 0
     self.leftText = nil

@@ -10,7 +10,6 @@ Client.PrecacheLocalSound(kButtonClickSound)
 Client.PrecacheLocalSound(kMouseHoverSound)
 Client.PrecacheLocalSound(kSlideSound)
 
-local kScreenScaleAspect = 1280
 local screenWidth = Client.GetScreenWidth()
 local screenHeight = Client.GetScreenHeight()
 local aspectRatio = screenWidth/screenHeight
@@ -18,20 +17,6 @@ local aspectRatio = screenWidth/screenHeight
 local kSteamProfileURL = "http://steamcommunity.com/profiles/"
 local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
 local kNS2StatsProfileURL = "http://ns2stats.com/player/ns2id/"
-
-local function ScreenSmallAspect()
-	return ConditionalValue(screenWidth > screenHeight, screenHeight, screenWidth)
-end
-
-local function GUILinearScale(size)
-	-- 25% bigger so it's similar size to the "normal" GUIScale
-	local scale = 1.25
-	-- Text is hard to read on lower res, so make it bigger for them
-	if screenWidth < 1920 then
-		scale = 1.5
-	end
-	return (ScreenSmallAspect() / kScreenScaleAspect)*size*scale
-end
 
 -- To avoid printing 200.00 or things like that
 local function printNum(number)
@@ -146,7 +131,7 @@ local function UpdateSizeOfUI(self, screenWidth, screenHeight)
 	kRowPlayerNameOffset = GUILinearScale(10)
 	
 	rtGraphPadding = GUILinearScale(50)
-	rtGraphSize = GUILinearScale(Vector(kTitleSize.x*0.85, 370, 0)) - Vector(2*rtGraphPadding,3*rtGraphPadding,0)
+	rtGraphSize = Vector(kTitleSize.x*0.85, GUILinearScale(370), 0)
 	comparisonSize = GUILinearScale(Vector(400,30,0))
 end
 
@@ -449,6 +434,9 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 
 	local item = {}
 	
+	logoSizeX = GUILinearScale(logoSizeX)
+	logoSizeY = GUILinearScale(logoSizeY)
+	
 	item.background = GUIManager:CreateGraphicItem()
 	item.background:SetStencilFunc(GUIItem.NotEqual)
 	item.background:SetColor(color)
@@ -711,6 +699,9 @@ local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techNa
 	local xOffset = GUILinearScale(70)
 	
 	if logoTexture then
+		logoSizeX = GUILinearScale(logoSizeX)
+		logoSizeY = GUILinearScale(logoSizeY)
+		
 		item.logo = GUIManager:CreateGraphicItem()
 		item.logo:SetStencilFunc(GUIItem.NotEqual)
 		item.logo:SetAnchor(GUIItem.Left, GUIItem.Center)
@@ -1802,12 +1793,8 @@ end
 
 local function CHUDSetGameData(message)
 	if message and message.marineAcc then
-		local accTable = {}
-		table.insert(accTable, message.marineAcc)
-		table.insert(accTable, message.marineOnosAcc)
-		table.insert(accTable, message.alienAcc)
 		
-		avgAccTable = accTable
+		avgAccTable = {marineAcc = message.marineAcc, marineOnosAcc = message.marineOnosAcc, alienAcc = message.alienAcc}
 		
 		local minutes = math.floor(message.gameLengthMinutes)
 		local seconds = (message.gameLengthMinutes % 1)*60
@@ -2204,6 +2191,11 @@ function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
 	
 	-- Mark the last round as not loaded so it loads it back when we destroy the current UI
 	loadedLastRound = false
+	
+	-- We need to trigger this manually to update font sizes
+	self.rtGraph:OnResolutionChanged(oldX, oldY, newX, newY)
+	self.builtRTsComp:OnResolutionChanged(oldX, oldY, newX, newY)
+	self.lostRTsComp:OnResolutionChanged(oldX, oldY, newX, newY)
 	
 	self:Uninitialize()
 	self:Initialize()

@@ -12,11 +12,11 @@ class 'CHUDGUI_StaticLineGraph'
 
 local kTitleFontName = Fonts.kAgencyFB_Medium
 local kFontName = Fonts.kAgencyFB_Small
-local kFontScale = GUIScale(Vector(1,1,0))
+local kFontScale = GUILinearScale(Vector(1,1,0))
 local gridColor = Color(1,1,1,0.1)
 local fontColor = Color(1,1,1,1)
-local xPadding = GUIScale(Vector(0,10,0))
-local yPadding = GUIScale(Vector(-10,0,0))
+local xPadding = GUILinearScale(Vector(0,10,0))
+local yPadding = GUILinearScale(Vector(-10,0,0))
 
 local function AddLine(self, linesTable, previous, current, color)
     local direction = GetNormalizedVector(previous - current)
@@ -31,7 +31,6 @@ local function AddLine(self, linesTable, previous, current, color)
     local length = math.sqrt(delta.x ^ 2 + delta.y ^ 2)
     
     local item = GUIManager:CreateGraphicItem()
-    item = GetGUIManager():CreateGraphicItem()
     item:SetColor(color)
     item:SetAnchor(GUIItem.Left, GUIItem.Top)
     if self.stencilFunc then
@@ -109,10 +108,10 @@ function CHUDGUI_StaticLineGraph:Initialize()
     
 end
 
-function CHUDGUI_StaticLineGraph:OnResolutionChange(stencilFunc)
-    kFontScale = GUIScale(Vector(1,1,0))
-    xPadding = GUIScale(Vector(0,10,0))
-    yPadding = GUIScale(Vector(-10,0,0))
+function CHUDGUI_StaticLineGraph:OnResolutionChanged(oldX, oldY, newX, newY)
+    kFontScale = GUILinearScale(Vector(1,1,0))
+    xPadding = GUILinearScale(Vector(0,10,0))
+    yPadding = GUILinearScale(Vector(-10,0,0))
 end
 
 function CHUDGUI_StaticLineGraph:SetStencilFunc(stencilFunc)
@@ -244,8 +243,6 @@ function CHUDGUI_StaticLineGraph:ExtendXAxisToBounds(bool)
     self.xAxisToBounds = bool
     self:refreshLines()
 end
-
-
 
 function CHUDGUI_StaticLineGraph:toGameTimeString(timeInt)
 
