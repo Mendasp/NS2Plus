@@ -267,7 +267,7 @@ function CHUDGUI_StaticLineGraph:refreshLines()
             local previous = self:scalePoint(linePoints[1])
             for i = 2, #linePoints do
                 local current = self:scalePoint(linePoints[i])
-                AddLine(self, self.plotLines, previous, current, color, self.graphBackground)
+                AddLine(self, self.plotLines, previous, current, color)
                 previous = current
             end
             if self.xAxisToBounds then
@@ -275,7 +275,7 @@ function CHUDGUI_StaticLineGraph:refreshLines()
                 if lastPoint then
                     local pointAtBounds = Vector(self.max.x, lastPoint.y, 0)
                     local toBounds = self:scalePoint(pointAtBounds)
-                    AddLine(self, self.plotLines, previous, toBounds, color, self.graphBackground)
+                    AddLine(self, self.plotLines, previous, toBounds, color)
                 end
             end
         end
@@ -339,7 +339,7 @@ function CHUDGUI_StaticLineGraph:refreshGrid(ignoreX, ignoreY)
         for x = self.min.x, self.max.x, self.gridSpacing.x do
         
             local xOffset = self:scalePoint(Vector(x,self.min.y,0))
-            AddLine(self, self.xGridLines, xOffset - Vector(0,self.graphSize.y,0), xOffset, gridColor, self.graphBackground)
+            AddLine(self, self.xGridLines, xOffset - Vector(0,self.graphSize.y,0), xOffset, gridColor)
             
             local lineString
             if self.xAxisIsTime then
@@ -364,7 +364,7 @@ function CHUDGUI_StaticLineGraph:refreshGrid(ignoreX, ignoreY)
         for y = self.min.y, self.max.y, self.gridSpacing.y do
         
             local yOffset = self:scalePoint(Vector(self.min.x,y,0))
-            AddLine(self, self.yGridLines, yOffset, yOffset + Vector(self.graphSize.x,0,0), gridColor, self.graphBackground)
+            AddLine(self, self.yGridLines, yOffset, yOffset + Vector(self.graphSize.x,0,0), gridColor)
             
             local lineString = tostring(y)
             local nameItem = self:getNameItem(false)

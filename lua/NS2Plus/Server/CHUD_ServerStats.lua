@@ -2,6 +2,7 @@
 local CHUDClientStats = {}
 local CHUDTeamStats = {}
 local CHUDRTGraph = {}
+local CHUDKillGraph = {}
 local CHUDResearchTree = {}
 
 local function GetGameTime(inMinutes)
@@ -35,11 +36,11 @@ local function AddRTStat(teamNumber, isBuilt, isDestroyed)
 	end
 end
 
-local function AddTechStat(teamNumber, techId, isResearch)
+local function AddTechStat(teamNumber, techId)
 	if (teamNumber == 1 or teamNumber == 2) and techId then
 		local teamInfoEnt = GetTeamInfoEntity(teamNumber)
 		
-		table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = GetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources(), isResearch = isResearch})
+		table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = GetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources()})
 	end
 end
 
@@ -53,7 +54,7 @@ function ResearchMixin:TechResearched(structure, researchId)
 			end
 		else
 			-- Don't add recycles to the tech log
-			AddTechStat(structure:GetTeamNumber(), researchId, true)
+			AddTechStat(structure:GetTeamNumber(), researchId)
 		end
 	end
 end
@@ -74,8 +75,8 @@ function ConstructMixin:OnConstructionComplete(builder)
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false)
 	elseif self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
-		-- Don't log built certain buildings...
-		AddTechStat(self:GetTeamNumber(), self:GetTechId(), false)
+		-- Don't log certain buildings...
+		AddTechStat(self:GetTeamNumber(), self:GetTechId())
 	end
 end
 
@@ -197,6 +198,12 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 		if lastStat.kills > rootStat.killstreak then
 			rootStat.killstreak = lastStat.kills
 		end
+	end
+end
+
+local function AddTeamGraphKill(teamNumber)
+	if teamNumber == 1 or teamNumber == 2 then
+		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = GetGameTime(true)})
 	end
 end
 
@@ -347,6 +354,7 @@ local function CHUDResetStats()
 	CHUDClientStats = {}
 	
 	CHUDRTGraph = {}
+	CHUDKillGraph = {}
 	
 	CHUDTeamStats[1] = {}
 	CHUDTeamStats[1].hits = 0
@@ -594,18 +602,23 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		msg.alienRTsLost = CHUDTeamStats[2]["rts"].lost
 		msg.gameLengthMinutes = gameMinutes
 		
+		-- Don't send the round data if there's no player data
 		if #finalStats[1] > 0 or #finalStats[2] > 0 then
 			Server.SendNetworkMessage("CHUDGameData", msg, true)
 			
-			for _, techLogEntry in ipairs(CHUDResearchTree) do
-				-- Exclude the initial buildings
-				if techLogEntry.finishedMinute > 0 or techLogEntry.teamRes > 0 then
-					Server.SendNetworkMessage("CHUDTechLog", techLogEntry, true)
+			for _, entry in ipairs(CHUDResearchTree) do
+				-- Exclude the initial buildings (finishedMinute is 0 and teamRes is 0)
+				if entry.finishedMinute > 0 or entry.teamRes > 0 then
+					Server.SendNetworkMessage("CHUDTechLog", entry, true)
 				end
 			end
 			
-			for _, RTGraphEntry in ipairs(CHUDRTGraph) do
-				Server.SendNetworkMessage("CHUDRTGraph", RTGraphEntry, true)
+			for _, entry in ipairs(CHUDRTGraph) do
+				Server.SendNetworkMessage("CHUDRTGraph", entry, true)
+			end
+			
+			for _, entry in ipairs(CHUDKillGraph) do
+				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
 			end
 		end
 		
@@ -658,11 +671,14 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 			ResetCHUDLastLifeStats(steamId)
 		end
 		
+		local targetTeam = self.GetTeamNumber and self:GetTeamNumber() or 0
+		
 		-- Now save the attacker weapon
 		local killerSteamId, killerWeapon, killerTeam = GetAttackerWeapon(killer, doer)
 		
-		if killerSteamId then
+		if killerSteamId and killerTeam ~= targetTeam and not self.isHallucination then
 			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
+			AddTeamGraphKill(killerTeam)
 		end
 		
 	end)

@@ -62,13 +62,18 @@ if not CHUDMainMenu then
 		gameMinute = "float (0 to 1023 by 0.01)",
 	}
 	
+	local kCHUDKillGraphMessage =
+	{
+		teamNumber = "integer (1 to 2)",
+		gameMinute = "float (0 to 1023 by 0.01)",
+	}
+	
 	local kCHUDTechLogMessage =
 	{
 		teamNumber = "integer (1 to 2)",
 		techId = "enum kTechId",
 		finishedMinute = "float (0 to 1023 by 0.01)",
 		activeRTs = "integer (0 to 23)",
-		isResearch = "boolean",
 		teamRes = "float (0 to " .. kMaxTeamResources .." by 0.01)",
 	}
 	
@@ -119,6 +124,7 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDPlayerStats", kCHUDPlayerStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDGameData", kCHUDGameDataMessage)
 	Shared.RegisterNetworkMessage( "CHUDRTGraph", kCHUDRTGraphMessage)
+	Shared.RegisterNetworkMessage( "CHUDKillGraph", kCHUDKillGraphMessage)
 	Shared.RegisterNetworkMessage( "CHUDTechLog", kCHUDTechLogMessage)
 
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")

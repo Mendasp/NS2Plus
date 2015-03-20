@@ -92,6 +92,7 @@ local avgAccTable = {}
 local miscDataTable = {}
 local cardsTable = {}
 local rtGraphTable = {}
+local killGraphTable = {}
 local techLogTable = {}
 
 local lastStatsMsg = -100
@@ -994,6 +995,30 @@ function CHUDGUI_EndStats:Initialize()
 	self.rtGraphText:SetLayer(kGUILayerMainMenu)
 	self.rtGraphTextShadow:AddChild(self.rtGraphText)
 	
+	self.killGraphTextShadow = GUIManager:CreateTextItem()
+	self.killGraphTextShadow:SetStencilFunc(GUIItem.NotEqual)
+	self.killGraphTextShadow:SetFontName(kTitleFontName)
+	self.killGraphTextShadow:SetColor(Color(0,0,0,1))
+	self.killGraphTextShadow:SetScale(scaledVector)
+	self.killGraphTextShadow:SetIsVisible(false)
+	self.killGraphTextShadow:SetText("KILL GRAPH")
+	self.killGraphTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
+	self.killGraphTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
+	self.killGraphTextShadow:SetLayer(kGUILayerMainMenu)
+	self.background:AddChild(self.killGraphTextShadow)
+	
+	self.killGraphText = GUIManager:CreateTextItem()
+	self.killGraphText:SetStencilFunc(GUIItem.NotEqual)
+	self.killGraphText:SetFontName(kTitleFontName)
+	self.killGraphText:SetColor(Color(1,1,1,1))
+	self.killGraphText:SetScale(scaledVector)
+	self.killGraphText:SetText("KILL GRAPH")
+	self.killGraphText:SetAnchor(GUIItem.Left, GUIItem.Top)
+	self.killGraphText:SetTextAlignmentX(GUIItem.Align_Center)
+	self.killGraphText:SetPosition(Vector(-kTextShadowOffset, -kTextShadowOffset, 0))
+	self.killGraphText:SetLayer(kGUILayerMainMenu)
+	self.killGraphTextShadow:AddChild(self.killGraphText)
+	
 	self.teamStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(16), 0))
 	local yPos = GUILinearScale(48)
 	self.team1UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
@@ -1007,6 +1032,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.statsCards = {}
 	self.techLogs = {}
 	self.rtGraphs = {}
+	self.killGraphs = {}
 	
 	self.rtGraph = _G["CHUDGUI_StaticLineGraph"]()
 	self.rtGraph:Initialize()
@@ -1021,6 +1047,20 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.rtGraph:StartLine(kTeam1Index, kBlueColor)
 	self.rtGraph:StartLine(kTeam2Index, kRedColor)
+	
+	self.killGraph = _G["CHUDGUI_StaticLineGraph"]()
+	self.killGraph:Initialize()
+	self.killGraph:SetAnchor(GUIItem.Middle, GUIItem.Top)
+	self.killGraph:SetSize(rtGraphSize)
+	self.killGraph:SetYGridSpacing(1)
+	self.killGraph:SetIsVisible(false)
+	self.killGraph:SetXAxisIsTime(true)
+	self.killGraph:ExtendXAxisToBounds(true)
+	self.killGraph:GiveParent(self.background)
+	self.killGraph:SetStencilFunc(GUIItem.NotEqual)
+	
+	self.killGraph:StartLine(kTeam1Index, kBlueColor)
+	self.killGraph:StartLine(kTeam2Index, kRedColor)
 	
 	self.builtRTsComp =  _G["CHUDGUI_ComparisonBarGraph"]()
 	self.builtRTsComp:Initialize()
@@ -1039,6 +1079,15 @@ function CHUDGUI_EndStats:Initialize()
 	self.lostRTsComp:SetStencilFunc(GUIItem.NotEqual)
 	self.lostRTsComp:SetTitle("Lost RTs")
 	self.lostRTsComp:GiveParent(self.background)
+	
+	self.killComparison =  _G["CHUDGUI_ComparisonBarGraph"]()
+	self.killComparison:Initialize()
+	self.killComparison:SetAnchor(GUIItem.Middle, GUIItem.Top)
+	self.killComparison:SetSize(comparisonSize)
+	self.killComparison:SetValues(0,0)
+	self.killComparison:SetStencilFunc(GUIItem.NotEqual)
+	self.killComparison:SetTitle("Total Kills")
+	self.killComparison:GiveParent(self.background)
 	
 	self.saved = false
 	self.prevRequestKey = false
@@ -1233,6 +1282,19 @@ local function repositionStats(self)
 			yPos = yPos + comparisonSize.y + GUILinearScale(48)
 		end
 		
+		self.killGraphTextShadow:SetIsVisible(#self.killGraphs > 0)
+		self.killGraph:SetIsVisible(#self.killGraphs > 0)
+		self.killComparison:SetIsVisible(#self.killGraphs > 0)
+		if #self.killGraphs > 0 then
+			self.killGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+			yPos = yPos + GUILinearScale(32)
+			
+			self.killGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
+			yPos = yPos + rtGraphSize.y + GUILinearScale(72)
+			
+			self.killComparison:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
+			yPos = yPos + comparisonSize.y + GUILinearScale(48)
+		end
 		self.contentSize = math.max(self.contentSize, yPos)
 end
 
@@ -1293,6 +1355,24 @@ local function SortByColumn(self, isMarine, sortField, inv)
 			row.background:SetColor(bgColor)
 		end
 	end
+end
+
+local function GetXSpacing(gameLength)
+	local xSpacing = 60
+	
+	if gameLength < 60 then
+		xSpacing = 10
+	elseif gameLength < 5*60 then
+		xSpacing = 30
+	elseif gameLength < 15*60 then
+		xSpacing = 60
+	elseif gameLength < 60*60 then
+		xSpacing = 300
+	else
+		xSpacing = 600
+	end
+	
+	return xSpacing
 end
 
 function CHUDGUI_EndStats:Update(deltaTime)
@@ -1697,19 +1777,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.rtGraph:SetPoints(2, self.rtGraphs[2])
 			self.rtGraph:SetYBounds(0, maxRTs+1, true)
 			local gameLength = miscDataTable.gameLengthMinutes*60
-			local xSpacing = 60
-			
-			if gameLength < 60 then
-				xSpacing = 10
-			elseif gameLength < 5*60 then
-				xSpacing = 30
-			elseif gameLength < 15*60 then
-				xSpacing = 60
-			elseif gameLength < 60*60 then
-				xSpacing = 300
-			else
-				xSpacing = 600
-			end
+			local xSpacing = GetXSpacing(gameLength)
 			
 			self.rtGraph:SetXBounds(0, gameLength)
 			self.rtGraph:SetXGridSpacing(xSpacing)
@@ -1731,6 +1799,60 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 		end
 		
+		self.killGraphs = {}
+		if #killGraphTable > 0 then
+			table.sort(killGraphTable, function(a, b)
+				if a.teamNumber == b.teamNumber then
+					return a.gameMinute < b.gameMinute
+				else
+					return a.teamNumber > b.teamNumber
+				end
+			end)
+			
+			local killCount = 0
+			local teamNumber = -1
+			self.killGraphs[1] = {}
+			self.killGraphs[2] = {}
+			local team1Kills = 0
+			local team2Kills = 0
+			for _, entry in ipairs(killGraphTable) do
+				if teamNumber ~= entry.teamNumber then
+					teamNumber = entry.teamNumber
+					killCount = 0
+				end
+				
+				if teamNumber == entry.teamNumber then
+					local adjustment = 0
+					if teamNumber == 1 then
+						team1Kills = team1Kills + 1
+					else
+						team2Kills = team2Kills + 1
+						adjustment = 0.05
+					end
+					table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, killCount, 0))
+					killCount = math.floor(killCount) + 1 + adjustment
+					table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, killCount, 0))
+				end
+			end
+			self.killGraph:SetPoints(1, self.killGraphs[1])
+			self.killGraph:SetPoints(2, self.killGraphs[2])
+			self.killGraph:SetYBounds(0, math.max(team1Kills, team2Kills)+1, true)
+			local gameLength = miscDataTable.gameLengthMinutes*60
+			local xSpacing = GetXSpacing(gameLength)
+			
+			self.killGraph:SetXBounds(0, gameLength)
+			self.killGraph:SetXGridSpacing(xSpacing)
+			
+			self.killComparison:SetValues(team1Kills, team2Kills)
+			
+			if team1Kills > 0 then
+				self.killComparison:SetLeftText("(" .. printNum(team1Kills/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(team1Kills))
+			end
+			if team2Kills > 0 then
+				self.killComparison:SetRightText(tostring(team2Kills) .. "  (" .. printNum(team2Kills/miscDataTable.gameLengthMinutes) .. "/min)")
+			end
+		end
+		
 		repositionStats(self)
 		
 		if not self.saved then
@@ -1740,6 +1862,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			savedStats.miscDataTable = miscDataTable
 			savedStats.cardsTable = cardsTable
 			savedStats.rtGraphTable = rtGraphTable
+			savedStats.killGraphTable = killGraphTable
 			savedStats.techLogTable = techLogTable
 			
 			local savedFile = io.open(lastRoundFile, "w+")
@@ -1755,6 +1878,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		miscDataTable = {}
 		cardsTable = {}
 		rtGraphTable = {}
+		killGraphTable = {}
 		techLogTable = {}
 	end
 end
@@ -2016,6 +2140,14 @@ local function CHUDSetRTGraph(message)
 	lastStatsMsg = Shared.GetTime()
 end
 
+local function CHUDSetKillGraph(message)
+	if message and message.gameMinute then
+		table.insert(killGraphTable, message)
+	end
+	
+	lastStatsMsg = Shared.GetTime()
+end
+
 local function CHUDSetTechLog(message)
 	if message and message.finishedMinute then
 		local entry = {}
@@ -2221,4 +2353,5 @@ Client.HookNetworkMessage("CHUDGameData", CHUDSetGameData)
 Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetWeaponStats)
 Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetCommStats)
 Client.HookNetworkMessage("CHUDRTGraph", CHUDSetRTGraph)
+Client.HookNetworkMessage("CHUDKillGraph", CHUDSetKillGraph)
 Client.HookNetworkMessage("CHUDTechLog", CHUDSetTechLog)
