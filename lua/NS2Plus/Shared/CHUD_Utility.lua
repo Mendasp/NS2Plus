@@ -140,6 +140,99 @@ function CHUDFormatDateTimeString(dateTime)
 	return string.format("%s%s, %d @ %d:%02d", os.date("%A, %B %d", dateTime), ordinal, tmpDate.year, tmpDate.hour, tmpDate.min)
 end
 
+function CHUDGetWeaponAmmoString(weapon)
+	local ammo = ""
+	if weapon and weapon:isa("Weapon") then
+		if weapon:isa("ClipWeapon") then
+			ammo = string.format("%d", weapon:GetClip() or 0)
+		elseif weapon:isa("GrenadeThrower") then
+			ammo = string.format("%d", weapon.grenadesLeft or 0)
+		elseif weapon:isa("LayMines") then
+			ammo = string.format("%d", weapon:GetMinesLeft() or 0)
+		elseif weapon:isa("ExoWeaponHolder") then
+			local leftWeapon = Shared.GetEntity(weapon.leftWeaponId)
+			local rightWeapon = Shared.GetEntity(weapon.rightWeaponId)
+			local leftAmmo = -1
+			local rightAmmo = -1
+			if rightWeapon:isa("Railgun") then
+				rightAmmo = rightWeapon:GetChargeAmount() * 100
+				if leftWeapon:isa("Railgun") then
+					leftAmmo = leftWeapon:GetChargeAmount() * 100
+				end
+			elseif rightWeapon:isa("Minigun") then
+				rightAmmo = rightWeapon.heatAmount * 100
+				if leftWeapon:isa("Minigun") then
+					leftAmmo = leftWeapon.heatAmount * 100
+				end
+			end
+			if leftAmmo > -1 and rightAmmo > -1 then
+				ammo = string.format("%d%% / %d%%", leftAmmo, rightAmmo)
+			elseif rightAmmo > -1 then
+				ammo = string.format("%d", rightAmmo)
+			end
+		elseif weapon:isa("Builder") or weapon:isa("Welder") then
+			ammo = string.format("%d%%", PlayerUI_GetUnitStatusPercentage())
+		end
+	end
+	
+	return ammo
+end
+
+function CHUDGetWeaponAmmoFraction(weapon)
+	local fraction = -1
+	if weapon and weapon:isa("Weapon") then
+		if weapon:isa("ClipWeapon") then
+			fraction = weapon:GetClip()/weapon:GetClipSize()
+		elseif weapon:isa("GrenadeThrower") then
+			fraction = weapon.grenadesLeft/kMaxHandGrenades
+		elseif weapon:isa("LayMines") then
+			fraction = weapon:GetMinesLeft()/kNumMines
+		elseif weapon:isa("ExoWeaponHolder") then
+			local leftWeapon = Shared.GetEntity(weapon.leftWeaponId)
+			local rightWeapon = Shared.GetEntity(weapon.rightWeaponId)
+
+			if rightWeapon:isa("Railgun") then
+				fraction = rightWeapon:GetChargeAmount()
+				if leftWeapon:isa("Railgun") then
+					fraction = (fraction + leftWeapon:GetChargeAmount()) / 2.0
+				end
+			elseif rightWeapon:isa("Minigun") then
+				fraction = rightWeapon.heatAmount
+				if leftWeapon:isa("Minigun") then
+					fraction = (fraction + leftWeapon.heatAmount) / 2.0
+				end
+				fraction = 1 - fraction
+			end
+		elseif weapon:isa("Builder") or weapon:isa("Welder") then
+			fraction = PlayerUI_GetUnitStatusPercentage()/100
+		end
+	end
+	
+	return fraction
+end
+
+function CHUDGetWeaponReserveAmmoString(weapon)
+	local ammo = ""
+	if weapon and weapon:isa("Weapon") then
+		if weapon:isa("ClipWeapon") then
+			ammo = string.format("%d", weapon:GetAmmo() or 0)
+		end
+	end
+	
+	return ammo
+end
+
+function CHUDGetWeaponReserveAmmoFraction(weapon)
+	local fraction = -1
+	if weapon and weapon:isa("Weapon") then
+		if weapon:isa("ClipWeapon") then
+			fraction = weapon:GetAmmo()/weapon:GetMaxAmmo()
+		end
+	end
+	
+	return fraction
+end
+
 if Client then
 	function CHUDEvaluateGUIVis()
 		local player = Client.GetLocalPlayer()

@@ -51,65 +51,37 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 
 	local player = Client.GetLocalPlayer()
 	local activeWeapon = player:GetActiveWeapon()
-	if activeWeapon and activeWeapon:isa("ClipWeapon") and not player:isa("Exo") then
-		local clipammo = ToString(PlayerUI_GetWeaponClip())
-		local ammo = ToString(PlayerUI_GetWeaponAmmo())
-		if clipammo == nil then clipammo = "0" end
-		local reloadindicator = ""
-		if player:GetActiveWeapon():GetIsReloading() then
-			reloadindicator = " (R)"
+	self.ammoText:SetIsVisible(activeWeapon and true or false)
+	
+	if activeWeapon then
+		local ammo = CHUDGetWeaponAmmoString(activeWeapon)
+		local reserveAmmo = CHUDGetWeaponReserveAmmoString(activeWeapon)
+		local fraction = CHUDGetWeaponAmmoFraction(activeWeapon)
+		local reserveFraction = CHUDGetWeaponReserveAmmoFraction(activeWeapon)
+		local isReloading = activeWeapon:isa("ClipWeapon") and activeWeapon:GetIsReloading()
+		local reloadIndicator = isReloading and " (R)" or ""
+		
+		self.ammoText:SetIsVisible(fraction ~= -1)
+		if reserveFraction ~= -1 then
+			self.ammoText:SetText(string.format("%s / %s", ammo, reserveAmmo .. reloadIndicator))
+		else
+			self.ammoText:SetText(string.format("%s", ammo))
 		end
-		self.ammoText:SetText(clipammo .. " / " .. ammo .. reloadindicator)
-		self.ammoText:SetIsVisible(true)
-
-		local fraction = PlayerUI_GetWeaponClip() / PlayerUI_GetWeapon():GetClipSize()
-
+		
 		if fraction < 0.25 then
 			pulsateTime = 0.25
 		elseif fraction <= 0.4 then
 			pulsateTime = 0.5
 		end
 
-		if not self.ammoText:GetIsAnimating() and fraction <= 0.4 and fraction > 0 then
-			self.ammoText:FadeIn(0.05, "CLASSIC_AMMO_PULSATE", AnimateLinear, Pulsate)
-		elseif fraction > 0.4 then
-			self.ammoText:SetColor(kAmmoColor)
-		elseif fraction == 0 then
-			self.ammoText:SetColor(kRed)
-		end
-	else
-		self.ammoText:SetColor(kAmmoColor)
-		if activeWeapon and (activeWeapon:isa("Builder") or activeWeapon:isa("Welder")) then
-			self.ammoText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
-			self.ammoText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
-		elseif activeWeapon and player:isa("Exo") and activeWeapon:isa("ExoWeaponHolder") then
-			local leftWeapon = Shared.GetEntity(activeWeapon.leftWeaponId)
-			local rightWeapon = Shared.GetEntity(activeWeapon.rightWeaponId)
-			local leftAmmo = -1
-			local rightAmmo = -1
-			if rightWeapon:isa("Railgun") then
-				rightAmmo = rightWeapon:GetChargeAmount() * 100
-				if leftWeapon:isa("Railgun") then
-					leftAmmo = leftWeapon:GetChargeAmount() * 100
-				end
-			elseif rightWeapon:isa("Minigun") then
-				rightAmmo = rightWeapon.heatAmount * 100
-				if leftWeapon:isa("Minigun") then
-					leftAmmo = leftWeapon.heatAmount * 100
-				end
+		if reserveFraction ~= -1 then
+			if not self.ammoText:GetIsAnimating() and fraction <= 0.4 and fraction > 0 then
+				self.ammoText:FadeIn(0.05, "CLASSIC_AMMO_PULSATE", AnimateLinear, Pulsate)
+			elseif fraction > 0.4 then
+				self.ammoText:SetColor(kAmmoColor)
+			elseif fraction == 0 then
+				self.ammoText:SetColor(kRed)
 			end
-			if leftAmmo > -1 and rightAmmo > -1 then
-				self.ammoText:SetText(string.format("%d / %d", leftAmmo, rightAmmo))
-			elseif rightAmmo > -1 then
-				self.ammoText:SetText(string.format("%d", rightAmmo))
-			end
-			self.ammoText:SetIsVisible((leftAmmo > -1 and rightAmmo > -1) or rightAmmo > -1)
-		elseif activeWeapon and activeWeapon:isa("GrenadeThrower") then
-			self.ammoText:SetText(string.format("%d", activeWeapon.grenadesLeft))
-		elseif activeWeapon and activeWeapon:isa("LayMines") then
-			self.ammoText:SetText(string.format("%d", activeWeapon:GetMinesLeft()))
-		else
-			self.ammoText:SetIsVisible(false)
 		end
 	end
 	

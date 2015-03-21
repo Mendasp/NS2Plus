@@ -141,6 +141,7 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.reloadIndicatorTextBG:SetLayer(kGUILayerPlayerHUD)
 	self.reloadIndicatorTextBG:SetIsVisible(false)
 	self.reloadIndicatorTextBG:SetIsScaling(false)
+	self.reloadIndicatorTextBG:SetText("R")
 	self.reloadIndicatorTextBG:SetColor(Color(0,0,0,1))
 	self.reloadIndicatorTextBG:SetPosition(Vector(2, kBarSize[hudbars].y/2+10, 0))
 
@@ -151,6 +152,7 @@ function CHUDGUI_CustomHUD:Initialize()
 	self.reloadIndicatorText:SetLayer(kGUILayerPlayerHUD)
 	self.reloadIndicatorText:SetIsVisible(false)
 	self.reloadIndicatorText:SetIsScaling(false)
+	self.reloadIndicatorText:SetText("R")
 	self.reloadIndicatorText:SetColor(Color(1,1,1,1))
 	self.reloadIndicatorText:SetPosition(Vector(0, kBarSize[hudbars].y/2+8, 0))
 	
@@ -247,31 +249,16 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 				self.rightBar:SetIsVisible(false)
 				rightFraction = energy / maxEnergy
 				rightPulsatingRed = energy < energyCost
-			elseif player:isa("Marine") and activeWeapon:isa("ClipWeapon") then
-				rightFraction = activeWeapon:GetClip() / activeWeapon:GetClipSize()
-				reserveFraction = activeWeapon:GetAmmo() / activeWeapon:GetMaxAmmo() * kBottomBar1SecSizeProportion
-				rightPulsatingRed = rightFraction <= 0.4 or (activeWeapon:isa("GrenadeLauncher") and rightFraction <= 0.5)
-			elseif player:isa("Exo") and activeWeapon:isa("ExoWeaponHolder") then
-				local leftWeapon = Shared.GetEntity(activeWeapon.leftWeaponId)
-				local rightWeapon = Shared.GetEntity(activeWeapon.rightWeaponId)
-
-				if rightWeapon:isa("Railgun") then
-					rightFraction = rightWeapon:GetChargeAmount()
-					if leftWeapon:isa("Railgun") then
-						rightFraction = (rightFraction + leftWeapon:GetChargeAmount()) / 2.0
-					end
-				elseif rightWeapon:isa("Minigun") then
-					rightFraction = rightWeapon.heatAmount
-					if leftWeapon:isa("Minigun") then
-						rightFraction = (rightFraction + leftWeapon.heatAmount) / 2.0
-					end
-					rightFraction = 1 - rightFraction
+			elseif player:isa("Marine") or player:isa("Exo") then
+				rightFraction = CHUDGetWeaponAmmoFraction(activeWeapon)
+				reserveFraction = CHUDGetWeaponReserveAmmoFraction(activeWeapon)
+				if reserveFraction ~= -1 then
+					rightPulsatingRed = rightFraction <= 0.4 or (activeWeapon:isa("GrenadeLauncher") and rightFraction <= 0.5)
 				end
 			end
 		end
 		
 		-- Don't display the text for the NS1 bars, we will reuse the existing UI elements
-		-- ALSO: COUNTDOWN FOR SOMEONE TO COMPLAIN AND REQUEST THIS TEXT TO BE AN OPTION IN 3, 2, 1...
 		if (player:isa("Marine") or player:isa("Exo") or player:isa("Alien")) and hudbars == 1 then
 			if self.lastHealth ~= health or self.lastArmor ~= armor then
 				if not player:isa("Exo") then
@@ -294,20 +281,25 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 				self.lastArmor = armor
 			end
 			
-			if activeWeapon and activeWeapon:isa("ClipWeapon") and not activeWeapon:isa("ExoWeaponHolder") then
-				local clip = activeWeapon:GetClip()
-				local ammo = activeWeapon:GetAmmo()
-				local isreloading = activeWeapon:GetIsReloading()
+			if activeWeapon and player:isa("Marine") or player:isa("Exo") then
+				local clip = CHUDGetWeaponAmmoString(activeWeapon)
+				local ammo = CHUDGetWeaponReserveAmmoString(activeWeapon)
+				local isReloading = activeWeapon:isa("ClipWeapon") and activeWeapon:GetIsReloading()
 
-				self.reloadIndicatorText:SetText("R")
-				self.reloadIndicatorTextBG:SetText("R")
-				self.reloadIndicatorText:SetIsVisible(isreloading)
-				self.reloadIndicatorTextBG:SetIsVisible(isreloading)
+				self.reloadIndicatorText:SetIsVisible(isReloading)
+				self.reloadIndicatorTextBG:SetIsVisible(isReloading)
 				
-				if self.lastReserveAmmo ~= ammo then
+				if reserveFraction ~= -1 then
 					self.ammoText:SetText(string.format("%s / %s", clip, ammo))
 					self.ammoTextBg:SetText(string.format("%s / %s", clip, ammo))
-					
+				else
+					self.ammoText:SetText(string.format("%s", clip))
+					self.ammoTextBg:SetText(string.format("%s", clip))
+					-- If we have no reserve ammo, use the actual "ammo" as clip
+					ammo = clip
+				end
+				
+				if self.lastReserveAmmo ~= ammo then
 					self.ammoText:SetIsVisible(true)
 					self.ammoTextBg:SetIsVisible(true)
 					self.ammoText:SetColor(Color(1,1,1,1))
@@ -319,12 +311,6 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 					self.lastReserveAmmo = ammo
 				end
 			else
-				if activeWeapon and (activeWeapon:isa("Builder") or activeWeapon:isa("Welder")) then
-					self.reloadIndicatorText:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
-					self.reloadIndicatorTextBG:SetText(string.format("%d%%", PlayerUI_GetUnitStatusPercentage()))
-					self.reloadIndicatorText:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
-					self.reloadIndicatorTextBG:SetIsVisible(PlayerUI_GetUnitStatusPercentage() > 0)
-				end
 				self.ammoText:SetIsVisible(false)
 				self.ammoTextBg:SetIsVisible(false)
 				-- When switching to non-clipweapons and switching back we want the text to show up again
@@ -362,8 +348,8 @@ function CHUDGUI_CustomHUD:Update(deltaTime)
 		
 		if self.reserveBar then
 			self.reserveBar:SetIsVisible(reserveFraction > 0)
-			self.reserveBar:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y*reserveFraction, 0))
-			self.reserveBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], kBarTexCoords[2]-kBarTexCoords[2]*reserveFraction)
+			self.reserveBar:SetSize(Vector(-kBarSize[hudbars].x, -kBarSize[hudbars].y*reserveFraction*kBottomBar1SecSizeProportion, 0))
+			self.reserveBar:SetTexturePixelCoordinates(kBarTexCoords[1], kBarTexCoords[2], kBarTexCoords[3], kBarTexCoords[2]-kBarTexCoords[2]*reserveFraction*kBottomBar1SecSizeProportion)
 			self.reserveBar:SetColor(kWhite)
 		end
 
