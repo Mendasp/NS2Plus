@@ -51,7 +51,7 @@ local originalAlienInit
 originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 	function(self)
 		local mingui = not CHUDGetOption("mingui")
-		local alienbars = CHUDGetOption("alienbars")
+		local aliencircles = CHUDGetOption("aliencircles")
 	
 		originalAlienInit(self)
 		
@@ -61,7 +61,7 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
 		self.gameTime:SetColor(kAlienTeamColorFloat)
 		
-		local kTextureNameCHUD = CHUDGetOptionAssocVal("alienbars")
+		local kTextureNameCHUD = CHUDGetOptionAssocVal("aliencircles")
 		local kBackgroundCHUD = ConditionalValue(mingui, PrecacheAsset("ui/alien_commander_bg_smoke.dds"), PrecacheAsset("ui/transparent.dds"))
 		
 		// Backgrounds of health/energy
@@ -75,9 +75,9 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self.energyBall:SetForegroundTexture(kTextureNameCHUD)
 		self.adrenalineEnergy:SetForegroundTexture(kTextureNameCHUD)
 		
-		local healthColor = ConditionalValue(alienbars == 2, Color(1, 1, 1, 1), Color(230/255, 171/255, 46/255, 1))
-		local armorColor = ConditionalValue(alienbars == 2, Color(1, 1, 1, 1), Color(1, 121/255, 12/255, 1))
-		local adrenalineColor = ConditionalValue(alienbars == 2, Color(1, 1, 1, 1), Color(1, 121/255, 12/255, 1))
+		local healthColor = ConditionalValue(aliencircles == 2, Color(1, 1, 1, 1), Color(230/255, 171/255, 46/255, 1))
+		local armorColor = ConditionalValue(aliencircles == 2, Color(1, 1, 1, 1), Color(1, 121/255, 12/255, 1))
+		local adrenalineColor = ConditionalValue(aliencircles == 2, Color(1, 1, 1, 1), Color(1, 121/255, 12/255, 1))
 		
 		self.healthBall:GetLeftSide():SetColor(healthColor)
 		self.healthBall:GetRightSide():SetColor(healthColor)
@@ -88,7 +88,7 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		self.adrenalineEnergy:GetLeftSide():SetColor(adrenalineColor)
 		self.adrenalineEnergy:GetRightSide():SetColor(adrenalineColor)
 		
-		if alienbars == 2 then
+		if aliencircles == 2 then
 			self.armorBall:GetLeftSide():SetTexturePixelCoordinates(0, 0, 64, 128)
 			self.armorBall:GetRightSide():SetTexturePixelCoordinates(64, 0, 128, 128)
 			
@@ -207,10 +207,10 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 		
 		self.resourceDisplay.teamText:SetIsVisible(showcomm)
 		
-		local alienbars = CHUDGetOption("alienbars")
+		local aliencircles = CHUDGetOption("aliencircles")
 		local energyColor = Color(1, 1, 1, 1)
 		
-		if alienbars == 2 and self.energyBall:GetBackground():GetColor() ~= Color(0.6, 0, 0, 1) then
+		if aliencircles == 2 and self.energyBall:GetBackground():GetColor() ~= Color(0.6, 0, 0, 1) then
 			self.energyBall:GetLeftSide():SetColor(energyColor)
 			self.energyBall:GetRightSide():SetColor(energyColor)
 		end
@@ -237,7 +237,7 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 			mucousBallSettings.BackgroundTextureY1 = 0
 			mucousBallSettings.BackgroundTextureX2 = 0
 			mucousBallSettings.BackgroundTextureY2 = 0
-			mucousBallSettings.ForegroundTextureName = CHUDGetOptionAssocVal("alienbars")
+			mucousBallSettings.ForegroundTextureName = CHUDGetOptionAssocVal("aliencircles")
 			mucousBallSettings.ForegroundTextureWidth = 128
 			mucousBallSettings.ForegroundTextureHeight = 128
 			mucousBallSettings.ForegroundTextureX1 = 128

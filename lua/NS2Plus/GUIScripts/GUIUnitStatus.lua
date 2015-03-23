@@ -19,7 +19,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()
 	
-	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates")
+	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates") or 0
 	
 	local showHints = showHints
 	

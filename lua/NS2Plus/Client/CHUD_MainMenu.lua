@@ -28,6 +28,7 @@ CHUDMarineSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_M", "sensitivit
 CHUDAlienSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_A", "sensitivity_a" )
 CHUDMarineFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_M", "fov_m" )
 CHUDAlienFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_A", "fov_a" )
+CHUDCrosshairScaleSlider = MakeCHUDSliderCallback( "CHUD_CrosshairScale", "crosshairscale" )
 
 function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
@@ -554,13 +555,15 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			OnMouseOver = function(self)
 				if mainMenu ~= nil then
 					local text = option.tooltip
+					local texture = option.helpImage
+					local textureSize = option.helpImageSize
 					if text ~= nil then
 						local val = ConditionalValue(option.disabledValue == nil, option.defaultValue, option.disabledValue)
 						if option.disabled and val ~= option.currentValue then
 							text = text .. " (Disabled by server)."
 						end
 						
-						mainMenu.optionTooltip:SetText(text)
+						mainMenu.optionTooltip:SetText(text, texture, textureSize)
 						mainMenu.optionTooltip:Show()
 					else
 						mainMenu.optionTooltip:Hide()

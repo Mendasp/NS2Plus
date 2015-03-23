@@ -3,10 +3,8 @@ originalCrossInit = Class_ReplaceMethod("GUICrosshair", "Initialize",
 	function(self)
 		originalCrossInit(self)
 		
-		if CHUDGetOption("crosshairscaling") then
-			self.crosshairs:SetSize(Vector(GUIScale(GUICrosshair.kCrosshairSize), GUIScale(GUICrosshair.kCrosshairSize), 0))
-			self.damageIndicator:SetSize(Vector(GUIScale(GUICrosshair.kCrosshairSize), GUIScale(GUICrosshair.kCrosshairSize), 0))
-		end
+		self.crosshairs:SetSize(Vector(1, 1, 0)*GUICrosshair.kCrosshairSize*CHUDGetOption("crosshairscale"))
+		self.damageIndicator:SetSize(Vector(1, 1, 0)*GUICrosshair.kCrosshairSize*CHUDGetOption("crosshairscale"))
 	end)
 	
 // For reasons unknown to science the crosshair sets its position again every single frame
@@ -15,8 +13,5 @@ originalCrossUpdate = Class_ReplaceMethod("GUICrosshair", "Update",
 	function(self, deltaTime)
 		originalCrossUpdate(self)
 		
-		if CHUDGetOption("crosshairscaling") then
-			local scaledSize = GUIScale(GUICrosshair.kCrosshairSize)
-			self.crosshairs:SetPosition(Vector(-scaledSize / 2, -scaledSize / 2, 0))
-		end
+		self.crosshairs:SetPosition(-Vector(0.5, 0.5, 0)*GUICrosshair.kCrosshairSize*CHUDGetOption("crosshairscale"))
 	end)
