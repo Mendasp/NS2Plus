@@ -179,8 +179,6 @@ originalMarineChanged = Class_ReplaceMethod( "GUIMarineHUD", "OnLocalPlayerChang
 	
 		if not newPlayer:isa("Exo") then
 			self:SetFrameVisible(not CHUDGetOption("mingui"))
-		elseif CHUDGetOption("drawviewmodel") == 1 or CHUDGetOption("drawviewmodel") == 3 then
-			self:SetStatusDisplayVisible(true)
 		end
 	end)
 	
@@ -204,24 +202,25 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local gametime = CHUDGetOption("gametime")
 		local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("customhud_m") ~= 2
 		local inventoryMode = CHUDGetOption("inventory")
-
+		
+		-- Minimal HUD pls go home, you're drunk
+		-- Run this if WE choose to have it
+		if self.lastNotificationUpdate + GUIMarineHUD.kNotificationUpdateIntervall < Client.GetTime() then
+			local fullMode = Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Full
+			if not fullMode and commactions then
+				self.eventDisplay:Update(Client.GetTime() - self.lastNotificationUpdate, { PlayerUI_GetRecentNotification(), PlayerUI_GetRecentPurchaseable() } )
+				self.lastNotificationUpdate = Client.GetTime()
+			end
+			self.eventDisplay.notificationFrame:SetIsVisible(commactions)
+		end
+		
 		originalMarineHUDUpdate(self, deltaTime)
 		
-		-- Force it on all the time when disabling the viewmodel
 		local player = Client.GetLocalPlayer()
 		
 		if self.gameTime then
 			self.gameTime:SetText(CHUDGetGameTime())
 			self.gameTime:SetIsVisible(gametime)
-		end
-		
-		// Minimal HUD pls go home, you're drunk
-		// Run this again so WE choose if we want to toggle it or not
-        if Client.GetOptionInteger("hudmode", kHUDMode.Full) == kHUDMode.Minimal then
-			local notification = PlayerUI_GetRecentNotification()
-			
-			self.eventDisplay:Update(Client.GetTime() - self.lastNotificationUpdate, { notification, PlayerUI_GetRecentPurchaseable() } )
-			self.lastNotificationUpdate = Client.GetTime()
 		end
 		
 		if not rtcount then
@@ -240,13 +239,11 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 			self.resourceDisplay.rtCount:SetPosition(Vector(pos.x-75, pos.y, 0))
 		end
 		
-		// Commander name / TRes
+		-- Commander name / TRes
 		self.commanderName:SetIsVisible(showcomm)
 		self.resourceDisplay.teamText:SetIsVisible(showcomm)
-
-		self.eventDisplay.notificationFrame:SetIsVisible(commactions)
 		
-		// Disable that rotating border around the HP Bars if we have MinGUI or disabled bars
+		-- Disable that rotating border around the HP Bars if we have MinGUI or disabled bars
 		if not mingui or not hpbar then
 			self.statusDisplay.healthBorderMask:SetColor(Color(1,1,1,0))
 			self.statusDisplay.armorBorderMask:SetColor(Color(1,1,1,0))
@@ -262,12 +259,12 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 			self.statusDisplay.healthText:SetIsVisible(false)
 		end
 		
-		// In vanilla, the commander name doesn't get updated (or show!) if we use their minimal HUD
-		// Make it run again! Let us choose! Power to the people!
-		// Update commander name
+		-- In vanilla, the commander name doesn't get updated (or show!) if we use low detail HUD
+		-- Make it run again! Let us choose! Power to the people!
+		-- Update commander name
 		local commanderName = PlayerUI_GetCommanderName()
 		
-		if Client.GetOptionInteger("hudmode", kHUDMode.Full) ~= kHUDMode.Full then
+		if Client.GetOptionInteger("hudmode", kHUDMode.Full) ~= kHUDMode.Full and showcomm then
 			
 			if commanderName == nil then
 			

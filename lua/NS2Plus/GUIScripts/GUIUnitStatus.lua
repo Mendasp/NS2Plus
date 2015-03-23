@@ -19,11 +19,11 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()
 	
-	local minnps = CHUDGetOption("minnps") and not localPlayerIsCommander
+	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates")
 	
 	local showHints = showHints
 	
-	if minnps then
+	if nameplates == 1 then
 		showHints = false
 	end
 	
@@ -32,7 +32,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	
 		
 	-- Hide Background
-	if CHUDGetOption("mingui") or minnps then
+	if CHUDGetOption("mingui") or nameplates > 0 then
 		updateBlip.statusBg:SetTexture(kTransparentTexture)
 		if updateBlip.BorderMask then
 			updateBlip.BorderMask:SetIsVisible(false)
@@ -42,24 +42,24 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		end
 	end
 
-    if blipData.IsWorldWeapon and updateBlip.AbilityBar then
-        if CHUDGetOption("pickupexpire") == 0 then
-            updateBlip.AbilityBarBg:SetIsVisible(false)
-        end
-        if CHUDGetOption("pickupexpirecolor") > 0 then
-            if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
-                updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
-            elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
-                updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
-            elseif blipData.AbilityFraction < 0.25 then
-                updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
-            end
-        end
-    end
+	if blipData.IsWorldWeapon and updateBlip.AbilityBar then
+		if CHUDGetOption("pickupexpire") == 0 then
+			updateBlip.AbilityBarBg:SetIsVisible(false)
+		end
+		if CHUDGetOption("pickupexpirecolor") > 0 then
+			if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
+				updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
+			elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
+				updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
+			elseif blipData.AbilityFraction < 0.25 then
+				updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
+			end
+		end
+	end
 
 	
-	-- Minimal Nameplates
-	if minnps then
+	-- Percentages Nameplates
+	if nameplates == 1 then
 		if CHUDBlipData and updateBlip.NameText:GetIsVisible() then
 			
 			if CHUDBlipData.Percentage then
@@ -97,6 +97,9 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			end
 			
 		end
+	elseif nameplates == 2 and not blipData.IsPlayer then
+		updateBlip.NameText:SetIsVisible(false)
+		updateBlip.HintText:SetIsVisible(false)
 	end
 	
 end

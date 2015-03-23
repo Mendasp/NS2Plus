@@ -64,16 +64,16 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "A4",
 			},
-			minnps = {
-				name    = "CHUD_MinNameplates",
-				label   = "Minimal nameplates",
-				tooltip = "Toggles building names and health/armor bars with a simple %.",
+			nameplates = {
+				name    = "CHUD_Nameplates",
+				label   = "Nameplate style",
+				tooltip = "Changes building names and health/armor bars for teammates and structures.",
 				type    = "select",
-				values  = { "Off", "On" },
+				values  = { "Default", "Percentages", "Bars only" },
 				callback = CHUDSaveMenuSettings,
-				defaultValue = false,
+				defaultValue = 0,
 				category = "func",
-				valueType = "bool",
+				valueType = "int",
 				sort = "A5",
 			},
 			smallnps = {
