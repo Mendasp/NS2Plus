@@ -9,6 +9,7 @@ Latest changes
 	- Removed message about players not being able to join when detecting mod updates if the server has a mod backup server enabled.
 	- The Classic Ammo and HUD Bars options now use the same code to fetch weapon info. They now also display mines and grenades.
 	- Added option to customize the behavior for the inventory, the options allow you to have it always on, disabled, or showing weapon ammo for marines.
+	- Renamed "Minimal Nameplates" option to "Nameplate style" and added a third style to show only the bars. The options now are: "Default", "Percentages", "Bars only".
 
 - 19/03/2015
 	- Classic Ammo now supports the Exo.
