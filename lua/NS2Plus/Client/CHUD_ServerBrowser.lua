@@ -84,13 +84,19 @@ originalServerEntryInit = Class_ReplaceMethod( "ServerEntry", "Initialize",
 			if GUIItemContainsPoint(self.playerSkill, Client.GetCursorPosScreen()) then
 				self.playerSkill.tooltip:SetText(self.playerSkill.tooltipText)
 				self.playerSkill.tooltip:Show()
-			else
+			elseif GUIItemContainsPoint(self.modName.guiItem, Client.GetCursorPosScreen()) then
 				if self.modName.tooltip then
 					self.playerSkill.tooltip:SetText(self.modName.tooltip)
 					self.playerSkill.tooltip:Show()
-				else
-					self.playerSkill.tooltip:Hide()
 				end
+			else
+				self.playerSkill.tooltip:Hide()
 			end
+		end)
+		
+		table.insertunique(self.mouseOutCallbacks, function(self)
+			self.scriptHandle.highlightServer:SetIsVisible(false)
+			self.favorite:SetColor(kFavoriteColor)
+			self.playerSkill.tooltip:Hide()
 		end)
 	end)
