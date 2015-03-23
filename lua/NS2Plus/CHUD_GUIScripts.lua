@@ -23,6 +23,7 @@ Script.Load("lua/NS2Plus/GUIScripts/GUICrosshair.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIHoverTooltip.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUICommanderAlerts.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_Overhead.lua")
+Script.Load("lua/NS2Plus/GUIScripts/GUIInventory.lua")
 
 GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
 GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")

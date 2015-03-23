@@ -82,6 +82,8 @@ function CHUDGUI_ClassicAmmo:Update(deltaTime)
 			elseif fraction == 0 then
 				self.ammoText:SetColor(kRed)
 			end
+		else
+			self.ammoText:SetColor(kAmmoColor)
 		end
 	end
 	

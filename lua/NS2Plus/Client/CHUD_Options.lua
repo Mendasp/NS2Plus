@@ -789,6 +789,23 @@ CHUDOptions =
 				end,
 				sort = "E3",
 			},
+			inventory = {
+				name    = "CHUD_Inventory",
+				label   = "Weapon Inventory",
+				tooltip = "Lets you customize the functionality of the inventory.",
+				type    = "select",
+				values  = { "Default", "Hide", "Show ammo", "Always on", "Always on + ammo" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				applyFunction = function() CHUDRestartScripts({
+					"Hud/Marine/GUIMarineHUD",
+					"GUIAlienHUD",
+					"GUIProgressBar",
+					}) end,
+				sort = "E4",
+			},
 			crosshairscaling = {
 				name    = "CHUD_CrosshairScaling",
 				label   = "Scale crosshair with resolution",
@@ -802,7 +819,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDRestartScripts({ "GUICrosshair" })
 				end,
-				sort = "E4",
+				sort = "E5",
 			},
 
 

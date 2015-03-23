@@ -6,8 +6,9 @@ Latest changes
 ==============
 - /03/2015
 	- Added Kill Graph to end game stats.
-	- Removed message about player not being able to join when detecting mod updates if the server has a mod backup server enabled.
+	- Removed message about players not being able to join when detecting mod updates if the server has a mod backup server enabled.
 	- The Classic Ammo and HUD Bars options now use the same code to fetch weapon info. They now also display mines and grenades.
+	- Added option to customize the behavior for the inventory, the options allow you to have it always on, disabled, or showing weapon ammo for marines.
 
 - 19/03/2015
 	- Classic Ammo now supports the Exo.

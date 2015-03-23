@@ -1,3 +1,4 @@
+local kBarPos
 local kTextures =
 {
     [kMarineTeamType] = PrecacheAsset("ui/progress_bar_marine.dds"),
@@ -9,8 +10,14 @@ Class_AddMethod( "GUIProgressBar", "ApplyCHUD",
 		
 		local mingui = CHUDGetOption("mingui")
 		local texture = ConditionalValue(mingui, "ui/transparent.dds", kTextures[self.teamType])
+		local inventoryMode = CHUDGetOption("inventory")
 
 		self.progressBarBg:SetTexture(texture)
+		if self.teamType == kMarineTeamType and (inventoryMode == 2 or inventoryMode == 4) then
+			self.progressBarBg:SetPosition(kBarPos-GUIScale(Vector(0, 24, 0)))
+		else
+			self.progressBarBg:SetPosition(kBarPos)
+		end
 		
 		self.lastMinGUI = mingui
 	end)
@@ -19,7 +26,8 @@ local originalProgressBarInit
 originalProgressBarInit = Class_ReplaceMethod( "GUIProgressBar", "Initialize",
 	function(self)
 		originalProgressBarInit(self)
-
+		kBarPos = self.progressBarBg:GetPosition()
+		
 		self:ApplyCHUD()
 	end)
 	

@@ -203,15 +203,12 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local commactions = CHUDGetOption("commactions")
 		local gametime = CHUDGetOption("gametime")
 		local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("customhud_m") ~= 2
+		local inventoryMode = CHUDGetOption("inventory")
 
 		originalMarineHUDUpdate(self, deltaTime)
 		
 		-- Force it on all the time when disabling the viewmodel
 		local player = Client.GetLocalPlayer()
-		-- Don't show it for the exo because it doesn't normally show it, duh
-		if player and self.inventoryDisplay then
-			self.inventoryDisplay.forceAnimationReset = not player:isa("Exo") and (CHUDGetOption("drawviewmodel") == 1 or CHUDGetOption("drawviewmodel") == 3)
-		end
 		
 		if self.gameTime then
 			self.gameTime:SetText(CHUDGetGameTime())
