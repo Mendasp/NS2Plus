@@ -93,6 +93,7 @@ local miscDataTable = {}
 local cardsTable = {}
 local rtGraphTable = {}
 local killGraphTable = {}
+local buildingSummaryTable = {}
 local techLogTable = {}
 
 local lastStatsMsg = -100
@@ -312,7 +313,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.playerName:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.playerName:SetTextAlignmentY(GUIItem.Align_Center)
 	item.playerName:SetPosition(Vector(kRowPlayerNameOffset, 0, 0))
-	item.playerName:SetText(playerName)
+	item.playerName:SetText(playerName or "")
 	item.playerName:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.playerName)
 	
@@ -333,7 +334,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.timeBuilding:SetTextAlignmentY(GUIItem.Align_Center)
 	item.timeBuilding:SetTextAlignmentX(GUIItem.Align_Center)
 	item.timeBuilding:SetPosition(Vector(xOffset, 0, 0))
-	item.timeBuilding:SetText(timeBuilding)
+	item.timeBuilding:SetText(timeBuilding or "")
 	item.timeBuilding:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.timeBuilding)
 	
@@ -348,7 +349,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.sdmg:SetTextAlignmentY(GUIItem.Align_Center)
 	item.sdmg:SetTextAlignmentX(GUIItem.Align_Center)
 	item.sdmg:SetPosition(Vector(xOffset, 0, 0))
-	item.sdmg:SetText(sdmg)
+	item.sdmg:SetText(sdmg or "")
 	item.sdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.sdmg)
 	
@@ -363,7 +364,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.pdmg:SetTextAlignmentY(GUIItem.Align_Center)
 	item.pdmg:SetTextAlignmentX(GUIItem.Align_Center)
 	item.pdmg:SetPosition(Vector(xOffset, 0, 0))
-	item.pdmg:SetText(pdmg)
+	item.pdmg:SetText(pdmg or "")
 	item.pdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.pdmg)
 	
@@ -378,7 +379,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.acc:SetTextAlignmentY(GUIItem.Align_Center)
 	item.acc:SetTextAlignmentX(GUIItem.Align_Center)
 	item.acc:SetPosition(Vector(xOffset, 0, 0))
-	item.acc:SetText(acc)
+	item.acc:SetText(acc or "")
 	item.acc:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.acc)
 	
@@ -393,7 +394,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.deaths:SetTextAlignmentY(GUIItem.Align_Center)
 	item.deaths:SetTextAlignmentX(GUIItem.Align_Center)
 	item.deaths:SetPosition(Vector(xOffset, 0, 0))
-	item.deaths:SetText(deaths)
+	item.deaths:SetText(deaths or "")
 	item.deaths:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.deaths)
 	
@@ -408,7 +409,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.assists:SetTextAlignmentY(GUIItem.Align_Center)
 	item.assists:SetTextAlignmentX(GUIItem.Align_Center)
 	item.assists:SetPosition(Vector(xOffset, 0, 0))
-	item.assists:SetText(assists)
+	item.assists:SetText(assists or "")
 	item.assists:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.assists)
 	
@@ -423,7 +424,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.kills:SetTextAlignmentY(GUIItem.Align_Center)
 	item.kills:SetTextAlignmentX(GUIItem.Align_Center)
 	item.kills:SetPosition(Vector(xOffset, 0, 0))
-	item.kills:SetText(kills)
+	item.kills:SetText(kills or "")
 	item.kills:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.kills)
 	
@@ -553,7 +554,7 @@ local function CreateHeaderRow(container, bgColor, textColor, leftText, rightTex
 	item.leftText:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.leftText:SetTextAlignmentY(GUIItem.Align_Center)
 	item.leftText:SetPosition(Vector(GUILinearScale(5), 0, 0))
-	item.leftText:SetText(leftText)
+	item.leftText:SetText(leftText or "")
 	item.leftText:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.leftText)
 	
@@ -566,7 +567,7 @@ local function CreateHeaderRow(container, bgColor, textColor, leftText, rightTex
 	item.rightText:SetTextAlignmentX(GUIItem.Align_Max)
 	item.rightText:SetTextAlignmentY(GUIItem.Align_Center)
 	item.rightText:SetPosition(Vector(-GUILinearScale(5), 0, 0))
-	item.rightText:SetText(rightText)
+	item.rightText:SetText(rightText or "")
 	item.rightText:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.rightText)
 	
@@ -667,7 +668,7 @@ function CHUDGUI_EndStats:CreateTechLogHeader(teamNumber, teamName)
 	return item
 end
 
-local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techName, activeRTs, numRes, isResearch, logoTexture, logoCoords, logoSizeX, logoSizeY, logoColor)
+local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techName, activeRTs, numRes, logoTexture, logoCoords, logoSizeX, logoSizeY, logoColor)
 	
 	local containerSize = container:GetSize()
 	container:SetSize(Vector(containerSize.x, containerSize.y + kTechLogRowSize.y, 0))
@@ -684,20 +685,24 @@ local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techNa
 	
 	container:AddChild(item.background)
 	
-	item.timeBuilt = GUIManager:CreateTextItem()
-	item.timeBuilt:SetStencilFunc(GUIItem.NotEqual)
-	item.timeBuilt:SetFontName(kRowFontName)
-	item.timeBuilt:SetColor(textColor)
-	item.timeBuilt:SetScale(scaledVector)
-	item.timeBuilt:SetAnchor(GUIItem.Left, GUIItem.Center)
-	item.timeBuilt:SetTextAlignmentX(GUIItem.Align_Center)
-	item.timeBuilt:SetTextAlignmentY(GUIItem.Align_Center)
-	item.timeBuilt:SetPosition(Vector(GUILinearScale(30), 0, 0))
-	item.timeBuilt:SetText(timeBuilt)
-	item.timeBuilt:SetLayer(kGUILayerMainMenu)
-	item.background:AddChild(item.timeBuilt)
+	local xOffset = GUILinearScale(10)
 	
-	local xOffset = GUILinearScale(70)
+	if timeBuilt ~= "" then
+		item.timeBuilt = GUIManager:CreateTextItem()
+		item.timeBuilt:SetStencilFunc(GUIItem.NotEqual)
+		item.timeBuilt:SetFontName(kRowFontName)
+		item.timeBuilt:SetColor(textColor)
+		item.timeBuilt:SetScale(scaledVector)
+		item.timeBuilt:SetAnchor(GUIItem.Left, GUIItem.Center)
+		item.timeBuilt:SetTextAlignmentX(GUIItem.Align_Center)
+		item.timeBuilt:SetTextAlignmentY(GUIItem.Align_Center)
+		item.timeBuilt:SetPosition(Vector(GUILinearScale(30), 0, 0))
+		item.timeBuilt:SetText(timeBuilt or "")
+		item.timeBuilt:SetLayer(kGUILayerMainMenu)
+		item.background:AddChild(item.timeBuilt)
+		
+		xOffset = GUILinearScale(70)
+	end
 	
 	if logoTexture then
 		logoSizeX = GUILinearScale(logoSizeX)
@@ -728,7 +733,7 @@ local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techNa
 	item.techName:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.techName:SetTextAlignmentY(GUIItem.Align_Center)
 	item.techName:SetPosition(Vector(xOffset, 0, 0))
-	item.techName:SetText(techName)
+	item.techName:SetText(techName or "")
 	item.techName:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.techName)
 	
@@ -741,7 +746,7 @@ local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techNa
 	item.activeRTs:SetTextAlignmentX(GUIItem.Align_Center)
 	item.activeRTs:SetTextAlignmentY(GUIItem.Align_Center)
 	item.activeRTs:SetPosition(Vector(GUILinearScale(-80), 0, 0))
-	item.activeRTs:SetText(tostring(activeRTs))
+	item.activeRTs:SetText(tostring(activeRTs) or "")
 	item.activeRTs:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.activeRTs)
 	
@@ -754,7 +759,7 @@ local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techNa
 	item.numRes:SetTextAlignmentX(GUIItem.Align_Center)
 	item.numRes:SetTextAlignmentY(GUIItem.Align_Center)
 	item.numRes:SetPosition(Vector(GUILinearScale(-30), 0, 0))
-	item.numRes:SetText(tostring(numRes))
+	item.numRes:SetText(tostring(numRes) or "")
 	item.numRes:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.numRes)
 	
@@ -1115,6 +1120,8 @@ function CHUDGUI_EndStats:Initialize()
 				cardsTable = parsedFile.cardsTable or {}
 				rtGraphTable = parsedFile.rtGraphTable or {}
 				techLogTable = parsedFile.techLogTable or {}
+				killGraphTable = parsedFile.killGraphTable or {}
+				buildingSummaryTable = parsedFile.buildingSummaryTable or {}
 			end
 			
 			self.saved = true
@@ -1704,12 +1711,28 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			table.insert(self.statsCards, statCard)
 		end
 		
-		if #techLogTable > 0 then
+		if #techLogTable > 0 or #buildingSummaryTable > 0 then
 			table.sort(techLogTable, function(a, b)
 				if a.teamNumber == b.teamNumber then
 					return a.finishedMinute < b.finishedMinute
 				else
-					return a.teamNumber > b.teamNumber
+					return a.teamNumber < b.teamNumber
+				end
+			end)
+			
+			table.sort(buildingSummaryTable, function(a, b)
+				if a.teamNumber == b.teamNumber then
+					if a.built == b. built then
+						if a.lost == b.lost then
+							return a.techId < b.techId
+						else
+							return a.lost > b.lost
+						end
+					else
+						return a.built > b.built
+					end
+				else
+					return a.teamNumber < b.teamNumber
 				end
 			end)
 			
@@ -1719,25 +1742,54 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.techLogs[1] = {}
 			self.techLogs[1].header = self:CreateTechLogHeader(1, team1Name)
 			self.techLogs[1].rows = {}
-			self.techLogs[1].ySize = 0
-			table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
 			
 			self.techLogs[2] = {}
 			self.techLogs[2].header = self:CreateTechLogHeader(2, team2Name)
 			self.techLogs[2].rows = {}
-			self.techLogs[2].ySize = 0
-			table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
 			
-			for index, techLogEntry in ipairs(techLogTable) do
-				local isMarine = techLogEntry.teamNumber == 1
-				local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
-				local logoColor = kIconColors[techLogEntry.teamNumber]
-				local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
-				if index % 2 == 0 then
-					bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+			if #buildingSummaryTable > 0 then
+				if buildingSummaryTable[1].teamNumber == 1 then
+					table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "", "Tech", "Built", "Lost"))
+				end
+
+				if buildingSummaryTable[#buildingSummaryTable].teamNumber == 2 then
+					table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "", "Tech", "Built", "Lost"))
 				end
 				
-				table.insert(self.techLogs[techLogEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[techLogEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, techLogEntry.finishedTime, techLogEntry.name, techLogEntry.activeRTs, techLogEntry.teamRes, techLogEntry.isResearch, techLogEntry.iconTexture, techLogEntry.iconCoords, techLogEntry.iconSizeX, techLogEntry.iconSizeY, logoColor))
+				for index, buildingEntry in ipairs(buildingSummaryTable) do
+					local isMarine = buildingEntry.teamNumber == 1
+					local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
+					local logoColor = kIconColors[buildingEntry.teamNumber]
+					local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+					if index % 2 == 0 then
+						bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+					end
+					
+					table.insert(self.techLogs[buildingEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[buildingEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, "", buildingEntry.name, buildingEntry.built, buildingEntry.lost, buildingEntry.iconTexture, buildingEntry.iconCoords, buildingEntry.iconSizeX, buildingEntry.iconSizeY, logoColor))
+				end
+
+			end
+			
+			if #techLogTable > 0 then
+				if techLogTable[1].teamNumber == 1 then
+					table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
+				end
+				
+				if techLogTable[#techLogTable].teamNumber == 2 then
+					table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
+				end
+				
+				for index, techLogEntry in ipairs(techLogTable) do
+					local isMarine = techLogEntry.teamNumber == 1
+					local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
+					local logoColor = kIconColors[techLogEntry.teamNumber]
+					local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+					if index % 2 == 0 then
+						bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+					end
+					
+					table.insert(self.techLogs[techLogEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[techLogEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, techLogEntry.finishedTime, techLogEntry.name, techLogEntry.activeRTs, techLogEntry.teamRes, techLogEntry.iconTexture, techLogEntry.iconCoords, techLogEntry.iconSizeX, techLogEntry.iconSizeY, logoColor))
+				end
 			end
 		end
 		
@@ -1863,6 +1915,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			savedStats.cardsTable = cardsTable
 			savedStats.rtGraphTable = rtGraphTable
 			savedStats.killGraphTable = killGraphTable
+			savedStats.buildingSummaryTable = buildingSummaryTable
 			savedStats.techLogTable = techLogTable
 			
 			local savedFile = io.open(lastRoundFile, "w+")
@@ -1879,6 +1932,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		cardsTable = {}
 		rtGraphTable = {}
 		killGraphTable = {}
+		buildingSummaryTable = {}
 		techLogTable = {}
 	end
 end
@@ -2148,6 +2202,26 @@ local function CHUDSetKillGraph(message)
 	lastStatsMsg = Shared.GetTime()
 end
 
+local function CHUDSetBuildingSummary(message)
+	if message and message.techId then
+		local entry = {}
+		entry.iconTexture = "ui/buildmenu.dds"
+		entry.iconCoords = GetTextureCoordinatesForIcon(message.techId)
+		entry.iconSizeX = 24
+		entry.iconSizeY = 24
+		entry.teamNumber = message.teamNumber
+		entry.name = GetDisplayNameForTechId(message.techId)
+		
+		entry.techId = message.techId
+		entry.lost = message.lost
+		entry.built = message.built
+		
+		table.insert(buildingSummaryTable, entry)
+	end
+	
+	lastStatsMsg = Shared.GetTime()
+end
+
 local function CHUDSetTechLog(message)
 	if message and message.finishedMinute then
 		local entry = {}
@@ -2165,7 +2239,6 @@ local function CHUDSetTechLog(message)
 		entry.finishedTime = string.format("%d:%.2d", minutes, seconds)
 		entry.activeRTs = message.activeRTs
 		entry.teamRes = message.teamRes
-		entry.isResearch = message.isResearch
 		
 		table.insert(techLogTable, entry)
 	end
@@ -2355,3 +2428,4 @@ Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetCommStats)
 Client.HookNetworkMessage("CHUDRTGraph", CHUDSetRTGraph)
 Client.HookNetworkMessage("CHUDKillGraph", CHUDSetKillGraph)
 Client.HookNetworkMessage("CHUDTechLog", CHUDSetTechLog)
+Client.HookNetworkMessage("CHUDBuildingSummary", CHUDSetBuildingSummary)

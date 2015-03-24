@@ -4,6 +4,7 @@ local CHUDTeamStats = {}
 local CHUDRTGraph = {}
 local CHUDKillGraph = {}
 local CHUDResearchTree = {}
+local CHUDBuildingSummary = {}
 
 local function GetGameTime(inMinutes)
 	local gamerules = GetGamerules()
@@ -44,17 +45,28 @@ local function AddTechStat(teamNumber, techId)
 	end
 end
 
-local oldTechResearched = ResearchMixin.TechResearched
-function ResearchMixin:TechResearched(structure, researchId)
-	oldTechResearched(self, structure, researchId)
-	if structure and structure:GetId() == self:GetId() then
-		if researchId == kTechId.Recycle then
-			if structure:isa("ResourceTower") then
-				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true)
-			end
+local function AddBuildingStat(teamNumber, techId, lost)
+	if (teamNumber == 1 or teamNumber == 2) and techId then
+		if techId == kTechId.DrifterEgg then
+			techId = kTechId.Drifter
+		elseif techId == kTechId.ARCRoboticsFactory then
+			techId = kTechId.RoboticsFactory
+		elseif techId == kTechId.AdvancedArmory then
+			techId = kTechId.Armory
+		end
+		
+		local stat = CHUDBuildingSummary[teamNumber][techId]
+		if not stat then
+			CHUDBuildingSummary[teamNumber][techId] = {}
+			CHUDBuildingSummary[teamNumber][techId].built = 0
+			CHUDBuildingSummary[teamNumber][techId].lost = 0
+			stat = CHUDBuildingSummary[teamNumber][techId]
+		end
+		
+		if lost then
+			stat.lost = stat.lost + 1
 		else
-			-- Don't add recycles to the tech log
-			AddTechStat(structure:GetTeamNumber(), researchId)
+			stat.built = stat.built + 1
 		end
 	end
 end
@@ -65,8 +77,45 @@ local notLoggedBuildings = set {
 	"TunnelEntrance",
 	"TunnelExit",
 	"Hydra",
+	"Clog",
+	"Web",
+	"Babbler",
 	"BabblerEgg",
+	"Egg",
 }
+
+local techLoggedAsBuilding = set {
+	kTechId.ARC,
+	kTechId.MAC,
+}
+
+local techLogBuildings = set {
+	"ArmsLab",
+	"PrototypeLab",
+	"Observatory",
+	"CommandStation",
+	"Veil",
+	"Shell",
+	"Shift",
+	"Hive",
+}
+
+local oldTechResearched = ResearchMixin.TechResearched
+function ResearchMixin:TechResearched(structure, researchId)
+	oldTechResearched(self, structure, researchId)
+	if structure and structure:GetId() == self:GetId() then
+		if researchId == kTechId.Recycle then
+			if structure:isa("ResourceTower") then
+				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true)
+			end
+		elseif techLoggedAsBuilding[researchId] then
+			AddBuildingStat(structure:GetTeamNumber(), researchId, false)
+		else
+			-- Don't add recycles to the tech log
+			AddTechStat(structure:GetTeamNumber(), researchId)
+		end
+	end
+end
 
 local oldConstructionComplete = ConstructMixin.OnConstructionComplete
 function ConstructMixin:OnConstructionComplete(builder)
@@ -74,9 +123,11 @@ function ConstructMixin:OnConstructionComplete(builder)
 	
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false)
+	elseif self.GetClassName and techLogBuildings[self:GetClassName()] then
+		AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId())
+		AddBuildingStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
 	elseif self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
-		-- Don't log certain buildings...
-		AddTechStat(self:GetTeamNumber(), self:GetTechId())
+		AddBuildingStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
 	end
 end
 
@@ -109,6 +160,8 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 				entry.misses = 0
 				entry.killstreak = 0
 				entry.timeBuilding = 0
+				entry.timePlayed = 0
+				entry.commanderTime = 0
 			end
 			
 			-- These are team independent
@@ -285,11 +338,41 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 		
 		if stat then
 			stat.playerName = self.playerName
+			local scorePlayer = Shared.GetEntity(self.playerId)
+			if scorePlayer and HasMixin(scorePlayer, "Scoring") then
+				stat[1].timePlayed = scorePlayer.marineTime or 0
+				stat[2].timePlayed = scorePlayer.alienTime or 0
+				stat[1].commanderTime = scorePlayer.marineCommanderTime or 0
+				stat[2].commanderTime = scorePlayer.alienCommanderTime or 0
+			end
 		end
 		
 		return true
 	end)
 	
+-- Add commander playing teams separate per team
+-- Vanilla only tracks overall commanding time
+local originalScoringOnUpdate = ScoringMixin.OnUpdate
+function ScoringMixin:OnUpdate(deltaTime)
+	originalScoringOnUpdate(self, deltaTime)
+	
+	if not self.marineCommanderTime then
+		self.marineCommanderTime = 0
+	end
+	
+	if not self.alienCommanderTime then
+		self.alienCommanderTime = 0
+	end
+	
+	if self:GetIsPlaying() then
+		if self:isa("MarineCommander") then
+			self.marineCommanderTime = self.marineCommanderTime + deltaTime
+		elseif self:isa("AlienCommander") then
+			self.alienCommanderTime = self.alienCommanderTime + deltaTime
+		end
+	end
+end
+
 local originalScoringAddKill = ScoringMixin.AddKill
 function ScoringMixin:AddKill()
 	originalScoringAddKill(self)
@@ -370,8 +453,12 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 		
 		local targetTeam = self:GetTeamNumber()
 		
-		if killedFromDamage and self:isa("ResourceTower") then
-			AddRTStat(targetTeam, self:GetIsBuilt(), true)
+		if killedFromDamage then
+			if self:isa("ResourceTower") then
+				AddRTStat(targetTeam, self:GetIsBuilt(), true)
+			elseif not self:isa("Player") and self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
+				AddBuildingStat(targetTeam, self.GetTechId and self:GetTechId(), true)
+			end
 		end
 		
 		local attackerSteamId, attackerWeapon, attackerTeam = GetAttackerWeapon(attacker, doer)
@@ -426,6 +513,9 @@ local function CHUDResetStats()
 	CHUDTeamStats[2].rts = {lost = 0, built = 0}
 
 	CHUDResearchTree = {}
+	
+	CHUDBuildingSummary[1] = {}
+	CHUDBuildingSummary[2] = {}
 	
 	-- Do this so we can spawn items without a commander with cheats on
 	CHUDMarineComm = 0
@@ -545,6 +635,14 @@ originalCatPackOnTouch = Class_ReplaceMethod("CatPack", "OnTouch",
 	
 	end)
 	
+local originalDrifterEggHatch
+originalDrifterEggHatch = Class_ReplaceMethod("DrifterEgg", "Hatch",
+	function(self)
+		originalDrifterEggHatch(self)
+		
+		AddBuildingStat(self:GetTeamNumber(), kTechId.Drifter, false)
+	end)
+	
 local originalNS2GamerulesEndGame
 originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 	function(self, winningTeam)
@@ -626,27 +724,31 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			table.insert(tmp, stats[1])
 			table.insert(tmp, stats[2])
 			for teamNumber, entry in pairs(tmp) do
-				local statEntry = {}
-				
-				local accuracy, accuracyOnos = CHUDGetAccuracy(entry.hits, entry.misses, entry.onosHits)
-				
-				statEntry.isMarine = teamNumber == 1
-				statEntry.playerName = stats.playerName
-				statEntry.kills = entry.kills
-				statEntry.killstreak = entry.killstreak
-				statEntry.assists = entry.assists
-				statEntry.deaths = entry.deaths
-				statEntry.accuracy = accuracy
-				statEntry.accuracyOnos = accuracyOnos
-				statEntry.pdmg = entry.pdmg
-				statEntry.sdmg = entry.sdmg
-				statEntry.minutesBuilding = entry.timeBuilding/60
-				statEntry.steamId = steamId
-				
-				if teamNumber == 1 then
-					table.insert(finalStats[1], statEntry)
-				elseif teamNumber == 2 then
-					table.insert(finalStats[2], statEntry)
+				if entry.timePlayed and entry.timePlayed > 0 then
+					local statEntry = {}
+					
+					local accuracy, accuracyOnos = CHUDGetAccuracy(entry.hits, entry.misses, entry.onosHits)
+					
+					statEntry.isMarine = teamNumber == 1
+					statEntry.playerName = stats.playerName
+					statEntry.kills = entry.kills
+					statEntry.killstreak = entry.killstreak
+					statEntry.assists = entry.assists
+					statEntry.deaths = entry.deaths
+					statEntry.accuracy = accuracy
+					statEntry.accuracyOnos = accuracyOnos
+					statEntry.pdmg = entry.pdmg
+					statEntry.sdmg = entry.sdmg
+					statEntry.minutesBuilding = entry.timeBuilding/60
+					statEntry.minutesPlaying = entry.timePlayed/60
+					statEntry.minutesComm = entry.commanderTime/60
+					statEntry.steamId = steamId
+					
+					if teamNumber == 1 then
+						table.insert(finalStats[1], statEntry)
+					elseif teamNumber == 2 then
+						table.insert(finalStats[2], statEntry)
+					end
 				end
 			end
 		end
@@ -681,6 +783,17 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			
 			for _, entry in ipairs(CHUDKillGraph) do
 				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
+			end
+			
+			for teamNumber, team in pairs(CHUDBuildingSummary) do
+				for techId, entry in pairs(team) do
+						local msg = {}
+						msg.teamNumber = teamNumber
+						msg.techId = techId
+						msg.built = entry.built
+						msg.lost = entry.lost
+						Server.SendNetworkMessage("CHUDBuildingSummary", msg, true)
+				end
 			end
 		end
 		

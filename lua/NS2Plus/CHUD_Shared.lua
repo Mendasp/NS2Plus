@@ -77,6 +77,14 @@ if not CHUDMainMenu then
 		teamRes = "float (0 to " .. kMaxTeamResources .." by 0.01)",
 	}
 	
+	local kCHUDBuildingSummaryMessage =
+	{
+		teamNumber = "integer (1 to 2)",
+		techId = "enum kTechId",
+		built = "integer (0 to 255)",
+		lost = "integer (0 to 255)",
+	}
+	
 	local kCHUDPlayerStatsMessage =
 	{
 		isMarine = "boolean",
@@ -89,6 +97,8 @@ if not CHUDMainMenu then
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
 		minutesBuilding = "float (0 to 1023 by 0.01)",
+		minutesPlaying = "float (0 to 1023 by 0.01)",
+		minutesComm = "float (0 to 1023 by 0.01)",
 		killstreak = "integer (0 to 254)",
 		steamId = "integer",
 	}
@@ -126,6 +136,7 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDRTGraph", kCHUDRTGraphMessage)
 	Shared.RegisterNetworkMessage( "CHUDKillGraph", kCHUDKillGraphMessage)
 	Shared.RegisterNetworkMessage( "CHUDTechLog", kCHUDTechLogMessage)
+	Shared.RegisterNetworkMessage( "CHUDBuildingSummary", kCHUDBuildingSummaryMessage)
 
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
