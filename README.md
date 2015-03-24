@@ -5,16 +5,17 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - /03/2015
+	- Added played time and Commander time to the stats UI.
 	- Added Kill Graph to end game stats.
+	- Player stats are now kept when switching teams so one player can show up on both teams.
 	- Removed message about players not being able to join when detecting mod updates if the server has a mod backup server enabled. Now it will just display the mods updated once.
 	- The Classic Ammo and HUD Bars options now use the same code to fetch weapon info. They now also display mines and grenades.
 	- Added "Weapon Inventory" option to customize the behavior for the inventory, the options allow you to have it always on, disabled, or showing weapon ammo for marines. Available in HUD tab.
 	- Renamed "Minimal Nameplates" option to "Nameplate style" and added a third style to show only the bars. The options now are: "Default", "Percentages", "Bars only".
 	- Improved tooltips, some of them now include an example image for the NS2+ options.
 	- Changed crosshair resolution scaling option with a slider that allows users to choose scaling themselves (from 1% to 200%).
-	- Fixed vanilla bug where server browser tooltips could get stuck on the screen.
-	- Player stats are kept when switching teams so one player can show up on both teams.
 	- Added "Request Weld" and other voiceover menu options to the Bindings menu.
+	- Fixed vanilla bug where server browser tooltips could get stuck on the screen.
 
 - 19/03/2015
 	- Classic Ammo now supports the Exo.

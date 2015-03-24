@@ -284,7 +284,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 
 end
 
-local function CreateScoreboardRow(container, bgColor, textColor, playerName, kills, assists, deaths, acc, pdmg, sdmg, timeBuilding, steamId)
+local function CreateScoreboardRow(container, bgColor, textColor, playerName, kills, assists, deaths, acc, pdmg, sdmg, timeBuilding, timePlayed, timeComm, steamId)
 	
 	local containerSize = container:GetSize()
 	container:SetSize(Vector(containerSize.x, containerSize.y + kRowSize.y, 0))
@@ -317,13 +317,44 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.playerName:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.playerName)
 	
+	local playerNameLength = GUILinearScale(item.playerName:GetTextWidth(playerName or "") + 5)
+	
+	if timeComm then
+		item.commIcon = GUIManager:CreateGraphicItem()
+		item.commIcon:SetStencilFunc(GUIItem.NotEqual)
+		item.commIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
+		item.commIcon:SetTexture("ui/badges/commander_20.dds")
+		item.commIcon:SetIsVisible(true)
+		item.commIcon:SetSize(GUILinearScale(Vector(20, 20, 0)))
+		item.commIcon:SetPosition(Vector(kRowPlayerNameOffset + playerNameLength, -GUILinearScale(10), 0))
+		item.commIcon:SetLayer(kGUILayerMainMenu)
+		item.commIcon.tooltip = "Commander time: " .. timeComm
+		item.background:AddChild(item.commIcon)
+	end
+	
 	local kItemSize = GUILinearScale(50)
 	local xOffset = kRowSize.x
 	local kItemPaddingLarge = GUILinearScale(60)
 	local kItemPaddingMedium = GUILinearScale(40)
 	local kItemPaddingSmall = GUILinearScale(20)
+	local kItemPaddingExtraSmall = GUILinearScale(10)
 	
-	xOffset = xOffset - kItemSize
+	xOffset = xOffset - kItemPaddingMedium + kItemPaddingExtraSmall
+	
+	item.timePlayed = GUIManager:CreateTextItem()
+	item.timePlayed:SetStencilFunc(GUIItem.NotEqual)
+	item.timePlayed:SetFontName(kRowFontName)
+	item.timePlayed:SetColor(textColor)
+	item.timePlayed:SetScale(scaledVector)
+	item.timePlayed:SetAnchor(GUIItem.Left, GUIItem.Center)
+	item.timePlayed:SetTextAlignmentY(GUIItem.Align_Center)
+	item.timePlayed:SetTextAlignmentX(GUIItem.Align_Center)
+	item.timePlayed:SetPosition(Vector(xOffset, 0, 0))
+	item.timePlayed:SetText(timePlayed or "")
+	item.timePlayed:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.timePlayed)
+	
+	xOffset = xOffset - kItemSize - kItemPaddingExtraSmall
 	
 	item.timeBuilding = GUIManager:CreateTextItem()
 	item.timeBuilding:SetStencilFunc(GUIItem.NotEqual)
@@ -338,7 +369,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.timeBuilding:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.timeBuilding)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingLarge
+	xOffset = xOffset - kItemSize - kItemPaddingSmall
 	
 	item.sdmg = GUIManager:CreateTextItem()
 	item.sdmg:SetStencilFunc(GUIItem.NotEqual)
@@ -353,7 +384,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.sdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.sdmg)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingLarge
+	xOffset = xOffset - kItemSize - kItemPaddingSmall
 	
 	item.pdmg = GUIManager:CreateTextItem()
 	item.pdmg:SetStencilFunc(GUIItem.NotEqual)
@@ -368,7 +399,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.pdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.pdmg)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingLarge
+	xOffset = xOffset - kItemSize - kItemPaddingMedium
 	
 	item.acc = GUIManager:CreateTextItem()
 	item.acc:SetStencilFunc(GUIItem.NotEqual)
@@ -383,7 +414,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.acc:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.acc)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingMedium
+	xOffset = xOffset - kItemSize - kItemPaddingSmall
 	
 	item.deaths = GUIManager:CreateTextItem()
 	item.deaths:SetStencilFunc(GUIItem.NotEqual)
@@ -398,7 +429,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.deaths:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.deaths)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingSmall
+	xOffset = xOffset - kItemSize
 	
 	item.assists = GUIManager:CreateTextItem()
 	item.assists:SetStencilFunc(GUIItem.NotEqual)
@@ -413,7 +444,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.assists:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.assists)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingSmall
+	xOffset = xOffset - kItemSize
 	
 	item.kills = GUIManager:CreateTextItem()
 	item.kills:SetStencilFunc(GUIItem.NotEqual)
@@ -863,10 +894,10 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.team1UI = self:CreateTeamBackground(1)
 	self.team1UI.playerRows = {}
-	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Acc. (No Onos)", "Player dmg", "Structure dmg", "Time building"))
+	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Player name", "K", "A", "D", "Acc. (No Onos)", "Pl. dmg", "Str. dmg", "Build time", "Played"))
 	self.team2UI = self:CreateTeamBackground(2)
 	self.team2UI.playerRows = {}
-	table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Player name", "Kills", "Assists", "Deaths", "Accuracy", "Player dmg", "Structure dmg", "Time building"))
+	table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Player name", "K", "A", "D", "Accuracy", "Pl. dmg", "Str. dmg", "Build time", "Played"))
 	
 	self.sliderBarBg = GUIManager:CreateGraphicItem()
 	self.sliderBarBg:SetColor(Color(0,0,0,0.5))
@@ -1134,6 +1165,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.actionIconGUI.pickupIcon:SetLayer(kGUILayerPlayerHUD)
 	self.actionIconGUI:Hide()
 	
+	self.tooltip = GetGUIManager():CreateGUIScriptSingle("GUIHoverTooltip")
 	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
 	self.lastRow = nil
 	
@@ -1324,6 +1356,14 @@ local function CheckRowHighlight(self, row, mouseX, mouseY)
 		end
 		local color = row.originalColor * 0.75
 		row.background:SetColor(color)
+		
+		if row.commIcon and row.commIcon.tooltip and GUIItemContainsPoint(row.commIcon, mouseX, mouseY) then
+			self.tooltip:SetText(row.commIcon.tooltip)
+			self.tooltip:Show()
+		else
+			self.tooltip:Hide()
+		end
+		
 		self.lastRow = row
 	elseif row.originalColor then
 		row.background:SetColor(row.originalColor)
@@ -1444,11 +1484,17 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				end
 			end
 			
+			if self.lastRow == nil then
+				self.tooltip:Hide()
+			end
+			
 			-- Change it to the field name on the message table for proper sorting
 			if highlightedField == "acc" then
 				highlightedField = "realAccuracy"
 			elseif highlightedField == "timeBuilding" then
 				highlightedField = "minutesBuilding"
+			elseif highlightedField == "timePlayed" then
+				highlightedField = "minutesPlaying"
 			elseif highlightedField == "playerName" then
 				highlightedField = "lowerCaseName"
 			end
@@ -1581,6 +1627,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		local totalSdmg2 = 0
 		local totalTimeBuilding1 = 0
 		local totalTimeBuilding2 = 0
+		local totalTimePlaying1 = 0
+		local totalTimePlaying2 = 0
 		local avgAccuracy1 = 0
 		local avgAccuracy1Onos = 0
 		local avgAccuracy2 = 0
@@ -1591,6 +1639,12 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		for _, message in ipairs(finalStatsTable) do
 			local minutes = math.floor(message.minutesBuilding)
 			local seconds = (message.minutesBuilding % 1)*60
+			
+			local pMinutes = math.floor(message.minutesPlaying)
+			local pSeconds = (message.minutesPlaying % 1)*60
+			
+			local cMinutes = math.floor(message.minutesComm)
+			local cSeconds = (message.minutesComm % 1)*60
 			
 			local isMarine = message.isMarine
 			
@@ -1604,6 +1658,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				totalPdmg1 = totalPdmg1 + message.pdmg
 				totalSdmg1 = totalSdmg1 + message.sdmg
 				totalTimeBuilding1 = totalTimeBuilding1 + message.minutesBuilding
+				totalTimePlaying1 = totalTimePlaying1 + message.minutesPlaying
 				avgAccuracy1 = avgAccTable.marineAcc
 				avgAccuracy1Onos = avgAccTable.marineOnosAcc
 			else
@@ -1614,6 +1669,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				totalPdmg2 = totalPdmg2 + message.pdmg
 				totalSdmg2 = totalSdmg2 + message.sdmg
 				totalTimeBuilding2 = totalTimeBuilding2 + message.minutesBuilding
+				totalTimePlaying2 = totalTimePlaying2 + message.minutesPlaying
 				avgAccuracy2 = avgAccTable.alienAcc
 			end
 			
@@ -1630,7 +1686,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				playerTextColor = kCurrentPlayerStatsTextColor
 			end
 			
-			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), message.steamId))
+			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), string.format("%d:%02d", pMinutes, pSeconds), message.minutesComm > 0 and string.format("%d:%02d", cMinutes, cSeconds) or nil, message.steamId))
 			-- Store some of the original info so we can sort afterwards
 			teamObj.playerRows[#teamObj.playerRows].originalOrder = playerCount
 			teamObj.playerRows[#teamObj.playerRows].message = message
@@ -1657,21 +1713,34 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		totalTimeBuilding1 = totalTimeBuilding1/numPlayers1
 		local minutes1Avg = math.floor(totalTimeBuilding1)
 		local seconds1Avg = (totalTimeBuilding1 % 1)*60
+		
+		local minutesP1 = math.floor(totalTimePlaying1)
+		local secondsP1 = (totalTimePlaying1 % 1)*60
+		totalTimePlaying1 = totalTimePlaying1/numPlayers1
+		local minutes1PAvg = math.floor(totalTimePlaying1)
+		local seconds1PAvg = (totalTimePlaying1 % 1)*60
+		
 		local minutes2 = math.floor(totalTimeBuilding2)
 		local seconds2 = (totalTimeBuilding2 % 1)*60
 		totalTimeBuilding2 = totalTimeBuilding2/numPlayers2
 		local minutes2Avg = math.floor(totalTimeBuilding2)
 		local seconds2Avg = (totalTimeBuilding2 % 1)*60
 		
+		local minutesP2 = math.floor(totalTimePlaying2)
+		local secondsP2 = (totalTimePlaying2 % 1)*60
+		totalTimePlaying2 = totalTimePlaying2/numPlayers2
+		local minutes2PAvg = math.floor(totalTimePlaying2)
+		local seconds2PAvg = (totalTimePlaying2 % 1)*60
+		
 		-- When there's only one player in a team, the total and the average will be the same
 		-- Don't even bother displaying this, it looks odd
 		if numPlayers1 > 1 then
 			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg)))
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg), string.format("%d:%02d", minutes1PAvg, seconds1PAvg)))
 		end
 		if numPlayers2 > 1 then
 			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg)))
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg), string.format("%d:%02d", minutes2PAvg, seconds2PAvg)))
 		end
 		
 		local teamStatsVisible = gameInfo.showEndStatsTeamBreakdown

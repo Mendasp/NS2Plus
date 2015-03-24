@@ -10,6 +10,7 @@ originalTooltipInit = Class_ReplaceMethod("GUIHoverTooltip", "Initialize",
 		self.tooltip:SetAnchor(GUIItem.Left, GUIItem.Top)
 		
 		self.background:SetTexture(nil)
+		self.background:SetIsVisible(false)
 		self.background:SetColor(kBackgroundColor)
 		
 		self.image = GetGUIManager():CreateGraphicItem()
@@ -46,9 +47,19 @@ originalTooltipInit = Class_ReplaceMethod("GUIHoverTooltip", "Initialize",
 local originalTooltipShow
 originalTooltipShow = Class_ReplaceMethod("GUIHoverTooltip", "Show",
 	function(self, displayTime)
-		originalTooltipShow(self, displayTime)
-		
-		self.background:SetColor(kBackgroundColor, 0.25, "TOOLTIP_SHOW")
+		if not self.background:GetIsAnimating() or self.background:GetColor().a == 0 then
+			originalTooltipShow(self, displayTime)
+			self.background:SetIsVisible(true)
+			self.background:SetColor(kBackgroundColor, 0.25, "TOOLTIP_SHOW")
+		end
+	end)
+	
+local originalTooltipHide
+originalTooltipHide = Class_ReplaceMethod("GUIHoverTooltip", "Hide",
+	function(self, hideTime)
+		if not self.background:GetIsAnimating() then
+			originalTooltipHide(self, hideTime)
+		end
 	end)
 	
 local originalTooltipUpdate
