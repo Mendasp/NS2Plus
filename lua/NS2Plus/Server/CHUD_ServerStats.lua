@@ -342,8 +342,6 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 			if scorePlayer and HasMixin(scorePlayer, "Scoring") then
 				stat[1].timePlayed = scorePlayer.marineTime or 0
 				stat[2].timePlayed = scorePlayer.alienTime or 0
-				stat[1].commanderTime = scorePlayer.marineCommanderTime or 0
-				stat[2].commanderTime = scorePlayer.alienCommanderTime or 0
 			end
 		end
 		
@@ -352,23 +350,16 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 	
 -- Add commander playing teams separate per team
 -- Vanilla only tracks overall commanding time
-local originalScoringOnUpdate = ScoringMixin.OnUpdate
-function ScoringMixin:OnUpdate(deltaTime)
-	originalScoringOnUpdate(self, deltaTime)
+local originalScoringOnMove = ScoringMixin.OnProcessMove
+function ScoringMixin:OnProcessMove(input)
+	originalScoringOnMove(self, input)
 	
-	if not self.marineCommanderTime then
-		self.marineCommanderTime = 0
-	end
-	
-	if not self.alienCommanderTime then
-		self.alienCommanderTime = 0
-	end
-	
-	if self:GetIsPlaying() then
-		if self:isa("MarineCommander") then
-			self.marineCommanderTime = self.marineCommanderTime + deltaTime
-		elseif self:isa("AlienCommander") then
-			self.alienCommanderTime = self.alienCommanderTime + deltaTime
+	local steamId = self.GetSteamId and self:GetSteamId()
+	local teamNumber = self:GetTeamNumber()
+	if steamId and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
+		local stat = CHUDClientStats[steamId][self:GetTeamNumber()]
+		if self:GetIsPlaying() and self:isa("Commander") then
+			stat.commanderTime = stat.commanderTime + input.time
 		end
 	end
 end
