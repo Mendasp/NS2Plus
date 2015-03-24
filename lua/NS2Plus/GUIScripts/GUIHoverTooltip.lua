@@ -1,7 +1,7 @@
 local kBorderWidth = 2
 local kBackgroundColor = Color(0, 0, 0, 0.9)
 local kDefaultBorderColor = ColorIntToColor(kMarineTeamColor)
-local chud_tooltip = PrecacheAsset("ui/chud_tooltip.dds")
+
 local originalTooltipInit
 originalTooltipInit = Class_ReplaceMethod("GUIHoverTooltip", "Initialize",
 	function(self)

@@ -1,6 +1,10 @@
 Script.Load("lua/NS2Plus/CHUD_Shared.lua")
 
-// Clear tags on map restart
+-- Allow customizations for our HUD textures
+Server.RemoveFileHashes("ui/centerhud.dds")
+Server.RemoveFileHashes("ui/bottomhudbar*.dds")
+
+-- Clear tags on map restart
 SetCHUDTagBitmask(0)
 
 Script.Load("lua/NS2Plus/Server/CHUD_ServerSettings.lua")
