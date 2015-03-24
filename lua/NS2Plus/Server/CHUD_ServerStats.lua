@@ -80,44 +80,8 @@ function ConstructMixin:OnConstructionComplete(builder)
 	end
 end
 
-// Function name 2 stronk
-local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
-	if steamId > 0 then
-		if not CHUDClientStats[steamId] or (teamNumber ~= nil and CHUDClientStats[steamId].teamNumber ~= teamNumber and (teamNumber == 1 or teamNumber == 2)) then
-			CHUDClientStats[steamId] = {}
-			CHUDClientStats[steamId].pdmg = 0
-			CHUDClientStats[steamId].sdmg = 0
-			CHUDClientStats[steamId].hits = 0
-			CHUDClientStats[steamId].onosHits = 0
-			CHUDClientStats[steamId].misses = 0
-			CHUDClientStats[steamId].killstreak = 0
-			CHUDClientStats[steamId].teamNumber = teamNumber
-			CHUDClientStats[steamId].timeBuilding = 0
-			CHUDClientStats[steamId]["last"] = {}
-			CHUDClientStats[steamId]["last"].pdmg = 0
-			CHUDClientStats[steamId]["last"].sdmg = 0
-			CHUDClientStats[steamId]["last"].hits = 0
-			CHUDClientStats[steamId]["last"].misses = 0
-			CHUDClientStats[steamId]["last"].kills = 0
-			CHUDClientStats[steamId]["weapons"] = {}
-		end
-		
-		if wTechId and not CHUDClientStats[steamId]["weapons"][wTechId] then
-			CHUDClientStats[steamId]["weapons"][wTechId] = {}
-			CHUDClientStats[steamId]["weapons"][wTechId].hits = 0
-			CHUDClientStats[steamId]["weapons"][wTechId].onosHits = 0
-			CHUDClientStats[steamId]["weapons"][wTechId].misses = 0
-			CHUDClientStats[steamId]["weapons"][wTechId].kills = 0
-			CHUDClientStats[steamId]["weapons"][wTechId].pdmg = 0
-			CHUDClientStats[steamId]["weapons"][wTechId].sdmg = 0
-		end
-	end
-end
-
 local function ResetCHUDLastLifeStats(steamId)
-	if steamId > 0 then
-		MaybeInitCHUDClientStats(steamId)
-		
+	if steamId > 0 and CHUDClientStats[steamId] then
 		CHUDClientStats[steamId]["last"] = {}
 		CHUDClientStats[steamId]["last"].pdmg = 0
 		CHUDClientStats[steamId]["last"].sdmg = 0
@@ -127,11 +91,59 @@ local function ResetCHUDLastLifeStats(steamId)
 	end
 end
 
+-- Function name 2 stronk
+local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
+	if steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
+		if not CHUDClientStats[steamId] then
+			CHUDClientStats[steamId] = {}
+			CHUDClientStats[steamId][1] = {}
+			CHUDClientStats[steamId][2] = {}
+			for _, entry in ipairs(CHUDClientStats[steamId]) do
+				entry.kills = 0
+				entry.assists = 0
+				entry.deaths = 0
+				entry.pdmg = 0
+				entry.sdmg = 0
+				entry.hits = 0
+				entry.onosHits = 0
+				entry.misses = 0
+				entry.killstreak = 0
+				entry.timeBuilding = 0
+			end
+			
+			-- These are team independent
+			CHUDClientStats[steamId].playerName = "NSPlayer"
+			CHUDClientStats[steamId].lastTeam = teamNumber
+			
+			-- Initialize the last life stats
+			ResetCHUDLastLifeStats(steamId)
+			
+			CHUDClientStats[steamId]["weapons"] = {}
+		elseif (teamNumber ~= nil and CHUDClientStats[steamId].lastTeam ~= teamNumber) then
+			CHUDClientStats[steamId].lastTeam = teamNumber
+			
+			-- Clear the last life stats if the player switches teams
+			ResetCHUDLastLifeStats(steamId)
+		end
+		
+		if wTechId and not CHUDClientStats[steamId]["weapons"][wTechId] and (teamNumber == 1 or teamNumber == 2) then
+			CHUDClientStats[steamId]["weapons"][wTechId] = {}
+			CHUDClientStats[steamId]["weapons"][wTechId].hits = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].onosHits = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].misses = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].kills = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].pdmg = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].sdmg = 0
+			CHUDClientStats[steamId]["weapons"][wTechId].teamNumber = teamNumber
+		end
+	end
+end
+
 local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 then
+	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
-		local overallStat = CHUDClientStats[steamId]
+		local overallStat = CHUDClientStats[steamId][teamNumber]
 		local stat = CHUDClientStats[steamId]["weapons"][wTechId]
 		local lastStat = CHUDClientStats[steamId]["last"]
 		
@@ -165,10 +177,10 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 end
 
 local function AddDamageStat(steamId, damage, isPlayer, wTechId, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 then
+	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
-		local stat = CHUDClientStats[steamId]
+		local stat = CHUDClientStats[steamId][teamNumber]
 		local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
 		local lastStat = CHUDClientStats[steamId]["last"]
 		
@@ -185,10 +197,10 @@ local function AddDamageStat(steamId, damage, isPlayer, wTechId, teamNumber)
 end
 
 local function AddWeaponKill(steamId, wTechId, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 then
+	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
-		local rootStat = CHUDClientStats[steamId]
+		local rootStat = CHUDClientStats[steamId][teamNumber]
 		local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
 		local lastStat = CHUDClientStats[steamId]["last"]
 		
@@ -208,10 +220,10 @@ local function AddTeamGraphKill(teamNumber)
 end
 
 local function AddBuildTime(steamId, buildTime, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 then
+	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
 		
-		local stat = CHUDClientStats[steamId]
+		local stat = CHUDClientStats[steamId][teamNumber]
 		stat.timeBuilding = stat.timeBuilding + buildTime
 	end
 end
@@ -268,17 +280,63 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 	function(self)
 		originalUpdateScore(self)
 		
+		MaybeInitCHUDClientStats(self.steamId, nil, self.teamNumber)
 		local stat = CHUDClientStats[self.steamId]
 		
 		if stat then
 			stat.playerName = self.playerName
-			stat.kills = self.kills
-			stat.assists = self.assists
-			stat.deaths = self.deaths
 		end
 		
 		return true
 	end)
+	
+local originalScoringAddKill = ScoringMixin.AddKill
+function ScoringMixin:AddKill()
+	originalScoringAddKill(self)
+	
+	if self.clientIndex and self.clientIndex > 0 then
+		local steamId = GetSteamIdForClientIndex(self.clientIndex)
+		local teamNumber = self:GetTeamNumber()
+		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
+		local stat = CHUDClientStats[steamId][teamNumber]
+		
+		if stat then
+			stat.kills = Clamp(stat.kills + 1, 0, kMaxKills)
+		end
+	end
+end
+	
+local originalScoringAddAssist = ScoringMixin.AddAssistKill
+function ScoringMixin:AddAssistKill()
+	originalScoringAddAssist(self)
+	
+	if self.clientIndex and self.clientIndex > 0 then
+		local steamId = GetSteamIdForClientIndex(self.clientIndex)
+		local teamNumber = self:GetTeamNumber()
+		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
+		local stat = CHUDClientStats[steamId][teamNumber]
+		
+		if stat then
+			stat.assists = Clamp(stat.assists + 1, 0, kMaxKills)
+		end
+	end
+end
+
+local originalScoringAddDeath = ScoringMixin.AddDeaths
+function ScoringMixin:AddDeaths()
+	originalScoringAddDeath(self)
+	
+	if self.clientIndex and self.clientIndex > 0 then
+		local steamId = GetSteamIdForClientIndex(self.clientIndex)
+		local teamNumber = self:GetTeamNumber()
+		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
+		local stat = CHUDClientStats[steamId][teamNumber]
+		
+		if stat then
+			stat.deaths = Clamp(stat.assists + 1, 0, kMaxDeaths)
+		end
+	end
+end
 
 local function OnSetCHUDOverkill(client, message)
 
@@ -369,13 +427,15 @@ local function CHUDResetStats()
 
 	CHUDResearchTree = {}
 	
-	// Do this so we can spawn items without a commander with cheats on
+	-- Do this so we can spawn items without a commander with cheats on
+	CHUDMarineComm = 0
 	CHUDResetCommStats(0)
 	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 	
 		if playerInfo.isCommander then
 			if playerInfo.teamNumber == kTeam1Index then
+				CHUDMarineComm = playerInfo.steamId
 				CHUDResetCommStats(playerInfo.steamId)
 			end
 			-- Init the commander player stats so they show up at the end-game stats
@@ -407,9 +467,6 @@ local function CHUDGetAccuracy(hits, misses, onosHits)
 	return accuracy, accuracyOnos
 end
 
-CHUDCommStats = { }
-CHUDMarineComm = 0
-
 local originalCommandStructureLoginPlayer
 originalCommandStructureLoginPlayer = Class_ReplaceMethod("CommandStructure", "LoginPlayer",
 	function(self, player, forced)
@@ -439,7 +496,7 @@ originalMedPackOnTouch = Class_ReplaceMethod("MedPack", "OnTouch",
 		local oldHealth = recipient:GetHealth()
 		originalMedPackOnTouch(self, recipient)
 		if oldHealth < recipient:GetHealth() then
-			// If the medpack hits immediatly expireTime is 0
+			-- If the medpack hits immediatly expireTime is 0
 			if ConditionalValue(self.expireTime == 0, Shared.GetTime(), self.expireTime - kItemStayTime) + 0.025 > Shared.GetTime() then
 				CHUDCommStats[CHUDMarineComm]["medpack"].misses = CHUDCommStats[CHUDMarineComm]["medpack"].misses - 1
 				CHUDCommStats[CHUDMarineComm]["medpack"].hits = CHUDCommStats[CHUDMarineComm]["medpack"].hits + 1
@@ -498,7 +555,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 			local client = Server.GetClientById(playerInfo.clientId)
 			
-			// Commander stats
+			-- Commander stats
 			if CHUDCommStats[playerInfo.steamId] and client then
 				local msg = {}
 				msg.medpackAccuracy = 0
@@ -538,7 +595,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				Server.SendNetworkMessage(client, "CHUDMarineCommStats", msg, true)
 			end
 			
-			// Player stats
+			-- Player stats
 			if CHUDClientStats[playerInfo.steamId] and client then
 				local stats = CHUDClientStats[playerInfo.steamId]
 				
@@ -552,7 +609,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					msg.kills = wStats.kills
 					msg.pdmg = wStats.pdmg
 					msg.sdmg = wStats.sdmg
-					msg.teamNumber = stats.teamNumber
+					msg.teamNumber = wStats.teamNumber
 					
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
 				end
@@ -565,27 +622,32 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		finalStats[2] = {}
 		
 		for steamId, stats in pairs(CHUDClientStats) do
-			local statEntry = {}
-			
-			local accuracy, accuracyOnos = CHUDGetAccuracy(stats.hits, stats.misses, stats.onosHits)
-			
-			statEntry.isMarine = stats.teamNumber == 1
-			statEntry.playerName = stats.playerName
-			statEntry.kills = stats.kills
-			statEntry.killstreak = stats.killstreak
-			statEntry.assists = stats.assists
-			statEntry.deaths = stats.deaths
-			statEntry.accuracy = accuracy
-			statEntry.accuracyOnos = accuracyOnos
-			statEntry.pdmg = stats.pdmg
-			statEntry.sdmg = stats.sdmg
-			statEntry.minutesBuilding = stats.timeBuilding/60
-			statEntry.steamId = steamId
-			
-			if stats.teamNumber == 1 then
-				table.insert(finalStats[1], statEntry)
-			elseif stats.teamNumber == 2 then
-				table.insert(finalStats[2], statEntry)
+			local tmp = {}
+			table.insert(tmp, stats[1])
+			table.insert(tmp, stats[2])
+			for teamNumber, entry in pairs(tmp) do
+				local statEntry = {}
+				
+				local accuracy, accuracyOnos = CHUDGetAccuracy(entry.hits, entry.misses, entry.onosHits)
+				
+				statEntry.isMarine = teamNumber == 1
+				statEntry.playerName = stats.playerName
+				statEntry.kills = entry.kills
+				statEntry.killstreak = entry.killstreak
+				statEntry.assists = entry.assists
+				statEntry.deaths = entry.deaths
+				statEntry.accuracy = accuracy
+				statEntry.accuracyOnos = accuracyOnos
+				statEntry.pdmg = entry.pdmg
+				statEntry.sdmg = entry.sdmg
+				statEntry.minutesBuilding = entry.timeBuilding/60
+				statEntry.steamId = steamId
+				
+				if teamNumber == 1 then
+					table.insert(finalStats[1], statEntry)
+				elseif teamNumber == 2 then
+					table.insert(finalStats[2], statEntry)
+				end
 			end
 		end
 		
@@ -636,7 +698,9 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 
 		-- Send stats to the player on death
 		local steamId = GetSteamIdForClientIndex(self:GetClientIndex())
-		if steamId then
+		if steamId and steamId > 0 then
+			local teamNumber = self:GetTeamNumber()
+			MaybeInitCHUDClientStats(steamId, nil, teamNumber)
 			if CHUDClientStats[steamId] then
 				local lastStat = CHUDClientStats[steamId]["last"]
 				local totalStats = CHUDClientStats[steamId]["weapons"]
@@ -647,8 +711,11 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 				local missessum = 0
 				
 				for _, wStats in pairs(totalStats) do
-					hitssum = hitssum + wStats.hits
-					missessum = missessum + wStats.misses
+					-- Display current accuracy for the current team's weapons
+					if wStats.teamNumber == teamNumber then
+						hitssum = hitssum + wStats.hits
+						missessum = missessum + wStats.misses
+					end
 				end
 				
 				if lastStat.hits > 0 or lastStat.misses > 0 then
@@ -700,8 +767,8 @@ function ConstructMixin:Construct(elapsedTime, builder)
 
 end
 
-// Attack counters for every single fucking thing in the game
-// ClipWeapon covers FT, GL, pistol, rifle and SG
+-- Attack counters for every single fucking thing in the game
+-- ClipWeapon covers FT, GL, pistol, rifle and SG
 local originalClipWeaponFirePrimary
 originalClipWeaponFirePrimary = Class_ReplaceMethod( "ClipWeapon", "FirePrimary",
 	function(self, player)
@@ -880,7 +947,7 @@ originalShotgunFirePrimary = Class_ReplaceMethod( "Shotgun", "FirePrimary",
 			
 			end
 			
-			// Drifters, buildings and teammates don't count towards accuracy as hits or misses
+			-- Drifters, buildings and teammates don't count towards accuracy as hits or misses
 			if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
@@ -1027,7 +1094,7 @@ local function NewMinigunShoot(self, leftSide)
 			
 			end
 
-			// Drifters, buildings and teammates don't count towards accuracy as hits or misses
+			-- Drifters, buildings and teammates don't count towards accuracy as hits or misses
 			if isPlayer and GetAreEnemies(self:GetParent(), statsTarget) then
 				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 				if steamId then
@@ -1092,7 +1159,7 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 		
 		end
 
-		// Drifters, buildings and teammates don't count towards accuracy as hits or misses
+		-- Drifters, buildings and teammates don't count towards accuracy as hits or misses
 		if #hitEntities == 0 or (#hitEntities > 0 and isPlayer) then
 			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
 			if steamId then
