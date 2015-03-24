@@ -3,6 +3,18 @@ originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 	function(self, deltaTime)
 		originalGUIRequestUpdate(self, deltaTime)
 		
+		for _,button in ipairs( self.menuButtons ) do         
+			-- Update KeyBind Strings
+			local keyBindString = (button.KeyBind and BindingsUI_GetInputValue(button.KeyBind)) or ""
+			if keyBindString ~= nil and keyBindString ~= "" and keyBindString ~= "None" then
+				keyBindString = "[" .. string.sub(keyBindString, 1, 1) .. "]"
+			else
+				keyBindString = ""
+			end
+			
+			button.KeyBindText:SetText(keyBindString)
+		end
+		
 		if self.background:GetIsVisible() and CHUDGetOption("mingui") then
 			local highlightColor = Color(1,1,0,1)
 			local defaultColor = Color(1,1,1,1)
@@ -35,6 +47,82 @@ originalGUIRequestUpdate = Class_ReplaceMethod( "GUIRequestMenu", "Update",
 		
 	end)
 
+-- Thanks Dragon, I know you added this to your mod so I could add it mine one day
+local origControlBindings = GetUpValue( BindingsUI_GetBindingsData, "globalControlBindings", { LocateRecurse = true } )
+local newGlobalControlBindings = { }
+for i = 1, #origControlBindings do
+	table.insert(newGlobalControlBindings, origControlBindings[i])
+	if origControlBindings[i] == "H" then
+		table.insert(newGlobalControlBindings, "RequestWeld")
+		table.insert(newGlobalControlBindings, "input")
+		table.insert(newGlobalControlBindings, "REQUEST WELD")
+		table.insert(newGlobalControlBindings, "None")
+
+		table.insert(newGlobalControlBindings, "VoiceOverCovering")
+		table.insert(newGlobalControlBindings, "input")
+		table.insert(newGlobalControlBindings, "(MARINE) \"COVERING YOU\"")
+		table.insert(newGlobalControlBindings, "None")
+		
+		table.insert(newGlobalControlBindings, "VoiceOverFollowMe")
+		table.insert(newGlobalControlBindings, "input")
+		table.insert(newGlobalControlBindings, "(MARINE) \"FOLLOW ME\"")
+		table.insert(newGlobalControlBindings, "None")
+		
+		table.insert(newGlobalControlBindings, "VoiceOverHostiles")
+		table.insert(newGlobalControlBindings, "input")
+		table.insert(newGlobalControlBindings, "(MARINE) \"HOSTILES\"")
+		table.insert(newGlobalControlBindings, "None")
+		
+		table.insert(newGlobalControlBindings, "VoiceOverAcknowledged")
+		table.insert(newGlobalControlBindings, "input")
+		table.insert(newGlobalControlBindings, "\"ACKNOWLEDGED\"/CHUCKLE")
+		table.insert(newGlobalControlBindings, "None")
+	end
+end
+ReplaceLocals(BindingsUI_GetBindingsData, { globalControlBindings = newGlobalControlBindings }) 
+
+local defaults = GetUpValue( GetDefaultInputValue, "defaults", { LocateRecurse = true } )
+table.insert(defaults, { "RequestWeld", "None" })
+table.insert(defaults, { "VoiceOverCovering", "None" })
+table.insert(defaults, { "VoiceOverFollowMe", "None" })
+table.insert(defaults, { "VoiceOverHostiles", "None" })
+table.insert(defaults, { "VoiceOverAcknowledged", "None" })
+
+local kSoundData = GetUpValue( GetVoiceKeyBind, "kSoundData", { LocateRecurse = true } )
+kSoundData[kVoiceId.MarineCovering]["KeyBind"] = "VoiceOverCovering"
+kSoundData[kVoiceId.MarineFollowMe]["KeyBind"] = "VoiceOverFollowMe"
+kSoundData[kVoiceId.MarineHostiles]["KeyBind"] = "VoiceOverHostiles"
+kSoundData[kVoiceId.MarineAcknowledged]["KeyBind"] = "VoiceOverAcknowledged"
+kSoundData[kVoiceId.AlienChuckle]["KeyBind"] = "VoiceOverAcknowledged"
+
+ReplaceUpValue(GetVoiceKeyBind, "kSoundData", kSoundData, { LocateRecurse = true })
+
+local origReqSendKeyEvent
+origReqSendKeyEvent = Class_ReplaceMethod("GUIRequestMenu", "SendKeyEvent", 
+	function(self, key, down)
+		local consumed = origReqSendKeyEvent(self, key, down)
+		if not consumed and down then
+			if GetIsBinding(key, "RequestWeld") then
+				Shared.ConsoleCommand("requestweld")
+				consumed = true
+			elseif GetIsBinding(key, "VoiceOverCovering") then
+				Shared.ConsoleCommand("impulse Covering")
+				consumed = true
+			elseif GetIsBinding(key, "VoiceOverFollowMe") then
+				Shared.ConsoleCommand("impulse FollowMe")
+				consumed = true
+			elseif GetIsBinding(key, "VoiceOverHostiles") then
+				Shared.ConsoleCommand("impulse Hostiles")
+				consumed = true
+			elseif GetIsBinding(key, "VoiceOverAcknowledged") then
+				Shared.ConsoleCommand("impulse Chuckle")
+				consumed = true
+			end
+		end
+		return consumed
+	end
+)
+
 local impulseTypes =
 {
 	marineType = set{ "Marine", "JetpackMarine", "Exo" },
@@ -60,6 +148,7 @@ local impulseMap = {
 	},
 	Chuckle = 
 	{
+		marineType = kVoiceId.MarineAcknowledged,
 		alienType  = kVoiceId.AlienChuckle,
 		embryoType = kVoiceId.EmbryoChuckle,
 	},
@@ -117,5 +206,5 @@ local function OnCommandImpulse( ... )
 		SendRequest(nil, request[math.random(#request)] )
 	end
 end
-    
+
 Event.Hook("Console_impulse", OnCommandImpulse)

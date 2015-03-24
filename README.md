@@ -14,6 +14,7 @@ Latest changes
 	- Changed crosshair resolution scaling option with a slider that allows users to choose scaling themselves (from 1% to 200%).
 	- Fixed vanilla bug where server browser tooltips could get stuck on the screen.
 	- Player stats are kept when switching teams so one player can show up on both teams.
+	- Added "Request Weld" and other voiceover menu options to the Bindings menu.
 
 - 19/03/2015
 	- Classic Ammo now supports the Exo.

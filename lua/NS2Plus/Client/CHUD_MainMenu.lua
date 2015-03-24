@@ -115,14 +115,23 @@ local function BoolToIndex(value)
 	return 1
 end
 
-// Set appropriate form size without CSS
+-- Set appropriate form size without CSS
 originalMenuCreateOptions = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionsForm",
 	function(mainMenu, content, options, optionElements)
 		local form = originalMenuCreateOptions(mainMenu, content, options, optionElements)
 		form:SetHeight(#options*50)
 		return form
 	end)
-	
+
+local CreateKeyBindingsForm = GetUpValue(GUIMainMenu.CreateOptionWindow, "CreateKeyBindingsForm", { LocateRecurse = true })
+local function newCreateKeyBindingsForm(self, content)
+	local form = CreateKeyBindingsForm(self, content)
+	local bindingsTable = BindingsUI_GetBindingsTable()
+		form:SetHeight(#bindingsTable*50)
+	return form
+end
+ReplaceUpValue(GUIMainMenu.CreateOptionWindow, "CreateKeyBindingsForm", newCreateKeyBindingsForm, { LocateRecurse = true })
+
 originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks", function(self)
 		mainMenu = self
 		local OnClick = function(self)
