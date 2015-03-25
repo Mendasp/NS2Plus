@@ -196,34 +196,36 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
-		local overallStat = CHUDClientStats[steamId][teamNumber]
-		local stat = CHUDClientStats[steamId]["weapons"][wTechId]
-		local lastStat = CHUDClientStats[steamId]["last"]
-		
-		if wasHit then
-			overallStat.hits = overallStat.hits + 1
-			stat.hits = stat.hits + 1
-			lastStat.hits = lastStat.hits + 1
+		if CHUDClientStats[steamId] then
+			local overallStat = CHUDClientStats[steamId][teamNumber]
+			local stat = CHUDClientStats[steamId]["weapons"][wTechId]
+			local lastStat = CHUDClientStats[steamId]["last"]
 			
-			if teamNumber == 1 or teamNumber == 2 then
-				CHUDTeamStats[teamNumber].hits = CHUDTeamStats[teamNumber].hits + 1
-			end
-			
-			if isOnos then
-				overallStat.onosHits = overallStat.onosHits + 1
-				stat.onosHits = stat.onosHits + 1
+			if wasHit then
+				overallStat.hits = overallStat.hits + 1
+				stat.hits = stat.hits + 1
+				lastStat.hits = lastStat.hits + 1
 				
-				if teamNumber == 1 then
-					CHUDTeamStats[1].onosHits = CHUDTeamStats[1].onosHits + 1
+				if teamNumber == 1 or teamNumber == 2 then
+					CHUDTeamStats[teamNumber].hits = CHUDTeamStats[teamNumber].hits + 1
 				end
-			end
-		else
-			overallStat.misses = overallStat.misses + 1
-			stat.misses = stat.misses + 1
-			lastStat.misses = lastStat.misses + 1
-			
-			if teamNumber == 1 or teamNumber == 2 then
-				CHUDTeamStats[teamNumber].misses = CHUDTeamStats[teamNumber].misses + 1
+				
+				if isOnos then
+					overallStat.onosHits = overallStat.onosHits + 1
+					stat.onosHits = stat.onosHits + 1
+					
+					if teamNumber == 1 then
+						CHUDTeamStats[1].onosHits = CHUDTeamStats[1].onosHits + 1
+					end
+				end
+			else
+				overallStat.misses = overallStat.misses + 1
+				stat.misses = stat.misses + 1
+				lastStat.misses = lastStat.misses + 1
+				
+				if teamNumber == 1 or teamNumber == 2 then
+					CHUDTeamStats[teamNumber].misses = CHUDTeamStats[teamNumber].misses + 1
+				end
 			end
 		end
 	end
@@ -233,18 +235,20 @@ local function AddDamageStat(steamId, damage, isPlayer, wTechId, teamNumber)
 	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
-		local stat = CHUDClientStats[steamId][teamNumber]
-		local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
-		local lastStat = CHUDClientStats[steamId]["last"]
-		
-		if isPlayer then
-			stat.pdmg = stat.pdmg + damage
-			weaponStat.pdmg = weaponStat.pdmg + damage
-			lastStat.pdmg = lastStat.pdmg + damage
-		else
-			stat.sdmg = stat.sdmg + damage
-			weaponStat.sdmg = weaponStat.sdmg + damage
-			lastStat.sdmg = lastStat.sdmg + damage
+		if CHUDClientStats[steamId] then
+			local stat = CHUDClientStats[steamId][teamNumber]
+			local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
+			local lastStat = CHUDClientStats[steamId]["last"]
+			
+			if isPlayer then
+				stat.pdmg = stat.pdmg + damage
+				weaponStat.pdmg = weaponStat.pdmg + damage
+				lastStat.pdmg = lastStat.pdmg + damage
+			else
+				stat.sdmg = stat.sdmg + damage
+				weaponStat.sdmg = weaponStat.sdmg + damage
+				lastStat.sdmg = lastStat.sdmg + damage
+			end
 		end
 	end
 end
@@ -253,15 +257,17 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
-		local rootStat = CHUDClientStats[steamId][teamNumber]
-		local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
-		local lastStat = CHUDClientStats[steamId]["last"]
-		
-		weaponStat.kills = weaponStat.kills + 1
-		lastStat.kills = lastStat.kills + 1
-		
-		if lastStat.kills > rootStat.killstreak then
-			rootStat.killstreak = lastStat.kills
+		if CHUDClientStats[steamId] then
+			local rootStat = CHUDClientStats[steamId][teamNumber]
+			local weaponStat = CHUDClientStats[steamId]["weapons"][wTechId]
+			local lastStat = CHUDClientStats[steamId]["last"]
+			
+			weaponStat.kills = weaponStat.kills + 1
+			lastStat.kills = lastStat.kills + 1
+			
+			if lastStat.kills > rootStat.killstreak then
+				rootStat.killstreak = lastStat.kills
+			end
 		end
 	end
 end
@@ -276,8 +282,10 @@ local function AddBuildTime(steamId, buildTime, teamNumber)
 	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
 		
-		local stat = CHUDClientStats[steamId][teamNumber]
-		stat.timeBuilding = stat.timeBuilding + buildTime
+		if CHUDClientStats[steamId] then
+			local stat = CHUDClientStats[steamId][teamNumber]
+			stat.timeBuilding = stat.timeBuilding + buildTime
+		end
 	end
 end
 
@@ -338,11 +346,6 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 		
 		if stat then
 			stat.playerName = self.playerName
-			local scorePlayer = Shared.GetEntity(self.playerId)
-			if scorePlayer and HasMixin(scorePlayer, "Scoring") then
-				stat[1].timePlayed = scorePlayer.marineTime or 0
-				stat[2].timePlayed = scorePlayer.alienTime or 0
-			end
 		end
 		
 		return true
@@ -354,12 +357,17 @@ local originalScoringOnMove = ScoringMixin.OnProcessMove
 function ScoringMixin:OnProcessMove(input)
 	originalScoringOnMove(self, input)
 	
-	local steamId = self.GetSteamId and self:GetSteamId()
-	local teamNumber = self:GetTeamNumber()
-	if steamId and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
-		local stat = CHUDClientStats[steamId][self:GetTeamNumber()]
-		if self:GetIsPlaying() and self:isa("Commander") then
-			stat.commanderTime = stat.commanderTime + input.time
+	if self.clientIndex and self.clientIndex > 0 then
+		local steamId = GetSteamIdForClientIndex(self.clientIndex)
+		local teamNumber = self:GetTeamNumber()
+		if steamId and steamId > 0 and (teamNumber == 1 or teamNumber == 2) and CHUDClientStats[steamId] then
+			local stat = CHUDClientStats[steamId][teamNumber]
+			if self:GetIsPlaying() then
+				if self:isa("Commander") then
+					stat.commanderTime = stat.commanderTime + input.time
+				end
+				stat.timePlayed = stat.timePlayed + input.time
+			end
 		end
 	end
 end
@@ -372,7 +380,7 @@ function ScoringMixin:AddKill()
 		local steamId = GetSteamIdForClientIndex(self.clientIndex)
 		local teamNumber = self:GetTeamNumber()
 		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
-		local stat = CHUDClientStats[steamId][teamNumber]
+		local stat = CHUDClientStats[steamId] and CHUDClientStats[steamId][teamNumber]
 		
 		if stat then
 			stat.kills = Clamp(stat.kills + 1, 0, kMaxKills)
@@ -388,7 +396,7 @@ function ScoringMixin:AddAssistKill()
 		local steamId = GetSteamIdForClientIndex(self.clientIndex)
 		local teamNumber = self:GetTeamNumber()
 		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
-		local stat = CHUDClientStats[steamId][teamNumber]
+		local stat = CHUDClientStats[steamId] and CHUDClientStats[steamId][teamNumber]
 		
 		if stat then
 			stat.assists = Clamp(stat.assists + 1, 0, kMaxKills)
@@ -404,7 +412,7 @@ function ScoringMixin:AddDeaths()
 		local steamId = GetSteamIdForClientIndex(self.clientIndex)
 		local teamNumber = self:GetTeamNumber()
 		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
-		local stat = CHUDClientStats[steamId][teamNumber]
+		local stat = CHUDClientStats[steamId] and CHUDClientStats[steamId][teamNumber]
 		
 		if stat then
 			stat.deaths = Clamp(stat.assists + 1, 0, kMaxDeaths)
