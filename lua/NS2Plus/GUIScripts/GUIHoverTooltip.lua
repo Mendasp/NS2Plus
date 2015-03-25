@@ -47,17 +47,24 @@ originalTooltipInit = Class_ReplaceMethod("GUIHoverTooltip", "Initialize",
 local originalTooltipShow
 originalTooltipShow = Class_ReplaceMethod("GUIHoverTooltip", "Show",
 	function(self, displayTime)
-		if not self.background:GetIsAnimating() or self.background:GetColor().a == 0 then
+		if self.tooltip:GetHasAnimation("TOOLTIP_HIDE") then
+			self.background:DestroyAnimations()
+			self.tooltip:DestroyAnimations()
+		end
+		if not self.tooltip:GetHasAnimation("TOOLTIP_SHOW") then
 			originalTooltipShow(self, displayTime)
 			self.background:SetIsVisible(true)
-			self.background:SetColor(kBackgroundColor, 0.25, "TOOLTIP_SHOW")
 		end
 	end)
 	
 local originalTooltipHide
 originalTooltipHide = Class_ReplaceMethod("GUIHoverTooltip", "Hide",
 	function(self, hideTime)
-		if not self.background:GetIsAnimating() then
+		if self.tooltip:GetHasAnimation("TOOLTIP_SHOW") then
+			self.background:DestroyAnimations()
+			self.tooltip:DestroyAnimations()
+		end
+		if not self.tooltip:GetHasAnimation("TOOLTIP_HIDE") then
 			originalTooltipHide(self, hideTime)
 		end
 	end)
