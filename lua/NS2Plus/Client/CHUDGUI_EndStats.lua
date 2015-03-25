@@ -1165,7 +1165,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.actionIconGUI.pickupIcon:SetLayer(kGUILayerPlayerHUD)
 	self.actionIconGUI:Hide()
 	
-	self.tooltip = GetGUIManager():CreateGUIScriptSingle("GUIHoverTooltip")
+	self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
 	self.hoverMenu = GetGUIManager():CreateGUIScriptSingle("GUIHoverMenu")
 	self.lastRow = nil
 	

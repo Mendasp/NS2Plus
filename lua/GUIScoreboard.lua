@@ -689,29 +689,6 @@ local function SetPlayerItemBadges( item, badgeTextures )
 
 end
 
-local function HandleBadgeClicked(self)
-       
-    local mouseX, mouseY = Client.GetCursorPosScreen()    
-    for t = 1, #self.teams do   
-        local playerList = self.teams[t]["PlayerList"]
-        for p = 1, #playerList do
-            local playerItem = playerList[p]
-            for i = 1, #playerItem.BadgeItems do
-                local badgeItem = playerItem.BadgeItems[i]
-                if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
-                    local clientIndex = playerItem["ClientIndex"]
-                    local _, badgeNames = Badges_GetBadgeTextures(clientIndex, "scoreboard")
-                    local badge = ToString(badgeNames[i])
-                    self.badgeNameTooltip:SetText(GetBadgeFormalName(badge))
-                    self.badgeNameTooltip:Show(1)
-                    return
-                end
-            end
-        end        
-    end
-
-end
-
 function GUIScoreboard:UpdateTeam(updateTeam)
     
     local teamGUIItem = updateTeam["GUIs"]["Background"]
@@ -944,6 +921,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         if not self.hoverMenu.background:GetIsVisible() then
             if MouseTracker_GetIsVisible() and GUIItemContainsPoint(player["Background"], mouseX, mouseY) then
                 local canHighlight = true
+                local hoverBadge = false
                 for _, icon in ipairs(player["IconTable"]) do
                     if icon:GetIsVisible() and GUIItemContainsPoint(icon, mouseX, mouseY) and not icon.allowHighlight then
                         canHighlight = false
@@ -954,7 +932,11 @@ function GUIScoreboard:UpdateTeam(updateTeam)
                 for i = 1, #player.BadgeItems do
                     local badgeItem = player.BadgeItems[i]
                     if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
-                        canHighlight = false
+                        local clientIndex = player["ClientIndex"]
+                        local _, badgeNames = Badges_GetBadgeTextures(clientIndex, "scoreboard")
+                        local badge = ToString(badgeNames[i])
+                        self.badgeNameTooltip:SetText(GetBadgeFormalName(badge))
+                        hoverBadge = true
                         break
                     end
                 end
@@ -964,6 +946,12 @@ function GUIScoreboard:UpdateTeam(updateTeam)
                     player["Background"]:SetColor(color)
                 else
                     self.hoverPlayerClientIndex = 0
+                end
+                
+                if hoverBadge then
+                    self.badgeNameTooltip:Show()
+                else
+                    self.badgeNameTooltip:Hide()
                 end
             end
         elseif steamId == GetSteamIdForClientIndex(self.hoverPlayerClientIndex) then
@@ -1334,6 +1322,7 @@ function GUIScoreboard:SendKeyEvent(key, down)
             end
             
             self.hoverMenu:Show()
+            self.badgeNameTooltip:Hide(0)
         end
     end
     
@@ -1348,7 +1337,6 @@ function GUIScoreboard:SendKeyEvent(key, down)
                 SetMouseVisible(self, true)
             else
                 HandlePlayerVoiceClicked(self)
-                HandleBadgeClicked(self)
             end
             
             return true
