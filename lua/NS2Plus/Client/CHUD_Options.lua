@@ -153,7 +153,7 @@ CHUDOptions =
 				sort = "C1",
 			},
 			aliencircles = {
-				name    = "CHUD_aliencircles",
+				name    = "CHUD_AlienBars",
 				label   = "Alien circles",
 				tooltip = "Lets you choose between different alien energy/health circles.",
 				type    = "select",
