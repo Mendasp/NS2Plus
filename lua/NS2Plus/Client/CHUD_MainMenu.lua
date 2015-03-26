@@ -120,11 +120,28 @@ local function BoolToIndex(value)
 end
 
 -- Set appropriate form size without CSS
+local originalMenuCreateOptions
 originalMenuCreateOptions = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionsForm",
 	function(mainMenu, content, options, optionElements)
 		local form = originalMenuCreateOptions(mainMenu, content, options, optionElements)
 		form:SetHeight(#options*50)
 		return form
+	end)
+	
+-- Add join button to server details window
+local originalMenuServerDetails
+originalMenuServerDetails = Class_ReplaceMethod( "GUIMainMenu", "CreateServerDetailsWindow",
+	function(self)
+		originalMenuServerDetails(self)
+		
+		self.serverDetailsWindow.joinButton = CreateMenuElement(self.serverDetailsWindow, "MenuButton")
+		self.serverDetailsWindow.joinButton:SetCSSClass("apply")
+		self.serverDetailsWindow.joinButton:SetText(Locale.ResolveString("JOIN"))
+		self.serverDetailsWindow.joinButton:AddEventCallbacks( {OnClick = function(self) self.scriptHandle:ProcessJoinServer() end } )
+		self.serverDetailsWindow.joinButton:SetBottomOffset(10)
+		
+		self.serverDetailsWindow.slideBar:SetHeight(380)
+		self.serverDetailsWindow:GetContentBox():SetHeight(380)
 	end)
 
 local CreateKeyBindingsForm = GetUpValue(GUIMainMenu.CreateOptionWindow, "CreateKeyBindingsForm", { LocateRecurse = true })
