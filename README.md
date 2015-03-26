@@ -15,6 +15,7 @@ Latest changes
 	- The Classic Ammo and HUD Bars options now use the same code to fetch weapon info. They now also display mines and grenades.
 	- Added "Request Weld" and other voiceover menu options to the Bindings menu.
 	- Color coded marine wrench icon for teammates and buildings depending on the damage received.
+	- Moving the mouse over the tech icons in Insight will now display the tech name.
 	- NS2+ console output will now wrap the text correctly on low resolutions.
 	- NS2+ console commands now allow you to reset settings to their individual defaults.
 	- Improved tooltips, some of them now include an example image for the NS2+ options.
