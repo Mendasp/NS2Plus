@@ -1,7 +1,11 @@
 local mainMenu
 LoadCSSFile("lua/NS2Plus/Client/chud.css")
 
-function MakeCHUDSliderCallback( elemId, key )
+function GetCHUDMainMenu()
+	return mainMenu
+end
+
+local function MakeCHUDSliderCallback( elemId, key )
 	return function()
 		if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 			local multiplier = CHUDGetOptionParam(key, "multiplier") or 1

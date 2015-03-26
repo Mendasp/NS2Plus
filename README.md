@@ -16,6 +16,8 @@ Latest changes
 	- Changed crosshair resolution scaling option with a slider that allows users to choose scaling themselves (from 1% to 200%).
 	- Added "Request Weld" and other voiceover menu options to the Bindings menu.
 	- Fixed vanilla bug where server browser tooltips could get stuck on the screen.
+	- NS2+ console output will now wrap the text correctly on low resolutions.
+	- NS2+ console commands now allow you to reset settings to their individual defaults.
 
 - 19/03/2015
 	- Classic Ammo now supports the Exo.

@@ -1,5 +1,15 @@
 local kCHUDUnrecognizedOptionMsg = "Unrecognized option. Type \"plus\" to see a list of available options or change them in the NS2+ Options menu."
 
+-- Wrap the text so it fits on screen
+local function PrintConsoleText(text)
+	local item = GetGUIManager():CreateTextItem()
+	item:SetFontName(Fonts.kArial_15)
+	
+	Shared.Message(WordWrap(item, text, 0, Client.GetScreenWidth()-10))
+	
+	GUI.DestroyItem(item)
+end
+
 local function isInteger(x)
 	return math.floor(x)==x
 end
@@ -48,6 +58,7 @@ function CHUDSetOption(key, value)
 	
 		option = CHUDOptions[key]
 		oldValue = option.currentValue
+		defaultValue = option.defaultValue
 				
 		if option.valueType == "bool" then
 			if value == "true" or value == "1" or value == true then
@@ -62,6 +73,10 @@ function CHUDSetOption(key, value)
 				Client.SetOptionBoolean(option.name, not oldValue)
 				option.currentValue = not oldValue
 				setValue = option.currentValue
+			elseif value == "reset" or value == "default" then
+				Client.SetOptionBoolean(option.name, defaultValue)
+				option.currentValue = defaultValue
+				setValue = option.currentValue
 			end
 			
 		elseif option.valueType == "float" then
@@ -71,6 +86,10 @@ function CHUDSetOption(key, value)
 				number = number / multiplier
 				Client.SetOptionFloat(option.name, number)
 				option.currentValue = number
+				setValue = option.currentValue
+			elseif value == "reset" or value == "default" then
+				Client.SetOptionFloat(option.name, defaultValue)
+				option.currentValue = defaultValue
 				setValue = option.currentValue
 			end
 			
@@ -90,6 +109,10 @@ function CHUDSetOption(key, value)
 					option.currentValue = oldValue+1
 					setValue = option.currentValue
 				end
+			elseif value == "reset" or value == "default" then
+				Client.SetOptionInteger(option.name, defaultValue)
+				option.currentValue = defaultValue
+				setValue = option.currentValue
 			end
 		end
 		
@@ -142,7 +165,7 @@ function GetCHUDSettings()
 		end
 		
 		if lastCHUD < kCHUDVersion and option.resetSettingInBuild and kCHUDVersion >= option.resetSettingInBuild and lastCHUD < option.resetSettingInBuild then
-			Shared.Message(string.format("[NS2+] The default setting for \"%s\" was changed in NS2+ build %d, resetting to default.", option.label, option.resetSettingInBuild))
+			PrintConsoleText(string.format("[NS2+] The default setting for \"%s\" was changed in NS2+ build %d, resetting to default.", option.label, option.resetSettingInBuild))
 			CHUDSetOption(name, option.defaultValue)
 		end
 		
@@ -174,28 +197,28 @@ local function CHUDPrintCommandsPage(page)
 	local numPages = math.ceil(#SortedOptions/linesPerPage)
 	local curPage = page >= 0 and page < numPages and page or 0
 
-	Shared.Message("-------------------------------------")
-	Shared.Message("NS2+ Commands")
-	Shared.Message("-------------------------------------")
+	PrintConsoleText("-------------------------------------")
+	PrintConsoleText("NS2+ Commands")
+	PrintConsoleText("-------------------------------------")
 	for i=1+(linesPerPage*curPage),linesPerPage*curPage+linesPerPage do
 		local option = CHUDOptions[SortedOptions[i]]
 		if option then
 			local helpStr = "plus " .. SortedOptions[i]
 			if option.valueType == "float" then
 				local multiplier = option.multiplier or 1
-				helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier
+				helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier .. " or reset/default"
 			elseif option.valueType == "int" then
-				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle"
+				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle or reset/default"
 			elseif option.valueType == "bool" then
-				helpStr = helpStr .. " <true/false> or <0/1> or cycle"
+				helpStr = helpStr .. " <true/false> or <0/1> or cycle or reset/default"
 			end
 			helpStr = helpStr .. " - " .. option.tooltip
-			Shared.Message(helpStr)
+			PrintConsoleText(helpStr)
 		end
 	end
-	Shared.Message("-------------------------------------")
-	Shared.Message(string.format("Page %d of %d. Type \"plus page <number>\" to see other pages.", curPage+1, numPages))
-	Shared.Message("-------------------------------------")
+	PrintConsoleText("-------------------------------------")
+	PrintConsoleText(string.format("Page %d of %d. Type \"plus page <number>\" to see other pages.", curPage+1, numPages))
+	PrintConsoleText("-------------------------------------")
 end
 
 local function CHUDHelp(optionName)
@@ -203,27 +226,27 @@ local function CHUDHelp(optionName)
 	if CHUDOptions[optionName] ~= nil then
 		option = CHUDOptions[optionName]
 		local multiplier = option.multiplier or 1
-		Shared.Message("-------------------------------------")
-		Shared.Message(option.label)
-		Shared.Message("-------------------------------------")
-		Shared.Message(option.tooltip)
+		PrintConsoleText("-------------------------------------")
+		PrintConsoleText(option.label)
+		PrintConsoleText("-------------------------------------")
+		PrintConsoleText(option.tooltip)
 		local default = option.defaultValue
 		local helpStr = "Usage: plus " .. optionName
 		if option.valueType == "float" then
-			helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier
+			helpStr = helpStr .. " <float> - Values: " .. option.minValue * multiplier .. " to " .. option.maxValue * multiplier .. " or reset/default"
 			default = default * multiplier
 		elseif option.valueType == "int" then
-			helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle"
+			helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle or reset/default"
 		elseif option.valueType == "bool" then
-			helpStr = helpStr .. " <true/false> or <0/1> or <cycle>"
+			helpStr = helpStr .. " <true/false> or <0/1> or cycle or reset/default"
 		end
-		Shared.Message(helpStr .. " - Example (default value): plus " .. optionName .. " " .. tostring(default))
+		PrintConsoleText(helpStr .. " - Example (default value): plus " .. optionName .. " " .. tostring(default))
 		if option.type == "select" then
 			if option.valueType == "int" then
 				for index, value in pairs(option.values) do
-					Shared.Message("plus " .. optionName .. " " .. index-1 .. " - " .. value)
+					PrintConsoleText("plus " .. optionName .. " " .. index-1 .. " - " .. value)
 				end
-				Shared.Message("-------------------------------------")
+				PrintConsoleText("-------------------------------------")
 			end
 			if option.valueType == "bool" then
 				if option.currentValue then
@@ -238,11 +261,11 @@ local function CHUDHelp(optionName)
 		else
 			helpStr = tostring(Round(option.currentValue * multiplier), 4)
 		end
-		Shared.Message("Current value: " .. helpStr)
-		Shared.Message("-------------------------------------")
+		PrintConsoleText("Current value: " .. helpStr)
+		PrintConsoleText("-------------------------------------")
 			
 	else
-		Shared.Message(kCHUDUnrecognizedOptionMsg)
+		PrintConsoleText(kCHUDUnrecognizedOptionMsg)
 	end
 end
 
@@ -279,20 +302,34 @@ local function OnCommandCHUD(...)
 				helpStr = tostring(option.currentValue * multiplier)
 			end
 			if setValue ~= nil then
-				Shared.Message(option.label .. " set to: " .. helpStr)
+				local mainMenu = GetCHUDMainMenu()
+				if mainMenu then
+					if option.valueType == "bool" then
+						mainMenu.CHUDOptionElements[option.name]:SetOptionActive(setValue == true and 2 or 1)
+					elseif option.valueType == "int" then
+						mainMenu.CHUDOptionElements[option.name]:SetOptionActive(setValue+1)
+					elseif option.valueType == "float" then
+						local multiplier = option.multiplier or 1
+						local minValue = option.minValue or 0
+						local maxValue = option.maxValue or 1
+						local value = (setValue - minValue) / (maxValue - minValue)
+						mainMenu.CHUDOptionElements[option.name]:SetValue(value)
+					end
+				end
+				PrintConsoleText(option.label .. " set to: " .. helpStr)
 				if option.disabled then
-					Shared.Message("The server admin has disabled this option (" .. option.label .. "). The option will get saved, but the blocked value will be used." )
+					PrintConsoleText("The server admin has disabled this option (" .. option.label .. "). The option will get saved, but the blocked value will be used." )
 				end
 			else
 				CHUDHelp(args[1])
 			end
 		else
-			Shared.Message(kCHUDUnrecognizedOptionMsg)
+			PrintConsoleText(kCHUDUnrecognizedOptionMsg)
 		end
 	elseif #args == 2 and args[1] == "page" and IsNumber(tonumber(args[2])) then
 		CHUDPrintCommandsPage(args[2])
 	else
-		Shared.Message(kCHUDUnrecognizedOptionMsg)
+		PrintConsoleText(kCHUDUnrecognizedOptionMsg)
 	end
 end
 
@@ -373,7 +410,7 @@ local function OnCommandPlusExport()
 		
 		settingsFile:write("\r\nDate exported: " .. CHUDFormatDateTimeString(Shared.GetSystemTime()))
 		
-		Shared.Message("Exported NS2+ config. You can find it in \"%APPDATA%\\Natural Selection 2\\NS2Plus\\ExportedSettings.txt\"")
+		PrintConsoleText("Exported NS2+ config. You can find it in \"%APPDATA%\\Natural Selection 2\\NS2Plus\\ExportedSettings.txt\"")
 		io.close(settingsFile)
 	end
 end
