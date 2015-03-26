@@ -91,9 +91,13 @@ Class_ReplaceMethod("GUIHoverTooltip", "Update",
 		GUIAnimatedScript.Update(self, deltaTime)
 		
 		if self.targetTime > -1 then
-			if self.targetTime > 0 and self.targetTime < Shared.GetTime() or not MouseTracker_GetIsVisible() then
-				self:Hide()
-				self.targetTime = -1
+			if self.targetTime > 0 then
+				if self.targetTime > Shared.GetTime() - 0.3 then
+					self:Hide()
+				elseif self.targetTime < Shared.GetTime() then
+					self:Hide(0)
+					self.targetTime = -1
+				end
 			end
 
 			local mouseX, mouseY = Client.GetCursorPosScreen()
