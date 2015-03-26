@@ -5,36 +5,19 @@ function GetCHUDMainMenu()
 	return mainMenu
 end
 
-local function MakeCHUDSliderCallback( elemId, key )
-	return function()
-		if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-			local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
-			local minValue = CHUDGetOptionParam(key, "minValue") or 0
-			local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
-			local elem = mainMenu.CHUDOptionElements[elemId]
-			local value = (elem:GetValue() * (maxValue - minValue) + minValue) * multiplier
-			CHUDSetOption(key, Round(value, 2))
-		end
+local function CHUDSliderCallback(elemId)
+	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+		local key = mainMenu.CHUDOptionElements[elemId].index
+		local multiplier = CHUDGetOptionParam(key, "multiplier") or 1
+		local minValue = CHUDGetOptionParam(key, "minValue") or 0
+		local maxValue = CHUDGetOptionParam(key, "maxValue") or 1
+		local elem = mainMenu.CHUDOptionElements[elemId]
+		local value = (elem:GetValue() * (maxValue - minValue) + minValue) * multiplier
+		CHUDSetOption(key, Round(value, 2))
 	end
 end
-CHUDHitIndicatorSlider = MakeCHUDSliderCallback( "CHUD_HitIndicator", "hitindicator" )
-CHUDLocationSlider = MakeCHUDSliderCallback( "CHUD_LocationAlpha", "locationalpha" )
-CHUDMinimapSlider = MakeCHUDSliderCallback( "CHUD_MinimapAlpha", "minimapalpha" )
-CHUDHitsoundsSlider = MakeCHUDSliderCallback( "CHUD_HitsoundsVolume", "hitsounds_vol" )
-CHUDFlashAtmosSlider = MakeCHUDSliderCallback( "CHUD_FlashAtmos", "flashatmos" )
-CHUDMapAtmosSlider = MakeCHUDSliderCallback( "CHUD_MapAtmos", "mapatmos" )
-CHUDDMGScaleSlider = MakeCHUDSliderCallback( "CHUD_DMGScale", "dmgscale" )
-CHUDDMGTimeSlider = MakeCHUDSliderCallback( "CHUD_DamageNumberTime", "damagenumbertime" )
-CHUDKillFeedScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedScale", "killfeedscale" )
-CHUDKillFeedIconScaleSlider = MakeCHUDSliderCallback( "CHUD_KillFeedIconScale", "killfeediconscale" )
-CHUDDecalSlider = MakeCHUDSliderCallback( "CHUD_MaxDecalLifeTime", "maxdecallifetime" )
-CHUDMarineSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_M", "sensitivity_m" )
-CHUDAlienSensSlider = MakeCHUDSliderCallback( "CHUD_Sensitivity_A", "sensitivity_a" )
-CHUDMarineFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_M", "fov_m" )
-CHUDAlienFOVSlider = MakeCHUDSliderCallback( "CHUD_FOV_A", "fov_a" )
-CHUDCrosshairScaleSlider = MakeCHUDSliderCallback( "CHUD_CrosshairScale", "crosshairscale" )
 
-function CHUDSaveMenuSettings()
+local function CHUDSaveMenuSettings()
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		for _, option in pairs(mainMenu.CHUDOptionElements) do
 			CHUDOption = CHUDOptions[option.index]
@@ -254,6 +237,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	self:SetupWindow(self.CHUDOptionWindow, "NS2+ OPTIONS")
 	local function InitOptionWindow()
 		for idx, option in pairs(CHUDOptions) do
+			self.CHUDOptionElements[option.name].index = idx
 			if option.valueType == "bool" then
 				self.CHUDOptionElements[option.name]:SetOptionActive( BoolToIndex(CHUDOptions[idx].currentValue) )
 			elseif option.valueType == "int" and option.type == "select" then
@@ -263,7 +247,6 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 				local maxValue = option.maxValue or 1
 				self.CHUDOptionElements[option.name]:SetValue( (CHUDOptions[idx].currentValue - minValue) / (maxValue - minValue) )
 			end
-			self.CHUDOptionElements[option.name].index = idx
 		end
 		// When opening and closing menus the tooltips would appear behind the form
 		// Increment the layer so it's always on top
@@ -541,17 +524,14 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 				end
 			end,
 			})
-			// HACK: Really should use input:AddSetValueCallback, but the slider bar bypasses that.
-			if option.sliderCallback then
-				input:Register(
-					{OnSlide =
-						function(value, interest)
-							option.sliderCallback(mainMenu)
-							local value = (input:GetValue() * (maxValue - minValue) + minValue) * multiplier
-							input_display:SetValue(ToString(string.sub(Round(value,2), 0, ConditionalValue(value > 100, 5, 4))))
-						end
-					}, SLIDE_HORIZONTAL)
-			end
+			input:Register(
+				{OnSlide =
+					function(value, interest)
+						CHUDSliderCallback(option.name)
+						local value = (input:GetValue() * (maxValue - minValue) + minValue) * multiplier
+						input_display:SetValue(ToString(string.sub(Round(value,2), 0, ConditionalValue(value > 100, 5, 4))))
+					end
+				}, SLIDE_HORIZONTAL)
 			
 			resetOption:SetCSSClass("clear_keybind_slider")
 			resetOption:SetTopOffset(y+5)
@@ -564,9 +544,11 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			input = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
 		end
 		
-		if option.callback then
-			input:AddSetValueCallback(option.callback)
+		-- Sliders have their own callbacks/saving
+		if option.type ~= "slider" then
+			input:AddSetValueCallback(CHUDSaveMenuSettings)
 		end
+		
 		local inputClass = defaultInputClass
 		if option.inputClass then
 			inputClass = option.inputClass
