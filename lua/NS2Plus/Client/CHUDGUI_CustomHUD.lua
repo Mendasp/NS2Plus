@@ -3,7 +3,7 @@ Script.Load("lua/GUIAnimatedScript.lua")
 -- I had to reorganize this code at least 10 times because of varying and increasingly specific conditions.
 -- Please, forgive me if something is super twisted, I can't be bothered going through this again.
 
-class 'CHUDGUI_CustomHUD' (GUIAnimatedScript)
+class 'CHUDGUI_HUDBars' (GUIAnimatedScript)
 
 local kBarSize, kXOffset, leftBarXOffset, rightBarXOffset, yOffset, leftBarXAnchor, rightBarXAnchor, yAnchor, kBarBgTexCoords, kBarTexCoords, hudbars
 local kCenterBarTexture = PrecacheAsset("ui/centerhudbar.dds")
@@ -29,7 +29,7 @@ local kBarRightTextures = { kBottomBar1MainTexture, kBottomBar2RightTexture, kCe
 
 local kBottomBar1SecSizeProportion = 0.925
 
-function CHUDGUI_CustomHUD:Initialize()
+function CHUDGUI_HUDBars:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
@@ -37,7 +37,7 @@ function CHUDGUI_CustomHUD:Initialize()
 	
 	local kBottomBarBgTexture, kBottomBarHPTexture, kBottomBarAPTexture, kBottomBarRightTexture
 	local isMarine = self.team == kTeam1Index
-	hudbars = isMarine and CHUDGetOption("customhud_m") or CHUDGetOption("customhud_a")
+	hudbars = isMarine and CHUDGetOption("hudbars_m") or CHUDGetOption("hudbars_a")
 	
 	local textureMode = hudbars == 1 and 3 or self.team
 	kBarSize = { Vector(32, 64, 0), GUIScale(Vector(128, kBaseScreenHeight/3, 0)) }
@@ -172,7 +172,7 @@ function CHUDGUI_CustomHUD:Initialize()
 
 end
 
-function CHUDGUI_CustomHUD:Uninitialize()
+function CHUDGUI_HUDBars:Uninitialize()
 
 	GUIAnimatedScript.Uninitialize(self)
 	
@@ -194,7 +194,7 @@ function CHUDGUI_CustomHUD:Uninitialize()
 
 end
 
-function CHUDGUI_CustomHUD:Reset()
+function CHUDGUI_HUDBars:Reset()
 
 	GUIAnimatedScript.Reset(self)
 	
@@ -203,7 +203,7 @@ function CHUDGUI_CustomHUD:Reset()
 
 end
 
-function CHUDGUI_CustomHUD:Update(deltaTime)
+function CHUDGUI_HUDBars:Update(deltaTime)
 	local player = Client.GetLocalPlayer()
 	local teamIndex = player:GetTeamNumber()
 	

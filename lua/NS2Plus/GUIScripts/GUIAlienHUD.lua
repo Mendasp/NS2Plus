@@ -112,8 +112,8 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		HiveVisionExtra_screenEffect = Client.CreateScreenEffect("shaders/HiveVisionExtra.screenfx")
 		Player.screenEffects.darkVision = Client.CreateScreenEffect(CHUDGetOptionAssocVal("av"))
 		
-		if CHUDGetOption("customhud_a") > 0 then
-			if CHUDGetOption("customhud_a") == 2 then
+		if CHUDGetOption("hudbars_a") > 0 then
+			if CHUDGetOption("hudbars_a") == 2 then
 				self.resourceDisplay.background:SetPosition(Vector(-440, -100, 0))
 			end
 			
@@ -126,7 +126,7 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 			self.energyBall.leftSide:SetIsVisible(false)
 			self.energyBall.rightSide:SetIsVisible(false)
 			self.adrenalineEnergy:SetIsVisible(false)
-			if CHUDGetOption("customhud_a") == 2 then
+			if CHUDGetOption("hudbars_a") == 2 then
 				healthBall:SetPosition(Vector(healthBallPos.x+50, healthBallPos.y, 0))
 				energyBall:SetPosition(Vector(energyBallPos.x-50, energyBallPos.y, 0))
 				self.secondaryAbilityBackground:SetPosition(Vector(-50, -125, 0))
@@ -215,17 +215,17 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 			self.energyBall:GetRightSide():SetColor(energyColor)
 		end
 		
-		self.armorBall:SetIsVisible(self.healthBall:GetBackground():GetIsVisible() and CHUDGetOption("customhud_a") == 0)
+		self.armorBall:SetIsVisible(self.healthBall:GetBackground():GetIsVisible() and CHUDGetOption("hudbars_a") == 0)
 		
 		local player = Client.GetLocalPlayer()
 		local shieldFraction = player:GetShieldPercentage()
 		local hasShield = PlayerUI_GetHasMucousShield()
 		
 		if self.mucousText then
-			self.mucousText:SetIsVisible(CHUDGetOption("customhud_a") > 0 and PlayerUI_GetHasMucousShield())
+			self.mucousText:SetIsVisible(CHUDGetOption("hudbars_a") > 0 and PlayerUI_GetHasMucousShield())
 		end
 		
-		if not self.mucousBall and CHUDGetOption("customhud_a") == 0 then
+		if not self.mucousBall and CHUDGetOption("hudbars_a") == 0 then
 			local mucousBallSettings = { }
 			mucousBallSettings.BackgroundWidth = GUIScale(192)
 			mucousBallSettings.BackgroundHeight = GUIScale(192)
@@ -252,7 +252,7 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 			self.mucousBall:GetRightSide():SetColor(Color(0, 1, 0, 1))
 		end
 		if self.mucousBall then
-			self.mucousBall:SetIsVisible(shieldFraction and shieldFraction > 0 and CHUDGetOption("customhud_a") == 0)
+			self.mucousBall:SetIsVisible(shieldFraction and shieldFraction > 0 and CHUDGetOption("hudbars_a") == 0)
 			self.mucousBall:SetPercentage(shieldFraction)
 			self.mucousBall:Update()
 		end

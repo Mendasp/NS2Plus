@@ -10,7 +10,7 @@ function CHUDGUI_ClassicAmmo:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
 	
-	if CHUDGetOption("customhud_m") == 2 then
+	if CHUDGetOption("hudbars_m") == 2 then
 		self.kAmmoPos = Vector(-320, -105, 0)
 	else
 		self.kAmmoPos = Vector(-210, -105, 0)

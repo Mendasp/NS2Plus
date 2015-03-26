@@ -36,14 +36,14 @@ Class_AddMethod( "GUIMarineHUD", "CHUDRepositionGUI",
 		end
 		
 		local xpos = ConditionalValue(hpbar, -20, -300)
-		if CHUDGetOption("customhud_m") == 2 then
+		if CHUDGetOption("hudbars_m") == 2 then
 			xpos = -150
 		end
 		self.statusDisplay.healthText:SetPosition(Vector(xpos, 36, 0))
 		self.statusDisplay.armorText:SetPosition(Vector(xpos, 96, 0))
 		
 		local anchor = ConditionalValue(hpbar, GUIItem.Right, GUIItem.Left)
-		if CHUDGetOption("customhud_m") == 2 then
+		if CHUDGetOption("hudbars_m") == 2 then
 			anchor = GUIItem.Middle
 		end
 		self.statusDisplay.parasiteState:SetAnchor(anchor, GUIItem.Center)
@@ -83,7 +83,7 @@ function(self)
 	// Reversed the setting since when it's enabled it hides stuff...
 	// It makes sense to me at least, didn't like seeing so much negativity
 	local mingui = not CHUDGetOption("mingui")
-	local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("customhud_m") ~= 2
+	local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("hudbars_m") ~= 2
 	local minimap = CHUDGetOption("minimap")
 	local showcomm = CHUDGetOption("showcomm")
 	local commactions = CHUDGetOption("commactions")
@@ -119,7 +119,7 @@ function(self)
 	// Fixes marine elements showing up in the Exo HUD when reloading the script
 	self:OnLocalPlayerChanged(Client.GetLocalPlayer())
 	
-	if CHUDGetOption("customhud_m") == 2 then
+	if CHUDGetOption("hudbars_m") == 2 then
 		self.resourceDisplay.background:SetPosition(Vector(-440, -100, 0))
 		
 		local pos = self.armorLevel:GetPosition()
@@ -221,7 +221,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local rtcount = CHUDGetOption("rtcount")
 		local commactions = CHUDGetOption("commactions")
 		local gametime = CHUDGetOption("gametime")
-		local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("customhud_m") ~= 2
+		local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("hudbars_m") ~= 2
 		local inventoryMode = CHUDGetOption("inventory")
 		local welderUpgrade = CHUDGetOption("welderup")
 		
@@ -260,7 +260,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 			self.resourceDisplay.pResDescription:SetText(Locale.ResolveString("RESOURCES"))
 		end
 		
-		if CHUDGetOption("customhud_m") == 2 then
+		if CHUDGetOption("hudbars_m") == 2 then
 			local pos = self.resourceDisplay.rtCount:GetPosition()
 			self.resourceDisplay.rtCount:SetPosition(Vector(pos.x-75, pos.y, 0))
 		end
@@ -376,7 +376,7 @@ Script.Load("lua/GUIJetpackFuel.lua")
 local originalJetpackFuelInit
 originalJetpackFuelInit = Class_ReplaceMethod( "GUIJetpackFuel", "Initialize",
 	function(self)
-		GUIJetpackFuel.kBackgroundOffsetX = ConditionalValue(CHUDGetOption("customhud_m") == 2, GUIScale(128), 6)
+		GUIJetpackFuel.kBackgroundOffsetX = ConditionalValue(CHUDGetOption("hudbars_m") == 2, GUIScale(128), 6)
 		originalJetpackFuelInit(self)
 	end
 )

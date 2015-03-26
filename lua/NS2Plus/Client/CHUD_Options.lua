@@ -770,7 +770,7 @@ CHUDOptions =
 				helpImageSize = Vector(128, 128, 0),
 				sort = "E1",
 			},
-			customhud_m = {
+			hudbars_m = {
 				name    = "CHUD_CustomHUD_M",
 				label   = "HUD bars (Marine)",
 				tooltip = "HL2 Style displays health/armor and ammo next to the crosshair. NS1 Style puts big bars at the bottom on each side.",
@@ -782,7 +782,7 @@ CHUDOptions =
 				valueType = "int",
 				applyFunction = function()
 					local classicammoScript = "NS2Plus/Client/CHUDGUI_ClassicAmmo"
-					local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
+					local customhudScript = "NS2Plus/Client/CHUDGUI_HUDBars"
 					if GetGUIManager():GetGUIScriptSingle(customhudScript) then
 						GetGUIManager():DestroyGUIScriptSingle(customhudScript)
 					end
@@ -794,7 +794,7 @@ CHUDOptions =
 				end,
 				sort = "E2",
 			},
-			customhud_a = {
+			hudbars_a = {
 				name    = "CHUD_CustomHUD_A",
 				label   = "HUD bars (Alien)",
 				tooltip = "HL2 Style displays health/armor and ammo next to the crosshair. NS1 Style puts big bars at the bottom on each side.",
@@ -805,7 +805,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "int",
 				applyFunction = function()
-					local customhudScript = "NS2Plus/Client/CHUDGUI_CustomHUD"
+					local customhudScript = "NS2Plus/Client/CHUDGUI_HUDBars"
 					if GetGUIManager():GetGUIScriptSingle(customhudScript) then
 						GetGUIManager():DestroyGUIScriptSingle(customhudScript)
 					end
