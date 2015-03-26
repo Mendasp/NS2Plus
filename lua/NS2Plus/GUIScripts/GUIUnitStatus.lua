@@ -30,7 +30,16 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 
 	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
+	if blipData.Status == kUnitStatus.Unrepaired then
+		local percentage = blipData.IsPlayer and blipData.ArmorFraction or (blipData.HealthFraction + blipData.ArmorFraction)/2
+		local alpha = updateBlip.GraphicsItem:GetColor().a
+		local color = (percentage < 0.5 and LerpColor(kRed, kYellow, percentage*2)) or (percentage >= 0.5 and LerpColor(kYellow, kWhite, (percentage-0.5)*2))
+		color.a = alpha
 		
+		updateBlip.GraphicsItem:SetColor(color)
+		updateBlip.OverLayGraphic:SetColor(color)
+	end
+	
 	-- Hide Background
 	if CHUDGetOption("mingui") or nameplates > 0 then
 		updateBlip.statusBg:SetTexture(kTransparentTexture)
