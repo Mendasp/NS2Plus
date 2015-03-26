@@ -23,6 +23,8 @@ Script.Load("lua/NS2Plus/GUIScripts/GUICrosshair.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIHoverTooltip.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUICommanderAlerts.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_Overhead.lua")
+Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_PlayerFrames.lua")
+Script.Load("lua/NS2Plus/GUIScripts/GUIInsight_PlayerHealthbars.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIInventory.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIProduction.lua")
 
