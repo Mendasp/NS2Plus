@@ -22,6 +22,27 @@ Script.Load("lua/NS2Plus/Client/CHUD_GoldenMode.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_DropPack.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 
+-- Add drop circles for some tech
+LookupTechData(kTechId.Hallucinate, kTechDataGhostModelClass, "AlienGhostModel")
+LookupTechData(kTechId.Hallucinate, kVisualRange, HallucinationCloud.kRadius)
+LookupTechData(kTechId.Hallucinate, kTechDataModel, BoneWall.kModelName)
+
+LookupTechData(kTechId.EnzymeCloud, kTechDataGhostModelClass, "AlienGhostModel")
+LookupTechData(kTechId.EnzymeCloud, kVisualRange, EnzymeCloud.kRadius)
+LookupTechData(kTechId.EnzymeCloud, kTechDataModel, BoneWall.kModelName)
+
+LookupTechData(kTechId.MucousMembrane, kTechDataGhostModelClass, "AlienGhostModel")
+LookupTechData(kTechId.MucousMembrane, kVisualRange, MucousMembrane.kRadius)
+LookupTechData(kTechId.MucousMembrane, kTechDataModel, BoneWall.kModelName)
+
+LookupTechData(kTechId.NutrientMist, kTechDataGhostModelClass, "AlienGhostModel")
+LookupTechData(kTechId.NutrientMist, kVisualRange, NutrientMist.kSearchRange)
+LookupTechData(kTechId.NutrientMist, kTechDataModel, BoneWall.kModelName)
+
+LookupTechData(kTechId.Rupture, kTechDataGhostModelClass, "AlienGhostModel")
+LookupTechData(kTechId.Rupture, kVisualRange, Rupture.kRadius)
+LookupTechData(kTechId.Rupture, kTechDataModel, BoneWall.kModelName)
+
 local function OnLoadComplete()
 	GetCHUDSettings()
 	Script.Load("lua/NS2Plus/CHUD_GUIScripts.lua")
