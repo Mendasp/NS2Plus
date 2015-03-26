@@ -246,7 +246,7 @@ if Client then
 		local hiddenviewmodel = false
 		
 		local classicammoScript = "NS2Plus/Client/CHUDGUI_ClassicAmmo"
-		local customhudScript = "NS2Plus/Client/CHUDGUI_HUDBars"
+		local hudbarsScript = "NS2Plus/Client/CHUDGUI_HUDBars"
 		local hiddenviewmodelScript = "NS2Plus/Client/CHUDGUI_HiddenViewmodel"
 		if not player:isa("Commander") then
 			if teamNumber == kTeam1Index then
@@ -256,12 +256,12 @@ if Client then
 				end
 				
 				if CHUDGetOption("hudbars_m") > 0 then
-					GetGUIManager():CreateGUIScriptSingle(customhudScript)
+					GetGUIManager():CreateGUIScriptSingle(hudbarsScript)
 					customhud = true
 				end
 			elseif teamNumber == kTeam2Index then
 				if CHUDGetOption("hudbars_a") > 0 then
-					GetGUIManager():CreateGUIScriptSingle(customhudScript)
+					GetGUIManager():CreateGUIScriptSingle(hudbarsScript)
 					customhud = true
 				end
 				if CHUDGetOption("drawviewmodel") > 1 then
@@ -274,8 +274,8 @@ if Client then
 		if GetGUIManager():GetGUIScriptSingle(classicammoScript) and not classicammo then
 			GetGUIManager():DestroyGUIScriptSingle(classicammoScript)
 		end
-		if GetGUIManager():GetGUIScriptSingle(customhudScript) and not customhud then
-			GetGUIManager():DestroyGUIScriptSingle(customhudScript)
+		if GetGUIManager():GetGUIScriptSingle(hudbarsScript) and not customhud then
+			GetGUIManager():DestroyGUIScriptSingle(hudbarsScript)
 		end
 		if GetGUIManager():GetGUIScriptSingle(hiddenviewmodelScript) and not hiddenviewmodel then
 			GetGUIManager():DestroyGUIScriptSingle(hiddenviewmodelScript)

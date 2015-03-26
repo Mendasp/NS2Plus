@@ -782,9 +782,9 @@ CHUDOptions =
 				valueType = "int",
 				applyFunction = function()
 					local classicammoScript = "NS2Plus/Client/CHUDGUI_ClassicAmmo"
-					local customhudScript = "NS2Plus/Client/CHUDGUI_HUDBars"
-					if GetGUIManager():GetGUIScriptSingle(customhudScript) then
-						GetGUIManager():DestroyGUIScriptSingle(customhudScript)
+					local hudbarsScript = "NS2Plus/Client/CHUDGUI_HUDBars"
+					if GetGUIManager():GetGUIScriptSingle(hudbarsScript) then
+						GetGUIManager():DestroyGUIScriptSingle(hudbarsScript)
 					end
 					if GetGUIManager():GetGUIScriptSingle(classicammoScript) then
 						GetGUIManager():DestroyGUIScriptSingle(classicammoScript)
@@ -805,9 +805,9 @@ CHUDOptions =
 				category = "hud",
 				valueType = "int",
 				applyFunction = function()
-					local customhudScript = "NS2Plus/Client/CHUDGUI_HUDBars"
-					if GetGUIManager():GetGUIScriptSingle(customhudScript) then
-						GetGUIManager():DestroyGUIScriptSingle(customhudScript)
+					local hudbarsScript = "NS2Plus/Client/CHUDGUI_HUDBars"
+					if GetGUIManager():GetGUIScriptSingle(hudbarsScript) then
+						GetGUIManager():DestroyGUIScriptSingle(hudbarsScript)
 					end
 					CHUDRestartScripts({ "GUIAlienHUD" })
 					CHUDEvaluateGUIVis()
