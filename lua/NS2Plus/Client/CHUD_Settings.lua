@@ -303,7 +303,7 @@ local function OnCommandCHUD(...)
 			end
 			if setValue ~= nil then
 				local mainMenu = GetCHUDMainMenu()
-				if mainMenu then
+				if mainMenu and mainMenu.CHUDOptionElements then
 					if option.valueType == "bool" then
 						mainMenu.CHUDOptionElements[option.name]:SetOptionActive(setValue == true and 2 or 1)
 					elseif option.valueType == "int" then

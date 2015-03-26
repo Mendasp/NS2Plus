@@ -165,7 +165,7 @@ CHUDOptions =
 				valueType = "int",
 				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
 				helpImage = "ui/helpImages/aliencircles.dds",
-				helpImageSize = Vector(320, 192, 0),
+				helpImageSize = Vector(192, 120, 0),
 				sort = "C2",
 			}, 
 			instantalienhealth = {
@@ -670,15 +670,26 @@ CHUDOptions =
 				defaultValue = 1,
 				category = "hud",
 				valueType = "int",
-				applyFunction = function() local script = ClientUI.GetScript("Hud/Marine/GUIMarineHUD")
-					if script then
-						script:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
-						script:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
-					end
+				applyFunction = function()
+					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
 				end,
 				helpImage = "ui/helpImages/uplvl.dds",
 				helpImageSize = Vector(160, 128, 0),
 				sort = "D6",
+			},
+			welderup = {
+				name    = "CHUD_WelderUp",
+				label   = "Show welder as upgrade",
+				tooltip = "When you have a welder it shows up under the armor and weapon level.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				callback = CHUDSaveMenuSettings,
+				defaultValue = false,
+				category = "hud",
+				valueType = "bool",
+				helpImage = "ui/helpImages/welderup.dds",
+				helpImageSize = Vector(160, 160, 0),
+				sort = "D7",
 			},
 			killfeedscale = {
 				name    = "CHUD_KillFeedScale",
@@ -695,7 +706,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
-				sort = "D7",
+				sort = "D8",
 			},
 			killfeediconscale = {
 				name    = "CHUD_KillFeedIconScale",
@@ -712,7 +723,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
-				sort = "D8",
+				sort = "D9a",
 			},
 			killfeedhighlight = {
 				name    = "CHUD_KillFeedHighlight",
@@ -727,7 +738,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
-				sort = "D9a",
+				sort = "D9b",
 			},
 			killfeedcolor = {
 				name    = "CHUD_KillFeedHighlightColor",
@@ -743,7 +754,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
-				sort = "D9b",
+				sort = "D9c",
 			},
 			lowammowarning = {
 				name    = "CHUD_LowAmmoWarning",

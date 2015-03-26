@@ -62,6 +62,24 @@ function(self)
     self.gameTime:SetColor(kBrightColor)
 	self.background:AddChild(self.gameTime)
 	
+	self.welderIcon = GetGUIManager():CreateGraphicItem()
+	self.welderIcon:SetAnchor(GUIItem.Right, GUIItem.Center)
+	self.welderIcon:SetColor(Color(0.725, 0.921, 0.949, 0.9))
+	local uplvl = CHUDGetOption("uplvl")
+	if uplvl < 2 then
+		self.welderIcon:SetPosition(Vector(GUIMarineHUD.kUpgradePos.x, GUIMarineHUD.kUpgradePos.y + (GUIMarineHUD.kUpgradeSize.y)*2 + 16, 0) * self.scale)
+		self.welderIcon:SetSize(GUIMarineHUD.kUpgradeSize * self.scale)
+		self.welderIcon:SetTexture("ui/buildmenu.dds")
+		self.welderIcon:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Welder)))
+	else
+		self.welderIcon:SetPosition(Vector(GUIMarineHUD.kUpgradePos.x * 0.9, GUIMarineHUD.kUpgradePos.y + (GUIMarineHUD.kUpgradeSize.y)*2, 0) * self.scale)
+		self.welderIcon:SetSize(Vector(96, 48, 0) * self.scale)
+		self.welderIcon:SetTexture(kInventoryIconsTexture)
+		self.welderIcon:SetTexturePixelCoordinates(GetTexCoordsForTechId(kTechId.Welder))
+	end
+	self.welderIcon:SetIsVisible(false)
+	self.background:AddChild(self.welderIcon)
+	
 	// Reversed the setting since when it's enabled it hides stuff...
 	// It makes sense to me at least, didn't like seeing so much negativity
 	local mingui = not CHUDGetOption("mingui")
@@ -104,10 +122,13 @@ function(self)
 	if CHUDGetOption("customhud_m") == 2 then
 		self.resourceDisplay.background:SetPosition(Vector(-440, -100, 0))
 		
-		pos = self.armorLevel:GetPosition()
-		self.armorLevel:SetPosition(Vector(pos.x, pos.y-100, 0))
+		local pos = self.armorLevel:GetPosition()
+		self.armorLevel:SetPosition(Vector(pos.x, pos.y-200, 0))
 		pos = self.weaponLevel:GetPosition()
-		self.weaponLevel:SetPosition(Vector(pos.x, pos.y-100, 0))
+		self.weaponLevel:SetPosition(Vector(pos.x, pos.y-200, 0))
+		pos = self.welderIcon:GetPosition()
+		self.welderIcon:SetPosition(Vector(pos.x, pos.y-200, 0))
+		
 	end
 	
 end)
@@ -202,6 +223,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local gametime = CHUDGetOption("gametime")
 		local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("customhud_m") ~= 2
 		local inventoryMode = CHUDGetOption("inventory")
+		local welderUpgrade = CHUDGetOption("welderup")
 		
 		-- Minimal HUD pls go home, you're drunk
 		-- Run this if WE choose to have it
@@ -221,6 +243,10 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		if self.gameTime then
 			self.gameTime:SetText(CHUDGetGameTime())
 			self.gameTime:SetIsVisible(gametime)
+		end
+		
+		if self.welderIcon then
+			self.welderIcon:SetIsVisible(welderUpgrade and player:GetWeapon(Welder.kMapName) ~= nil)
 		end
 		
 		if not rtcount then
@@ -318,6 +344,7 @@ function(self)
 	self.gameTime = nil
 	self.commanderNameIsAnimating = nil
 	self.lastCommanderName = nil
+	self.welderIcon = nil
 	
 end)
 

@@ -11,6 +11,7 @@ Latest changes
 	- Removed message about players not being able to join when detecting mod updates if the server has a mod backup server enabled. Now it will just display the mods updated once.
 	- The Classic Ammo and HUD Bars options now use the same code to fetch weapon info. They now also display mines and grenades.
 	- Added "Weapon Inventory" option to customize the behavior for the inventory, the options allow you to have it always on, disabled, or showing weapon ammo for marines. Available in HUD tab.
+	- Added option to display a welder icon under the armor and weapon levels when there's one equipped. Available in HUD tab.
 	- Renamed "Minimal Nameplates" option to "Nameplate style" and added a third style to show only the bars. The options now are: "Default", "Percentages", "Bars only".
 	- Improved tooltips, some of them now include an example image for the NS2+ options.
 	- Changed crosshair resolution scaling option with a slider that allows users to choose scaling themselves (from 1% to 200%).
