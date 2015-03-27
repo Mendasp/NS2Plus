@@ -1422,6 +1422,22 @@ local function GetXSpacing(gameLength)
 	return xSpacing
 end
 
+local function GetYSpacing(value)
+	local ySpacing = 25
+	
+	if value < 10 then
+		return 1
+	elseif value < 20 then
+		return 2
+	elseif value < 100 then
+		return 10
+	else
+		return 25    
+	end
+	
+	return ySpacing
+end
+
 function CHUDGUI_EndStats:Update(deltaTime)
 
 	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
@@ -1637,6 +1653,22 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		self:Initialize()
 		
 		for _, message in ipairs(finalStatsTable) do
+			-- Initialize the values in case there's something missing
+			message.isMarine = message.isMarine or false
+			message.playerName = message.playerName or "NSPlayer"
+			message.kills = message.kills or 0
+			message.assists = message.assists or 0
+			message.deaths = message.deaths or 0
+			message.accuracy = message.accuracy or 0
+			message.accuracyOnos = message.accuracyOnos or -1
+			message.pdmg = message.pdmg or 0
+			message.sdmg = message.sdmg or 0
+			message.minutesBuilding = message.minutesBuilding or 0
+			message.minutesPlaying = message.minutesPlaying or 0
+			message.minutesComm = message.minutesComm or 0
+			message.killstreak = message.killstreak or 0
+			message.steamId = message.steamId or 1
+			
 			local minutes = math.floor(message.minutesBuilding)
 			local seconds = (message.minutesBuilding % 1)*60
 			
@@ -1957,12 +1989,15 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 			self.killGraph:SetPoints(1, self.killGraphs[1])
 			self.killGraph:SetPoints(2, self.killGraphs[2])
-			self.killGraph:SetYBounds(0, math.max(team1Kills, team2Kills)+1, true)
+			local yElems = math.max(team1Kills, team2Kills)+1
+			self.killGraph:SetYBounds(0, yElems, true)
 			local gameLength = miscDataTable.gameLengthMinutes*60
 			local xSpacing = GetXSpacing(gameLength)
+			local ySpacing = GetXSpacing(yElems)
 			
 			self.killGraph:SetXBounds(0, gameLength)
 			self.killGraph:SetXGridSpacing(xSpacing)
+			self.killGraph:SetYGridSpacing(ySpacing)
 			
 			self.killComparison:SetValues(team1Kills, team2Kills)
 			
