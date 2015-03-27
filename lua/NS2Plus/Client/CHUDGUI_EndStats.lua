@@ -335,6 +335,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	local kItemSize = GUILinearScale(50)
 	local xOffset = kRowSize.x
 	local kItemPaddingLarge = GUILinearScale(60)
+	local kItemPaddingMediumLarge = GUILinearScale(50)
 	local kItemPaddingMedium = GUILinearScale(40)
 	local kItemPaddingSmall = GUILinearScale(20)
 	local kItemPaddingExtraSmall = GUILinearScale(10)
@@ -399,7 +400,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.pdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.pdmg)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingMedium
+	xOffset = xOffset - kItemSize - kItemPaddingMediumLarge
 	
 	item.acc = GUIManager:CreateTextItem()
 	item.acc:SetStencilFunc(GUIItem.NotEqual)
@@ -414,7 +415,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.acc:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.acc)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingSmall
+	xOffset = xOffset - kItemSize - kItemPaddingMedium
 	
 	item.deaths = GUIManager:CreateTextItem()
 	item.deaths:SetStencilFunc(GUIItem.NotEqual)
