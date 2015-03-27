@@ -7,14 +7,16 @@ originalIPHBCreatePlayerUI = Class_ReplaceMethod("GUIInsight_PlayerHealthbars", 
 	function(self)
 		local playerUI = originalIPHBCreatePlayerUI(self)
 		
-		local playerHPItem = GUIManager:CreateTextItem()
-		playerHPItem:SetFontName(Fonts.kInsight)
-		playerHPItem:SetScale(GUIScale(Vector(1,1,1)) * 0.8)
-		playerHPItem:SetTextAlignmentX(GUIItem.Align_Center)
-		playerHPItem:SetTextAlignmentY(GUIItem.Align_Max)
-		playerUI.Background:AddChild(playerHPItem)
-		
-		playerUI.HPText = playerHPItem
+		if not playerUI.HPText then
+			local playerHPItem = GUIManager:CreateTextItem()
+			playerHPItem:SetFontName(Fonts.kInsight)
+			playerHPItem:SetScale(GUIScale(Vector(1,1,1)) * 0.8)
+			playerHPItem:SetTextAlignmentX(GUIItem.Align_Center)
+			playerHPItem:SetTextAlignmentY(GUIItem.Align_Max)
+			playerUI.Background:AddChild(playerHPItem)
+			
+			playerUI.HPText = playerHPItem
+		end
 		
 		return playerUI
 	end)
