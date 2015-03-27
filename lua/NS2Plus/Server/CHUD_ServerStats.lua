@@ -82,6 +82,8 @@ local notLoggedBuildings = set {
 	"Babbler",
 	"BabblerEgg",
 	"Egg",
+	"BoneWall",
+	"Hallucination",
 }
 
 local techLoggedAsBuilding = set {
@@ -455,7 +457,7 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 		if killedFromDamage then
 			if self:isa("ResourceTower") then
 				AddRTStat(targetTeam, self:GetIsBuilt(), true)
-			elseif not self:isa("Player") and self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
+			elseif not self:isa("Player") and not self:isa("Weapon") and self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
 				AddBuildingStat(targetTeam, self.GetTechId and self:GetTechId(), true)
 			end
 		end
