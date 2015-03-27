@@ -15,6 +15,11 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			blipData.HasWelder = CHUDBlipData.HasWelder
 		end
 	end
+	
+	if playerTeamType == kTeam1Index and blipData.Status == kUnitStatus.Damaged then
+		blipData.Status = kUnitStatus.Unrepaired
+	end
+	
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
 	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()

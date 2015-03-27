@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- //2015
+	- Fixed wrench icon not being color coded if you had a welder.
+
 - 27/03/2015
 	- Added played time and Commander time to the stats UI.
 	- Added Kill Graph to end game stats.
