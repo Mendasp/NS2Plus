@@ -8,6 +8,7 @@ Latest changes
 	- Added played time and Commander time to the stats UI.
 	- Added Kill Graph to end game stats.
 	- Player stats are now kept when switching teams so one player can show up on both teams.
+	- Last life stats now use the same graphics style as the End game stats.
 	- Added "Weapon Inventory" option to customize the behavior for the inventory, the options allow you to have it always on, disabled, or showing weapon ammo for marines. Available in HUD tab.
 	- Added option to display a welder icon under the armor and weapon levels when there's one equipped. Available in HUD tab.
 	- Renamed "Minimal Nameplates" option to "Nameplate style" and added a third style to show only the bars. The options now are: "Default", "Percentages", "Bars only".
