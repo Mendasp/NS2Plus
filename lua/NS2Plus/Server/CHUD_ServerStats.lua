@@ -417,7 +417,7 @@ function ScoringMixin:AddDeaths()
 		local stat = CHUDClientStats[steamId] and CHUDClientStats[steamId][teamNumber]
 		
 		if stat then
-			stat.deaths = Clamp(stat.assists + 1, 0, kMaxDeaths)
+			stat.deaths = Clamp(stat.deaths + 1, 0, kMaxDeaths)
 		end
 	end
 end
