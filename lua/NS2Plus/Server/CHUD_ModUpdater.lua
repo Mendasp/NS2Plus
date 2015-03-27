@@ -33,7 +33,9 @@ function CHUDParseModInfo(modInfo)
 			for _, res in pairs(response["publishedfiledetails"]) do
 				if res["result"] == 1 then
 					if modsTable[res["publishedfileid"]] and modsTable[res["publishedfileid"]] ~= res["time_updated"] then
-						AddCHUDTagBitmask(CHUDTagBitmask["mcr"])
+						if not hasModBackup then
+							AddCHUDTagBitmask(CHUDTagBitmask["mcr"])
+						end
 						mapChangeNeeded = true
 						-- Repeat the mod update message
 						updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60
