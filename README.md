@@ -4,7 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /03/2015
+- 27/03/2015
 	- Added played time and Commander time to the stats UI.
 	- Added Kill Graph to end game stats.
 	- Player stats are now kept when switching teams so one player can show up on both teams.
@@ -56,14 +56,14 @@ Latest changes
 	- Changed stats UI so it only shows up when tapping the request key instead of whenever it was released.
 	- Reworked average skill display so it looks more integrated with the scoreboard.
 	- Fixed bug with the profile option in the stats menu where it wouldn't react when clicking.
-    
+
 - 31/01/2015
 	- Fixed bug where opening the stats before they'd show up automatically at end-round would leave the mouse cursor stuck on the screen.
 	- Fixed edge case where if the only stats available were Marine Commander drops, the client would not display any stats even after receiving them.
 	- The Commanders now show up in the final stats regardless of their field player stats.
 	- Made the stats UI highlight your own row.
 	- Added a way for server operators to disable autoshowing the end game stats (clients can still bring them up with the Request/Voiceover key, default X). Servers can toggle it with "sv_plus autodisplayendstats true/false" in console or modifying NS2PlusServerConfig.json.
-	
+
 - 29/01/2015
 	- Fixed bug where opening/closing the scoreboard would reset the HUD.
 	- Changed the way the stats were sorted from Accuracy first to Kills first.
@@ -71,58 +71,6 @@ Latest changes
 	- Added ability to check the player profiles from the stats UI.
 	- Made the stats UI show on top of the rest of the UI.
 	- Fixed problems with the cursor staying on screen after seeing the stats UI.
-
-- 23/01/2015
-	- Fixed Average/Total stats being covered up for Marines.
-	- Fixed Average/Total stats only showing NaN%.
-	- Fixed cursor disappearing when looking at the stats as a Spectator.
-	- Fixed not being able to bring up the stats mid-round as Spectator.
-	- Fixed script error when killing an Exo with Bilebomb.
-	- Fixed cursor still being visible after logging out of the CC after seeing the stats UI.
-
-- 22/01/2015
-	- Updated for build 273.
-	- Revamped end-game stats UI.
-	- Reset the Alien Vision setting as the Vanilla AV has changed and added the old Fanta Vision to the list of selectable AVs.
-
-- 18/12/2014
-	- Updated for build 272.
-	- Fixed unresponsive menu bug. (Thanks Samusdroid!)
-	- Fixed bug that would reset certain settings to default every time NS2+ updated.
-	- Added console message when NS2+ force-resets a setting because of updated defaults.
-
-- 09/12/2014
-	- Added ability to click on a player's row in the scoreboard to check their Steam/Hive/NS2Stats profiles.
-	- Added option to mute Text chat.
-	- Added icon to the scoreboard indicating if someone is your friend on Steam.
-	- Made it so the scoreboard shortens the player name if it overlaps.
-	- Muting a player's voice/text chat will last 6 hours so it's persistent across map changes.
-	- Rookies will always show the "(rookie)" tag in chat even if they're not in your own team.
-
-- 15/11/2014
-	- Made the pregame skill display compatible with Pregame Plus.
-
-- 14/11/2014
-	- Fixed bug where end round stats would display all players as aliens.
-	- Made scoreboard not take up the entire width at high res.
-	- Marine Commanders can now always see if a player has a welder.
-	- Added server option to display player skill pre-game on the scoreboard. Servers can enable it by typing "sv_plus showplayerskill true" in console or modifying NS2PlusServerConfig.json.
-
-- 09/11/2014
-	- Fixed server crash related to parented entities.
-	- Made scoreboard behave more like the old one at high resolutions.
-	- Made Commander player background yellow in the scoreboard as to identify rookie commanders.
-
-- 08/11/2014
-	- Added average skill (if enabled by the server) to the server name/game time UI element at the top of the scoreboard.
-	- Added toggle for the auto-centering on your player in the scoreboard. Available in Misc. tab.
-	- Fixed issue where players that left the server before the round ended wouldn't show up in the final stats.
-	- Fixed small issue with scoreboard element uninitialization.
-	- Fixed bug where the killfeed was displaying behind the death screen.
-
-- 07/11/2014
-	- Modified vanilla scoreboard to make it usable at low resolutions. It will automatically scroll to your position if you are in RR or in a team. You can use the mousewheel, home/end/pgup/pgdn or click and drag to scroll.
-	- Formatted server console output on load to display more of the current NS2+ settings.
 
 =================
 Credits/Thanks to
