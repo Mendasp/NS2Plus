@@ -4,8 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- //2015
+- 28/03/2015
 	- Fixed wrench icon not being color coded if you had a welder.
+	- Made dropped welders display the outline even if you already have a welder for easy recycling.
 
 - 27/03/2015
 	- Added played time and Commander time to the stats UI.
