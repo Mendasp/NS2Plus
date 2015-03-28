@@ -16,10 +16,6 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		end
 	end
 	
-	if playerTeamType == kTeam1Index and blipData.Status == kUnitStatus.Damaged then
-		blipData.Status = kUnitStatus.Unrepaired
-	end
-	
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
 	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()
@@ -35,14 +31,20 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 
 	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
-	if blipData.Status == kUnitStatus.Unrepaired then
-		local percentage = blipData.IsPlayer and blipData.ArmorFraction or (blipData.HealthFraction + blipData.ArmorFraction)/2
-		local alpha = updateBlip.GraphicsItem:GetColor().a
-		local color = (percentage < 0.5 and LerpColor(kRed, kYellow, percentage*2)) or (percentage >= 0.5 and LerpColor(kYellow, kWhite, (percentage-0.5)*2))
-		color.a = alpha
-		
-		updateBlip.GraphicsItem:SetColor(color)
-		updateBlip.OverLayGraphic:SetColor(color)
+	if CHUDGetOption("wrenchicon") == 1 then
+		if playerTeamType == kTeam1Index and (blipData.Status == kUnitStatus.Unrepaired or blipData.Status == kUnitStatus.Damaged) then
+			local percentage = blipData.IsPlayer and blipData.ArmorFraction or (blipData.HealthFraction + blipData.ArmorFraction)/2
+			local alpha = updateBlip.GraphicsItem:GetColor().a
+			local color = (percentage < 0.5 and LerpColor(kRed, kYellow, percentage*2)) or (percentage >= 0.5 and LerpColor(kYellow, kWhite, (percentage-0.5)*2))
+			color.a = alpha
+			
+			local x1, y1, x2, y2 = updateBlip.GraphicsItem:GetTexturePixelCoordinates()
+			
+			updateBlip.GraphicsItem:SetTexturePixelCoordinates(x1 + 512, y1, x2 + 512, y2)
+			updateBlip.OverLayGraphic:SetTexturePixelCoordinates(x1 + 512, y1, x2 + 512, y2)
+			updateBlip.GraphicsItem:SetColor(color)
+			updateBlip.OverLayGraphic:SetColor(color)
+		end
 	end
 	
 	-- Hide Background

@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 29/03/2015
+	- Fixed drifter abilities requiring to click empty space to be used.
+	- Added outline to the wrench icon if you have a welder.
+	- Added option to disable the new wrench icon coloring and revert to the previous behavior. Available in Misc. tab.
+
 - 28/03/2015
 	- Fixed wrench icon not being color coded if you had a welder.
 	- Made dropped welders display the outline even if you already have a welder for easy recycling.

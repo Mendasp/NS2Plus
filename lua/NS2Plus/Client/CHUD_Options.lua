@@ -979,6 +979,17 @@ CHUDOptions =
 				valueType = "int",
 				sort = "E4",
 			},
+			wrenchicon = { 
+				name    = "CHUD_DynamicWrenchColor",
+				label   = "Dynamically colored repair icon",
+				tooltip = "Makes the wrench on the marine HUD be color coded with the amount of damage received.",
+				type    = "select",
+				values  = { "Disabled", "Enabled" },
+				defaultValue = 1,
+				category = "comp",
+				valueType = "int",
+				sort = "E5",
+			},
 			instantdissolve = { 
 				name    = "CHUD_InstantDissolve",
 				label   = "Ragdoll instant dissolve effect",
@@ -988,7 +999,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				sort = "E5",
+				sort = "E6",
 			},
 			minimaptoggle = { 
 				name    = "CHUD_MinimapToggle",
