@@ -302,6 +302,7 @@ classNameToTechId["SporeCloud"] = kTechId.Spores
 classNameToTechId["NerveGasCloud"] = kTechId.GasGrenade
 classNameToTechId["WhipBomb"] = kTechId.WhipBomb
 classNameToTechId["DotMarker"] = kTechId.BileBomb
+classNameToTechId["Shockwave"] = kTechId.Stomp
 
 local function GetAttackerWeapon(attacker, doer)
 
@@ -313,7 +314,7 @@ local function GetAttackerWeapon(attacker, doer)
 			if doer.GetClassName and classNameToTechId[doer:GetClassName()] then
 				attackerWeapon = classNameToTechId[doer:GetClassName()]
 			elseif doer:GetParent() and doer:GetParent():isa("Player") then
-				if attacker:isa("Alien") and (doer.secondaryAttacking or doer.shootingSpikes) then
+				if attacker:isa("Alien") and ((attacker:isa("Gorge") and doer.secondaryAttacking) or doer.shootingSpikes) then
 					attackerWeapon = attacker:GetActiveWeapon():GetSecondaryTechId()
 				else
 					attackerWeapon = doer:GetTechId()
