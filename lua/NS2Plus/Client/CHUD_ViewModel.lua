@@ -18,6 +18,7 @@ local function OnLoadComplete()
 	//swalkModeEnabled = Client.GetSteamId() == 2582259
 end
 
+local direction = 1
 local roll = 0
 local originalViewModelOnAdjustModelCoords
 originalViewModelOnAdjustModelCoords = Class_ReplaceMethod("ViewModel", "OnAdjustModelCoords",
@@ -33,7 +34,7 @@ originalViewModelOnAdjustModelCoords = Class_ReplaceMethod("ViewModel", "OnAdjus
 			if player then
 				local velocity = player:GetVelocity()
 				local speed = velocity:GetLengthXZ()
-				rollIncrement = rollIncrement*(speed/2)
+				rollIncrement = rollIncrement*(speed/2)*direction
 			end
 			
 			roll = math.min(4 * math.pi, roll + rollIncrement)
@@ -52,6 +53,45 @@ originalViewModelOnAdjustModelCoords = Class_ReplaceMethod("ViewModel", "OnAdjus
 		return newCoords * rotationCoords
 
 	end)
+
+local lastBack, lastLeft, lastRight, lastForward
+local originalSKE
+originalSKE = Class_ReplaceMethod("GUIManager", "SendKeyEvent",
+function(self, key, down, amount)
+	local ret = originalSKE(self, key, down, amount)
+	
+	if GetIsBinding(key, "MoveBackward") then
+		if down ~= lastBack then
+			lastBack = down
+		end
+	end
+	
+	if GetIsBinding(key, "MoveLeft") then
+		if down ~= lastLeft then
+			lastLeft = down
+		end
+	end
+	
+	if GetIsBinding(key, "MoveRight") then
+		if down ~= lastRight then
+			lastRight = down
+		end
+	end
+	
+	if GetIsBinding(key, "MoveForward") then
+		if down ~= lastForward then
+			lastForward = down
+		end
+	end
+	
+	if (lastLeft and not lastBack and not lastRight and not lastForward) or lastBack then
+		direction = -1
+	else
+		direction = 1
+	end
+	
+	return ret
+end)
 
 local function ToggleSwalk()
 	swalkModeEnabled = not swalkModeEnabled

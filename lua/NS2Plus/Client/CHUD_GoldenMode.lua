@@ -1,7 +1,7 @@
 local goldenModeEnabled, isPlaying = false, false
 local globeModel, originalSKE, lastDown
 
-Client.PrecacheLocalSound("sound/mlg.fev/mlg/sanic")
+/*Client.PrecacheLocalSound("sound/mlg.fev/mlg/sanic")
 originalSKE = Class_ReplaceMethod("GUIManager", "SendKeyEvent",
 function(self, key, down, amount)
 	local ret = originalSKE(self, key, down, amount)
@@ -26,11 +26,9 @@ function(self, key, down, amount)
 	end
 	
 	return ret
-end)
+end)*/
 
 local function GoldenMode()
-	local gameTime = PlayerUI_GetGameLengthTime()
-	
 	local player = Client.GetLocalPlayer()
 
 	if goldenModeEnabled then
