@@ -8,6 +8,7 @@ Latest changes
 	- Fixed drifter abilities requiring to click empty space to be used.
 	- Added outline to the wrench icon if you have a welder.
 	- Added option to disable the new wrench icon coloring and revert to the previous behavior. Available in Misc. tab.
+	- Reduced size of last life stats.
 
 - 28/03/2015
 	- Fixed wrench icon not being color coded if you had a welder.
