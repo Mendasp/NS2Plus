@@ -1213,6 +1213,7 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 		
 		if not visible then
 			self.hoverMenu:Hide()
+			self.tooltip:Hide(0)
 		end
 		
 		MouseTracker_SetIsVisible(visible)
