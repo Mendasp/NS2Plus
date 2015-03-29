@@ -53,6 +53,12 @@ local function AddBuildingStat(teamNumber, techId, lost)
 			techId = kTechId.RoboticsFactory
 		elseif techId == kTechId.AdvancedArmory then
 			techId = kTechId.Armory
+		elseif techId == kTechId.CragHive then
+			techId = kTechId.Hive
+		elseif techId == kTechId.ShiftHive then
+			techId = kTechId.Hive
+		elseif techId == kTechId.ShadeHive then
+			techId = kTechId.Hive
 		end
 		
 		local stat = CHUDBuildingSummary[teamNumber][techId]
@@ -98,7 +104,7 @@ local techLogBuildings = set {
 	"CommandStation",
 	"Veil",
 	"Shell",
-	"Shift",
+	"Spur",
 	"Hive",
 }
 
