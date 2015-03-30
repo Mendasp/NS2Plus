@@ -28,7 +28,7 @@ end
 
 local kTitleFontName = Fonts.kAgencyFB_Medium
 local kRowFontName = Fonts.kArial_17
-local widthPercentage
+local kRowBorderSize
 local kTitleSize
 local scaledVector
 local kTopOffset
@@ -136,46 +136,53 @@ function CHUDGUI_DeathStats:Initialize()
 	gStatsUI = self
 end
 
-function CHUDGUI_DeathStats:AddRow(leftText, rightText, bgColor, textColor)
+function CHUDGUI_DeathStats:AddRow(leftText, rightText)
 	local containerSize = self.tableBackground:GetSize()
-	self.tableBackground:SetSize(Vector(containerSize.x, containerSize.y + kRowSize.y, 0))
 	
-	local item = {}
-	
-	item.background = GUIManager:CreateGraphicItem()
-	item.background:SetColor(bgColor)
-	item.background:SetInheritsParentAlpha(true)
-	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
-	item.background:SetPosition(Vector(kRowBorderSize, containerSize.y - kRowBorderSize, 0))
-	item.background:SetLayer(kGUILayerMainMenu)
-	item.background:SetSize(kRowSize)
-	
-	self.tableBackground:AddChild(item.background)
-	
-	item.leftText = GUIManager:CreateTextItem()
-	item.leftText:SetFontName(kRowFontName)
-	item.leftText:SetColor(textColor)
-	item.leftText:SetInheritsParentAlpha(true)
-	item.leftText:SetScale(scaledVector)
-	item.leftText:SetAnchor(GUIItem.Left, GUIItem.Center)
-	item.leftText:SetTextAlignmentY(GUIItem.Align_Center)
-	item.leftText:SetPosition(Vector(GUILinearScale(5), 0, 0))
-	item.leftText:SetText(leftText or "")
-	item.leftText:SetLayer(kGUILayerMainMenu)
-	item.background:AddChild(item.leftText)
-	
-	item.rightText = GUIManager:CreateTextItem()
-	item.rightText:SetFontName(kRowFontName)
-	item.rightText:SetColor(textColor)
-	item.rightText:SetInheritsParentAlpha(true)
-	item.rightText:SetScale(scaledVector)
-	item.rightText:SetAnchor(GUIItem.Right, GUIItem.Center)
-	item.rightText:SetTextAlignmentX(GUIItem.Align_Max)
-	item.rightText:SetTextAlignmentY(GUIItem.Align_Center)
-	item.rightText:SetPosition(Vector(-GUILinearScale(5), 0, 0))
-	item.rightText:SetText(rightText or "")
-	item.rightText:SetLayer(kGUILayerMainMenu)
-	item.background:AddChild(item.rightText)
+	if leftText and rightText then
+		self.tableBackground:SetSize(Vector(containerSize.x, containerSize.y + kRowSize.y, 0))
+		
+		local numRows = math.floor(containerSize.y / kRowSize.y)
+		
+		local item = {}
+		
+		item.background = GUIManager:CreateGraphicItem()
+		item.background:SetColor(numRows % 2 == 0 and kStatsEvenColor or kStatsOddColor)
+		item.background:SetInheritsParentAlpha(true)
+		item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
+		item.background:SetPosition(Vector(kRowBorderSize, containerSize.y - kRowBorderSize, 0))
+		item.background:SetLayer(kGUILayerMainMenu)
+		item.background:SetSize(kRowSize)
+		
+		self.tableBackground:AddChild(item.background)
+		
+		item.leftText = GUIManager:CreateTextItem()
+		item.leftText:SetFontName(kRowFontName)
+		item.leftText:SetColor(Color(1, 1, 1, 1))
+		item.leftText:SetInheritsParentAlpha(true)
+		item.leftText:SetScale(scaledVector)
+		item.leftText:SetAnchor(GUIItem.Left, GUIItem.Center)
+		item.leftText:SetTextAlignmentY(GUIItem.Align_Center)
+		item.leftText:SetPosition(Vector(GUILinearScale(5), 0, 0))
+		item.leftText:SetText(leftText or "")
+		item.leftText:SetLayer(kGUILayerMainMenu)
+		item.background:AddChild(item.leftText)
+		
+		item.rightText = GUIManager:CreateTextItem()
+		item.rightText:SetFontName(kRowFontName)
+		item.rightText:SetColor(Color(1, 1, 1, 1))
+		item.rightText:SetInheritsParentAlpha(true)
+		item.rightText:SetScale(scaledVector)
+		item.rightText:SetAnchor(GUIItem.Right, GUIItem.Center)
+		item.rightText:SetTextAlignmentX(GUIItem.Align_Max)
+		item.rightText:SetTextAlignmentY(GUIItem.Align_Center)
+		item.rightText:SetPosition(Vector(-GUILinearScale(5), 0, 0))
+		item.rightText:SetText(rightText or "")
+		item.rightText:SetLayer(kGUILayerMainMenu)
+		item.background:AddChild(item.rightText)
+	else
+		self.tableBackground:SetSize(Vector(containerSize.x, containerSize.y + kRowBorderSize*2, 0))
+	end
 end
 
 function CHUDGUI_DeathStats:Reset()
@@ -192,13 +199,13 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 	
 	local isDead = PlayerUI_GetIsDead() and Client.GetIsControllingPlayer() and not PlayerUI_GetIsSpecating()
 	
-	// Hide the stats when you're alive
-	// When getting beaconed right after dying you could still see the UI
-	// Also makes training with cheats in a private server not horrible
+	-- Hide the stats when you're alive
+	-- When getting beaconed right after dying you could still see the UI
+	-- Also makes training with cheats in a private server not horrible
 	local visible = (not Client.GetIsControllingPlayer() or PlayerUI_GetIsThirdperson() or isDead)
 	self.titleBackground:SetIsVisible((self.requestVisible or visible and CHUDGetOption("deathstats") == 2) and not PlayerUI_IsOverhead())
 	local binding = BindingsUI_GetInputValue("RequestMenu")
-	// Lazy mode: Engaged
+	-- Lazy mode: Engaged
 	if not visible or CHUDGetOption("deathstats") < 2 or binding == "None" then
 		self.actionIconGUI:Hide()
 	end
@@ -224,7 +231,7 @@ end
 
 function CHUDGUI_DeathStats:SendKeyEvent(key, down)
 
-	// Force show when request menu is open
+	-- Force show when request menu is open
 	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible and (Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index or Client.GetLocalPlayer():GetTeamNumber() == kTeam2Index) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and not PlayerUI_IsOverhead() then
 		self.titleBackground:SetIsVisible(down)
 		self.requestVisible = down
@@ -243,7 +250,7 @@ function CHUDGUI_DeathStats:Uninitialize()
 	
 	GetGUIManager():DestroyGUIScript(self.actionIconGUI)
 	self.actionIconGUI = nil
-	
+
 end
 
 function CHUDGUI_DeathStats:ResetTableBackground()
@@ -279,11 +286,17 @@ function CHUDGUI_DeathStats:SetStats()
 	self:ResetTableBackground()
 	
 	if statsTable ~= nil then
-		self:AddRow("Last life accuracy", printNum(statsTable.lastAcc) .. "%", kStatsOddColor, Color(1,1,1,1))
-		self:AddRow("Player damage", printNum(statsTable.pdmg), kStatsEvenColor, Color(1,1,1,1))
-		self:AddRow("Structure damage", printNum(statsTable.sdmg), kStatsOddColor, Color(1,1,1,1))
-		self:AddRow("", "", Color(0,0,0,0), Color(1,1,1,1))
-		self:AddRow("Current accuracy", printNum(statsTable.currentAcc) .. "%", kStatsEvenColor, Color(1,1,1,1))
+		self:AddRow("Last life accuracy", printNum(statsTable.lastAcc) .. "%")
+		if statsTable.lastAccOnos > -1 then
+			self:AddRow("Without Onos hits", printNum(statsTable.lastAccOnos) .. "%")
+		end
+		self:AddRow("Player damage", printNum(statsTable.pdmg))
+		self:AddRow("Structure damage", printNum(statsTable.sdmg))
+		self:AddRow()
+		self:AddRow("Current accuracy", printNum(statsTable.currentAcc) .. "%")
+		if statsTable.currentAccOnos > -1 then
+			self:AddRow("Without Onos hits", printNum(statsTable.currentAccOnos) .. "%")
+		end
 	end
 	
 end

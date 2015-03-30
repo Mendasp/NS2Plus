@@ -145,6 +145,7 @@ local function ResetCHUDLastLifeStats(steamId)
 		CHUDClientStats[steamId]["last"].pdmg = 0
 		CHUDClientStats[steamId]["last"].sdmg = 0
 		CHUDClientStats[steamId]["last"].hits = 0
+		CHUDClientStats[steamId]["last"].onosHits = 0
 		CHUDClientStats[steamId]["last"].misses = 0
 		CHUDClientStats[steamId]["last"].kills = 0
 	end
@@ -221,6 +222,7 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 				if isOnos then
 					overallStat.onosHits = overallStat.onosHits + 1
 					stat.onosHits = stat.onosHits + 1
+					lastStat.onosHits = lastStat.onosHits + 1
 					
 					if teamNumber == 1 then
 						CHUDTeamStats[1].onosHits = CHUDTeamStats[1].onosHits + 1
@@ -827,29 +829,35 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 				local totalStats = CHUDClientStats[steamId]["weapons"]
 				local msg = {}
 				local lastAcc = 0
+				local lastAccOnos = 0
 				local currentAcc = 0
+				local currentAccOnos = 0
 				local hitssum = 0
 				local missessum = 0
+				local onossum = 0
 				
 				for _, wStats in pairs(totalStats) do
 					-- Display current accuracy for the current team's weapons
 					if wStats.teamNumber == teamNumber then
 						hitssum = hitssum + wStats.hits
+						onossum = onossum + wStats.onosHits
 						missessum = missessum + wStats.misses
 					end
 				end
 				
 				if lastStat.hits > 0 or lastStat.misses > 0 then
-					lastAcc = lastStat.hits/(lastStat.hits+lastStat.misses)*100
+					lastAcc, lastAccOnos = CHUDGetAccuracy(lastStat.hits, lastStat.misses, lastStat.onosHits)
 				end
 				
 				if hitssum > 0 or missessum > 0 then
-					currentAcc = hitssum/(hitssum+missessum)*100
+					currentAcc, currentAccOnos = CHUDGetAccuracy(hitssum, missessum, onossum)
 				end
 				
 				if lastStat.hits > 0 or lastStat.misses > 0 or lastStat.pdmg > 0 or lastStat.sdmg > 0 then
 					msg.lastAcc = lastAcc
+					msg.lastAccOnos = lastAccOnos
 					msg.currentAcc = currentAcc
+					msg.currentAccOnos = currentAccOnos
 					msg.pdmg = lastStat.pdmg
 					msg.sdmg = lastStat.sdmg
 					
