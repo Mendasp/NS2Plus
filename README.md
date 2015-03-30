@@ -4,6 +4,8 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+	- Added accuracies without Onos hits to the Last Life Stats.
+	- End games stats now uses different commader icons to distinguish the Commander with most commanding time.
 	- Fixed tooltip still being visible when closing the stats while hovering the Commander badge.
 	- Fixed Stomp not showing up properly on the personal weapon stats.
 

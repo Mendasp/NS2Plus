@@ -323,7 +323,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 		item.commIcon = GUIManager:CreateGraphicItem()
 		item.commIcon:SetStencilFunc(GUIItem.NotEqual)
 		item.commIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
-		item.commIcon:SetTexture("ui/badges/commander_20.dds")
+		item.commIcon:SetTexture("ui/badges/commander_grey_20.dds")
 		item.commIcon:SetIsVisible(true)
 		item.commIcon:SetSize(GUILinearScale(Vector(20, 20, 0)))
 		item.commIcon:SetPosition(Vector(kRowPlayerNameOffset + playerNameLength, -GUILinearScale(10), 0))
@@ -1650,6 +1650,10 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		local avgAccuracy1 = 0
 		local avgAccuracy1Onos = 0
 		local avgAccuracy2 = 0
+		local team1Comm = 0
+		local team2Comm = 0
+		local team1CommTime = 0
+		local team2CommTime = 0
 		
 		self:Uninitialize()
 		self:Initialize()
@@ -1724,6 +1728,26 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			-- Store some of the original info so we can sort afterwards
 			teamObj.playerRows[#teamObj.playerRows].originalOrder = playerCount
 			teamObj.playerRows[#teamObj.playerRows].message = message
+			
+			if isMarine and message.minutesComm > team1CommTime then
+				team1Comm = playerCount+1
+				team1CommTime = message.minutesComm
+			elseif not isMarine and message.minutesComm > team2CommTime then
+				team2Comm = playerCount+1
+				team2CommTime = message.minutesComm
+			end
+		end
+		
+		if team1Comm > 0 then
+			if self.team1UI.playerRows[team1Comm].message then
+				self.team1UI.playerRows[team1Comm].commIcon:SetTexture("ui/badges/commander_20.dds")
+			end
+		end
+		
+		if team2Comm > 0 then
+			if self.team2UI.playerRows[team2Comm] then
+				self.team2UI.playerRows[team2Comm].commIcon:SetTexture("ui/badges/commander_20.dds")
+			end
 		end
 		
 		local numPlayers1 = #self.team1UI.playerRows-1
