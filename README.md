@@ -6,6 +6,7 @@ Latest changes
 ==============
 	- Added accuracies without Onos hits to the Last Life Stats.
 	- End games stats now uses different commader icons to distinguish the Commander with most commanding time.
+	- Enabled last life stats and the ability to check the previous round stats during PreGamePlus.
 	- Fixed tooltip still being visible when closing the stats while hovering the Commander badge.
 	- Fixed Stomp not showing up properly on the personal weapon stats.
 

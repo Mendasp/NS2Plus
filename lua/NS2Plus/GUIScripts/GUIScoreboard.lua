@@ -91,8 +91,9 @@ function(self, deltaTime)
 	
 	if self.visible then
 		self.centerOnPlayer = CHUDGetOption("sbcenter")
-		local _, pgp = Shine and Shine:IsExtensionEnabled( "pregameplus" )
-		local pgpEnabled = pgp and pgp.dt and pgp.dt.Enabled
+		
+		-- Shine:IsExtensionEnabled was only returning plugin state, but not the plugin
+		local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
 
 		self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and (pgpEnabled or not PlayerUI_GetHasGameStarted())
 		self.showAvgSkill = GetGameInfoEntity().showAvgSkill

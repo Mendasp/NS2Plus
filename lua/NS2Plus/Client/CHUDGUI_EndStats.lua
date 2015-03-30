@@ -1453,8 +1453,11 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			MouseTracker_SetIsVisible(true)
 		end
 		
+		-- Shine:IsExtensionEnabled was only returning plugin state, but not the plugin
+		local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
+		
 		-- Hide the stats when the game starts if we're on a team
-		if PlayerUI_GetHasGameStarted() and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
+		if PlayerUI_GetHasGameStarted() and not pgpEnabled and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
 			self:SetIsVisible(false)
 			self.actionIconGUI:Hide()
 		end
@@ -2381,8 +2384,9 @@ local lastDown = 0
 local kKeyTapTiming = 0.2
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
-	local _, pgp = Shine and Shine:IsExtensionEnabled( "pregameplus" )
-	local pgpEnabled = pgp and pgp.dt and pgp.dt.Enabled
+	-- Shine:IsExtensionEnabled was only returning plugin state, but not the plugin
+	local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
+	
 	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (not PlayerUI_GetHasGameStarted() or pgpEnabled or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
 		
 		self.prevRequestKey = down
@@ -2391,7 +2395,6 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 			lastDown = Shared.GetTime()
 			
 		-- Only show stats when the player hasn't selected something from the request menu first
-		-- Disable for fullscreen windowed until the bug where the cursor is not centered is fixed
 		elseif not down then
 			local isVisible = self:GetIsVisible()
 			if isVisible then

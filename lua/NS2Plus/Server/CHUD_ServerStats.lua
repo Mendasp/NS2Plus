@@ -6,7 +6,13 @@ local CHUDKillGraph = {}
 local CHUDResearchTree = {}
 local CHUDBuildingSummary = {}
 
-local function GetGameTime(inMinutes)
+local function CHUDGetGameStarted()
+	local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
+	
+	return GetGamerules():GetGameStarted() or pgpEnabled
+end
+
+local function CHUDGetGameTime(inMinutes)
 	local gamerules = GetGamerules()
 	local gameTime
 	if gamerules then
@@ -28,7 +34,7 @@ local function AddRTStat(teamNumber, isBuilt, isDestroyed)
 			-- We're going to save this for the RT graph, we don't want unfinished nodes in the graph
 			-- We can reconstruct it considering that if destroyed is false it means it's a new one
 			-- This way we only send a bool instead of an int
-			table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = isDestroyed or false, gameMinute = GetGameTime(true)})
+			table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = isDestroyed or false, gameMinute = CHUDGetGameTime(true)})
 		end
 		
 		-- The unfinished nodes will be computed on the overall built/lost data
@@ -41,7 +47,7 @@ local function AddTechStat(teamNumber, techId)
 	if (teamNumber == 1 or teamNumber == 2) and techId then
 		local teamInfoEnt = GetTeamInfoEntity(teamNumber)
 		
-		table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = GetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources()})
+		table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = CHUDGetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources()})
 	end
 end
 
@@ -202,7 +208,7 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 end
 
 local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
+	if CHUDGetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
 		if CHUDClientStats[steamId] then
@@ -242,7 +248,7 @@ local function AddAccuracyStat(steamId, wTechId, wasHit, isOnos, teamNumber)
 end
 
 local function AddDamageStat(steamId, damage, isPlayer, wTechId, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
+	if CHUDGetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
 		if CHUDClientStats[steamId] then
@@ -264,7 +270,7 @@ local function AddDamageStat(steamId, damage, isPlayer, wTechId, teamNumber)
 end
 
 local function AddWeaponKill(steamId, wTechId, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
+	if CHUDGetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 		
 		if CHUDClientStats[steamId] then
@@ -284,12 +290,12 @@ end
 
 local function AddTeamGraphKill(teamNumber)
 	if teamNumber == 1 or teamNumber == 2 then
-		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = GetGameTime(true)})
+		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true)})
 	end
 end
 
 local function AddBuildTime(steamId, buildTime, teamNumber)
-	if GetGamerules():GetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
+	if CHUDGetGameStarted() and steamId > 0 and (teamNumber == 1 or teamNumber == 2) then
 		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
 		
 		if CHUDClientStats[steamId] then
@@ -656,7 +662,7 @@ originalDrifterEggHatch = Class_ReplaceMethod("DrifterEgg", "Hatch",
 local originalNS2GamerulesEndGame
 originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 	function(self, winningTeam)
-		local gameMinutes = GetGameTime(true)
+		local gameMinutes = CHUDGetGameTime(true)
 		
 		originalNS2GamerulesEndGame(self, winningTeam)
 		
