@@ -581,6 +581,10 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		input:SetCSSClass(inputClass)
 		input:SetTopOffset(y)
 		
+		if input.label then
+			input.label:SetIsVisible(false)
+		end
+		
 		local label = CreateMenuElement(form, "Font", false)
 		label:SetCSSClass("option_label")
 		label:SetText(string.upper(option.label) .. ":")
@@ -682,41 +686,48 @@ function GUIMainMenu:CreateColorPickerWindow()
 	self.colorPickerRedInput:SetNumbersOnly(true)
 	self.colorPickerRedInput:SetMaxLength(3)
 	self.colorPickerRedInput:AddEventCallbacks(textInputCallbacks)
+	self.colorPickerRedInput.text:SetScale(GetScaledVector())
 	
 	local text_r = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
 	text_r:SetCSSClass("passwordprompt_title")
 	text_r:SetTopOffset(190)
 	text_r:SetLeftOffset(42)
 	text_r:SetText("R")
+	text_r.text:SetScale(GetScaledVector())
 	
 	self.colorPickerGreenInput = self.colorPickerForm:CreateFormElement(Form.kElementType.TextInput, "G", "")
 	self.colorPickerGreenInput:SetCSSClass("colorpicker_g")
 	self.colorPickerGreenInput:SetNumbersOnly(true)
 	self.colorPickerGreenInput:SetMaxLength(3)
 	self.colorPickerGreenInput:AddEventCallbacks(textInputCallbacks)
+	self.colorPickerGreenInput.text:SetScale(GetScaledVector())
 	
 	local text_g = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
 	text_g:SetCSSClass("passwordprompt_title")
 	text_g:SetTopOffset(190)
 	text_g:SetLeftOffset(132)
 	text_g:SetText("G")
+	text_g.text:SetScale(GetScaledVector())
 	
 	self.colorPickerBlueInput = self.colorPickerForm:CreateFormElement(Form.kElementType.TextInput, "B", "")
 	self.colorPickerBlueInput:SetCSSClass("colorpicker_b")
 	self.colorPickerBlueInput:SetNumbersOnly(true)
 	self.colorPickerBlueInput:SetMaxLength(3)
 	self.colorPickerBlueInput:AddEventCallbacks(textInputCallbacks)
+	self.colorPickerBlueInput.text:SetScale(GetScaledVector())
 	
 	local text_b = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
 	text_b:SetCSSClass("passwordprompt_title")
 	text_b:SetTopOffset(190)
 	text_b:SetLeftOffset(222)
 	text_b:SetText("B")
+	text_b.text:SetScale(GetScaledVector())
 	
 	self.colorPickerWindowText = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
 	self.colorPickerWindowText:SetCSSClass("passwordprompt_title")
 	self.colorPickerWindowText:SetTopOffset(3)
 	self.colorPickerWindowText:SetText("COLOR PICKER")
+	self.colorPickerWindowText.text:SetScale(GetScaledVector())
 	
 	self.colorPreview = self.colorPickerForm:CreateFormElement(Form.kElementType.FormButton, "COLORPREVIEW", "")
 	self.colorPreview:SetTopOffset(130)
