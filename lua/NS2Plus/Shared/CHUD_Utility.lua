@@ -97,17 +97,6 @@ function CheckCHUDTagOption(bitmask, option)
 	return(bit.band(bitmask, option) > 0)
 end
 
-// Reminder to fix all the stupid time rounding stuff
-local function FormatTime(time)
-
-	local t = math.round(time)
-	local h = math.floor(t / 3600)
-	local m = math.floor((t / 60) % 60)
-	local s = math.floor(t % 60)
-	return string.format("%d:%.2d:%.2d", h,  m, s)
-
-end
-
 function CHUDGetGameTime()
 
 	local gameTime, state = PlayerUI_GetGameLengthTime()
@@ -316,5 +305,9 @@ if Client then
 			scale = 1.5
 		end
 		return (ScreenSmallAspect() / kScreenScaleAspect)*size*scale
+	end
+	
+	function ColorToColorInt(color)
+		return bit.lshift(color.r*255, 16) + bit.lshift(color.g*255, 8) + color.b*255
 	end
 end

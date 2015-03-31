@@ -29,4 +29,57 @@ button.clear_keybind_slider
     left: 430px;
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
 }
+window.colorpicker_window 
+{ 
+    scaling: true; 
+    width: 360px; 
+    height: 310px; 
+    left: -200px; 
+    top: -100px; 
+    vertical-align: center; 
+    horizontal-align: center; 
+    border-width: 0px; 
+    background-color: rgba(0.3, 0.3, 0.3, 0.75); 
+}
+window.colorpicker_window titlebar 
+{ 
+    height: 32px; 
+}
+form textinput.colorpicker_r
+{ 
+    top: 185px; 
+    width: 50px; 
+    height: 40px; 
+    horizontal-align: center; 
+    margin-left: 10px;
+    left: -140px;
+    font-name: fonts/AgencyFB_small.fnt; 
+} 
+form textinput.colorpicker_g
+{ 
+    top: 185px; 
+    width: 50px; 
+    height: 40px; 
+    horizontal-align: center; 
+    margin-left: 10px;
+    left: -50px;
+    font-name: fonts/AgencyFB_small.fnt; 
+} 
+form textinput.colorpicker_b
+{ 
+    top: 185px; 
+    width: 50px; 
+    height: 40px; 
+    horizontal-align: center; 
+    margin-left: 10px;
+    left: 40px;
+    font-name: fonts/AgencyFB_small.fnt; 
+}
+form .colorpicker_input 
+{ 
+    width: 350px; 
+    height: 40px; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    left: 545px; 
+}
 ]] 

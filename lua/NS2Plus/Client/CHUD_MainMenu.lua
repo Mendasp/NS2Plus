@@ -28,6 +28,8 @@ local function CHUDSaveMenuSettings()
 					CHUDSetOption(option.index, option:GetActiveOptionIndex() > 1)
 				elseif CHUDOption.valueType == "int" and CHUDOption.type == "select" then
 					CHUDSetOption(option.index, option:GetActiveOptionIndex()-1)
+				elseif CHUDOption.valueType == "color" then
+					CHUDSetOption(option.index, ColorToColorInt(option:GetBackground():GetColor()))
 				end
 				
 				if CHUDOption.disabled then
@@ -82,6 +84,9 @@ local function ResetMenuOption(option)
 			local value = (option.defaultValue - minValue) / (maxValue - minValue)
 			mainMenu.CHUDOptionElements[option.name]:SetValue(value)
 			CHUDSetOption(mainMenu.CHUDOptionElements[option.name].index, option.defaultValue * multiplier)
+		elseif option.valueType == "color" then
+			mainMenu.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(option.defaultValue))
+			CHUDSetOption(mainMenu.CHUDOptionElements[option.name].index, option.defaultValue)
 		end
 	end
 end
@@ -229,7 +234,8 @@ function MainMenu_OnCloseMenu()
 end
 	
 function GUIMainMenu:CreateCHUDOptionWindow()
-
+	
+	self:CreateColorPickerWindow()
 	self.CHUDOptionWindow = self:CreateWindow()
 	self.CHUDOptionWindow:DisableCloseButton()
 	self.CHUDOptionWindow:SetCSSClass("option_window")
@@ -433,6 +439,9 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 						end
 					elseif option.valueType == "int" then
 						defaultValue = option.values[defaultValue+1]
+					elseif option.valueType == "color" then
+						local tmpColor = ColorIntToColor(defaultValue)
+						defaultValue = tostring(math.floor(tmpColor.r*255)) .. " " .. tostring(math.floor(tmpColor.g*255)) .. " " .. tostring(math.floor(tmpColor.b*255))
 					end
 					mainMenu.optionTooltip:SetText("Reset to default value (" .. defaultValue .. ").")
 					mainMenu.optionTooltip:Show()
@@ -535,8 +544,23 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			
 			resetOption:SetCSSClass("clear_keybind_slider")
 			resetOption:SetTopOffset(y+5)
+		elseif option.valueType == "color" then
+			option.inputClass = "colorpicker_input"
+			input = form:CreateFormElement(Form.kElementType.FormButton, option.name, option.value)
+			input:GetBackground():SetColor(ColorIntToColor(option.currentValue))
+			input:AddEventCallbacks({
+				OnClick = function(self)
+					self.scriptHandle.colorPickerWindow:SetIsVisible(true)
+					local color = self:GetBackground():GetColor()
+					self.scriptHandle.colorPickerRedInput:SetValue(tostring(math.floor(color.r*255)))
+					self.scriptHandle.colorPickerGreenInput:SetValue(tostring(math.floor(color.g*255)))
+					self.scriptHandle.colorPickerBlueInput:SetValue(tostring(math.floor(color.b*255)))
+					self.scriptHandle.colorPreview:SetBackgroundColor(Color(color.r, color.g, color.b, 1))
+					self.scriptHandle.colorPickerMenuElement = self:GetBackground()
+					self.scriptHandle.colorPickerWindowText:SetText(option.label)
+				end})
 		elseif option.type == "progress" then
-			input = form:CreateFormElement(Form.kElementType.ProgressBar, option.name, option.value)       
+			input = form:CreateFormElement(Form.kElementType.ProgressBar, option.name, option.value)
 		elseif option.type == "checkbox" then
 			input = form:CreateFormElement(Form.kElementType.Checkbox, option.name, option.value)
 			defaultInputClass = "option_checkbox"
@@ -591,8 +615,13 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			}
 
 		label:AddEventCallbacks(tooltipCallbacks)
-		for _, child in ipairs(input.children) do
-			child:AddEventCallbacks(tooltipCallbacks)
+		
+		if option.valueType == "color" then
+			input:AddEventCallbacks(tooltipCallbacks)
+		else
+			for _, child in ipairs(input.children) do
+				child:AddEventCallbacks(tooltipCallbacks)
+			end
 		end
 		
 		optionElements[option.name] = input
@@ -607,4 +636,146 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 
 	return form
 
+end
+
+function GUIMainMenu:CreateColorPickerWindow()
+
+	self.colorPickerWindow = self:CreateWindow()
+	local colorPickerWindow = self.colorPickerWindow
+	colorPickerWindow:SetInitialVisible(false)
+	colorPickerWindow:SetIsVisible(false)
+	colorPickerWindow:DisableResizeTile()
+	colorPickerWindow:DisableSlideBar()
+	colorPickerWindow:DisableContentBox()
+	colorPickerWindow:SetCSSClass("colorpicker_window")
+	colorPickerWindow:DisableCloseButton()
+	colorPickerWindow:SetLayer(kGUILayerMainMenuDialogs)
+	
+	self.colorPickerMenuElement = nil
+		
+	self.colorPickerForm = CreateMenuElement(colorPickerWindow, "Form", false)
+	self.colorPickerForm:SetCSSClass("colorpicker")
+	
+	local function CheckAndApply(self)
+		local value = tonumber(self:GetValue())
+		if value and IsNumber(value) then
+			if tonumber(self:GetValue()) > 255 then
+				self:SetValue("255")
+			end
+		elseif not value or value == "" then
+			self:SetValue("0")
+		end
+		
+		local r = tonumber(self.scriptHandle.colorPickerRedInput:GetValue()) or 0
+		local g = tonumber(self.scriptHandle.colorPickerGreenInput:GetValue()) or 0
+		local b = tonumber(self.scriptHandle.colorPickerBlueInput:GetValue()) or 0
+		self.scriptHandle.colorPreview:SetBackgroundColor(Color(r/255, g/255, b/255))
+	end
+	
+	local textInputCallbacks = {
+		OnEnter = CheckAndApply,
+		OnBlur = CheckAndApply
+	}
+	
+	self.colorPickerRedInput = self.colorPickerForm:CreateFormElement(Form.kElementType.TextInput, "R", "")
+	self.colorPickerRedInput:SetCSSClass("colorpicker_r")
+	self.colorPickerRedInput:SetNumbersOnly(true)
+	self.colorPickerRedInput:SetMaxLength(3)
+	self.colorPickerRedInput:AddEventCallbacks(textInputCallbacks)
+	
+	local text_r = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
+	text_r:SetCSSClass("passwordprompt_title")
+	text_r:SetTopOffset(190)
+	text_r:SetLeftOffset(42)
+	text_r:SetText("R")
+	
+	self.colorPickerGreenInput = self.colorPickerForm:CreateFormElement(Form.kElementType.TextInput, "G", "")
+	self.colorPickerGreenInput:SetCSSClass("colorpicker_g")
+	self.colorPickerGreenInput:SetNumbersOnly(true)
+	self.colorPickerGreenInput:SetMaxLength(3)
+	self.colorPickerGreenInput:AddEventCallbacks(textInputCallbacks)
+	
+	local text_g = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
+	text_g:SetCSSClass("passwordprompt_title")
+	text_g:SetTopOffset(190)
+	text_g:SetLeftOffset(132)
+	text_g:SetText("G")
+	
+	self.colorPickerBlueInput = self.colorPickerForm:CreateFormElement(Form.kElementType.TextInput, "B", "")
+	self.colorPickerBlueInput:SetCSSClass("colorpicker_b")
+	self.colorPickerBlueInput:SetNumbersOnly(true)
+	self.colorPickerBlueInput:SetMaxLength(3)
+	self.colorPickerBlueInput:AddEventCallbacks(textInputCallbacks)
+	
+	local text_b = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
+	text_b:SetCSSClass("passwordprompt_title")
+	text_b:SetTopOffset(190)
+	text_b:SetLeftOffset(222)
+	text_b:SetText("B")
+	
+	self.colorPickerWindowText = CreateMenuElement(colorPickerWindow.titleBar, "Font", false)
+	self.colorPickerWindowText:SetCSSClass("passwordprompt_title")
+	self.colorPickerWindowText:SetTopOffset(3)
+	self.colorPickerWindowText:SetText("COLOR PICKER")
+	
+	self.colorPreview = self.colorPickerForm:CreateFormElement(Form.kElementType.FormButton, "COLORPREVIEW", "")
+	self.colorPreview:SetTopOffset(130)
+	self.colorPreview:SetLeftOffset(120)
+	self.colorPreview:SetWidth(110)
+	self.colorPreview:SetHeight(30)
+	
+	local okButton = CreateMenuElement(self.colorPickerWindow, "MenuButton")
+	okButton:SetCSSClass("first_run_ok")
+	okButton:SetText(Locale.ResolveString("MENU_APPLY"))
+	okButton:SetTopOffset(240)
+	okButton:AddEventCallbacks( {
+		OnClick = function(self)
+			local color = self.scriptHandle.colorPreview:GetBackground():GetColor()
+			self.scriptHandle.colorPickerMenuElement:SetColor(color)
+			self.scriptHandle.colorPickerWindow:SetIsVisible(false)
+			CHUDSaveMenuSettings()
+		end
+	})
+	
+	local colors = { }
+	colors[1] = { 1, 1, 1 }
+	colors[2] = { 0.5, 0, 0 }
+	colors[3] = { 1, 0, 0 }
+	colors[4] = { 1, 0.5, 0 }
+	colors[5] = { 1, 1, 0 }
+	colors[6] = { 0.5, 1, 0 }
+	colors[7] = { 0, 1, 0 }
+	colors[8] = { 0, 1, 0.5 }
+	colors[9] = { 0, 1, 1 }
+	colors[10] = { 0, 0, 1  }
+	colors[11] = { 0, 0, 0.5 }
+	colors[12] = { 1, 0, 1 }
+	colors[13] = { 0.5, 0.5, 0.5 }
+	colors[14] = { 0, 0, 0 }
+	
+	for i = 1, 14 do
+		local tmpButton = self.colorPickerForm:CreateFormElement(Form.kElementType.FormButton, "COLORBUTTON" .. i, "")
+		local row = math.floor((i-1) / 7)
+		local currentX = i-((row)*7)
+		
+		tmpButton:SetTopOffset(40 + 40 * row)
+		tmpButton:SetLeftOffset((30 + 10) * currentX)
+		tmpButton:SetWidth(30)
+		tmpButton:SetHeight(30)
+		local color = Color(unpack(colors[i]))
+		tmpButton:SetBackgroundColor(color)
+		tmpButton:AddEventCallbacks({ OnClick = function(self)
+			self.scriptHandle.colorPickerRedInput:SetValue(tostring(math.ceil(color.r*255)))
+			self.scriptHandle.colorPickerGreenInput:SetValue(tostring(math.ceil(color.g*255)))
+			self.scriptHandle.colorPickerBlueInput:SetValue(tostring(math.ceil(color.b*255)))
+			self.scriptHandle.colorPreview:SetBackgroundColor(color)
+			end})
+	end
+
+	colorPickerWindow:AddEventCallbacks({ 
+		OnBlur = function(self) 
+			self:SetIsVisible(false) 
+		end,
+	})
+	
 end

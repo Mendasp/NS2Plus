@@ -144,12 +144,10 @@ local function NewGUIItemSetColor( blip, blipColor )
 		vars.blipType, vars.isHallucination, vars.playerTeam, vars.blipTeam, vars.spectating, vars.underAttack
 	
 	if blipType and playerTeam and blipTeam then
-		if CHUDGetOption("playercolor_m") > 0 and marinePlayers[blipType] then
-			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_m"))
-		end
-		
-		if CHUDGetOption("playercolor_a") > 0 and alienPlayers[blipType] then
-			blipColor = ColorIntToColor(CHUDGetOptionAssocVal("playercolor_a"))
+		if marinePlayers[blipType] then
+			blipColor = ColorIntToColor(CHUDGetOption("playercolor_m"))
+		elseif alienPlayers[blipType] then
+			blipColor = ColorIntToColor(CHUDGetOption("playercolor_a"))
 		end
 			
 		if blip and blipColor and not isHallucination then
@@ -226,8 +224,8 @@ originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
 local oldSetPlayerIconColor
 oldSetPlayerIconColor = Class_ReplaceMethod( "GUIMinimap", "SetPlayerIconColor",
 	function(self, color)
-		if CHUDGetOption("minimaparrowcolor") > 0 then
-			self.playerIconColor = ColorIntToColor(CHUDGetOptionAssocVal("minimaparrowcolor"))
+		if CHUDGetOption("minimaparrowcolor") ~= 1 then
+			self.playerIconColor = ColorIntToColor(CHUDGetOption("minimaparrowcolor"))
 		else
 			oldSetPlayerIconColor(self, color)
 		end

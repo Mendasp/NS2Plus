@@ -185,25 +185,21 @@ CHUDOptions =
 				name = "CHUD_DMGColorM",
 				label = "Marine damage numbers color",
 				tooltip = "Changes the color of the marine damage numbers.",
-				type = "select",
-				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
-				valueTable = { 0x4DDBFF, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
-				defaultValue = 0,
+				valueType = "color",
+				defaultValue = 0x4DDBFF,
 				category = "func",
-				valueType = "int",
 				sort = "D1",
+				resetSettingInBuild = 263,
 			},
 			dmgcolor_a = {
 				name = "CHUD_DMGColorA",
 				label = "Alien damage numbers color",
 				tooltip = "Changes the color of the alien damage numbers.",
-				type = "select",
-				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
-				valueTable = { 0xFFCA3A, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
-				defaultValue = 0,
+				defaultValue = 0xFFCA3A,
 				category = "func",
-				valueType = "int",
+				valueType = "color",
 				sort = "D2",
+				resetSettingInBuild = 263,
 			},
 			blur = {
 				name = "CHUD_Blur",
@@ -286,16 +282,14 @@ CHUDOptions =
 				name = "CHUD_ScorePopupColor",
 				label = "Score popup color",
 				tooltip = "Changes the color of the score popup.",
-				type = "select",
-				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
-				valueTable = { 0x19FF19, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
-				defaultValue = 0,
+				defaultValue = 0x19FF19,
 				category = "hud",
-				valueType = "int",
+				valueType = "color",
 				applyFunction = function()
-					GUINotifications.kScoreDisplayKillTextColor = ColorIntToColor(CHUDGetOptionAssocVal("scorecolor"))
+					GUINotifications.kScoreDisplayKillTextColor = ColorIntToColor(CHUDGetOption("scorecolor"))
 				end,
 				sort = "A2",
+				resetSettingInBuild = 263,
 			},
 			assists = {
 				name = "CHUD_Assists",
@@ -312,16 +306,14 @@ CHUDOptions =
 				name = "CHUD_AssistsPopupColor",
 				label = "Assists popup color",
 				tooltip = "Changes the color of the assists popup.",
-				type = "select",
-				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
-				valueTable = { 0xBFBF19, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
-				defaultValue = 0,
+				defaultValue = 0xBFBF19,
 				category = "hud",
-				valueType = "int",
+				valueType = "color",
 				applyFunction = function()
-					GUINotifications.kScoreDisplayTextColor = ColorIntToColor(CHUDGetOptionAssocVal("assistscolor"))
+					GUINotifications.kScoreDisplayTextColor = ColorIntToColor(CHUDGetOption("assistscolor"))
 				end,
 				sort = "A4",
+				resetSettingInBuild = 263,
 			},
 			banners = {
 				name = "CHUD_Banners",
@@ -507,46 +499,40 @@ CHUDOptions =
 				name = "CHUD_MinimapArrowColor",
 				label = "Minimap arrow color",
 				tooltip = "Sets the color of the arrow indicating your position in the minimap.",
-				type = "select",
-				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
-				valueTable = { 0x0, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
-				defaultValue = 0,
+				defaultValue = 1,
 				category = "hud",
-				valueType = "int",
 				applyFunction = function()
 					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
 					local playerIconColor = nil
-					if CHUDGetOption("minimaparrowcolor") > 0 then
-						playerIconColor = ColorIntToColor(CHUDGetOptionAssocVal("minimaparrowcolor"))
+					if CHUDGetOption("minimaparrowcolor") ~= 1 then
+						playerIconColor = ColorIntToColor(CHUDGetOption("minimaparrowcolor"))
 					end
 					minimapScript:SetPlayerIconColor(playerIconColor)
 					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
 				end,
+				valueType = "color",
 				sort = "C9b",
+				resetSettingInBuild = 263,
 			},
 			playercolor_m = { 
 				name = "CHUD_PlayerColor_M",
 				label = "Marine minimap player color",
 				tooltip = "Sets the color of marine players in the minimap different from the structures.",
-				type = "select",
-				values  = { "Default", "Blue", "Green", "Light Green", "Yellow" },
-				valueTable = { 0x0, 0x0000FF, 0x00FF00, 0xA0FFA0, 0xFFFF00 },
-				defaultValue = 0,
+				defaultValue = 0x00D8FF,
 				category = "hud",
-				valueType = "int",
+				valueType = "color",
 				sort = "C9c",
+				resetSettingInBuild = 263,
 			},
 			playercolor_a = { 
 				name = "CHUD_PlayerColor_A",
 				label = "Alien minimap player color",
 				tooltip = "Sets the color of alien players in the minimap different from the structures.",
-				type = "select",
-				values  = { "Default", "Light Orange", "Light Red", "Magenta", "Pink" },
-				valueTable = { 0x0, 0xFFDDAC, 0xFF6A6A, 0xFF00FF, 0xFFA0FF },
-				defaultValue = 0,
+				defaultValue = 0xFF8A00,
 				category = "hud",
-				valueType = "int",
+				valueType = "color",
 				sort = "C9d",
+				resetSettingInBuild = 263,
 			},
 			pglines = { 
 				name = "CHUD_MapConnectorLines",
@@ -695,16 +681,14 @@ CHUDOptions =
 				name = "CHUD_KillFeedHighlightColor",
 				label = "Killfeed highlight color",
 				tooltip = "Chooses the color of the highlight border for your kills in the killfeed.",
-				type = "select",
-				values  = { "Default", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan", "Orange", "Black", "White" },
-				valueTable = { 0x000000, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF, 0xFFA500, 0x000000, 0xFFFFFF },
-				defaultValue = 0,
+				defaultValue = 1,
 				category = "hud",
-				valueType = "int",
+				valueType = "color",
 				applyFunction = function()
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
 				sort = "D9c",
+				resetSettingInBuild = 263,
 			},
 			lowammowarning = {
 				name = "CHUD_LowAmmoWarning",

@@ -114,6 +114,18 @@ function CHUDSetOption(key, value)
 				option.currentValue = defaultValue
 				setValue = option.currentValue
 			end
+			
+		elseif option.valueType == "color" then
+			local number = tonumber(value)
+			if IsNumber(number) then
+				Client.SetOptionInteger(option.name, number)
+				option.currentValue = number
+				setValue = option.currentValue
+			elseif value == "reset" or value == "default" then
+				Client.SetOptionInteger(option.name, defaultValue)
+				option.currentValue = defaultValue
+				setValue = option.currentValue
+			end
 		end
 		
 		// Don't waste time reapplying settings we already have active
@@ -158,6 +170,15 @@ function GetCHUDSettings()
 			value = Client.GetOptionInteger(option.name, option.defaultValue)
 			local number = tonumber(value)
 			if IsNumber(number) and isInteger(number) and number >= 0 and number < #option.values then
+				CHUDOptions[name].currentValue = number
+			else
+				CHUDSetOption(name, option.defaultValue)
+			end
+			
+		elseif option.valueType == "color" then
+			value = Client.GetOptionInteger(option.name, option.defaultValue)
+			local number = tonumber(value)
+			if IsNumber(number) and isInteger(number) then
 				CHUDOptions[name].currentValue = number
 			else
 				CHUDSetOption(name, option.defaultValue)
@@ -211,6 +232,8 @@ local function CHUDPrintCommandsPage(page)
 				helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle or reset/default"
 			elseif option.valueType == "bool" then
 				helpStr = helpStr .. " <true/false> or <0/1> or cycle or reset/default"
+			elseif option.valueType == "color" then
+				helpStr = helpStr .. " <Red (0-255)> <Green (0-255)> <Blue (0-255> or reset/default"
 			end
 			helpStr = helpStr .. " - " .. option.tooltip
 			PrintConsoleText(helpStr)
@@ -239,6 +262,10 @@ local function CHUDHelp(optionName)
 			helpStr = helpStr .. " <integer> - Values: 0 to " .. #option.values-1 .. " or cycle or reset/default"
 		elseif option.valueType == "bool" then
 			helpStr = helpStr .. " <true/false> or <0/1> or cycle or reset/default"
+		elseif option.valueType == "color" then
+			helpStr = helpStr .. " <Red (0-255)> <Green (0-255)> <Blue (0-255> or reset/default"
+			local tmpColor = ColorIntToColor(default)
+			default = tostring(math.floor(tmpColor.r*255)) .. " " .. tostring(math.floor(tmpColor.g*255)) .. " " .. tostring(math.floor(tmpColor.b*255))
 		end
 		PrintConsoleText(helpStr .. " - Example (default value): plus " .. optionName .. " " .. tostring(default))
 		if option.type == "select" then
@@ -247,8 +274,7 @@ local function CHUDHelp(optionName)
 					PrintConsoleText("plus " .. optionName .. " " .. index-1 .. " - " .. value)
 				end
 				PrintConsoleText("-------------------------------------")
-			end
-			if option.valueType == "bool" then
+			elseif option.valueType == "bool" then
 				if option.currentValue then
 					helpStr = option.values[2]
 				else
@@ -258,6 +284,9 @@ local function CHUDHelp(optionName)
 			else
 				helpStr = option.values[option.currentValue+1]
 			end
+		elseif option.valueType == "color" then
+			local tmpColor = ColorIntToColor(option.currentValue)
+			helpStr = tostring(math.floor(tmpColor.r*255)) .. " " .. tostring(math.floor(tmpColor.g*255)) .. " " .. tostring(math.floor(tmpColor.b*255))
 		else
 			helpStr = tostring(Round(option.currentValue * multiplier), 4)
 		end
@@ -282,10 +311,23 @@ local function OnCommandCHUD(...)
 	elseif #args == 1 then
 		CHUDHelp(args[1])
 
-	elseif #args == 2 and args[1] ~= "page" then
+	elseif #args > 1 and args[1] ~= "page" then
 		if CHUDOptions[args[1]] ~= nil then
 			option = CHUDOptions[args[1]]
 			local multiplier = option.multiplier or 1
+			if option.valueType == "color" and args[2] ~= "reset" and args[2] ~= "default" then
+				local r = tonumber(args[2])
+				local g = tonumber(args[3]) or 0
+				local b = tonumber(args[4]) or 0
+				if IsNumber(r) and IsNumber(g) and IsNumber(b) then
+					r = math.max(0, math.min(r, 255))
+					g = math.max(0, math.min(g, 255))
+					b = math.max(0, math.min(b, 255))
+					args[2] = bit.lshift(r, 16) + bit.lshift(g, 8) + b
+				else
+					args[2] = nil
+				end
+			end
 			local setValue = CHUDSetOption(args[1], args[2])
 			if option.type == "select" then
 				if option.valueType == "bool" then
@@ -298,6 +340,9 @@ local function OnCommandCHUD(...)
 				else
 					helpStr = option.values[option.currentValue+1]
 				end
+			elseif option.valueType == "color" then
+				local tmpColor = ColorIntToColor(option.currentValue)
+				helpStr = tostring(math.floor(tmpColor.r*255)) .. " " .. tostring(math.floor(tmpColor.g*255)) .. " " .. tostring(math.floor(tmpColor.b*255))
 			else
 				helpStr = tostring(option.currentValue * multiplier)
 			end
@@ -314,6 +359,9 @@ local function OnCommandCHUD(...)
 						local maxValue = option.maxValue or 1
 						local value = (setValue - minValue) / (maxValue - minValue)
 						mainMenu.CHUDOptionElements[option.name]:SetValue(value)
+					elseif option.valueType == "color" then
+						mainMenu.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(setValue))
+						mainMenu.colorPickerWindow:SetIsVisible(false)
 					end
 				end
 				PrintConsoleText(option.label .. " set to: " .. helpStr)

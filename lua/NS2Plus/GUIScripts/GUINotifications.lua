@@ -4,6 +4,6 @@ originalGUINotificationsInit = Class_ReplaceMethod( "GUINotifications", "Initial
 		originalGUINotificationsInit(self)
 		
 		// This is some advanced shit right here
-		GUINotifications.kScoreDisplayKillTextColor = ColorIntToColor(CHUDGetOptionAssocVal("scorecolor"))
-		GUINotifications.kScoreDisplayTextColor = ColorIntToColor(CHUDGetOptionAssocVal("assistscolor"))
+		GUINotifications.kScoreDisplayKillTextColor = ColorIntToColor(CHUDGetOption("scorecolor"))
+		GUINotifications.kScoreDisplayTextColor = ColorIntToColor(CHUDGetOption("assistscolor"))
 	end)

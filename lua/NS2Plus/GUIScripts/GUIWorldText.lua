@@ -16,6 +16,6 @@ originalGUIWorldDamageText = Class_ReplaceMethod( "GUIWorldText", "UpdateDamageM
 		local oldalpha = useColor.a
 		messageItem:SetScale(messageItem:GetScale()*CHUDGetOption("dmgscale"))
 		
-		useColorCHUD = ColorIntToColor(ConditionalValue(PlayerUI_IsOnMarineTeam(), CHUDGetOptionAssocVal("dmgcolor_m"), CHUDGetOptionAssocVal("dmgcolor_a")))
+		useColorCHUD = ColorIntToColor(ConditionalValue(PlayerUI_IsOnMarineTeam(), CHUDGetOption("dmgcolor_m"), CHUDGetOption("dmgcolor_a")))
 		messageItem:SetColor(Color(useColorCHUD.r, useColorCHUD.g, useColorCHUD.b, oldalpha))
 	end)
