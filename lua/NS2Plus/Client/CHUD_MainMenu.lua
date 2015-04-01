@@ -214,8 +214,8 @@ function MainMenu_OnOpenMenu()
 		if not mainMenu.CHUDNewsScript then
 			mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_MenuNews")
 		else
-			// Solves issue where the news were visible when you click options and then spam escape
-			// This hides the news script properly
+			-- Solves issue where the news were visible when you click options and then spam escape
+			-- This hides the news script properly
 			mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.Links[1]:GetIsVisible())
 		end
 	end
@@ -226,7 +226,7 @@ function MainMenu_OnCloseMenu()
 	Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
 	
 	if mainMenu and mainMenu.CHUDNewsScript then
-		// Kill it, KILL IT WITH FIRE
+		-- Kill it, KILL IT WITH FIRE
 		GetGUIManager():DestroyGUIScript(mainMenu.CHUDNewsScript)
 		mainMenu.CHUDNewsScript:Uninitialize()
 		mainMenu.CHUDNewsScript = nil
@@ -252,14 +252,16 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 				local minValue = option.minValue or 0
 				local maxValue = option.maxValue or 1
 				self.CHUDOptionElements[option.name]:SetValue( (CHUDOptions[idx].currentValue - minValue) / (maxValue - minValue) )
+			elseif option.valueType == "color" then
+				self.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(CHUDOptions[idx].currentValue))
 			end
 		end
-		// When opening and closing menus the tooltips would appear behind the form
-		// Increment the layer so it's always on top
+		-- When opening and closing menus the tooltips would appear behind the form
+		-- Increment the layer so it's always on top
 		if mainMenu.optionTooltip then
 			local background = mainMenu.optionTooltip.background
 			local bgLayer = self.CHUDOptionWindow:GetContentBox():GetLayer()
-			// Increment by 2 so it works for the Options menu too if we open this menu first
+			-- Increment by 2 so it works for the Options menu too if we open this menu first
 			background:SetLayer(bgLayer+2)
 		end
 		
@@ -316,14 +318,14 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	self.warningLabel:SetIgnoreEvents(true)
 	self.warningLabel:SetIsVisible(false)
 
-	// save our option elements for future reference
+	-- save our option elements for future reference
 	self.CHUDOptionElements = { }
 	
 	local HUDOptionsMenu = { }
 	local FuncOptionsMenu = { }
 	local CompOptionsMenu = { }
 	
-	// Put the options in the correct tab
+	-- Put the options in the correct tab
 	for idx, option in pairs(CHUDOptions) do
 		if option.category == "hud" then
 			table.insert(HUDOptionsMenu, CHUDOptions[idx])
@@ -389,7 +391,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		local tabWidth = tabButton:GetWidth()
 		tabButton:SetBackgroundPosition( Vector(tabWidth * (i - 1), 0, 0) )
 		
-		// Make the first tab visible.
+		-- Make the first tab visible.
 		if i==1 then
 			tabBackground:SetBackgroundPosition( Vector(tabWidth * (i - 1), 0, 0) )
 			ShowTab()
@@ -547,7 +549,6 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		elseif option.valueType == "color" then
 			option.inputClass = "colorpicker_input"
 			input = form:CreateFormElement(Form.kElementType.FormButton, option.name, option.value)
-			input:GetBackground():SetColor(ColorIntToColor(option.currentValue))
 			input:AddEventCallbacks({
 				OnClick = function(self)
 					self.scriptHandle.colorPickerWindow:SetIsVisible(true)
