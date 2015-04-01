@@ -4,6 +4,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 01/04/2015
 	- Added accuracies without Onos hits to the Last Life Stats.
 	- Added a color picker for all the options with customizable colors.
 	- End games stats now uses different commader icons to distinguish the Commander with most commanding time.

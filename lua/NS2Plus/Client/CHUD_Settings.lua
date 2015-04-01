@@ -436,6 +436,13 @@ local function OnCommandPlusExport()
 				end
 			elseif optionIdx.valueType == "int" then
 				currentValue = optionIdx.values[currentValue+1]
+			elseif optionIdx.valueType == "color" then
+				if currentValue == optionIdx.defaultValue then
+					currentValue = "Default"
+				else
+					local tmpColor = ColorIntToColor(currentValue)
+					currentValue = tostring(math.floor(tmpColor.r*255)) .. " " .. tostring(math.floor(tmpColor.g*255)) .. " " .. tostring(math.floor(tmpColor.b*255))
+				end
 			end
 			local optionString = optionIdx.label .. ": " .. currentValue .. "\r\n"
 			settingsFile:write(optionString)
