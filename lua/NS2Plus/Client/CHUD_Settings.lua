@@ -274,6 +274,7 @@ local function CHUDHelp(optionName)
 					PrintConsoleText("plus " .. optionName .. " " .. index-1 .. " - " .. value)
 				end
 				PrintConsoleText("-------------------------------------")
+				helpStr = option.values[option.currentValue+1]
 			elseif option.valueType == "bool" then
 				if option.currentValue then
 					helpStr = option.values[2]
@@ -281,8 +282,6 @@ local function CHUDHelp(optionName)
 					helpStr = option.values[1]
 				end
 				helpStr = helpStr .. " (" .. tostring(option.currentValue) .. ")"
-			else
-				helpStr = option.values[option.currentValue+1]
 			end
 		elseif option.valueType == "color" then
 			local tmpColor = ColorIntToColor(option.currentValue)
