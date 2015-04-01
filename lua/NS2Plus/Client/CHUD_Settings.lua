@@ -361,6 +361,13 @@ local function OnCommandCHUD(...)
 					elseif option.valueType == "color" then
 						mainMenu.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(setValue))
 						mainMenu.colorPickerWindow:SetIsVisible(false)
+						if option.defaultValue == setValue then
+							mainMenu.CHUDOptionElements[option.name].text:SetIsVisible(true)
+							-- Invert color
+							mainMenu.CHUDOptionElements[option.name].text:SetColor(ColorIntToColor(0xFFFFFF - setValue))
+						else
+							mainMenu.CHUDOptionElements[option.name].text:SetIsVisible(false)
+						end
 					end
 				end
 				PrintConsoleText(option.label .. " set to: " .. helpStr)
