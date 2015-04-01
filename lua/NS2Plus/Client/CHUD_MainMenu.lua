@@ -206,13 +206,6 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 			mainMenu.mainWindow:SetBackgroundRepeat(true)
 		end
 	end)
-	
-originalMenuInit = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
-	function(self)
-		originalMenuInit(self)
-		
-		self:CreateCHUDOptionWindow()
-	end)
 
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 	

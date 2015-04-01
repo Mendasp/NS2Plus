@@ -189,7 +189,7 @@ CHUDOptions =
 				defaultValue = 0x4DDBFF,
 				category = "func",
 				sort = "D1",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			dmgcolor_a = {
 				name = "CHUD_DMGColorA",
@@ -199,7 +199,7 @@ CHUDOptions =
 				category = "func",
 				valueType = "color",
 				sort = "D2",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			blur = {
 				name = "CHUD_Blur",
@@ -289,7 +289,7 @@ CHUDOptions =
 					GUINotifications.kScoreDisplayKillTextColor = ColorIntToColor(CHUDGetOption("scorecolor"))
 				end,
 				sort = "A2",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			assists = {
 				name = "CHUD_Assists",
@@ -313,7 +313,7 @@ CHUDOptions =
 					GUINotifications.kScoreDisplayTextColor = ColorIntToColor(CHUDGetOption("assistscolor"))
 				end,
 				sort = "A4",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			banners = {
 				name = "CHUD_Banners",
@@ -475,7 +475,9 @@ CHUDOptions =
 				valueType = "float",
 				applyFunction = function()
 					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
-					minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
+					if minimapScript then
+						minimapScript:GetMinimapItem():SetColor(Color(1,1,1,CHUDGetOption("minimapalpha")))
+					end
 				end,
 				sort = "C8",
 			},
@@ -507,12 +509,14 @@ CHUDOptions =
 					if CHUDGetOption("minimaparrowcolor") ~= 1 then
 						playerIconColor = ColorIntToColor(CHUDGetOption("minimaparrowcolor"))
 					end
-					minimapScript:SetPlayerIconColor(playerIconColor)
+					if minimapScript then
+						minimapScript:SetPlayerIconColor(playerIconColor)
+					end
 					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
 				end,
 				valueType = "color",
 				sort = "C9b",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			playercolor_m = { 
 				name = "CHUD_PlayerColor_M",
@@ -522,7 +526,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "color",
 				sort = "C9c",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			playercolor_a = { 
 				name = "CHUD_PlayerColor_A",
@@ -532,7 +536,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "color",
 				sort = "C9d",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			pglines = { 
 				name = "CHUD_MapConnectorLines",
@@ -688,7 +692,7 @@ CHUDOptions =
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
 				sort = "D9c",
-				resetSettingInBuild = 263,
+				resetSettingInBuild = 264,
 			},
 			lowammowarning = {
 				name = "CHUD_LowAmmoWarning",

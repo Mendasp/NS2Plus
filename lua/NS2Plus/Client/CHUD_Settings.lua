@@ -128,7 +128,7 @@ function CHUDSetOption(key, value)
 			end
 		end
 		
-		// Don't waste time reapplying settings we already have active
+		-- Don't waste time reapplying settings we already have active
 		if oldValue ~= option.currentValue and option.applyFunction and option.disabled == nil and not CHUDMainMenu then
 			option.applyFunction()
 		end
@@ -139,7 +139,7 @@ function CHUDSetOption(key, value)
 end
 
 function GetCHUDSettings()
-	// Set the default to something different than the current one
+	-- Set the default to something different than the current one
 	local lastCHUD = Client.GetOptionInteger("CHUD_LastCHUDVersion", kCHUDVersion-1)
 	
 	if lastCHUD < kCHUDVersion then
@@ -147,7 +147,7 @@ function GetCHUDSettings()
 	end
 	
 	for name, option in pairs(CHUDOptions) do
-		// If setting is not what we expect we reset to default
+		-- If setting is not what we expect we reset to default
 		local value
 		if option.valueType == "bool" then
 			value = Client.GetOptionBoolean(option.name, option.defaultValue)
@@ -475,3 +475,12 @@ Event.Hook("Console_plus", OnCommandCHUD)
 if not CHUDMainMenu then
 	Client.HookNetworkMessage("CHUDOption", OnCHUDOption)
 end
+
+local function OnCommandSetPlusVersion(version)
+	if Shared.GetCheatsEnabled() then
+		Client.SetOptionInteger("CHUD_LastCHUDVersion", tonumber(version))
+		Print("Version set to: " .. version)
+	end
+end
+
+Event.Hook("Console_setplusversion", OnCommandSetPlusVersion)
