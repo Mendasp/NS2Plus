@@ -17,54 +17,65 @@ local function CHUDSliderCallback(elemId)
 	end
 end
 
-local function CHUDSaveMenuSettings()
+local function CHUDSaveMenuSetting(name)
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
-		for _, option in pairs(mainMenu.CHUDOptionElements) do
-			CHUDOption = CHUDOptions[option.index]
-			if CHUDOption then
-				-- We don't need to save floats, as that's being handled by the slider callback
-				-- Which is called on menu open and close, and when changing the value, of course
-				if CHUDOption.valueType == "bool" then
-					CHUDSetOption(option.index, option:GetActiveOptionIndex() > 1)
-				elseif CHUDOption.valueType == "int" and CHUDOption.type == "select" then
-					CHUDSetOption(option.index, option:GetActiveOptionIndex()-1)
-				elseif CHUDOption.valueType == "color" then
-					CHUDSetOption(option.index, ColorToColorInt(option:GetBackground():GetColor()))
+		local CHUDMenuOption = mainMenu.CHUDOptionElements[name]
+		local index = CHUDMenuOption.index
+		local CHUDOption = CHUDOptions[index]
+		if CHUDOption then
+			-- We don't need to save floats, as that's being handled by the slider callback
+			-- Which is called on menu open and close, and when changing the value, of course
+			if CHUDOption.valueType == "bool" then
+				CHUDSetOption(index, CHUDMenuOption:GetActiveOptionIndex() > 1)
+			elseif CHUDOption.valueType == "int" and CHUDOption.type == "select" then
+				CHUDSetOption(index, CHUDMenuOption:GetActiveOptionIndex()-1)
+			elseif CHUDOption.valueType == "color" then
+				CHUDSetOption(index, ColorToColorInt(CHUDMenuOption:GetBackground():GetColor()))
+			end
+			
+			if CHUDOption.disabled then
+				local val = ConditionalValue(CHUDOption.disabledValue == nil, CHUDOption.defaultValue, CHUDOption.disabledValue)
+				if val == CHUDOption.currentValue then
+					CHUDMenuOption.label:SetCSSClass("option_label")
+				else
+					CHUDMenuOption.label:SetCSSClass("option_label_disabled")
 				end
-				
-				if CHUDOption.disabled then
-					local val = ConditionalValue(CHUDOption.disabledValue == nil, CHUDOption.defaultValue, CHUDOption.disabledValue)
-					if val == CHUDOption.currentValue then
-						option.label:SetCSSClass("option_label")
-					else
-						option.label:SetCSSClass("option_label_disabled")
-					end
+			end
+			
+			if index == "hitsounds" then
+				if CHUDGetOption("hitsounds") > 0 then
+					mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label")
+				else
+					mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label_disabled")
+				end
+			elseif index == "sensitivity_perteam" then
+				if CHUDGetOption("sensitivity_perteam") then
+					mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label")
+					mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label")
+				else
+					mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label_disabled")
+					mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label_disabled")
+				end
+			elseif index == "fov_perteam" then
+				if CHUDGetOption("fov_perteam") then
+					mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label")
+					mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label")
+				else
+					mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label_disabled")
+					mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label_disabled")
 				end
 			end
 		end
-		
-		if CHUDGetOption("hitsounds") > 0 then
-			mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label")
-		else
-			mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label_disabled")
+	end
+end
+
+local function CHUDSaveMenuSettings(name)
+	if not name then
+		for optionName, option in pairs(mainMenu.CHUDOptionElements) do
+			CHUDSaveMenuSetting(optionName)
 		end
-		
-		if CHUDGetOption("sensitivity_perteam") then
-			mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label")
-			mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label")
-		else
-			mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label_disabled")
-			mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label_disabled")
-		end
-		
-		if CHUDGetOption("fov_perteam") then
-			mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label")
-			mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label")
-		else
-			mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label_disabled")
-			mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label_disabled")
-		end
-		
+	else
+		CHUDSaveMenuSetting(name)
 	end
 end
 	
@@ -194,6 +205,13 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 			mainMenu.mainWindow:SetBackgroundTexture("ui/menu/grid.dds")
 			mainMenu.mainWindow:SetBackgroundRepeat(true)
 		end
+	end)
+	
+originalMenuInit = Class_ReplaceMethod( "GUIMainMenu", "Initialize",
+	function(self)
+		originalMenuInit(self)
+		
+		self:CreateCHUDOptionWindow()
 	end)
 
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
@@ -557,7 +575,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					self.scriptHandle.colorPickerGreenInput:SetValue(tostring(math.floor(color.g*255)))
 					self.scriptHandle.colorPickerBlueInput:SetValue(tostring(math.floor(color.b*255)))
 					self.scriptHandle.colorPreview:SetBackgroundColor(Color(color.r, color.g, color.b, 1))
-					self.scriptHandle.colorPickerMenuElement = self:GetBackground()
+					self.scriptHandle.colorPickerMenuElement = self
 					self.scriptHandle.colorPickerWindowText:SetText(option.label)
 				end})
 		elseif option.type == "progress" then
@@ -571,7 +589,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		
 		-- Sliders have their own callbacks/saving
 		if option.type ~= "slider" then
-			input:AddSetValueCallback(CHUDSaveMenuSettings)
+			input:AddSetValueCallback(function() CHUDSaveMenuSetting(option.name) end)
 		end
 		
 		local inputClass = defaultInputClass
@@ -582,6 +600,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		input:SetCSSClass(inputClass)
 		input:SetTopOffset(y)
 		
+		-- Remove horrid white dot
 		if input.label then
 			input.label:SetIsVisible(false)
 		end
@@ -743,9 +762,9 @@ function GUIMainMenu:CreateColorPickerWindow()
 	okButton:AddEventCallbacks( {
 		OnClick = function(self)
 			local color = self.scriptHandle.colorPreview:GetBackground():GetColor()
-			self.scriptHandle.colorPickerMenuElement:SetColor(color)
+			self.scriptHandle.colorPickerMenuElement:GetBackground():SetColor(color)
 			self.scriptHandle.colorPickerWindow:SetIsVisible(false)
-			CHUDSaveMenuSettings()
+			CHUDSaveMenuSetting(self.scriptHandle.colorPickerMenuElement:GetFormElementName())
 		end
 	})
 	
