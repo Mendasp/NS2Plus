@@ -516,7 +516,7 @@ CHUDOptions =
 				end,
 				valueType = "color",
 				sort = "C9b",
-				resetSettingInBuild = 264,
+				resetSettingInBuild = 265,
 			},
 			playercolor_m = { 
 				name = "CHUD_PlayerColor_M",
@@ -692,7 +692,7 @@ CHUDOptions =
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
 				sort = "D9c",
-				resetSettingInBuild = 264,
+				resetSettingInBuild = 265,
 			},
 			lowammowarning = {
 				name = "CHUD_LowAmmoWarning",

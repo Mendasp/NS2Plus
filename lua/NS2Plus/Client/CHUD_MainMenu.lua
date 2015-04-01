@@ -17,6 +17,21 @@ local function CHUDSliderCallback(elemId)
 	end
 end
 
+local function CHUDDisplayDefaultColorText(elemId)
+	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+		local index = mainMenu.CHUDOptionElements[elemId].index
+		local option = CHUDOptions[index]
+		local colorInt = ColorToColorInt(mainMenu.CHUDOptionElements[elemId]:GetBackground():GetColor())
+		if option and option.defaultValue == colorInt then
+			mainMenu.CHUDOptionElements[elemId].text:SetIsVisible(true)
+			-- Invert color
+			mainMenu.CHUDOptionElements[elemId].text:SetColor(ColorIntToColor(0xFFFFFF - colorInt))
+		else
+			mainMenu.CHUDOptionElements[elemId].text:SetIsVisible(false)
+		end
+	end
+end
+
 local function CHUDSaveMenuSetting(name)
 	if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
 		local CHUDMenuOption = mainMenu.CHUDOptionElements[name]
@@ -69,16 +84,6 @@ local function CHUDSaveMenuSetting(name)
 	end
 end
 
-local function CHUDSaveMenuSettings(name)
-	if not name then
-		for optionName, option in pairs(mainMenu.CHUDOptionElements) do
-			CHUDSaveMenuSetting(optionName)
-		end
-	else
-		CHUDSaveMenuSetting(name)
-	end
-end
-	
 local function ResetMenuOption(option)
 	if mainMenu ~= nil then
 		if option.type == "select" then
@@ -98,6 +103,7 @@ local function ResetMenuOption(option)
 		elseif option.valueType == "color" then
 			mainMenu.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(option.defaultValue))
 			CHUDSetOption(mainMenu.CHUDOptionElements[option.name].index, option.defaultValue)
+			CHUDDisplayDefaultColorText(option.name)
 		end
 	end
 end
@@ -265,6 +271,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 				self.CHUDOptionElements[option.name]:SetValue( (CHUDOptions[idx].currentValue - minValue) / (maxValue - minValue) )
 			elseif option.valueType == "color" then
 				self.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(CHUDOptions[idx].currentValue))
+				CHUDDisplayDefaultColorText(option.name)
 			end
 		end
 		-- When opening and closing menus the tooltips would appear behind the form
@@ -282,15 +289,10 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	local content = self.CHUDOptionWindow:GetContentBox()
 	
 	local back = CreateMenuElement(self.CHUDOptionWindow, "MenuButton")
-	back:SetCSSClass("back")
+	back:SetCSSClass("apply")
 	back:SetText("BACK")
 	back:AddEventCallbacks( { OnClick = function() self.CHUDOptionWindow:SetIsVisible(false) end } )
 	
-	local apply = CreateMenuElement(self.CHUDOptionWindow, "MenuButton")
-	apply:SetCSSClass("apply")
-	apply:SetText("APPLY")
-	apply:AddEventCallbacks( { OnClick = function() CHUDSaveMenuSettings() end } )
-
 	self.fpsDisplay = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
 	self.fpsDisplay:SetCSSClass("fps")
 	
@@ -560,6 +562,11 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		elseif option.valueType == "color" then
 			option.inputClass = "colorpicker_input"
 			input = form:CreateFormElement(Form.kElementType.FormButton, option.name, option.value)
+			input.text:SetText("Default")
+			input.text:SetAnchor(GUIItem.Middle, GUIItem.Center)
+			input.text:SetPosition(Vector(0, 0, 0))
+			input.text:SetTextAlignmentX(GUIItem.Align_Center)
+			input.text:SetIsVisible(false)
 			input:AddEventCallbacks({
 				OnClick = function(self)
 					self.scriptHandle.colorPickerWindow:SetIsVisible(true)
@@ -757,7 +764,9 @@ function GUIMainMenu:CreateColorPickerWindow()
 			local color = self.scriptHandle.colorPreview:GetBackground():GetColor()
 			self.scriptHandle.colorPickerMenuElement:GetBackground():SetColor(color)
 			self.scriptHandle.colorPickerWindow:SetIsVisible(false)
-			CHUDSaveMenuSetting(self.scriptHandle.colorPickerMenuElement:GetFormElementName())
+			local elemName = self.scriptHandle.colorPickerMenuElement:GetFormElementName()
+			CHUDSaveMenuSetting(elemName)
+			CHUDDisplayDefaultColorText(elemName)
 		end
 	})
 	

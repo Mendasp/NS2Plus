@@ -308,6 +308,6 @@ if Client then
 	end
 	
 	function ColorToColorInt(color)
-		return bit.lshift(color.r*255, 16) + bit.lshift(color.g*255, 8) + color.b*255
+		return math.floor(bit.lshift(color.r*255, 16) + bit.lshift(color.g*255, 8) + color.b*255)
 	end
 end
