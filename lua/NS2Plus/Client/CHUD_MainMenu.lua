@@ -14,6 +14,7 @@ local function CHUDSliderCallback(elemId)
 		local elem = mainMenu.CHUDOptionElements[elemId]
 		local value = (elem:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, Round(value, 2))
+		elem.resetOption:SetIsVisible(CHUDOptions[key].defaultValue ~= Round(value, 2))
 	end
 end
 
@@ -28,6 +29,43 @@ local function CHUDDisplayDefaultColorText(elemId)
 			mainMenu.CHUDOptionElements[elemId].text:SetColor(ColorIntToColor(0xFFFFFF - colorInt))
 		else
 			mainMenu.CHUDOptionElements[elemId].text:SetIsVisible(false)
+		end
+	end
+end
+
+local function CHUDSetOptionVisible(option, visible)
+	option:SetIsVisible(visible)
+	option.label:SetIsVisible(visible)
+	if option.soundPreview then
+		option.soundPreview:SetIsVisible(visible)
+	end
+	if option.input_display then
+		option.input_display:SetIsVisible(visible)
+	end
+	local index = option.index
+	local CHUDOption = CHUDOptions[index]
+	if CHUDOption then
+		option.resetOption:SetIsVisible(visible and CHUDOption.defaultValue ~= CHUDOption.currentValue)
+	end
+end
+
+local function CHUDResortForm()
+	if mainMenu ~= nil and mainMenu.compOptions ~= nil then
+		local y = 0
+		for index, option in ipairs(mainMenu.compOptions) do
+			local optionElem = mainMenu.CHUDOptionElements[option.name]
+			if optionElem:GetIsVisible() then
+				optionElem:SetTopOffset(y)
+				optionElem.label:SetTopOffset(y)
+				if optionElem.soundPreview then
+					optionElem.soundPreview:SetTopOffset(y)
+				end
+				if optionElem.input_display then
+					optionElem.input_display:SetTopOffset(y)
+				end
+				optionElem.resetOption:SetTopOffset(y)
+				y = y + 50
+			end
 		end
 	end
 end
@@ -57,28 +95,19 @@ local function CHUDSaveMenuSetting(name)
 				end
 			end
 			
+			CHUDMenuOption.resetOption:SetIsVisible(CHUDOption.defaultValue ~= CHUDOption.currentValue)
+			
 			if index == "hitsounds" then
-				if CHUDGetOption("hitsounds") > 0 then
-					mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label")
-				else
-					mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"].label:SetCSSClass("option_label_disabled")
-				end
+				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"], CHUDGetOption("hitsounds") > 0)
+				CHUDResortForm()
 			elseif index == "sensitivity_perteam" then
-				if CHUDGetOption("sensitivity_perteam") then
-					mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label")
-					mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label")
-				else
-					mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"].label:SetCSSClass("option_label_disabled")
-					mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"].label:SetCSSClass("option_label_disabled")
-				end
+				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"], CHUDGetOption("sensitivity_perteam"))
+				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"], CHUDGetOption("sensitivity_perteam"))
+				CHUDResortForm()
 			elseif index == "fov_perteam" then
-				if CHUDGetOption("fov_perteam") then
-					mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label")
-					mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label")
-				else
-					mainMenu.CHUDOptionElements["CHUD_FOV_M"].label:SetCSSClass("option_label_disabled")
-					mainMenu.CHUDOptionElements["CHUD_FOV_A"].label:SetCSSClass("option_label_disabled")
-				end
+				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_FOV_M"], CHUDGetOption("fov_perteam"))
+				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_FOV_A"], CHUDGetOption("fov_perteam"))
+				CHUDResortForm()
 			end
 		end
 	end
@@ -272,6 +301,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 			elseif option.valueType == "color" then
 				self.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(CHUDOptions[idx].currentValue))
 				CHUDDisplayDefaultColorText(option.name)
+				CHUDSaveMenuSetting(option.name)
 			end
 		end
 		-- When opening and closing menus the tooltips would appear behind the form
@@ -284,7 +314,6 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		end
 		
 	end
-	self.CHUDOptionWindow:AddEventCallbacks({ OnHide = InitOptionWindow })
 	
 	local content = self.CHUDOptionWindow:GetContentBox()
 	
@@ -324,6 +353,12 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	resetButton:SetBorderColor(Color(1, 0, 0, 0.7))
 	resetButton:SetTextColor(Color(1, 0, 0, 0.7))
 	resetButton:AddEventCallbacks(resetCallbacks)
+	
+	local changelogButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
+	changelogButton:SetCSSClass("back")
+	changelogButton:SetText("CHANGELOG")
+	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/135458820"
+	changelogButton:AddEventCallbacks( { OnClick = function() Client.ShowWebpage(kChangeURL) end } )
 	
 	self.warningLabel = CreateMenuElement(self.CHUDOptionWindow, "MenuButton", false)
 	self.warningLabel:SetCSSClass("warning_label")
@@ -413,7 +448,10 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	end
 	
 	InitOptionWindow()
-  
+	
+	self.compOptions = CompOptionsMenu
+	
+	CHUDResortForm()
 end
 
 GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionElements)
@@ -434,9 +472,7 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		local maxValue = option.maxValue or 1
 		
 		local resetOption = CreateMenuElement(form, "MenuButton", false)
-		resetOption:SetCSSClass("clear_keybind")
-		resetOption:SetBorderColor(Color(1, 0, 0, 0.7))
-		resetOption:SetTextColor(Color(1, 0, 0, 0.7))
+		resetOption:SetCSSClass("reset_chud_option")
 		resetOption:SetText("X")
 		resetOption:SetTopOffset(y)
 		
@@ -485,10 +521,9 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 			end
 			
 			if option.name == "CHUD_Hitsounds" then
+				option.inputClass = "option_input_chud"
 				local soundPreview = CreateMenuElement(form, "MenuButton", false)
-				soundPreview:SetCSSClass("clear_keybind")
-				soundPreview:SetBorderColor(Color(0.54, 0.7, 0.75, 0.7))
-				soundPreview:SetTextColor(Color(0.54, 0.7, 0.75, 0.7))
+				soundPreview:SetCSSClass("sound_preview_chud")
 				soundPreview:SetText(">")
 				soundPreview:SetTopOffset(y)
 				
@@ -496,12 +531,11 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					HitSounds_PlayHitsound( 1 )
 				end
 				
-				resetOption:SetCSSClass("clear_keybind_hitsounds")
+				input.soundPreview = soundPreview
 			elseif option.name == "CHUD_HitsoundsPitch" then
+				option.inputClass = "option_input_chud"
 				local soundPreview = CreateMenuElement(form, "MenuButton", false)
-				soundPreview:SetCSSClass("clear_keybind")
-				soundPreview:SetBorderColor(Color(0.54, 0.7, 0.75, 0.7))
-				soundPreview:SetTextColor(Color(0.54, 0.7, 0.75, 0.7))
+				soundPreview:SetCSSClass("sound_preview_chud")
 				soundPreview:SetText(">")
 				soundPreview:SetTopOffset(y)
 				
@@ -509,20 +543,17 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					HitSounds_PlayHitsound( 3 )
 				end
 				
-				resetOption:SetCSSClass("clear_keybind_hitsounds")
+				input.soundPreview = soundPreview
 			end
 			
 		elseif option.type == "slider" then
+			option.inputClass = "option_input_chud"
 			input = form:CreateFormElement(Form.kElementType.SlideBar, option.name, option.value)
 			input_display = form:CreateFormElement(Form.kElementType.TextInput, option.name, option.value)
 			input_display:SetNumbersOnly(true)
 			input_display:SetXAlignment(GUIItem.Align_Min)
 			input_display:SetMarginLeft(5)
-			if option.formName and option.formName == "sound" then
-				input_display:SetCSSClass("display_sound_input")
-			else
-				input_display:SetCSSClass("display_input")
-			end
+			input_display:SetCSSClass("display_input_chud")
 			input_display:SetTopOffset(y)
 			input_display:SetValue(ToString( input:GetValue() ))
 			input_display:AddEventCallbacks({ 
@@ -557,7 +588,6 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 					end
 				}, SLIDE_HORIZONTAL)
 			
-			resetOption:SetCSSClass("clear_keybind_slider")
 			resetOption:SetTopOffset(y+5)
 		elseif option.valueType == "color" then
 			option.inputClass = "colorpicker_input"
@@ -649,6 +679,8 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		end
 		
 		optionElements[option.name] = input
+		optionElements[option.name].input_display = input_display
+		optionElements[option.name].resetOption = resetOption
 		optionElements[option.name].label = label
 		
 		y = y + rowHeight

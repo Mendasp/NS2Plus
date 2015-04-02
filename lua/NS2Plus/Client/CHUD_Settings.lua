@@ -464,9 +464,30 @@ local function OnCommandPlusExport()
 			PrintSetting(option)
 		end
 		
+		local hitsounds
+		local fov
+		local sens
 		settingsFile:write("\r\nMISC TAB:\r\n-----------\r\n")
 		for _, option in ipairs(CompOptionsMenu) do
-			PrintSetting(option)
+			local canPrint = true
+			
+			if option.name == "CHUD_Hitsounds" then
+				hitsounds = option.currentValue
+			elseif option.name == "CHUD_HitsoundsPitch" and hitsounds == 0 then
+				canPrint = false
+			elseif option.name == "CHUD_FOVPerTeam" then
+				fov = option.currentValue
+			elseif (option.name == "CHUD_FOV_M" or option.name == "CHUD_FOV_A") and fov == false then
+				canPrint = false
+			elseif option.name == "CHUD_SensitivityPerTeam" then
+				sens = option.currentValue
+			elseif (option.name == "CHUD_Sensitivity_M" or option.name == "CHUD_Sensitivity_A") and sens == false then
+				canPrint = false
+			end
+			
+			if canPrint then
+				PrintSetting(option)
+			end
 		end
 		
 		settingsFile:write("\r\nDate exported: " .. CHUDFormatDateTimeString(Shared.GetSystemTime()))

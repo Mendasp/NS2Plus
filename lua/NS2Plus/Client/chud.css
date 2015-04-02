@@ -9,24 +9,28 @@ font.option_label_disabled
     left: 30px; 
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
 }
-button.clear_keybind_hitsounds
+button.reset_chud_option
 { 
     opacity: 0; 
     font-name: fonts/AgencyFB_small.fnt; 
     text-align: left; 
-    width: 30px; 
-    height: 30px;
-    left: 440px;
+    width: 40px; 
+    height: 40px;
+    left: 475px;
+    border-color: rgba(1, 0, 0, 0.7);
+    text-color: rgba(1, 0, 0, 0.7);
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
 }
-button.clear_keybind_slider
+button.sound_preview_chud
 { 
     opacity: 0; 
     font-name: fonts/AgencyFB_small.fnt; 
     text-align: left; 
-    width: 30px; 
-    height: 30px;
-    left: 430px;
+    width: 40px; 
+    height: 40px;
+    left: 545px;
+    border-color: rgba(0.54, 0.7, 0.75, 0.7);
+    text-color: rgba(0.54, 0.7, 0.75, 0.7);
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
 }
 window.colorpicker_window 
@@ -82,4 +86,22 @@ form .colorpicker_input
     font-name: fonts/AgencyFB_small.fnt; 
     left: 545px; 
 }
+
+form .option_input_chud
+{ 
+    width: 330px; 
+    height: 40px; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    background-color: rgba(0, 0, 0, 0.4); 
+    left: 590px; 
+} 
+  
+form textinput.display_input_chud
+{ 
+    left:  540px; 
+    width: 50px; 
+    height: 40px;
+    font-name: fonts/AgencyFB_small.fnt; 
+    background-color: rgba(0, 0, 0, 0.4); 
+} 
 ]] 

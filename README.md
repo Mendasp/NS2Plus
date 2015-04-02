@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /04/2015
+	- Adjusted options menu elements so they all use the same space.
+	- Changed the options menu to only display the reset to default button if the value is different than default.
+	- The options menu will now hide sub-options that depend on a main setting if it's disabled (per-team sensitivies/FOV, Vanilla Hitsounds Pitch)
+
 - 01/04/2015
 	- Added accuracies without Onos hits to the Last Life Stats.
 	- Added a color picker for all the options with customizable colors.
