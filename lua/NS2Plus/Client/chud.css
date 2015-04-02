@@ -36,7 +36,7 @@ button.sound_preview_chud
 window.colorpicker_window 
 { 
     scaling: true; 
-    width: 360px; 
+    width: 350px; 
     height: 310px; 
     left: -200px; 
     top: -100px; 

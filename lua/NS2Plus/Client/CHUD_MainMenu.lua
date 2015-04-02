@@ -322,9 +322,6 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	back:SetText("BACK")
 	back:AddEventCallbacks( { OnClick = function() self.CHUDOptionWindow:SetIsVisible(false) end } )
 	
-	self.fpsDisplay = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
-	self.fpsDisplay:SetCSSClass("fps")
-	
 	local resetCallbacks = { 
 		OnMouseOver = function(self)
 			if mainMenu ~= nil then
@@ -359,6 +356,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	changelogButton:SetText("CHANGELOG")
 	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/135458820"
 	changelogButton:AddEventCallbacks( { OnClick = function() Client.ShowWebpage(kChangeURL) end } )
+	changelogButton:SetLeftOffset(260)
 	
 	self.warningLabel = CreateMenuElement(self.CHUDOptionWindow, "MenuButton", false)
 	self.warningLabel:SetCSSClass("warning_label")
