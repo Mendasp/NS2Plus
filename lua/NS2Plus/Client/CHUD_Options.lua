@@ -524,6 +524,7 @@ CHUDOptions =
 				tooltip = "Sets the color of marine players in the minimap different from the structures.",
 				defaultValue = 0x00D8FF,
 				category = "hud",
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 				valueType = "color",
 				sort = "C9c",
 				resetSettingInBuild = 264,

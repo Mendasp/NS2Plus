@@ -365,8 +365,10 @@ local function OnCommandCHUD(...)
 							mainMenu.CHUDOptionElements[option.name].text:SetIsVisible(true)
 							-- Invert color
 							mainMenu.CHUDOptionElements[option.name].text:SetColor(ColorIntToColor(0xFFFFFF - setValue))
+							mainMenu.CHUDOptionElements[option.name].resetOption:SetIsVisible(false)
 						else
 							mainMenu.CHUDOptionElements[option.name].text:SetIsVisible(false)
+							mainMenu.CHUDOptionElements[option.name].resetOption:SetIsVisible(true)
 						end
 					end
 				end

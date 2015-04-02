@@ -14,7 +14,7 @@ local function CHUDSliderCallback(elemId)
 		local elem = mainMenu.CHUDOptionElements[elemId]
 		local value = (elem:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, Round(value, 2))
-		elem.resetOption:SetIsVisible(CHUDOptions[key].defaultValue ~= Round(value, 2))
+		elem.resetOption:SetIsVisible(CHUDOptions[key].defaultValue ~= CHUDOptions[key].currentValue)
 	end
 end
 
@@ -133,6 +133,7 @@ local function ResetMenuOption(option)
 			mainMenu.CHUDOptionElements[option.name]:GetBackground():SetColor(ColorIntToColor(option.defaultValue))
 			CHUDSetOption(mainMenu.CHUDOptionElements[option.name].index, option.defaultValue)
 			CHUDDisplayDefaultColorText(option.name)
+			CHUDSaveMenuSetting(option.name)
 		end
 	end
 end
@@ -585,8 +586,6 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 						input_display:SetValue(ToString(string.sub(Round(value,2), 0, ConditionalValue(value > 100, 5, 4))))
 					end
 				}, SLIDE_HORIZONTAL)
-			
-			resetOption:SetTopOffset(y+5)
 		elseif option.valueType == "color" then
 			option.inputClass = "colorpicker_input"
 			input = form:CreateFormElement(Form.kElementType.FormButton, option.name, option.value)
