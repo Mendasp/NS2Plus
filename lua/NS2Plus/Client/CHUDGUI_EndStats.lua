@@ -400,7 +400,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.pdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.pdmg)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingMediumLarge
+	xOffset = xOffset - kItemSize - ConditionalValue(avgAccTable.marineOnosAcc == -1, kItemPaddingSmall, kItemPaddingMediumLarge)
 	
 	item.acc = GUIManager:CreateTextItem()
 	item.acc:SetStencilFunc(GUIItem.NotEqual)
@@ -415,7 +415,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.acc:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.acc)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingMedium
+	xOffset = xOffset - kItemSize - ConditionalValue(avgAccTable.marineOnosAcc == -1, kItemPaddingExtraSmall, kItemPaddingMedium)
 	
 	item.deaths = GUIManager:CreateTextItem()
 	item.deaths:SetStencilFunc(GUIItem.NotEqual)
@@ -895,7 +895,7 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.team1UI = self:CreateTeamBackground(1)
 	self.team1UI.playerRows = {}
-	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Player name", "K", "A", "D", "Acc. (No Onos)", "Pl. dmg", "Str. dmg", "Build time", "Played"))
+	table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Player name", "K", "A", "D", ConditionalValue(avgAccTable.marineOnosAcc == -1, "Accuracy", "Acc. (No Onos)"), "Pl. dmg", "Str. dmg", "Build time", "Played"))
 	self.team2UI = self:CreateTeamBackground(2)
 	self.team2UI.playerRows = {}
 	table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Player name", "K", "A", "D", "Accuracy", "Pl. dmg", "Str. dmg", "Build time", "Played"))
