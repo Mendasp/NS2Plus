@@ -139,15 +139,22 @@ end
 
 local OldGUIItemSetColor = GUIItem.SetColor
 local function NewGUIItemSetColor( blip, blipColor )
-	local vars = GetLocalsFromCallingFunction()	
+	local vars = GetLocalsFromCallingFunction()
 	local blipType, isHallucination, playerTeam, blipTeam, spectating, underAttack = 
 		vars.blipType, vars.isHallucination, vars.playerTeam, vars.blipTeam, vars.spectating, vars.underAttack
+	local player = Client.GetLocalPlayer()
+	local highlight = CHUDGetOption("commhighlight")
+	local highlightColor = ColorIntToColor(CHUDGetOption("commhighlightcolor"))
+	local isHighlighted = false
 	
 	if blipType and playerTeam and blipTeam then
 		if marinePlayers[blipType] then
 			blipColor = ColorIntToColor(CHUDGetOption("playercolor_m"))
 		elseif alienPlayers[blipType] then
 			blipColor = ColorIntToColor(CHUDGetOption("playercolor_a"))
+		elseif player and player:GetIsCommander() and highlight and EnumToString(kTechId, player:GetGhostModelTechId()) == EnumToString(kMinimapBlipType, blipType) then
+			blipColor = highlightColor
+			isHighlighted = true
 		end
 			
 		if blip and blipColor and not isHallucination then
@@ -155,7 +162,12 @@ local function NewGUIItemSetColor( blip, blipColor )
 
 				if underAttack then
 					if MinimapBlipTeamIsActive(blipTeam) then
-						blipColor = PulseRed(1.0)
+						if isHighlighted then
+							local percentage = (math.cos(Shared.GetTime() * 10) + 1) * 0.5
+							blipColor = LerpColor(kRed, highlightColor, percentage)
+						else
+							blipColor = PulseRed(1.0)
+						end
 					else
 						blipColor = PulseDarkRed(blipColor)
 					end

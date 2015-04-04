@@ -265,6 +265,26 @@ CHUDOptions =
 				valueType = "float",
 				sort = "E5",
 			},
+			commhighlight = {
+				name = "CHUD_CommHighlight",
+				label = "(Comm) Building highlight",
+				tooltip = "Highlights the buildings of the same type that you're about to drop in the minimap in a different color.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = true,
+				category = "func",
+				valueType = "bool",
+				sort = "E6",
+			},
+			commhighlightcolor = {
+				name = "CHUD_CommHighlightColor",
+				label = "(Comm) Building highlight color",
+				tooltip = "Selects the color of the building highlight.",
+				valueType = "color",
+				defaultValue = 0xFFFF00,
+				category = "func",
+				sort = "E7",
+			},
 
 
 			score = {

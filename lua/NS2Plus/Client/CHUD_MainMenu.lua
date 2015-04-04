@@ -50,21 +50,23 @@ local function CHUDSetOptionVisible(option, visible)
 end
 
 local function CHUDResortForm()
-	if mainMenu ~= nil and mainMenu.compOptions ~= nil then
-		local y = 0
-		for index, option in ipairs(mainMenu.compOptions) do
-			local optionElem = mainMenu.CHUDOptionElements[option.name]
-			if optionElem:GetIsVisible() then
-				optionElem:SetTopOffset(y)
-				optionElem.label:SetTopOffset(y)
-				if optionElem.soundPreview then
-					optionElem.soundPreview:SetTopOffset(y)
+	if mainMenu ~= nil and mainMenu.sortedOptionTables ~= nil then
+		for _, optionsTable in ipairs(mainMenu.sortedOptionTables) do
+			local y = 0
+			for index, option in ipairs(optionsTable) do
+				local optionElem = mainMenu.CHUDOptionElements[option.name]
+				if optionElem:GetIsVisible() then
+					optionElem:SetTopOffset(y)
+					optionElem.label:SetTopOffset(y)
+					if optionElem.soundPreview then
+						optionElem.soundPreview:SetTopOffset(y)
+					end
+					if optionElem.input_display then
+						optionElem.input_display:SetTopOffset(y)
+					end
+					optionElem.resetOption:SetTopOffset(y)
+					y = y + 50
 				end
-				if optionElem.input_display then
-					optionElem.input_display:SetTopOffset(y)
-				end
-				optionElem.resetOption:SetTopOffset(y)
-				y = y + 50
 			end
 		end
 	end
@@ -107,6 +109,9 @@ local function CHUDSaveMenuSetting(name)
 			elseif index == "fov_perteam" then
 				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_FOV_M"], CHUDGetOption("fov_perteam"))
 				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_FOV_A"], CHUDGetOption("fov_perteam"))
+				CHUDResortForm()
+			elseif index == "commhighlight" then
+				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_CommHighlightColor"], CHUDGetOption("commhighlight"))
 				CHUDResortForm()
 			end
 		end
@@ -448,7 +453,10 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	
 	InitOptionWindow()
 	
-	self.compOptions = CompOptionsMenu
+	self.sortedOptionTables = {}
+	table.insert(self.sortedOptionTables, CompOptionsMenu)
+	table.insert(self.sortedOptionTables, FuncOptionsMenu)
+	table.insert(self.sortedOptionTables, HUDOptionsMenu)
 	
 	CHUDResortForm()
 end
