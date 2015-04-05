@@ -7,6 +7,7 @@ Latest changes
 - 06/04/2015
 	- Adjusted options menu elements so they all use the same space.
 	- Adjusted accuracy text and column width when there's no accuracies without Onos hits.
+	- Added kills to last life stats.
 	- Added building highlight color option for Commanders that highlights the buildings of the same type that you're about to drop in the minimap in a different color. Available in Visual tab.
 	- Added Caster mode to use default NS2+ values without overwriting your config. Available in Misc tab.
 	- Free look spectators can now toggle the healthbars on and off by pressing the use key.
