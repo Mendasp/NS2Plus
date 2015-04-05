@@ -10,6 +10,7 @@ Latest changes
 	- Added building highlight color option for Commanders that highlights the buildings of the same type that you're about to drop in the minimap in a different color. Available in Visual tab.
 	- Added Caster mode to use default NS2+ values without overwriting your config. Available in Misc tab.
 	- Free look spectators can now toggle the healthbars on and off by pressing the use key.
+	- Increased nameplate range for free look spectators.
 	- Added hint text to show the keys you can use in Insight spectator.
 	- The state of the Insight HP/AP values now gets saved across map changes.
 	- Made custom minimap colors appear correctly for the marine minimap on the top left.

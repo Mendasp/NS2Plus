@@ -126,6 +126,7 @@ local oldUnitStatusUpdate
 oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	function(self, deltaTime)
 		CHUDHint = true
+		ReplaceUpValue(PlayerUI_GetUnitStatusInfo, "kUnitStatusDisplayRange", ConditionalValue(PlayerUI_GetIsSpecating(), 30, 13))
 		oldUnitStatusUpdate( self, deltaTime )
 		CHUDHint = false
 		
