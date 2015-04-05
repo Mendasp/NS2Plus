@@ -1,4 +1,4 @@
-
+local isEnabled = Client.GetOptionBoolean("CHUD_SpectatorHPUnitStatus", true)
 local parent, OldUpdateUnitStatusBlip = LocateUpValue( GUIUnitStatus.Update, "UpdateUnitStatusBlip", { LocateRecurse = true } )
 
 function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
@@ -26,9 +26,10 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	
 	if nameplates == 1 then
 		showHints = false
+	elseif PlayerUI_GetIsSpecating() and isEnabled and blipData.IsPlayer then
+		blipData.IsCrossHairTarget = true
 	end
 	
-
 	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
 	if CHUDGetOption("wrenchicon") == 1 then
@@ -72,7 +73,6 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			end
 		end
 	end
-
 	
 	-- Percentages Nameplates
 	if nameplates == 1 then
@@ -141,4 +141,17 @@ oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 			GUIUnitStatus.kFontScaleSmall = GUIScale( Vector(1,1,1) ) * 0.9
 		end
 
+	end)
+	
+local originalUnitStatusSKE
+originalUnitStatusSKE = Class_ReplaceMethod("GUIUnitStatus", "SendKeyEvent",
+	function(self, key, down)
+		local ret = originalUnitStatusSKE(self, key, down)
+		if not ret and PlayerUI_GetIsSpecating() and GetIsBinding(key, "Use") and down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
+			isEnabled = not isEnabled
+			Client.SetOptionBoolean("CHUD_SpectatorHPUnitStatus", isEnabled)
+			return true
+		end
+		
+		return ret
 	end)

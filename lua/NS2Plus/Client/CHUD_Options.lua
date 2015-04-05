@@ -1174,4 +1174,24 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "G9",
 			},
+			castermode = { 
+				name = "CHUD_CasterMode",
+				label = "Caster mode",
+				tooltip = "Makes NS2+ use all the default values without overwriting your current config.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				applyFunction = function()
+					for name, option in pairs(CHUDOptions) do
+						if name ~= "castermode" then
+							if option.applyFunction then
+								option.applyFunction()
+							end
+						end
+					end
+				end,
+				sort = "H1",
+			},
 }

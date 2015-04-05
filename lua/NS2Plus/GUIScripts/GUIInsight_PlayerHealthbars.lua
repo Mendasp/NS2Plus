@@ -1,6 +1,6 @@
 Script.Load("lua/GUIInsight_PlayerHealthbars.lua")
 
-local isEnabled = false
+local isEnabled = Client.GetOptionBoolean("CHUD_SpectatorHPInsight", false)
 
 local originalIPHBCreatePlayerUI
 originalIPHBCreatePlayerUI = Class_ReplaceMethod("GUIInsight_PlayerHealthbars", "CreatePlayerGUIItem",
@@ -68,6 +68,7 @@ originalIPHBSKE = Class_ReplaceMethod("GUIInsight_PlayerHealthbars", "SendKeyEve
 		local ret = originalIPHBSKE(self, key, down)
 		if not ret and GetIsBinding(key, "Use") and down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
 			isEnabled = not isEnabled
+			Client.SetOptionBoolean("CHUD_SpectatorHPInsight", isEnabled)
 			return true
 		end
 		

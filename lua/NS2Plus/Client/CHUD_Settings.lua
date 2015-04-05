@@ -19,6 +19,8 @@ function CHUDGetOption(key)
 		if CHUDOptions[key].disabled then
 			local ret = ConditionalValue(CHUDOptions[key].disabledValue == nil, CHUDOptions[key].defaultValue, CHUDOptions[key].disabledValue)
 			return ret
+		elseif CHUDOptions["castermode"] and CHUDOptions["castermode"].currentValue then
+			return CHUDOptions[key].defaultValue
 		else
 			return CHUDOptions[key].currentValue
 		end
