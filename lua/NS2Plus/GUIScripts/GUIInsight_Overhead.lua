@@ -1,9 +1,28 @@
 Script.Load("lua/GUIInsight_Overhead.lua")
 
+local keyHintsVisible = Client.GetOptionBoolean("CHUD_OverheadHelp", true)
+
+local originalOverheadInit
+originalOverheadInit = Class_ReplaceMethod("GUIInsight_Overhead", "Initialize",
+	function(self)
+		originalOverheadInit(self)
+		
+		self.keyHints = GUIManager:CreateTextItem()
+		self.keyHints:SetFontName(Fonts.kAgencyFB_Tiny)
+		self.keyHints:SetScale(GetScaledVector())
+		self.keyHints:SetAnchor(GUIItem.Left, GUIItem.Bottom)
+		self.keyHints:SetPosition(Vector(GUIScale(10), -GUIScale(20), 0))
+		self.keyHints:SetColor(kWhite)
+	end)
+
 local originalOverheadUpdate
 originalOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Update",
 	function(self, deltaTime)
-	
+		if self.keyHints then
+			self.keyHints:SetIsVisible(keyHintsVisible)
+			self.keyHints:SetText(string.format("[%s] Stats [%s] Toggle health [%s/%s] Zoom [%s] Reset zoom [%s] Draw on level [%s] Draw on screen [%s] Clear screen [%s] Toggle this help", BindingsUI_GetInputValue("RequestHealth"), BindingsUI_GetInputValue("Use"), BindingsUI_GetInputValue("OverHeadZoomIncrease"), BindingsUI_GetInputValue("OverHeadZoomDecrease"), BindingsUI_GetInputValue("OverHeadZoomReset"), "Mouse 2", "Mouse 3", "Backspace", BindingsUI_GetInputValue("RequestAmmo")))
+		end
+		
 		if CHUDGetOption("deselectspec") then
 			originalOverheadUpdate(self, deltaTime)
 		else
@@ -100,4 +119,39 @@ originalOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Update",
 
 			end
 		end
+	end)
+	
+local originalOverheadOnResChanged
+originalOverheadOnResChanged = Class_ReplaceMethod("GUIInsight_Overhead", "OnResolutionChanged",
+	function(self, oldX, oldY, newX, newY)
+		originalOverheadOnResChanged(self, oldX, oldY, newX, newY)
+		
+		if self.keyHints then
+			self.keyHints:SetScale(GetScaledVector())
+			self.keyHints:SetPosition(Vector(GUIScale(10), -GUIScale(20), 0))
+		end
+	end)
+	
+local originalOverheadUninit
+originalOverheadUninit = Class_ReplaceMethod("GUIInsight_Overhead", "Uninitialize",
+	function(self)
+		originalOverheadUninit(self)
+		
+		if self.keyHints then
+			GUI.DestroyItem(self.keyHints)
+			self.keyHints = nil
+		end
+	end)
+	
+local originalOverheadSKE
+originalOverheadSKE = Class_ReplaceMethod("GUIInsight_Overhead", "SendKeyEvent",
+	function(self, key, down)
+		local ret = originalOverheadSKE(self, key, down)
+		if not ret and GetIsBinding(key, "RequestAmmo") and down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
+			keyHintsVisible = not keyHintsVisible
+			Client.SetOptionBoolean("CHUD_OverheadHelp", keyHintsVisible)
+			return true
+		end
+		
+		return ret
 	end)

@@ -4,13 +4,14 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /04/2015
+- 06/04/2015
 	- Adjusted options menu elements so they all use the same space.
 	- Adjusted accuracy text and column width when there's no accuracies without Onos hits.
 	- Added building highlight color option for Commanders that highlights the buildings of the same type that you're about to drop in the minimap in a different color. Available in Visual tab.
 	- Added Caster mode to use default NS2+ values without overwriting your config. Available in Misc tab.
 	- Free look spectators can now toggle the healthbars on and off by pressing the use key.
-	- The state of the spectator HP/AP values now gets saved across map changes.
+	- Added hint text to show the keys you can use in Insight spectator.
+	- The state of the Insight HP/AP values now gets saved across map changes.
 	- Made custom minimap colors appear correctly for the marine minimap on the top left.
 	- Changed the options menu to only display the reset to default button if the value is different than default.
 	- The options menu will now hide sub-options that depend on a main setting if it's disabled (Per-team sensitivies/FOV, Vanilla Hitsounds Pitch).
