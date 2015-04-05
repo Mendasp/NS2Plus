@@ -866,6 +866,7 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 					msg.currentAccOnos = currentAccOnos
 					msg.pdmg = lastStat.pdmg
 					msg.sdmg = lastStat.sdmg
+					msg.kills = lastStat.kills
 					
 					Server.SendNetworkMessage(Server.GetOwner(self), "CHUDDeathStats", msg, true)
 				end

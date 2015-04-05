@@ -16,6 +16,7 @@ if not CHUDMainMenu then
 		currentAccOnos = "float (-1 to 100 by 0.01)",
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
+		kills = string.format("integer (0 to %d)", kMaxKills),
 	}
 
 	local kCHUDEndStatsWeaponMessage =
@@ -23,7 +24,7 @@ if not CHUDMainMenu then
 		wTechId = "enum kTechId",
 		accuracy = "float (0 to 100 by 0.01)",
 		accuracyOnos = "float (-1 to 100 by 0.01)",
-		kills = "integer (0 to 1023)",
+		kills = string.format("integer (0 to %d)", kMaxKills),
 		teamNumber = "integer (1 to 2)",
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",

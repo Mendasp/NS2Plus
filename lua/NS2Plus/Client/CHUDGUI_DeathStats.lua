@@ -292,6 +292,9 @@ function CHUDGUI_DeathStats:SetStats()
 		end
 		self:AddRow("Player damage", printNum(statsTable.pdmg))
 		self:AddRow("Structure damage", printNum(statsTable.sdmg))
+		if statsTable.kills > 0 then
+			self:AddRow("Kills", printNum(statsTable.kills))
+		end
 		self:AddRow()
 		self:AddRow("Current accuracy", printNum(statsTable.currentAcc) .. "%")
 		if statsTable.currentAccOnos > -1 then
