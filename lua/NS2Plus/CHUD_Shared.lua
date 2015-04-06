@@ -1,7 +1,7 @@
 kCHUDElixerVersion = 1.8
 // Version number is the amount of revisions in the Workshop
 // Try to update but only important when changing defaults
-kCHUDVersion = 268
+kCHUDVersion = 269
 
 Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
@@ -16,6 +16,7 @@ if not CHUDMainMenu then
 		currentAccOnos = "float (-1 to 100 by 0.01)",
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
+		kills = string.format("integer (0 to %d)", kMaxKills),
 	}
 
 	local kCHUDEndStatsWeaponMessage =
@@ -23,7 +24,7 @@ if not CHUDMainMenu then
 		wTechId = "enum kTechId",
 		accuracy = "float (0 to 100 by 0.01)",
 		accuracyOnos = "float (-1 to 100 by 0.01)",
-		kills = "integer (0 to 1023)",
+		kills = string.format("integer (0 to %d)", kMaxKills),
 		teamNumber = "integer (1 to 2)",
 		pdmg = "float (0 to 524287 by 0.01)",
 		sdmg = "float (0 to 524287 by 0.01)",
