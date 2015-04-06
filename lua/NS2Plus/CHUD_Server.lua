@@ -13,6 +13,7 @@ Script.Load("lua/NS2Plus/Server/CHUD_ServerStats.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_ClientOptions.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_DropPack.lua")
 Script.Load("lua/NS2Plus/Server/CHUD_HiveRanking.lua")
+Script.Load("lua/NS2Plus/Server/CHUD_Player.lua")
 
 Script.Load("lua/NS2Plus/Server/CHUD_GameInfo.lua")
 
