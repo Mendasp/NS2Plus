@@ -185,20 +185,9 @@ function GetBadgeFormalName( name )
 	end
 end
 
-local bindingsFileName = "ConsoleBindings.json"
 local function OnCommandClearBinding(keyName)
-
-	local bindings = LoadConfigFile(bindingsFileName) or { }
-	if bindings[keyName] then
-	
-		bindings[keyName] = nil
-		
-		// Save to disk.
-		SaveConfigFile(bindingsFileName, bindings)
-		
-		Shared.Message(keyName .. " cleared")
-		
+	if keyName then
+		Shared.ConsoleCommand("clear_binding " .. tostring(keyName))
 	end
-
 end
 Event.Hook("Console_unbind", OnCommandClearBinding)
