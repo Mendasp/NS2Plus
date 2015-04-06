@@ -33,6 +33,21 @@ originalSpectatorUninit = Class_ReplaceMethod( "GUISpectator", "Uninitialize",
 		foundTime = -1
 	end)
 
+local originalSpectatorLeft
+originalSpectatorLeft = Class_ReplaceMethod( "GUIProduction", "SetSpectatorLeft",
+	function(self)
+		originalSpectatorLeft(self)
+		
+		self.Background:SetPosition(Vector(GUIMinimap.kBackgroundWidth,-GUIScale(120),0))
+	end)
+	
+local originalSpectatorRight
+originalSpectatorRight = Class_ReplaceMethod( "GUIProduction", "SetSpectatorRight",
+	function(self)
+		originalSpectatorRight(self)
+		
+		self.Background:SetPosition(Vector(-GUIScale(280),-GUIScale(120),0))
+	end)
 
 local originalSpectatorUpdate
 originalSpectatorUpdate = Class_ReplaceMethod( "GUISpectator", "Update",

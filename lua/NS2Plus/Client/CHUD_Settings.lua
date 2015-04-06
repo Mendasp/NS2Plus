@@ -409,6 +409,7 @@ local function OnCommandPlusExport()
 		local HUDOptionsMenu = { }
 		local FuncOptionsMenu = { }
 		local CompOptionsMenu = { }
+		local skipOptions = { }
 		
 		for idx, option in pairs(CHUDOptions) do
 			if option.category == "hud" then
@@ -417,6 +418,23 @@ local function OnCommandPlusExport()
 				table.insert(FuncOptionsMenu, CHUDOptions[idx])
 			elseif option.category == "comp" then
 				table.insert(CompOptionsMenu, CHUDOptions[idx])
+			end
+			
+			-- Add the options that are hidden in the options menu here so we don't print them later
+			if option.children then
+				local show = true
+				for _, value in pairs(option.hideValues) do
+					if option.currentValue == value then
+						show = false
+					end
+				end
+				
+				for _, optionIndex in pairs(option.children) do
+					local optionName = CHUDGetOptionParam(optionIndex, "name")
+					if optionName and not show then
+						skipOptions[optionName] = true
+					end
+				end
 			end
 			
 			local function CHUDOptionsSort(a, b)
@@ -435,27 +453,29 @@ local function OnCommandPlusExport()
 		end
 		
 		local function PrintSetting(optionIdx)
-			local currentValue = optionIdx.currentValue
-			if optionIdx.valueType == "float" then
-				currentValue = tostring(Round(currentValue * (optionIdx.multiplier or 1), 4))
-			elseif optionIdx.valueType == "bool" then
-				if optionIdx.currentValue == true then
-					currentValue = optionIdx.values[2]
-				else
-					currentValue = optionIdx.values[1]
+			if not skipOptions[optionIdx.name] then
+				local currentValue = optionIdx.currentValue
+				if optionIdx.valueType == "float" then
+					currentValue = tostring(Round(currentValue * (optionIdx.multiplier or 1), 4))
+				elseif optionIdx.valueType == "bool" then
+					if optionIdx.currentValue == true then
+						currentValue = optionIdx.values[2]
+					else
+						currentValue = optionIdx.values[1]
+					end
+				elseif optionIdx.valueType == "int" then
+					currentValue = optionIdx.values[currentValue+1]
+				elseif optionIdx.valueType == "color" then
+					if currentValue == optionIdx.defaultValue then
+						currentValue = "Default"
+					else
+						local tmpColor = ColorIntToColor(currentValue)
+						currentValue = tostring(math.floor(tmpColor.r*255)) .. " " .. tostring(math.floor(tmpColor.g*255)) .. " " .. tostring(math.floor(tmpColor.b*255))
+					end
 				end
-			elseif optionIdx.valueType == "int" then
-				currentValue = optionIdx.values[currentValue+1]
-			elseif optionIdx.valueType == "color" then
-				if currentValue == optionIdx.defaultValue then
-					currentValue = "Default"
-				else
-					local tmpColor = ColorIntToColor(currentValue)
-					currentValue = tostring(math.floor(tmpColor.r*255)) .. " " .. tostring(math.floor(tmpColor.g*255)) .. " " .. tostring(math.floor(tmpColor.b*255))
-				end
+				local optionString = optionIdx.label .. ": " .. currentValue .. "\r\n"
+				settingsFile:write(optionString)
 			end
-			local optionString = optionIdx.label .. ": " .. currentValue .. "\r\n"
-			settingsFile:write(optionString)
 		end
 		
 		settingsFile:write("VISUAL TAB:\r\n-----------\r\n")
@@ -473,25 +493,7 @@ local function OnCommandPlusExport()
 		local sens
 		settingsFile:write("\r\nMISC TAB:\r\n-----------\r\n")
 		for _, option in ipairs(CompOptionsMenu) do
-			local canPrint = true
-			
-			if option.name == "CHUD_Hitsounds" then
-				hitsounds = option.currentValue
-			elseif option.name == "CHUD_HitsoundsPitch" and hitsounds == 0 then
-				canPrint = false
-			elseif option.name == "CHUD_FOVPerTeam" then
-				fov = option.currentValue
-			elseif (option.name == "CHUD_FOV_M" or option.name == "CHUD_FOV_A") and fov == false then
-				canPrint = false
-			elseif option.name == "CHUD_SensitivityPerTeam" then
-				sens = option.currentValue
-			elseif (option.name == "CHUD_Sensitivity_M" or option.name == "CHUD_Sensitivity_A") and sens == false then
-				canPrint = false
-			end
-			
-			if canPrint then
-				PrintSetting(option)
-			end
+			PrintSetting(option)
 		end
 		
 		settingsFile:write("\r\nDate exported: " .. CHUDFormatDateTimeString(Shared.GetSystemTime()))
