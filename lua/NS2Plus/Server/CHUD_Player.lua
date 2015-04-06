@@ -1,6 +1,6 @@
 local kMinTimeNameChange = 5
 local kMaxChanges = 3
-local kPenaltyTime = 30
+local kPenaltyTime = 60
 local originalPlayerSetName
 originalPlayerSetName = Class_ReplaceMethod( "Player", "SetName",
 	function(self, name)
@@ -21,7 +21,7 @@ originalPlayerSetName = Class_ReplaceMethod( "Player", "SetName",
 			self.nextAllowedNameChange = Shared.GetTime() + kPenaltyTime - kMinTimeNameChange
 			local client = self:GetClient()
 			if client then
-				CHUDServerAdminPrint(client, "You have changed your name too often in a short time, you will be able to change your name again in 30 seconds.")
+				CHUDServerAdminPrint(client, "You have changed your name too often in a short time, you will be able to change your name again in " .. kPenaltyTime .. " seconds.")
 			end
 		end
 		
