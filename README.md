@@ -18,6 +18,7 @@ Latest changes
 	- Changed the options menu to only display the reset to default button if the value is different than default.
 	- The options menu will now hide sub-options that depend on a main setting if it's disabled (Per-team sensitivies/FOV, Vanilla Hitsounds Pitch).
 	- Added name change limiter, it will limit the amount of name changes allowed under a certain time.
+	- Added "unbind" console command as an alias of "clear_binding", as it's easier to remember.
 
 - 01/04/2015
 	- Added accuracies without Onos hits to the Last Life Stats.
