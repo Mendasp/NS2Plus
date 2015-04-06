@@ -120,13 +120,13 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	
 end
 
-ReplaceUpValue( parent, "UpdateUnitStatusBlip", NewUpdateUnitStatusBlip )
+ReplaceUpValue( parent, "UpdateUnitStatusBlip", NewUpdateUnitStatusBlip, { LocateRecurse = true } )
 
 local oldUnitStatusUpdate
 oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	function(self, deltaTime)
 		CHUDHint = true
-		ReplaceUpValue(PlayerUI_GetUnitStatusInfo, "kUnitStatusDisplayRange", ConditionalValue(PlayerUI_GetIsSpecating(), 30, 13))
+		ReplaceUpValue(PlayerUI_GetUnitStatusInfo, "kUnitStatusDisplayRange", ConditionalValue(PlayerUI_GetIsSpecating(), 30, 13), { LocateRecurse = true })
 		oldUnitStatusUpdate( self, deltaTime )
 		CHUDHint = false
 		

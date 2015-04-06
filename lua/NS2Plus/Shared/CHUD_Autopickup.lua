@@ -220,7 +220,7 @@ if Client then
 							foundWeapon = false
 						end
 					elseif techId == kTechId.Welder then
-						foundWeapon = false						
+						foundWeapon = false
 					end
 					
 				end
@@ -237,5 +237,5 @@ if Client then
 
 	end
 
-	ReplaceUpValue( MarineActionFinderMixin.OnProcessMove, "FindNearbyWeapon", NewFindNearbyWeapon )
+	ReplaceUpValue( MarineActionFinderMixin.OnProcessMove, "FindNearbyWeapon", NewFindNearbyWeapon, { LocateRecurse = true } )
 end
