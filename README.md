@@ -74,38 +74,6 @@ Latest changes
 	- Added console command to export NS2+ settings to a text file (plus_export). The file will be in %APPDATA%\Natural Selection 2\NS2Plus\ExportedSettings.txt
 	- Added server option to disable all connections to Hive. Disabling this will break the Force Even Teams vote, badges, player skill display and player skill reporting. It's an option purely just in case Hive is acting up. Servers can toggle it with "sv_plus hiveconnection true/false" in console or modifying NS2PlusServerConfig.json.
 
-- 18/02/2015
-	- Fixed expiration bar being visible for items without an expiration time.
-	- Fixed mouse cursor disappearing for Commanders on round end.
-	- Added ability to sort by columns in the stats UI.
-
-- 04/02/2015
-	- Added option to enable or disable server-side hit effects. Available in Visual tab.
-	- Added option to choose the order of the stats UI from Team first to Personal first. Available in Misc tab.
-	- Fixed bug where scroll bar could be stuck on the screen if the game restarted immediatly after round end.
-
-- 03/02/2015
-	- Added a way for server operators to disable showing the team stats section of the end game stats. Servers can toggle it with "sv_plus endstatsteambreakdown true/false" in console or modifying NS2PlusServerConfig.json.
-	- Adjusted stats UI colors and added a few sounds.
-	- Changed stats UI so it only shows up when tapping the request key instead of whenever it was released.
-	- Reworked average skill display so it looks more integrated with the scoreboard.
-	- Fixed bug with the profile option in the stats menu where it wouldn't react when clicking.
-
-- 31/01/2015
-	- Fixed bug where opening the stats before they'd show up automatically at end-round would leave the mouse cursor stuck on the screen.
-	- Fixed edge case where if the only stats available were Marine Commander drops, the client would not display any stats even after receiving them.
-	- The Commanders now show up in the final stats regardless of their field player stats.
-	- Made the stats UI highlight your own row.
-	- Added a way for server operators to disable autoshowing the end game stats (clients can still bring them up with the Request/Voiceover key, default X). Servers can toggle it with "sv_plus autodisplayendstats true/false" in console or modifying NS2PlusServerConfig.json.
-
-- 29/01/2015
-	- Fixed bug where opening/closing the scoreboard would reset the HUD.
-	- Changed the way the stats were sorted from Accuracy first to Kills first.
-	- Improved readability of the stats UI on resolutions lower than 1920x1080.
-	- Added ability to check the player profiles from the stats UI.
-	- Made the stats UI show on top of the rest of the UI.
-	- Fixed problems with the cursor staying on screen after seeing the stats UI.
-
 =================
 Credits/Thanks to
 =================
