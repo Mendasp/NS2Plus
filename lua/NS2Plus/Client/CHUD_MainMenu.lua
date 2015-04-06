@@ -99,19 +99,21 @@ local function CHUDSaveMenuSetting(name)
 			
 			CHUDMenuOption.resetOption:SetIsVisible(CHUDOption.defaultValue ~= CHUDOption.currentValue)
 			
-			if index == "hitsounds" then
-				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_HitsoundsPitch"], CHUDGetOption("hitsounds") > 0)
-				CHUDResortForm()
-			elseif index == "sensitivity_perteam" then
-				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_Sensitivity_M"], CHUDGetOption("sensitivity_perteam"))
-				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_Sensitivity_A"], CHUDGetOption("sensitivity_perteam"))
-				CHUDResortForm()
-			elseif index == "fov_perteam" then
-				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_FOV_M"], CHUDGetOption("fov_perteam"))
-				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_FOV_A"], CHUDGetOption("fov_perteam"))
-				CHUDResortForm()
-			elseif index == "commhighlight" then
-				CHUDSetOptionVisible(mainMenu.CHUDOptionElements["CHUD_CommHighlightColor"], CHUDGetOption("commhighlight"))
+			if CHUDOption.children then
+				local show = true
+				for _, value in pairs(CHUDOption.hideValues) do
+					if CHUDOption.currentValue == value then
+						show = false
+					end
+				end
+				
+				for _, option in pairs(CHUDOption.children) do
+					local optionName = CHUDGetOptionParam(option, "name")
+					if optionName then
+						CHUDSetOptionVisible(mainMenu.CHUDOptionElements[optionName], show)
+					end
+				end
+				
 				CHUDResortForm()
 			end
 		end

@@ -274,6 +274,8 @@ CHUDOptions =
 				defaultValue = true,
 				category = "func",
 				valueType = "bool",
+				children = { "commhighlightcolor" },
+				hideValues = { false },
 				sort = "E6",
 			},
 			commhighlightcolor = {
@@ -820,6 +822,8 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "comp",
 				valueType = "int",
+				children = { "hitsounds_pitch" },
+				hideValues = { 0 },
 				sort = "A1",
 			},
 			hitsounds_pitch = { 
@@ -1053,10 +1057,12 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				sort = "G1",
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
+				children = { "sensitivity_m", "sensitivity_a" },
+				hideValues = { false },
+				sort = "G1",
 			},
 			sensitivity_m = { 
 				name = "CHUD_Sensitivity_M",
@@ -1069,10 +1075,10 @@ CHUDOptions =
 				multiplier = 1,
 				category = "comp",
 				valueType = "float",
-				sort = "G2",
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
+				sort = "G2",
 			},
 			sensitivity_a = { 
 				name = "CHUD_Sensitivity_A",
@@ -1085,10 +1091,10 @@ CHUDOptions =
 				multiplier = 1,
 				category = "comp",
 				valueType = "float",
-				sort = "G3",
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
+				sort = "G3",
 			},
 			fov_perteam = { 
 				name = "CHUD_FOVPerTeam",
@@ -1099,10 +1105,12 @@ CHUDOptions =
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
-				sort = "G4",
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
+				children = { "fov_m", "fov_a" },
+				hideValues = { false },
+				sort = "G4",
 			},
 			fov_m = { 
 				name = "CHUD_FOV_M",
@@ -1115,10 +1123,10 @@ CHUDOptions =
 				multiplier = 20,
 				category = "comp",
 				valueType = "float",
-				sort = "G5",
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
+				sort = "G5",
 			},
 			fov_a = { 
 				name = "CHUD_FOV_A",
@@ -1131,10 +1139,10 @@ CHUDOptions =
 				multiplier = 20,
 				category = "comp",
 				valueType = "float",
-				sort = "G6",
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
+				sort = "G6",
 			},
 			drawviewmodel = { 
 				name = "CHUD_DrawViewModel",
