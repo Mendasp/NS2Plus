@@ -143,12 +143,19 @@ oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 		end
 
 	end)
+
+local function isValidSpectatorMode()
+	local player = Client.GetLocalPlayer()
 	
+	return player ~= nil and player:isa("Spectator") and player.specMode ~= nil and player.specMode == kSpectatorMode.FreeLook
+end
+
 local originalUnitStatusSKE
 originalUnitStatusSKE = Class_ReplaceMethod("GUIUnitStatus", "SendKeyEvent",
 	function(self, key, down)
 		local ret = originalUnitStatusSKE(self, key, down)
-		if not ret and PlayerUI_GetIsSpecating() and GetIsBinding(key, "Use") and down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
+		local player = Client.GetLocalPlayer()
+		if player and not ret and isValidSpectatorMode() and GetIsBinding(key, "Use") and not down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
 			isEnabled = not isEnabled
 			Client.SetOptionBoolean("CHUD_SpectatorHPUnitStatus", isEnabled)
 			return true

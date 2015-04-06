@@ -66,7 +66,7 @@ local originalIPHBSKE
 originalIPHBSKE = Class_ReplaceMethod("GUIInsight_PlayerHealthbars", "SendKeyEvent",
 	function(self, key, down)
 		local ret = originalIPHBSKE(self, key, down)
-		if not ret and GetIsBinding(key, "Use") and down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
+		if not ret and GetIsBinding(key, "Use") and not down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
 			isEnabled = not isEnabled
 			Client.SetOptionBoolean("CHUD_SpectatorHPInsight", isEnabled)
 			return true

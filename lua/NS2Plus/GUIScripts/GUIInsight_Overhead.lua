@@ -147,7 +147,7 @@ local originalOverheadSKE
 originalOverheadSKE = Class_ReplaceMethod("GUIInsight_Overhead", "SendKeyEvent",
 	function(self, key, down)
 		local ret = originalOverheadSKE(self, key, down)
-		if not ret and GetIsBinding(key, "RequestAmmo") and down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
+		if not ret and GetIsBinding(key, "RequestAmmo") and not down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
 			keyHintsVisible = not keyHintsVisible
 			Client.SetOptionBoolean("CHUD_OverheadHelp", keyHintsVisible)
 			return true
