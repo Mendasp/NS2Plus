@@ -1130,7 +1130,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.prevRequestKey = false
 	self.prevScoreKey = false
 	self.isDragging = false
-	self.slidePercentage = 0
+	self.slideOffset = 0
 	self.displayed = false
 	
 	lastSortedT1 = "kills"
@@ -1209,7 +1209,7 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 		self.contentStencil:SetIsVisible(visible)
 		
 		CHUDEndStatsVisible = visible
-		self.slidePercentage = 0
+		self.slideOffset = 0
 		
 		if not visible then
 			self.hoverMenu:Hide()
@@ -1343,10 +1343,11 @@ local function HandleSlidebarClicked(self)
 
 	local mouseX, mouseY = Client.GetCursorPosScreen()
 	if self.sliderBarBg:GetIsVisible() and self.isDragging then
-		local topPos = GUILinearScale(128)
-		local bottomPos = screenHeight - kTopOffset
+		local topPos = self.sliderBarBg:GetScreenPosition(screenWidth, screenHeight).y
+		local bottomPos = topPos + kContentMaxYSize
 		mouseY = Clamp(mouseY, topPos, bottomPos)
-		self.slidePercentage = (mouseY - topPos) / (bottomPos - topPos) * 100
+		local slidePercentage = (mouseY - topPos) / (bottomPos - topPos)
+		self.slideOffset = slidePercentage * (self.contentSize - kContentMaxYSize)
 	end
 	
 end
@@ -1528,15 +1529,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		
 		-- Check if it's visible again since we hide the menu if the game starts
 		local showSlidebar = self.contentSize > kContentMaxYSize and self:GetIsVisible()
-		local slideOffset = -(self.slidePercentage * self.contentSize/100)+(self.slidePercentage * kContentMaxYSize/100)
-		local sliderPos = (self.slidePercentage * kContentMaxYSize/100)
-		self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, GUILinearScale(128)+slideOffset, 0))
-		if sliderPos < self.slider:GetSize().y/2 then
-			sliderPos = 0
-		end
-		if sliderPos > kContentMaxYSize - self.slider:GetSize().y then
-			sliderPos = kContentMaxYSize - self.slider:GetSize().y
-		end
+		local sliderPos = (self.slideOffset / (self.contentSize - kContentMaxYSize) * kContentMaxYSize) - self.slider:GetSize().y/2
+		self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, -self.slideOffset + GUILinearScale(128), 0))
 		
 		if math.abs(self.slider:GetPosition().y - sliderPos) > 2.5 then
 			StartSoundEffect(kSlideSound)
@@ -2491,6 +2485,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 	end
 	
 	if self.sliderBarBg:GetIsVisible() and not self.hoverMenu.background:GetIsVisible() then
+		local maxPos = self.contentSize - kContentMaxYSize
 		if key == InputKey.MouseButton0 and self.mousePressed ~= down then
 			self.mousePressed = down
 			if down then
@@ -2499,22 +2494,22 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				return true
 			end
 		elseif key == InputKey.MouseWheelDown then
-			self.slidePercentage = math.min(self.slidePercentage + 5, 100)
+			self.slideOffset = math.min(self.slideOffset + GUILinearScale(75), maxPos)
 			return true
 		elseif key == InputKey.MouseWheelUp then
-			self.slidePercentage = math.max(self.slidePercentage - 5, 0)
+			self.slideOffset = math.max(self.slideOffset - GUILinearScale(75), 0)
 			return true
 		elseif key == InputKey.PageDown and down then
-			self.slidePercentage = math.min(self.slidePercentage + 10, 100)
+			self.slideOffset = math.min(self.slideOffset + kContentMaxYSize/2, maxPos)
 			return true
 		elseif key == InputKey.PageUp and down then
-			self.slidePercentage = math.max(self.slidePercentage - 10, 0)
+			self.slideOffset = math.max(self.slideOffset - kContentMaxYSize/2, 0)
 			return true
 		elseif key == InputKey.Home then
-			self.slidePercentage = 0
+			self.slideOffset = 0
 			return true
 		elseif key == InputKey.End then
-			self.slidePercentage = 100
+			self.slideOffset = maxPos
 			return true
 		end
 	end
