@@ -232,7 +232,9 @@ end
 function CHUDGUI_DeathStats:SendKeyEvent(key, down)
 
 	-- Force show when request menu is open
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible and (Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index or Client.GetLocalPlayer():GetTeamNumber() == kTeam2Index) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and not PlayerUI_IsOverhead() then
+	local player = Client.GetLocalPlayer()
+	local teamNumber = player and player:GetTeamNumber()
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible and (player and teamNumber == kTeam1Index or teamNumber == kTeam2Index) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and not PlayerUI_IsOverhead() then
 		self.titleBackground:SetIsVisible(down)
 		self.requestVisible = down
 		local color = self.titleBackground:GetColor()
