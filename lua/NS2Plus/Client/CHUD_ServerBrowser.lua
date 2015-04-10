@@ -17,9 +17,9 @@ function BuildServerEntry(serverIndex)
 	if serverEntry.CHUDBitmask ~= nil and serverEntry.mode == "ns2" then
 		serverEntry.mode = "ns2+"
 	end
-    
-    return serverEntry
-    
+	
+	return serverEntry
+	
 end
 
 local originalSetServerData
