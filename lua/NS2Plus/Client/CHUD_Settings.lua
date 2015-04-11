@@ -39,7 +39,14 @@ end
 
 function CHUDGetOptionAssocVal(key)
 	if CHUDOptions[key] ~= nil and CHUDOptions[key].type == "select" and CHUDOptions[key].valueType == "int" then
-		return CHUDOptions[key].valueTable[CHUDOptions[key].currentValue+1]
+		local value
+		if CHUDOptions["castermode"] and CHUDOptions["castermode"].currentValue then
+			value = CHUDOptions[key].defaultValue
+		else
+			value = CHUDOptions[key].currentValue
+		end
+		
+		return CHUDOptions[key].valueTable[value+1]
 	end
 	
 	return nil
