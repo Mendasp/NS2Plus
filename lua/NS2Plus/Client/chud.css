@@ -21,6 +21,22 @@ button.reset_chud_option
     text-color: rgba(1, 0, 0, 0.7);
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
 }
+button.reset_all 
+{ 
+    height: 58px; 
+    width: 256px; 
+    border-width: 0px;     
+  
+    vertical-align: bottom; 
+    top: 4px; 
+    font-name: fonts/AgencyFB_medium.fnt; 
+    border-color: rgba(1, 0, 0, 0.7);
+    text-color: rgba(1, 0, 0, 0.7);
+    text-padding: 16px; 
+      
+    bottom: 0px; 
+    left: 0px; 
+} 
 button.sound_preview_chud
 { 
     opacity: 0; 

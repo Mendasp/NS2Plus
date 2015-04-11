@@ -352,11 +352,8 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		}
 	
 	local resetButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
-	resetButton:SetCSSClass("apply")
-	resetButton:SetLeftOffset(0)
+	resetButton:SetCSSClass("reset_all")
 	resetButton:SetText("RESET NS2+ VALUES")
-	resetButton:SetBorderColor(Color(1, 0, 0, 0.7))
-	resetButton:SetTextColor(Color(1, 0, 0, 0.7))
 	resetButton:AddEventCallbacks(resetCallbacks)
 	
 	local changelogButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
