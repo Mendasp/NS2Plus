@@ -14,10 +14,6 @@ originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRend
 
 	end)
 
-local function OnLoadComplete()
-	//swalkModeEnabled = Client.GetSteamId() == 2582259
-end
-
 local direction = 1
 local roll = 0
 local originalViewModelOnAdjustModelCoords
@@ -102,4 +98,3 @@ end
 Event.Hook("Console_iamthelaw", ToggleSwalk)
 Event.Hook("Console_swalkmode", ToggleSwalk)
 Event.Hook("Console_unfairadvantage", ToggleSwalk)
-Event.Hook("LoadComplete", OnLoadComplete)

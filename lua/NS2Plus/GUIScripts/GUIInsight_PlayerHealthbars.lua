@@ -36,13 +36,13 @@ originalIPHBUpdatePlayers = Class_ReplaceMethod("GUIInsight_PlayerHealthbars", "
 			if relevant then
 			
 				local playerList = GetUpValue( GUIInsight_PlayerHealthbars.UpdatePlayers, "playerList", { LocateRecurse = true } )
-				local health = player:GetHealth()
+				local health = math.max(player:GetHealth(), 1)
 				local armor = player:GetArmor()
 
 				if playerList[playerIndex] then
 					local text = health .. " / " .. armor
 					if player:isa("Exo") then
-						text = tostring(armor)
+						text = tostring(math.max(armor, 1))
 					end
 					
 					local nameHeight = 0

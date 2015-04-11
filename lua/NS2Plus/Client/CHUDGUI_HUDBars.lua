@@ -222,12 +222,9 @@ function CHUDGUI_HUDBars:Update(deltaTime)
 	
 		-- This is what vanilla is doing with health display so might as well do the same
 		-- Except for the Exo shenanigans, but still
-		local health = player:isa("Exo") and 0 or math.floor(player:GetHealth())
-		if not player:isa("Exo") and player:GetHealth() > 0 and health == 0 then
-			health = 1
-		end
+		local health = player:isa("Exo") and 0 or math.max(1, math.floor(player:GetHealth()))
 		-- Do not multiply by kHealthPointsPerArmor here so we can display the armor number directly later
-		local armor = math.floor(player:GetArmor())
+		local armor = player:isa("Exo") and math.max(1, math.floor(player:GetArmor())) or math.floor(player:GetArmor())
 		local armorHP = player:GetArmor() * kHealthPointsPerArmor
 		local maxHealth = player:isa("Exo") and 0 or player:GetMaxHealth()
 		local maxArmor = player:GetMaxArmor() * kHealthPointsPerArmor

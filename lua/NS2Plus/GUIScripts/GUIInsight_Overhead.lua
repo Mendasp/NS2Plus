@@ -87,7 +87,7 @@ originalOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Update",
 			
 			if entity ~= nil and HasMixin(entity, "Live") and entity:GetIsAlive() then
 
-				local text = ToString(math.ceil(entity:GetHealthScalar() * 100)) .. "%"
+				local text = ToString(math.max(1, math.ceil(entity:GetHealthScalar() * 100))) .. "%"
 				
 				if HasMixin(entity, "Construct") then
 					if not entity:GetIsBuilt() then

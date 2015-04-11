@@ -29,16 +29,15 @@ function(self, key, down, amount)
 end)*/
 
 local function GoldenMode()
-	local player = Client.GetLocalPlayer()
-
 	if goldenModeEnabled then
 	
 		if not globeModel then
-			globeModel = Client.CreateRenderModel(RenderScene.Zone_Default)       
+			globeModel = Client.CreateRenderModel(RenderScene.Zone_Default)
 			globeModel:SetModel(PrecacheAsset("models/props/refinery/refinery_shipping_hologram.model"))
 			globeModel:SetIsVisible(false)
 		end
-	
+		
+		local player = Client.GetLocalPlayer()
 		if player ~= nil then
 			local origin = player:GetEyePos()
 			local coords = globeModel:GetCoords()
