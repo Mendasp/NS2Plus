@@ -92,6 +92,7 @@ local avgAccTable = {}
 local miscDataTable = {}
 local cardsTable = {}
 local rtGraphTable = {}
+local commanderStats = nil
 local killGraphTable = {}
 local buildingSummaryTable = {}
 local techLogTable = {}
@@ -799,6 +800,127 @@ local function CreateTechLogRow(container, bgColor, textColor, timeBuilt, techNa
 	
 end
 
+local function CreateCommStatsRow(container, bgColor, textColor, techName, accuracy, efficiency, refill, used, wasted, logoTexture, logoCoords, logoSizeX, logoSizeY, logoColor)
+	
+	local containerSize = container:GetSize()
+	container:SetSize(Vector(containerSize.x, containerSize.y + kTechLogRowSize.y, 0))
+	
+	local item = {}
+	
+	item.background = GUIManager:CreateGraphicItem()
+	item.background:SetStencilFunc(GUIItem.NotEqual)
+	item.background:SetColor(bgColor)
+	item.background:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.background:SetPosition(Vector(kRowBorderSize, containerSize.y - kRowBorderSize, 0))
+	item.background:SetLayer(kGUILayerMainMenu)
+	item.background:SetSize(kTechLogRowSize)
+	
+	container:AddChild(item.background)
+	
+	local xOffset = GUILinearScale(10)
+	
+	if logoTexture then
+		logoSizeX = GUILinearScale(logoSizeX)
+		logoSizeY = GUILinearScale(logoSizeY)
+		
+		item.logo = GUIManager:CreateGraphicItem()
+		item.logo:SetStencilFunc(GUIItem.NotEqual)
+		item.logo:SetAnchor(GUIItem.Left, GUIItem.Center)
+		item.logo:SetLayer(kGUILayerMainMenu)
+		item.logo:SetIsVisible(true)
+		item.logo:SetSize(Vector(logoSizeX, logoSizeY, 0))
+		item.logo:SetPosition(Vector(xOffset, -logoSizeY/2, 0))
+		item.logo:SetColor(logoColor)
+		item.logo:SetTexture(logoTexture)
+		if logoCoords then
+			item.logo:SetTexturePixelCoordinates(unpack(logoCoords))
+		end
+		item.background:AddChild(item.logo)
+		
+		xOffset = xOffset + logoSizeX + GUILinearScale(5)
+	end
+	
+	item.techName = GUIManager:CreateTextItem()
+	item.techName:SetStencilFunc(GUIItem.NotEqual)
+	item.techName:SetFontName(kRowFontName)
+	item.techName:SetColor(textColor)
+	item.techName:SetScale(scaledVector)
+	item.techName:SetAnchor(GUIItem.Left, GUIItem.Center)
+	item.techName:SetTextAlignmentY(GUIItem.Align_Center)
+	item.techName:SetPosition(Vector(xOffset, 0, 0))
+	item.techName:SetText(techName or "")
+	item.techName:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.techName)
+	
+	item.accuracy = GUIManager:CreateTextItem()
+	item.accuracy:SetStencilFunc(GUIItem.NotEqual)
+	item.accuracy:SetFontName(kRowFontName)
+	item.accuracy:SetColor(textColor)
+	item.accuracy:SetScale(scaledVector)
+	item.accuracy:SetAnchor(GUIItem.Right, GUIItem.Center)
+	item.accuracy:SetTextAlignmentX(GUIItem.Align_Center)
+	item.accuracy:SetTextAlignmentY(GUIItem.Align_Center)
+	item.accuracy:SetPosition(Vector(GUILinearScale(-250), 0, 0))
+	item.accuracy:SetText(tostring(accuracy) or "")
+	item.accuracy:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.accuracy)
+	
+	item.efficiency = GUIManager:CreateTextItem()
+	item.efficiency:SetStencilFunc(GUIItem.NotEqual)
+	item.efficiency:SetFontName(kRowFontName)
+	item.efficiency:SetColor(textColor)
+	item.efficiency:SetScale(scaledVector)
+	item.efficiency:SetAnchor(GUIItem.Right, GUIItem.Center)
+	item.efficiency:SetTextAlignmentX(GUIItem.Align_Center)
+	item.efficiency:SetTextAlignmentY(GUIItem.Align_Center)
+	item.efficiency:SetPosition(Vector(GUILinearScale(-130), 0, 0))
+	item.efficiency:SetText(tostring(efficiency) or "")
+	item.efficiency:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.efficiency)
+	
+	item.refill = GUIManager:CreateTextItem()
+	item.refill:SetStencilFunc(GUIItem.NotEqual)
+	item.refill:SetFontName(kRowFontName)
+	item.refill:SetColor(textColor)
+	item.refill:SetScale(scaledVector)
+	item.refill:SetAnchor(GUIItem.Right, GUIItem.Center)
+	item.refill:SetTextAlignmentX(GUIItem.Align_Center)
+	item.refill:SetTextAlignmentY(GUIItem.Align_Center)
+	item.refill:SetPosition(Vector(GUILinearScale(-190), 0, 0))
+	item.refill:SetText(tostring(refill) or "")
+	item.refill:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.refill)
+	
+	item.used = GUIManager:CreateTextItem()
+	item.used:SetStencilFunc(GUIItem.NotEqual)
+	item.used:SetFontName(kRowFontName)
+	item.used:SetColor(textColor)
+	item.used:SetScale(scaledVector)
+	item.used:SetAnchor(GUIItem.Right, GUIItem.Center)
+	item.used:SetTextAlignmentX(GUIItem.Align_Center)
+	item.used:SetTextAlignmentY(GUIItem.Align_Center)
+	item.used:SetPosition(Vector(GUILinearScale(-80), 0, 0))
+	item.used:SetText(tostring(used) or "")
+	item.used:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.used)
+	
+	item.wasted = GUIManager:CreateTextItem()
+	item.wasted:SetStencilFunc(GUIItem.NotEqual)
+	item.wasted:SetFontName(kRowFontName)
+	item.wasted:SetColor(textColor)
+	item.wasted:SetScale(scaledVector)
+	item.wasted:SetAnchor(GUIItem.Right, GUIItem.Center)
+	item.wasted:SetTextAlignmentX(GUIItem.Align_Center)
+	item.wasted:SetTextAlignmentY(GUIItem.Align_Center)
+	item.wasted:SetPosition(Vector(GUILinearScale(-30), 0, 0))
+	item.wasted:SetText(tostring(wasted) or "")
+	item.wasted:SetLayer(kGUILayerMainMenu)
+	item.background:AddChild(item.wasted)
+	
+	return item
+	
+end
+
 function CHUDGUI_EndStats:SetPlayerCount(teamItem, playerCount)
 	if playerCount and IsNumber(playerCount) then
 		local playerString = string.format("%d %s", playerCount, ConditionalValue(playerCount == 1, Locale.ResolveString("PLAYER"), Locale.ResolveString("PLAYERS")))
@@ -1151,6 +1273,7 @@ function CHUDGUI_EndStats:Initialize()
 				miscDataTable = parsedFile.miscDataTable or {}
 				cardsTable = parsedFile.cardsTable or {}
 				rtGraphTable = parsedFile.rtGraphTable or {}
+				commanderStats = parsedFile.commanderStats or nil
 				techLogTable = parsedFile.techLogTable or {}
 				killGraphTable = parsedFile.killGraphTable or {}
 				buildingSummaryTable = parsedFile.buildingSummaryTable or {}
@@ -1871,6 +1994,27 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.techLogs[2].header = self:CreateTechLogHeader(2, team2Name)
 			self.techLogs[2].rows = {}
 			
+			-- Right now we only have marine comm stats so...
+			if commanderStats then
+				table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Commander Stats", "Acc.", "Effic.", "Refilled", "Picked", "Expired"))
+				
+				local row = 1
+				
+				if commanderStats.medpackResUsed > 0 or commanderStats.medpackResExpired > 0 then
+					table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Medpacks", printNum(commanderStats.medpackAccuracy) .. "%", printNum(commanderStats.medpackEfficiency) .. "%", commanderStats.medpackRefill, commanderStats.medpackResUsed, commanderStats.medpackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.MedPack), 24, 24, kIconColors[1]))
+					row = row + 1
+				end
+				
+				if commanderStats.ammopackResUsed > 0 or commanderStats.ammopackResExpired > 0 then
+					table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Ammopacks", "-", printNum(commanderStats.ammopackEfficiency) .. "%", commanderStats.ammopackRefill, commanderStats.ammopackResUsed, commanderStats.ammopackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.AmmoPack), 24, 24, kIconColors[1]))
+					row = row + 1
+				end
+				
+				if commanderStats.catpackResUsed > 0 or commanderStats.catpackResExpired > 0 then
+					table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Catpacks", "-", printNum(commanderStats.catpackEfficiency) .. "%", "-", commanderStats.catpackResUsed, commanderStats.catpackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.CatPack), 24, 24, kIconColors[1]))
+				end
+			end
+			
 			if #buildingSummaryTable > 0 then
 				if buildingSummaryTable[1].teamNumber == 1 then
 					table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "", "Tech", "Built", "Lost"))
@@ -2041,6 +2185,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			savedStats.miscDataTable = miscDataTable
 			savedStats.cardsTable = cardsTable
 			savedStats.rtGraphTable = rtGraphTable
+			savedStats.commanderStats = commanderStats
 			savedStats.killGraphTable = killGraphTable
 			savedStats.buildingSummaryTable = buildingSummaryTable
 			savedStats.techLogTable = techLogTable
@@ -2058,6 +2203,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		miscDataTable = {}
 		cardsTable = {}
 		rtGraphTable = {}
+		commanderStats = nil
 		killGraphTable = {}
 		buildingSummaryTable = {}
 		techLogTable = {}
@@ -2313,6 +2459,13 @@ local function CHUDSetCommStats(message)
 	lastStatsMsg = Shared.GetTime()
 end
 
+local function CHUDSetGlobalCommStats(message)
+	if message and message.medpackAccuracy then
+		commanderStats = message
+	end
+	
+	lastStatsMsg = Shared.GetTime()
+end
 local function CHUDSetRTGraph(message)
 	if message and message.gameMinute then
 		table.insert(rtGraphTable, message)
@@ -2553,6 +2706,7 @@ Client.HookNetworkMessage("CHUDPlayerStats", CHUDSetPlayerStats)
 Client.HookNetworkMessage("CHUDGameData", CHUDSetGameData)
 Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetWeaponStats)
 Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetCommStats)
+Client.HookNetworkMessage("CHUDGlobalCommStats", CHUDSetGlobalCommStats)
 Client.HookNetworkMessage("CHUDRTGraph", CHUDSetRTGraph)
 Client.HookNetworkMessage("CHUDKillGraph", CHUDSetKillGraph)
 Client.HookNetworkMessage("CHUDTechLog", CHUDSetTechLog)

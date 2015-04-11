@@ -134,6 +134,7 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
+	Shared.RegisterNetworkMessage( "CHUDGlobalCommStats", kCHUDMarineCommStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDPlayerStats", kCHUDPlayerStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDGameData", kCHUDGameDataMessage)
 	Shared.RegisterNetworkMessage( "CHUDRTGraph", kCHUDRTGraphMessage)

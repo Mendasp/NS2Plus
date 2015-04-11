@@ -604,9 +604,9 @@ originalMedPackOnTouch = Class_ReplaceMethod("MedPack", "OnTouch",
 		if oldHealth < recipient:GetHealth() then
 			-- If the medpack hits immediatly expireTime is 0
 			if ConditionalValue(self.expireTime == 0, Shared.GetTime(), self.expireTime - kItemStayTime) + 0.025 > Shared.GetTime() then
-				CHUDCommStats[CHUDMarineComm]["medpack"].misses = CHUDCommStats[CHUDMarineComm]["medpack"].misses - 1
 				CHUDCommStats[CHUDMarineComm]["medpack"].hits = CHUDCommStats[CHUDMarineComm]["medpack"].hits + 1
 			end
+			CHUDCommStats[CHUDMarineComm]["medpack"].misses = CHUDCommStats[CHUDMarineComm]["medpack"].misses - 1
 			CHUDCommStats[CHUDMarineComm]["medpack"].picks = CHUDCommStats[CHUDMarineComm]["medpack"].picks + 1
 			CHUDCommStats[CHUDMarineComm]["medpack"].refilled = CHUDCommStats[CHUDMarineComm]["medpack"].refilled + recipient:GetHealth() - oldHealth
 		end
@@ -686,7 +686,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				msg.catpackEfficiency = 0
 				
 				for index, stats in pairs(CHUDCommStats[playerInfo.steamId]) do
-					if stats.hits > 0 or stats.misses > 0 then
+					if stats.picks and stats.picks > 0 or stats.hits > 0 or stats.misses > 0 then
 						if index == "medpack" then
 							msg.medpackAccuracy = CHUDGetAccuracy(stats.hits, stats.misses)
 							msg.medpackResUsed = stats.picks*kMedPackCost
@@ -817,6 +817,56 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			for _, entry in ipairs(finalStat) do
 				Server.SendNetworkMessage("CHUDPlayerStats", entry, true)
 			end
+		end
+		
+		local medpackHits = 0
+		local medpackMisses = 0
+		local medpackPicks = 0
+		local medpackRefill = 0
+		local ammopackHits = 0
+		local ammopackMisses = 0
+		local ammopackRefill = 0
+		local catpackHits = 0
+		local catpackMisses = 0
+		local sendCommStats = false
+		
+		for _, playerStats in pairs(CHUDCommStats) do
+			for index, stats in pairs(playerStats) do
+				if stats.picks and stats.picks > 0 or stats.hits > 0 or stats.misses > 0 then
+					sendCommStats = true
+					if index == "medpack" then
+						medpackHits = medpackHits + stats.hits
+						medpackPicks = medpackPicks + stats.picks
+						medpackMisses = medpackMisses + stats.misses
+						medpackRefill = medpackRefill + stats.refilled
+					elseif index == "ammopack" then
+						ammopackHits = ammopackHits + stats.hits
+						ammopackMisses = ammopackMisses + stats.misses
+						ammopackRefill = ammopackRefill + stats.refilled
+					elseif index == "catpack" then
+						catpackHits = catpackHits + stats.hits
+						catpackMisses = catpackMisses + stats.misses
+					end
+				end
+			end
+		end
+		
+		if sendCommStats then
+			local msg = {}
+			msg.medpackAccuracy = CHUDGetAccuracy(medpackHits, medpackMisses)
+			msg.medpackResUsed = medpackPicks
+			msg.medpackResExpired = medpackMisses
+			msg.medpackEfficiency = CHUDGetAccuracy(medpackPicks, medpackMisses)
+			msg.medpackRefill = medpackRefill
+			msg.ammopackResUsed = ammopackHits
+			msg.ammopackResExpired = ammopackMisses
+			msg.ammopackEfficiency = CHUDGetAccuracy(ammopackHits, ammopackMisses)
+			msg.ammopackRefill = ammopackRefill
+			msg.catpackResUsed = catpackHits
+			msg.catpackResExpired = catpackMisses
+			msg.catpackEfficiency = CHUDGetAccuracy(catpackHits, catpackMisses)
+			
+			Server.SendNetworkMessage("CHUDGlobalCommStats", msg, true)
 		end
 	end)
 
