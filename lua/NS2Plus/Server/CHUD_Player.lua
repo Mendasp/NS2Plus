@@ -11,7 +11,7 @@ originalPlayerSetName = Class_ReplaceMethod( "Player", "SetName",
 			self.nextAllowedNameChange = 0
 		end
 		
-		if self.lastNameChange + kMinTimeNameChange > Shared.GetTime() then
+		if self.lastNameChange + kMinTimeNameChange > Shared.GetTime() and self:GetName() ~= "NSPlayer" then
 			self.changes = self.changes + 1
 		else
 			self.changes = 0
