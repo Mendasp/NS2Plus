@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 13/04/2015
+	- Improved end stats scrolling to be a constant amount instead of percentage based with the scrollwheel.
+	- When toggling healthbars on for spectators, the nameplate backgrounds are now hidden so they don't get in the way.
+
 - 06/04/2015
 	- Adjusted options menu elements so they all use the same space.
 	- Adjusted accuracy text and column width when there's no accuracies without Onos hits.
