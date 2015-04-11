@@ -24,10 +24,12 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	
 	local showHints = showHints
 	
+	local hideBg = false
 	if nameplates == 1 then
 		showHints = false
 	elseif PlayerUI_GetIsSpecating() and isEnabled and blipData.IsPlayer then
 		blipData.IsCrossHairTarget = true
+		hideBg = true
 	end
 	
 	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
@@ -49,7 +51,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	end
 	
 	-- Hide Background
-	if CHUDGetOption("mingui") or nameplates > 0 then
+	if CHUDGetOption("mingui") or nameplates > 0 or hideBg then
 		updateBlip.statusBg:SetTexture(kTransparentTexture)
 		if updateBlip.BorderMask then
 			updateBlip.BorderMask:SetIsVisible(false)
