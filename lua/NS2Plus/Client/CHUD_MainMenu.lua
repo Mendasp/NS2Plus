@@ -352,16 +352,15 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		}
 	
 	local resetButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
-	resetButton:SetCSSClass("reset_all")
+	resetButton:SetCSSClass("chud_reset_all")
 	resetButton:SetText("RESET NS2+ VALUES")
 	resetButton:AddEventCallbacks(resetCallbacks)
 	
 	local changelogButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
-	changelogButton:SetCSSClass("back")
+	changelogButton:SetCSSClass("chud_changelog")
 	changelogButton:SetText("CHANGELOG")
 	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/135458820"
 	changelogButton:AddEventCallbacks( { OnClick = function() Client.ShowWebpage(kChangeURL) end } )
-	changelogButton:SetLeftOffset(260)
 	
 	self.warningLabel = CreateMenuElement(self.CHUDOptionWindow, "MenuButton", false)
 	self.warningLabel:SetCSSClass("warning_label")

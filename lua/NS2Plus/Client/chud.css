@@ -19,9 +19,10 @@ button.reset_chud_option
     left: 475px;
     border-color: rgba(1, 0, 0, 0.7);
     text-color: rgba(1, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.4); 
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
 }
-button.reset_all 
+button.chud_reset_all 
 { 
     height: 58px; 
     width: 256px; 
@@ -47,8 +48,24 @@ button.sound_preview_chud
     left: 545px;
     border-color: rgba(0.54, 0.7, 0.75, 0.7);
     text-color: rgba(0.54, 0.7, 0.75, 0.7);
+    background-color: rgba(0, 0, 0, 0.4); 
     hover-background-color: rgba(0.5,0.5,0.5,0.4); 
 }
+button.chud_changelog 
+{ 
+    height: 58px; 
+    width: 256px; 
+    border-width: 0px; 
+      
+    vertical-align: bottom; 
+    top: 4px; 
+    font-name: fonts/AgencyFB_medium.fnt; 
+    text-color: #8bb4c1; 
+    text-padding: 16px; 
+      
+    bottom: 0px; 
+    left: 260px; 
+} 
 window.colorpicker_window 
 { 
     scaling: true; 
@@ -105,16 +122,16 @@ form .colorpicker_input
 
 form .option_input_chud
 { 
-    width: 330px; 
+    width: 325px; 
     height: 40px; 
     font-name: fonts/AgencyFB_small.fnt; 
     background-color: rgba(0, 0, 0, 0.4); 
-    left: 590px; 
+    left: 595px; 
 } 
   
 form textinput.display_input_chud
 { 
-    left:  540px; 
+    left:  544px; 
     width: 50px; 
     height: 40px;
     font-name: fonts/AgencyFB_small.fnt; 
