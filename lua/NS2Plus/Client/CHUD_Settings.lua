@@ -19,7 +19,7 @@ function CHUDGetOption(key)
 		if CHUDOptions[key].disabled then
 			local ret = ConditionalValue(CHUDOptions[key].disabledValue == nil, CHUDOptions[key].defaultValue, CHUDOptions[key].disabledValue)
 			return ret
-		elseif CHUDOptions["castermode"] and CHUDOptions["castermode"].currentValue then
+		elseif CHUDOptions["castermode"] and CHUDOptions["castermode"].currentValue and not CHUDOptions[key].ignoreCasterMode then
 			return CHUDOptions[key].defaultValue
 		else
 			return CHUDOptions[key].currentValue
@@ -40,7 +40,7 @@ end
 function CHUDGetOptionAssocVal(key)
 	if CHUDOptions[key] ~= nil and CHUDOptions[key].type == "select" and CHUDOptions[key].valueType == "int" then
 		local value
-		if CHUDOptions["castermode"] and CHUDOptions["castermode"].currentValue then
+		if CHUDOptions["castermode"] and CHUDOptions["castermode"].currentValue and not CHUDOptions[key].ignoreCasterMode then
 			value = CHUDOptions[key].defaultValue
 		else
 			value = CHUDOptions[key].currentValue

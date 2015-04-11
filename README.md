@@ -5,6 +5,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - 13/04/2015
+	- Added nameplate distance slider to allow players to choose how far nameplates render. Higher values will decrease performance. Available in Visual tab.
 	- Improved end stats scrolling to be a constant amount instead of percentage based with the scrollwheel.
 	- When toggling healthbars on for spectators, the nameplate backgrounds are now hidden so they don't get in the way.
 	- Added weapon expiration bars to Insight and Phase Gate/Gorge Tunnel destinations.
