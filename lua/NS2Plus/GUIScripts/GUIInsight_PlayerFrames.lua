@@ -25,16 +25,14 @@ originalIPFUpdatePlayer = Class_ReplaceMethod("GUIInsight_PlayerFrames", "Update
 						table.remove(currentTech, #currentTech)
 					end
 					
+					-- Check if we have chambers for each upgrade type
 					for i = 1, 3 do
 						if #currentTech >= i then
-							local isCragUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.CragHive
-							local isShiftUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.ShiftHive
-							local isShadeUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.ShadeHive
-							if isCragUpg and GetShellLevel(kTeam2Index) == 0 then
-								player["Upgrades"][i]:SetColor(Color(1, 0, 0, 1))
-							elseif isShiftUpg and GetSpurLevel(kTeam2Index) == 0 then
-								player["Upgrades"][i]:SetColor(Color(1, 0, 0, 1))
-							elseif isShadeUpg and GetVeilLevel(kTeam2Index) == 0 then
+							local isCragUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.CragHive and GetShellLevel(kTeam2Index) == 0
+							local isShiftUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.ShiftHive and GetSpurLevel(kTeam2Index) == 0
+							local isShadeUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.ShadeHive and GetVeilLevel(kTeam2Index) == 0
+							
+							if isCragUpg or isShiftUpg or isShadeUpg then
 								player["Upgrades"][i]:SetColor(Color(1, 0, 0, 1))
 							else
 								player["Upgrades"][i]:SetColor(Color(1, 0.792, 0.227, 1))
