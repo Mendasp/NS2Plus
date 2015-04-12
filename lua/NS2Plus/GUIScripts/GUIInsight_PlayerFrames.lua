@@ -14,6 +14,34 @@ originalIPFUpdatePlayer = Class_ReplaceMethod("GUIInsight_PlayerFrames", "Update
 					end
 					player["Detail"]:SetText(text)
 				end
+				
+				if playerRecord.EntityTeamNumber == kTeam2Index and playerRecord.Tech then
+					local currentTech = GetTechIdsFromBitMask(playerRecord.Tech)
+					
+					-- Parasite should be in the last position of the array if it exists
+					-- If it does, make player name yellow and remove it from the table
+					if currentTech[#currentTech] == kTechId.Parasite then
+						name:SetColor(kCommanderColorFloat)
+						table.remove(currentTech, #currentTech)
+					end
+					
+					for i = 1, 3 do
+						if #currentTech >= i then
+							local isCragUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.CragHive
+							local isShiftUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.ShiftHive
+							local isShadeUpg = LookupTechData(tonumber(currentTech[i]), kTechDataCategory) == kTechId.ShadeHive
+							if isCragUpg and GetShellLevel(kTeam2Index) == 0 then
+								player["Upgrades"][i]:SetColor(Color(1, 0, 0, 1))
+							elseif isShiftUpg and GetSpurLevel(kTeam2Index) == 0 then
+								player["Upgrades"][i]:SetColor(Color(1, 0, 0, 1))
+							elseif isShadeUpg and GetVeilLevel(kTeam2Index) == 0 then
+								player["Upgrades"][i]:SetColor(Color(1, 0, 0, 1))
+							else
+								player["Upgrades"][i]:SetColor(Color(1, 0.792, 0.227, 1))
+							end
+						end
+					end
+				end
 			end
 		end
 	end)

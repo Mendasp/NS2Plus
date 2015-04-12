@@ -8,6 +8,7 @@ Latest changes
 	- Added nameplate distance slider to allow players to choose how far nameplates render. Higher values will decrease performance. Available in Visual tab.
 	- Added Marine Commander stats to the Tech Log.
 	- Fixed bug where picked up medpacks outside the accuracy timing would count as picked and expired at the same time.
+	- Insight spectator now shows Alien upgrades in red if they have the upgrade, but have lost all the  chambers.
 	- Improved end stats scrolling to be a constant amount instead of percentage based with the scrollwheel.
 	- When toggling healthbars on for spectators, the nameplate backgrounds are now hidden so they don't get in the way.
 	- Added weapon expiration bars to Insight and Phase Gate/Gorge Tunnel destinations.
