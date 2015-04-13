@@ -4,7 +4,7 @@ local foundTime = -1
 local function displayTooltip(tech)
 	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
 		found = true
-		foundTime = Shared.GetTime()
+		foundTime = Shared.GetTime(true)
 		tooltipText = GetDisplayNameForTechId(tech.Id)
 	end
 end
@@ -63,7 +63,7 @@ originalSpectatorUpdate = Class_ReplaceMethod( "GUISpectator", "Update",
 		if found then
 			self.tooltip:SetText(tooltipText)
 			self.tooltip:Show()
-		elseif foundTime > -1 and foundTime + 0.1 < Shared.GetTime() then
+		elseif foundTime > -1 and foundTime + 0.1 < Shared.GetTime(true) then
 			self.tooltip:Hide()
 			foundTime = -1
 		end

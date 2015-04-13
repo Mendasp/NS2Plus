@@ -14,6 +14,7 @@ Latest changes
 	- Added weapon expiration bars to Insight and Phase Gate/Gorge Tunnel destinations.
 	- Fixed "Reset All" button in NS2+ Options overlapping the back button on resolution change.
 	- Fixed Insight HP/AP values being toggled while using chat or console.
+	- Fixed tech tooltips being stuck on screen when NSL pause is active.
 
 - 06/04/2015
 	- Adjusted options menu elements so they all use the same space.

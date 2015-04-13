@@ -62,7 +62,7 @@ Class_ReplaceMethod("GUIHoverTooltip", "Show",
 			self.background:SetColor(kBackgroundColor, 0.25, "TOOLTIP_SHOW")
 			
 			if displayTime then
-				self.targetTime = Shared.GetTime() + displayTime
+				self.targetTime = Shared.GetTime(true) + displayTime
 			else
 				self.targetTime = 0
 			end
@@ -92,9 +92,9 @@ Class_ReplaceMethod("GUIHoverTooltip", "Update",
 		
 		if self.targetTime > -1 then
 			if self.targetTime > 0 then
-				if self.targetTime > Shared.GetTime() - 0.3 then
+				if self.targetTime > Shared.GetTime(true) - 0.3 then
 					self:Hide()
-				elseif self.targetTime < Shared.GetTime() then
+				elseif self.targetTime < Shared.GetTime(true) then
 					self:Hide(0)
 					self.targetTime = -1
 				end
