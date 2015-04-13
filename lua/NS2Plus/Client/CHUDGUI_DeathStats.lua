@@ -5,7 +5,6 @@ class 'CHUDGUI_DeathStats' (GUIAnimatedScript)
 CHUDStatsVisible = false
 
 local gStatsUI
-local lastStatsMsg = 0
 
 local screenWidth = Client.GetScreenWidth()
 local screenHeight = Client.GetScreenHeight()
@@ -129,8 +128,6 @@ function CHUDGUI_DeathStats:Initialize()
 	
 	self:SetStats()
 	
-	self.fading = false
-	
 	self.requestVisible = false
 	
 	gStatsUI = self
@@ -195,34 +192,37 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 
 	GUIAnimatedScript.Update(self, deltaTime)
 
-	local displayTime = 8
-	
 	local isDead = PlayerUI_GetIsDead() and Client.GetIsControllingPlayer() and not PlayerUI_GetIsSpecating()
 	
 	-- Hide the stats when you're alive
 	-- When getting beaconed right after dying you could still see the UI
 	-- Also makes training with cheats in a private server not horrible
 	local visible = (not Client.GetIsControllingPlayer() or PlayerUI_GetIsThirdperson() or isDead)
-	self.titleBackground:SetIsVisible((self.requestVisible or visible and CHUDGetOption("deathstats") == 2) and not PlayerUI_IsOverhead())
+	local visState = (self.requestVisible or visible and CHUDGetOption("deathstats") == 2) and not PlayerUI_IsOverhead()
+	
+	self.titleBackground:SetIsVisible(visState)
+	
+	if not visState and self.titleBackground:GetIsAnimating() then
+		self.titleBackground:DestroyAnimations()
+		local color = self.titleBackground:GetColor()
+		self.titleBackground:SetColor(Color(color.r, color.g, color.b, 0))
+	end
+	
 	local binding = BindingsUI_GetInputValue("RequestMenu")
 	-- Lazy mode: Engaged
 	if not visible or CHUDGetOption("deathstats") < 2 or binding == "None" then
 		self.actionIconGUI:Hide()
 	end
 	
-	if Shared.GetTime() - lastStatsMsg > displayTime and visible and not self.fading then
-		self.fading = true
-		self.actionIconGUI:Hide()
-		self.titleBackground:FadeOut(2, "CHUD_DEATHSTATS_FADEOUT")
-	end
-
 	if self.titleBackground:GetColor().a > 0 then
 		CHUDStatsVisible = true
 	else
 		CHUDStatsVisible = false
+		self.actionIconGUI:Hide()
 	end
 	
 	if CHUDEndStatsVisible then
+		self.titleBackground:DestroyAnimations()
 		self.titleBackground:SetIsVisible(false)
 		self.actionIconGUI:Hide()
 	end
@@ -235,6 +235,7 @@ function CHUDGUI_DeathStats:SendKeyEvent(key, down)
 	local player = Client.GetLocalPlayer()
 	local teamNumber = player and player:GetTeamNumber()
 	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and not CHUDEndStatsVisible and (player and teamNumber == kTeam1Index or teamNumber == kTeam2Index) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and not PlayerUI_IsOverhead() then
+		self.titleBackground:DestroyAnimations()
 		self.titleBackground:SetIsVisible(down)
 		self.requestVisible = down
 		local color = self.titleBackground:GetColor()
@@ -278,6 +279,7 @@ end
 function CHUDGUI_DeathStats:SetStats()
 	
 	if statsTable ~= nil then
+		self.titleBackground:DestroyAnimations()
 		self.titleBackground:SetColor(Color(statsTable.color.r, statsTable.color.g, statsTable.color.b, 0))
 		local color = self.titleBackground:GetColor()
 		color.a = 1
@@ -314,13 +316,15 @@ local function CHUDGetStatsString(message)
 		
 		gStatsUI:SetStats()
 		
-		gStatsUI.titleBackground:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineStatsColor, kAlienStatsColor), 2, "CHUD_DEATHSTATS")
+		local fadeOutFunc = function() gStatsUI.titleBackground:FadeOut(2, "CHUD_DEATHSTATS", AnimateLinear) end
+		local pauseFunc = function() gStatsUI.titleBackground:Pause(6, "CHUD_DEATHSTATS", nil, fadeOutFunc) end
+		gStatsUI.titleBackground:DestroyAnimations()
+		gStatsUI.titleBackground:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineStatsColor, kAlienStatsColor), 2, "CHUD_DEATHSTATS", AnimateLinear, pauseFunc)
+		
 		gStatsUI.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last life stats", nil)
 		gStatsUI.actionIconGUI:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineFontColor, kAlienFontColor))
-		gStatsUI.fading = false
 	end
 
-	lastStatsMsg = Shared.GetTime()
 end
 
 local originalAlienSpecUpdate
