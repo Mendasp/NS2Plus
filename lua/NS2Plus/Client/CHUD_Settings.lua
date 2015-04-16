@@ -149,7 +149,7 @@ end
 
 function GetCHUDSettings()
 	-- Set the default to something different than the current one
-	local lastCHUD = Client.GetOptionInteger("CHUD_LastCHUDVersion", kCHUDVersion-1)
+	local lastCHUD = Client.GetOptionInteger("CHUD_LastCHUDVersion", 0)
 	
 	if lastCHUD < kCHUDVersion then
 		Client.SetOptionInteger("CHUD_LastCHUDVersion", kCHUDVersion)

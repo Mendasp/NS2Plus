@@ -40,27 +40,6 @@ local function OnServerRefreshed(serverData)
 	nextUpdateTotalNumPlayers = Shared.GetTime() + 3
 end
 
-function PlayerUI_GetServerNumPlayers()
-	
-	local ingameNumPlayers = #Scoreboard_GetPlayerList()
-	if ingameNumPlayers < lastIngameNumPlayers then
-		totalNumPlayers = math.max( ingameNumPlayers, totalNumPlayers - ( lastIngameNumPlayers - ingameNumPlayers ) )
-	end
-	lastIngameNumPlayers = ingameNumPlayers	
-	
-	if nextUpdateTotalNumPlayers ~= -1 and nextUpdateTotalNumPlayers < Shared.GetTime() then	
-		local addy = Client.GetOptionString(kLastServerConnected, "")	
-		if Client.GetOptionBoolean("CHUDScoreboardConnecting", true) then
-			Client.RefreshServer(addy, OnServerRefreshed)
-		end
-		
-		nextUpdateTotalNumPlayers = -1		
-	end
-	
-	return ingameNumPlayers, totalNumPlayers
-    
-end
-
 local lastChatCommand = Shared.GetTime()
 local chatInterval = 15
 
@@ -77,7 +56,7 @@ local function ClientSay(...)
 		end
 	end
 	
-	if message ~= nil and string.len(message) > 0 and Shared.GetTime() > lastChatCommand + chatInterval then
+	if message ~= nil and string.len(message) > 0 and Shared.GetTime(true) > lastChatCommand + chatInterval then
 
 		lastChatCommand = Shared.GetTime()
 		message = string.sub(message, 1, kMaxChatLength)
@@ -99,7 +78,7 @@ local function ClientTeamSay(...)
 		end
 	end
 	
-	if message ~= nil and string.len(message) > 0 and Shared.GetTime() > lastChatCommand + chatInterval then
+	if message ~= nil and string.len(message) > 0 and Shared.GetTime(true) > lastChatCommand + chatInterval then
 
 		lastChatCommand = Shared.GetTime()
 		message = string.sub(message, 1, kMaxChatLength)
@@ -121,18 +100,6 @@ originalPlayerOnInit = Class_ReplaceMethod("Player", "OnInitialized",
 		message.serverblood = CHUDGetOption("serverblood")
 		Client.SendNetworkMessage("SetCHUDServerBlood", message)
 	end)
-
-// Bandaid fix for players crashing when they run Client.RefreshServer
-local function OnCommandNS2PDC()
-	if Client.GetOptionBoolean("CHUDScoreboardConnecting", true) then
-		Client.SetOptionBoolean("CHUDScoreboardConnecting", false)
-		Shared.Message("Players connecting in scoreboard ENABLED")
-	else
-		Client.SetOptionBoolean("CHUDScoreboardConnecting", true)
-		Shared.Message("Players connecting in scoreboard DISABLED")
-	end
-end
-Event.Hook("Console_ns2pdc", OnCommandNS2PDC)
 
 Event.Hook("Console_say", ClientSay)
 Event.Hook("Console_team_say", ClientTeamSay)
