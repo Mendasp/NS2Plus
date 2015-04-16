@@ -32,15 +32,7 @@ local lastIngameNumPlayers = 0
 local totalNumPlayers = 0
 local nextUpdateTotalNumPlayers = 0
 
-local function OnServerRefreshed(serverData)
-	local name = Client.GetConnectedServerName()
-	if name == serverData.name then
-		totalNumPlayers = serverData.numPlayers
-	end			
-	nextUpdateTotalNumPlayers = Shared.GetTime() + 3
-end
-
-local lastChatCommand = Shared.GetTime()
+local lastChatCommand = Shared.GetTime(true)
 local chatInterval = 15
 
 local function ClientSay(...)
@@ -58,7 +50,7 @@ local function ClientSay(...)
 	
 	if message ~= nil and string.len(message) > 0 and Shared.GetTime(true) > lastChatCommand + chatInterval then
 
-		lastChatCommand = Shared.GetTime()
+		lastChatCommand = Shared.GetTime(true)
 		message = string.sub(message, 1, kMaxChatLength)
 		Client.SendNetworkMessage("ChatClient", BuildChatClientMessage(false, message), true)
 		
@@ -80,7 +72,7 @@ local function ClientTeamSay(...)
 	
 	if message ~= nil and string.len(message) > 0 and Shared.GetTime(true) > lastChatCommand + chatInterval then
 
-		lastChatCommand = Shared.GetTime()
+		lastChatCommand = Shared.GetTime(true)
 		message = string.sub(message, 1, kMaxChatLength)
 		Client.SendNetworkMessage("ChatClient", BuildChatClientMessage(true, message), true)
 		

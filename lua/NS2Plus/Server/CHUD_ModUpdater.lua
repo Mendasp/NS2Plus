@@ -1,5 +1,5 @@
 local updateCheckInterval = CHUDServerOptions["modupdatercheckinterval"].currentValue*60
-local lastTimeChecked = Shared.GetTime() - updateCheckInterval
+local lastTimeChecked = Shared.GetTime(true) - updateCheckInterval
 local mapChangeNeeded = false
 local modsTable = {}
 local updatedMods = {}
@@ -60,13 +60,13 @@ function CHUDModUpdater()
 	-- Change the check interval and reset the last time checked
 	if not mapChangeNeeded and updateCheckInterval ~= CHUDServerOptions["modupdatercheckinterval"].currentValue*60 then
 		updateCheckInterval = CHUDServerOptions["modupdatercheckinterval"].currentValue*60
-		lastTimeChecked = Shared.GetTime()
+		lastTimeChecked = Shared.GetTime(true)
 	end
 	
 	-- Change the reminder interval (only needed if it's already reminding)
 	if mapChangeNeeded and updateCheckInterval ~= CHUDServerOptions["modupdaterreminderinterval"].currentValue*60 then
 		updateCheckInterval = CHUDServerOptions["modupdaterreminderinterval"].currentValue*60
-		lastTimeChecked = Shared.GetTime()
+		lastTimeChecked = Shared.GetTime(true)
 	end
 
 	if mapChangeNeeded and Server.GetNumPlayers() == 0 and not DisableUpdater then
@@ -75,8 +75,8 @@ function CHUDModUpdater()
 	end
 
 	-- Even if the updater is disabled, keep running so it can notify players of outdated mods in the server browser
-	if lastTimeChecked < Shared.GetTime() - updateCheckInterval then
-		lastTimeChecked = Shared.GetTime()
+	if lastTimeChecked < Shared.GetTime(true) - updateCheckInterval then
+		lastTimeChecked = Shared.GetTime(true)
 		
 		if mapChangeNeeded then
 			-- If we set the reminder to 0, don't show this message anymore.

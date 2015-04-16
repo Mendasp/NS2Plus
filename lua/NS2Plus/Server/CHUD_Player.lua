@@ -11,22 +11,22 @@ originalPlayerSetName = Class_ReplaceMethod( "Player", "SetName",
 			self.nextAllowedNameChange = 0
 		end
 		
-		if self.lastNameChange + kMinTimeNameChange > Shared.GetTime() and self:GetName() ~= "NSPlayer" then
+		if self.lastNameChange + kMinTimeNameChange > Shared.GetTime(true) and self:GetName() ~= "NSPlayer" then
 			self.changes = self.changes + 1
 		else
 			self.changes = 0
 		end
 		
-		if self.changes > kMaxChanges and self.nextAllowedNameChange < Shared.GetTime() then
-			self.nextAllowedNameChange = Shared.GetTime() + kPenaltyTime - kMinTimeNameChange
+		if self.changes > kMaxChanges and self.nextAllowedNameChange < Shared.GetTime(true) then
+			self.nextAllowedNameChange = Shared.GetTime(true) + kPenaltyTime - kMinTimeNameChange
 			local client = self:GetClient()
 			if client then
 				CHUDServerAdminPrint(client, "You have changed your name too often in a short time, you will be able to change your name again in " .. kPenaltyTime .. " seconds.")
 			end
 		end
 		
-		if self.nextAllowedNameChange < Shared.GetTime() then
-			self.lastNameChange = Shared.GetTime()
+		if self.nextAllowedNameChange < Shared.GetTime(true) then
+			self.lastNameChange = Shared.GetTime(true)
 			originalPlayerSetName(self, name)
 		end
 	end)
