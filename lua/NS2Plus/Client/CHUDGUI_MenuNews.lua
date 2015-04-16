@@ -1,10 +1,7 @@
 local widthFraction = 0.4
-local newsAspect = 1.05/1
 local kTextureName = "*chudmenu_news"
-local lastUpdatedtime = 0
 local kCHUDLogoTexture = PrecacheAsset("ui/chud_logo.dds")
--- Non local so modders can easily change the URL.
-kCHUDMenuNewsURL = "http://www.mendasp.net/ns2plus-ingame/"
+local kCHUDMenuNewsURL = "http://www.mendasp.net/ns2plus-ingame/"
 
 class 'CHUDGUI_MenuNews' (GUIScript)
 
