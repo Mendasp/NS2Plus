@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- /04/2015
+	- Added NS2+ version number to the top left with the NS2 build.
+	- Removed Mine "deaths" from the Tech Log.
+
 - 13/04/2015
 	- Added nameplate distance slider to allow players to choose how far nameplates render. Higher values will decrease performance. Available in Visual tab.
 	- Added Marine Commander stats to the Tech Log.

@@ -47,7 +47,10 @@ local function AddTechStat(teamNumber, techId)
 	if (teamNumber == 1 or teamNumber == 2) and techId then
 		local teamInfoEnt = GetTeamInfoEntity(teamNumber)
 		
-		table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = CHUDGetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources()})
+		-- Advanced armory displays both "Upgrade to advanced armory" and "Advanced weaponry", filter one
+		if techId ~= kTechId.AdvancedWeaponry then
+			table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = CHUDGetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources()})
+		end
 	end
 end
 
@@ -96,6 +99,7 @@ local notLoggedBuildings = set {
 	"Egg",
 	"BoneWall",
 	"Hallucination",
+	"Mine",
 }
 
 local techLoggedAsBuilding = set {
