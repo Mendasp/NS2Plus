@@ -202,8 +202,7 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 	
 	self.titleBackground:SetIsVisible(visState)
 	
-	if not visState and self.titleBackground:GetIsAnimating() then
-		self.titleBackground:DestroyAnimations()
+	if not visState then
 		local color = self.titleBackground:GetColor()
 		self.titleBackground:SetColor(Color(color.r, color.g, color.b, 0))
 	end
@@ -221,8 +220,7 @@ function CHUDGUI_DeathStats:Update(deltaTime)
 		self.actionIconGUI:Hide()
 	end
 	
-	if CHUDEndStatsVisible then
-		self.titleBackground:DestroyAnimations()
+	if CHUDEndStatsVisible and visState then
 		self.titleBackground:SetIsVisible(false)
 		self.actionIconGUI:Hide()
 	end
@@ -279,7 +277,6 @@ end
 function CHUDGUI_DeathStats:SetStats()
 	
 	if statsTable ~= nil then
-		self.titleBackground:DestroyAnimations()
 		self.titleBackground:SetColor(Color(statsTable.color.r, statsTable.color.g, statsTable.color.b, 0))
 		local color = self.titleBackground:GetColor()
 		color.a = 1
@@ -318,7 +315,6 @@ local function CHUDGetStatsString(message)
 		
 		local fadeOutFunc = function() gStatsUI.titleBackground:FadeOut(2, "CHUD_DEATHSTATS", AnimateLinear) end
 		local pauseFunc = function() gStatsUI.titleBackground:Pause(6, "CHUD_DEATHSTATS", nil, fadeOutFunc) end
-		gStatsUI.titleBackground:DestroyAnimations()
 		gStatsUI.titleBackground:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineStatsColor, kAlienStatsColor), 2, "CHUD_DEATHSTATS", AnimateLinear, pauseFunc)
 		
 		gStatsUI.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last life stats", nil)
