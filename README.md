@@ -4,9 +4,12 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /04/2015
+- /05/2015
+	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).
 	- Added NS2+ version number to the top left with the NS2 build.
 	- Removed Mine "deaths" from the Tech Log.
+	- Removed redundant "Advanced Weaponry" entry in the Tech Log.
+	- Fixed script error in Insight spectator player frames.
 
 - 13/04/2015
 	- Added nameplate distance slider to allow players to choose how far nameplates render. Higher values will decrease performance. Available in Visual tab.

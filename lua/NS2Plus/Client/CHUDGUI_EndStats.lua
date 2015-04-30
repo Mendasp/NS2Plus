@@ -1350,44 +1350,56 @@ end
 local function repositionStatsCards(self)
 	-- Every row will have 3 items
 	local numItemsPerRow = 3
-	local numRows = math.ceil(#self.statsCards/numItemsPerRow)
-	-- Determine the last row with 3 elements
-	local last3Row = numItemsPerRow*(numRows-1)
 	local cardSize = (kCardSize.x-GUILinearScale(32))
-	local row = 0
-	local tallestElem = 0
 	local yPos = 0
 	local xPos = 0
-	local remainingElems = 0
 	local ySize = 0
 	
 	if #self.statsCards > 0 then
 		yPos = self.yourStatsTextShadow:GetPosition().y + GUILinearScale(32)
 		ySize = self.yourStatsTextShadow:GetPosition().y
-		for index, card in ipairs(self.statsCards) do
-			local curRow = math.ceil(index/3)
-			local relativeIndex = index-((curRow-1)*numItemsPerRow)
-			local ySize = card.tableBackground:GetSize().y + card.background:GetSize().y + GUILinearScale(16)
-			if row == curRow and ySize > tallestElem then
-				tallestElem = ySize
-			elseif row ~= curRow then
-				row = curRow
-				yPos = yPos + tallestElem
-				tallestElem = ySize
-				remainingElems = #self.statsCards - index + 1
+		local lastTeam
+		local tmp = {}
+		for _, teamCard in ipairs(self.statsCards) do
+			if lastTeam ~= teamCard.teamNumber then
+				lastTeam = teamCard.teamNumber
+				table.insert(tmp, {})
 			end
-			if index <= last3Row or remainingElems == 3 then
-				xPos = (relativeIndex-2)*GUILinearScale(32)-cardSize*1.5+(relativeIndex-1)*cardSize
-			elseif remainingElems == 2 then
-				xPos = -cardSize+(2-relativeIndex)*cardSize+ConditionalValue(relativeIndex == 1, 1, -1)*GUILinearScale(32)
-			else
-				xPos = -cardSize/2
+			table.insert(tmp[#tmp], teamCard)
+		end
+		for _, team in ipairs(tmp) do
+			local row = 0
+			local tallestElem = 0
+			local remainingElems = 0
+			for index, card in ipairs(team) do
+				local numRows = math.ceil(#team/numItemsPerRow)
+				-- Determine the last row with 3 elements
+				local last3Row = numItemsPerRow*(numRows-1)
+				local curRow = math.ceil(index/numItemsPerRow)
+				local relativeIndex = index-((curRow-1)*numItemsPerRow)
+				local currentYPos = card.tableBackground:GetSize().y + card.background:GetSize().y + GUILinearScale(16)
+				if row == curRow and currentYPos > tallestElem then
+					tallestElem = currentYPos
+				elseif row ~= curRow then
+					row = curRow
+					yPos = yPos + tallestElem
+					tallestElem = currentYPos
+					remainingElems = #team - index + 1
+				end
+				if index <= last3Row or remainingElems == 3 then
+					xPos = (relativeIndex-2)*GUILinearScale(32)-cardSize*1.5+(relativeIndex-1)*cardSize
+				elseif remainingElems == 2 then
+					xPos = -cardSize+(2-relativeIndex)*cardSize+ConditionalValue(relativeIndex == 1, 1, -1)*GUILinearScale(32)
+				else
+					xPos = -cardSize/2
+				end
+				card.background:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2 + xPos, yPos, 0))
 			end
-			card.background:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2 + xPos, yPos, 0))
+			yPos = yPos + tallestElem
 		end
 	end
 	
-	return (yPos + tallestElem) - ySize
+	return yPos - ySize
 end
 
 local function repositionStats(self)
@@ -1738,18 +1750,20 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		end)
 		
 		table.sort(cardsTable, function(a, b)
-			if a.message.kills and b.message.kills then
-				a.message.realAccuracy = a.message.accuracyOnos == -1 and a.message.accuracy or a.message.accuracyOnos
-				b.message.realAccuracy = b.message.accuracyOnos == -1 and b.message.accuracy or b.message.accuracyOnos
-				if a.message.kills == b.message.kills then
-					return a.message.realAccuracy > b.message.realAccuracy
-				else
-					return a.message.kills > b.message.kills
-				end
-			elseif a.order and b.order then
+			if a.order and b.order then
 				return a.order < b.order
+			elseif a.teamNumber == b.teamNumber then
+				if a.message.kills and b.message.kills then
+					a.message.realAccuracy = a.message.accuracyOnos == -1 and a.message.accuracy or a.message.accuracyOnos
+					b.message.realAccuracy = b.message.accuracyOnos == -1 and b.message.accuracy or b.message.accuracyOnos
+					if a.message.kills == b.message.kills then
+						return a.message.realAccuracy > b.message.realAccuracy
+					else
+						return a.message.kills > b.message.kills
+					end
+				end
 			else
-				return a.teamNumber > b.teamNumber
+				return a.teamNumber < b.teamNumber
 			end
 		end)
 		
@@ -1943,6 +1957,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 			local statCard = self:CreateGraphicHeader(card.text, bgColor, card.logoTexture, card.logoCoords, card.logoSizeX, card.logoSizeY)
 			statCard.rows = {}
+			statCard.teamNumber = card.teamNumber
 			
 			for index, row in ipairs(card.rows) do
 				if card.teamNumber == 1 then
@@ -2349,7 +2364,7 @@ local function CHUDSetCommStats(message)
 		if message.medpackResUsed + message.medpackResExpired > 0 then
 			local cardEntry = {}
 			cardEntry.text = "Medpacks"
-			cardEntry.teamNumber = 3
+			cardEntry.teamNumber = -1
 			cardEntry.logoTexture = "ui/buildmenu.dds"
 			cardEntry.logoCoords = GetTextureCoordinatesForIcon(kTechId.MedPack)
 			cardEntry.logoSizeX = 32
@@ -2390,7 +2405,7 @@ local function CHUDSetCommStats(message)
 		if message.ammopackResUsed + message.ammopackResExpired > 0 then
 			local cardEntry = {}
 			cardEntry.text = "Ammopacks"
-			cardEntry.teamNumber = 3
+			cardEntry.teamNumber = -1
 			cardEntry.logoTexture = "ui/buildmenu.dds"
 			cardEntry.logoCoords = GetTextureCoordinatesForIcon(kTechId.AmmoPack)
 			cardEntry.logoSizeX = 32
@@ -2426,7 +2441,7 @@ local function CHUDSetCommStats(message)
 		if message.catpackResUsed + message.catpackResExpired > 0 then
 			local cardEntry = {}
 			cardEntry.text = "Catpacks"
-			cardEntry.teamNumber = 3
+			cardEntry.teamNumber = -1
 			cardEntry.logoTexture = "ui/buildmenu.dds"
 			cardEntry.logoCoords = GetTextureCoordinatesForIcon(kTechId.CatPack)
 			cardEntry.logoSizeX = 32
