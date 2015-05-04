@@ -4,11 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- /05/2015
+- 04/05/2015
 	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).
 	- Added NS2+ version number to the top left with the NS2 build.
 	- Removed Mine "deaths" from the Tech Log.
-	- Removed redundant "Advanced Weaponry" entry in the Tech Log.
+	- Removed redundant "Advanced Weaponry" entry in the Tech Log (shows with Advanced Armory research).
 	- Fixed script error in Insight spectator player frames.
 
 - 13/04/2015
