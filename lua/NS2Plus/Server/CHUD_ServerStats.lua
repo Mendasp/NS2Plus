@@ -1680,9 +1680,11 @@ local originalSpitTimeUp
 originalSpitTimeUp = Class_ReplaceMethod( "Spit", "TimeUp",
 	function(self)
 		local player = self:GetOwner()
-		local steamId = GetSteamIdForClientIndex(player:GetClientIndex())
-		if steamId then
-			AddAccuracyStat(steamId, self:GetWeaponTechId(), false, false, player:GetTeamNumber())
+		if player then
+			local steamId = GetSteamIdForClientIndex(player:GetClientIndex())
+			if steamId then
+				AddAccuracyStat(steamId, self:GetWeaponTechId(), false, false, player:GetTeamNumber())
+			end
 		end
 	
 		originalSpitTimeUp(self)
