@@ -19,7 +19,6 @@ Script.Load("lua/NS2Plus/Client/CHUD_WeaponTime.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Dissolve.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_ViewModel.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_GoldenMode.lua")
-Script.Load("lua/NS2Plus/Client/CHUD_DropPack.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 
 -- Add drop circles for some tech

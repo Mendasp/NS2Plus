@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- //2015
+	- Removed NS2Stats button from End Game Stats and Scoreboard as the service is unavailable.
+
 - 04/05/2015
 	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).
 	- Added NS2+ version number to the top left with the NS2 build.

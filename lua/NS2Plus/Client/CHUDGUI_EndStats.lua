@@ -2606,7 +2606,7 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				self.hoverMenu:AddButton(self.lastRow.playerName:GetText(), nameBgColor, nameBgColor, textColor)
 				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_STEAM_PROFILE"), teamColorBg, teamColorHighlight, textColor, openSteamProf)
 				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_HIVE_PROFILE"), teamColorBg, teamColorHighlight, textColor, openHiveProf)
-				self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
+				--self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
 				
 				StartSoundEffect(kButtonClickSound)
 				self.hoverMenu:Show()
