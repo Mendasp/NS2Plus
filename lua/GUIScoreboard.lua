@@ -270,6 +270,8 @@ end
 
 function GUIScoreboard:Initialize()
 
+    self.updateInterval = 0.2
+    
     self.visible = false
     
     self.teams = { }
@@ -482,6 +484,7 @@ function GUIScoreboard:Update(deltaTime)
     if lastScoreboardVisState ~= displayScoreboard then
         lastScoreboardVisState = displayScoreboard
         if self.visible == false then
+            self.updateInterval = 0.2
             self.badgeNameTooltip:Hide(0)
         end
     end
@@ -1254,6 +1257,11 @@ function GUIScoreboard:SendKeyEvent(key, down)
     
     if GetIsBinding(key, "Scoreboard") then
         self.visible = down
+        if not down then
+            self.hoverMenu:Hide()
+        else
+            self.updateInterval = 0
+        end
     end
     
     if not self.visible then

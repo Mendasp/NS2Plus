@@ -6,14 +6,18 @@ originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam
 function(self, updateTeam)
 	originalScoreboardUpdateTeam(self, updateTeam)
 	
-	local GetTeamItemWidth = GetUpValue( GUIScoreboard.Update, "GetTeamItemWidth", { LocateRecurse = true } )
-	
+	local teamGUIItem = updateTeam["GUIs"]["Background"]
 	local teamNumber = updateTeam["TeamNumber"]
 	local teamScores = updateTeam["GetScores"]()
 	local playerList = updateTeam["PlayerList"]
 	
 	local teamAvgSkill = 0
 	local numPlayers = table.count(teamScores)
+	
+	-- Resize the player list if it doesn't match.
+	if table.count(playerList) ~= numPlayers then
+		self:ResizePlayerList(playerList, numPlayers, teamGUIItem)
+	end
 	
 	local currentPlayerIndex = 1
 	for index, player in pairs(playerList) do
@@ -185,58 +189,6 @@ function(self, deltaTime)
 			end
 		end
 	end
-end)
-
-local originalScoreboardSKE
-originalScoreboardSKE = Class_ReplaceMethod( "GUIScoreboard", "SendKeyEvent",
-function(self, key, down)
-	local ret = originalScoreboardSKE(self, key, down)
-	
-	if GetIsBinding(key, "Scoreboard") and not down then
-		self.hoverMenu:Hide()
-	end
-	
-	if self.visible and self.hoverMenu.background:GetIsVisible() then
-		local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex) or 0
-		local function openNS2StatsProf()
-			Client.ShowWebpage(string.format("%s%s", kNS2StatsProfileURL, steamId))
-		end
-		
-		local found = 0
-		local added = false
-		local teamColorBg = Color(0.5, 0.5, 0.5, 0.5)
-		local teamColorHighlight = Color(0.75, 0.75, 0.75, 0.75)
-		local textColor = Color(1, 1, 1, 1)
-		for index, entry in ipairs(self.hoverMenu.links) do
-			if not entry.isSeparator then
-				local text = entry.link:GetText()
-				if text == Locale.ResolveString("SB_MENU_HIVE_PROFILE") then
-					teamColorBg = entry.bgColor
-					teamColorHighlight = entry.bgHighlightColor
-					found = index
-				elseif text == "NS2Stats profile" then
-					added = true
-				end
-			end
-		end
-		
-		if not added then
-			if found > 0 then
-				found = found+1
-			else
-				found = nil
-			end
-			
-			-- Don't add the button if we can't find the one we expect
-			if found then
-				self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
-				-- Calling the show function will reposition the menu (in case we're out of the window)
-				self.hoverMenu:Show()
-			end
-		end
-	end
-	
-	return ret
 end)
 
 local originalLocaleResolveString = Locale.ResolveString
