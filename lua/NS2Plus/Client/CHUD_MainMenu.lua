@@ -214,25 +214,6 @@ originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks",
 		self.profileBackground:SetTopOffset(-70)
 	end)
 	
-originalHideMenu = Class_ReplaceMethod( "GUIMainMenu", "HideMenu",
-	function(self)
-		if self.CHUDNewsScript then
-			self.CHUDNewsScript:SetIsVisible(false)
-		end
-	
-		originalHideMenu(self)
-
-	end)
-	
-originalMenuAnimations = Class_ReplaceMethod( "GUIMainMenu", "OnAnimationCompleted",
-	function(self, animatedItem, animationName, itemHandle)
-		if animationName == "MAIN_MENU_MOVE" and self.menuBackground:HasCSSClass("menu_bg_show") and self.CHUDNewsScript then
-			self.CHUDNewsScript:SetIsVisible(true)
-		end
-
-		originalMenuAnimations(self, animatedItem, animationName, itemHandle)
-	end)
-	
 originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionChanged",
 	function(self, oldX, oldY, newX, newY)
 		originalMainMenuResChange(self, oldX, oldY, newX, newY)
@@ -263,28 +244,10 @@ function MainMenu_OnOpenMenu()
 		mainMenu.mainWindow:SetBackgroundTexture("ui/menu/grid.dds")
 		mainMenu.mainWindow:SetBackgroundRepeat(true)
 	end
-	
-	if not CHUDMainMenu then
-		if not mainMenu.CHUDNewsScript then
-			mainMenu.CHUDNewsScript = GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_MenuNews")
-		else
-			-- Solves issue where the news were visible when you click options and then spam escape
-			-- This hides the news script properly
-			mainMenu.CHUDNewsScript:SetIsVisible(mainMenu.Links[1]:GetIsVisible())
-		end
-	end
-
 end
 
 function MainMenu_OnCloseMenu()
 	Shared.StopSound(nil, "sound/chud.fev/CHUD/open_menu")
-	
-	if mainMenu and mainMenu.CHUDNewsScript then
-		-- Kill it, KILL IT WITH FIRE
-		GetGUIManager():DestroyGUIScript(mainMenu.CHUDNewsScript)
-		mainMenu.CHUDNewsScript:Uninitialize()
-		mainMenu.CHUDNewsScript = nil
-	end
 end
 	
 function GUIMainMenu:CreateCHUDOptionWindow()

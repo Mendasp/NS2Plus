@@ -6,6 +6,7 @@ Latest changes
 ==============
 - //2015
 	- Removed NS2Stats button from End Game Stats and Scoreboard as the service is unavailable.
+	- Removed changelog from ingame menu as noone seemed to even notice that it was different from the main menu one and proceeded to ignore it.
 
 - 04/05/2015
 	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).
