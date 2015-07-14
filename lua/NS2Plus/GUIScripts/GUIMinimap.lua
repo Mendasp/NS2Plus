@@ -123,19 +123,10 @@ local alienPlayers = set {
 	kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
 }
 
-local OnSameMinimapBlipTeam, MinimapBlipTeamIsActive, PulseRed, PulseDarkRed
-
-if Shared.GetBuildNumber() < 275 then
-	OnSameMinimapBlipTeam = GetUpValue (GUIMinimap.Update,   "OnSameMinimapBlipTeam", { LocateRecurse = true } )
-	MinimapBlipTeamIsActive = GetUpValue (GUIMinimap.Update, "MinimapBlipTeamIsActive", { LocateRecurse = true } )
-	PulseRed = GetUpValue (GUIMinimap.Update, "PulseRed", { LocateRecurse = true } )
-	PulseDarkRed = GetUpValue (GUIMinimap.Update, "PulseDarkRed", { LocateRecurse = true } )
-else
-	OnSameMinimapBlipTeam = MinimapMappableMixin.OnSameMinimapBlipTeam
-	MinimapBlipTeamIsActive = MinimapMappableMixin.MinimapBlipTeamIsActive
-	PulseRed = MinimapMappableMixin.PulseRed
-	PulseDarkRed = MinimapMappableMixin.PulseDarkRed
-end
+local OnSameMinimapBlipTeam = MinimapMappableMixin.OnSameMinimapBlipTeam
+local MinimapBlipTeamIsActive = MinimapMappableMixin.MinimapBlipTeamIsActive
+local PulseRed = MinimapMappableMixin.PulseRed
+local PulseDarkRed = MinimapMappableMixin.PulseDarkRed
 
 local OldGUIItemSetColor = GUIItem.SetColor
 local function NewGUIItemSetColor( blip, blipColor )
