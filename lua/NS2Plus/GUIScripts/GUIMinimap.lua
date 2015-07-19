@@ -227,7 +227,7 @@ originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
 local oldSetPlayerIconColor
 oldSetPlayerIconColor = Class_ReplaceMethod( "GUIMinimap", "SetPlayerIconColor",
 	function(self, color)
-		if CHUDGetOption("minimaparrowcolor") ~= 1 then
+		if CHUDGetOption("minimaparrowcolorcustom") then
 			self.playerIconColor = ColorIntToColor(CHUDGetOption("minimaparrowcolor"))
 		else
 			oldSetPlayerIconColor(self, color)
@@ -242,7 +242,7 @@ oldSetBackgroundMode = Class_ReplaceMethod( "GUIMinimapFrame", "SetBackgroundMod
 		oldSetBackgroundMode(self, setMode, forceReset)
 		
 		if self.comMode == GUIMinimapFrame.kModeZoom then
-			self:SetIconFileName(ConditionalValue(CHUDGetOption("minimaparrowcolor") ~= 1 or CHUDGetOption("playercolor_m") ~= CHUDGetOptionParam("playercolor_m", "defaultValue"), kCHUDMarineIconsFileName, kMarineIconsFileName))
+			self:SetIconFileName(ConditionalValue(CHUDGetOption("minimaparrowcolorcustom") or CHUDGetOption("playercolor_m") ~= CHUDGetOptionParam("playercolor_m", "defaultValue"), kCHUDMarineIconsFileName, kMarineIconsFileName))
 		else
 			self:SetIconFileName(nil)
 		end

@@ -19,7 +19,7 @@ originalDeathMessagesUpdate = Class_ReplaceMethod("GUIDeathMessages", "Update",
 		
 				local currentColor = message["Background"]:GetColor()
 				
-				if CHUDGetOption("killfeedcolor") ~= 1 then
+				if CHUDGetOption("killfeedcolorcustom") then
 					local alpha = currentColor.a
 					currentColor = ColorIntToColor(CHUDGetOption("killfeedcolor"))
 					currentColor.a = alpha

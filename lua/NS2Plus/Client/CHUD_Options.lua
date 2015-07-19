@@ -531,16 +531,40 @@ CHUDOptions =
 				end,
 				sort = "C9",
 			},
+			minimaparrowcolorcustom = { 
+				name = "CHUD_MinimapArrowColorCustom",
+				label = "Use custom minimap arrow color",
+				tooltip = "Lets you set the color of the arrow indicating your position in the minimap.",
+				type = "select",
+				values  = { "Disabled", "Enabled" },
+				defaultValue = false,
+				category = "hud",
+				valueType = "bool",
+				applyFunction = function()
+					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
+					local playerIconColor = nil
+					if CHUDGetOption("minimaparrowcolorcustom") then
+						playerIconColor = ColorIntToColor(CHUDGetOption("minimaparrowcolor"))
+					end
+					if minimapScript then
+						minimapScript:SetPlayerIconColor(playerIconColor)
+					end
+					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
+				end,
+				hideValues = { false },
+				children = { "minimaparrowcolor" },
+				sort = "C9b",
+			},
 			minimaparrowcolor = { 
 				name = "CHUD_MinimapArrowColor",
 				label = "Minimap arrow color",
 				tooltip = "Sets the color of the arrow indicating your position in the minimap.",
-				defaultValue = 1,
+				defaultValue = 0xFFFF00,
 				category = "hud",
 				applyFunction = function()
 					local minimapScript = ClientUI.GetScript("GUIMinimapFrame")
 					local playerIconColor = nil
-					if CHUDGetOption("minimaparrowcolor") ~= 1 then
+					if CHUDGetOption("minimaparrowcolorcustom") then
 						playerIconColor = ColorIntToColor(CHUDGetOption("minimaparrowcolor"))
 					end
 					if minimapScript then
@@ -549,7 +573,7 @@ CHUDOptions =
 					CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" })
 				end,
 				valueType = "color",
-				sort = "C9b",
+				sort = "C9c",
 				resetSettingInBuild = 265,
 			},
 			playercolor_m = { 
@@ -560,7 +584,7 @@ CHUDOptions =
 				category = "hud",
 				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 				valueType = "color",
-				sort = "C9c",
+				sort = "C9d",
 				resetSettingInBuild = 264,
 			},
 			playercolor_a = { 
@@ -570,7 +594,7 @@ CHUDOptions =
 				defaultValue = 0xFF8A00,
 				category = "hud",
 				valueType = "color",
-				sort = "C9d",
+				sort = "C9e",
 				resetSettingInBuild = 264,
 			},
 			pglines = { 
@@ -716,17 +740,33 @@ CHUDOptions =
 				end,
 				sort = "D9b",
 			},
+			killfeedcolorcustom = {
+				name = "CHUD_KillFeedHighlightColorCustom",
+				label = "Use custom killfeed highlight color",
+				tooltip = "Lets you choose the color of the highlight border for your kills in the killfeed.",
+				type = "select",
+				values  = { "Disabled", "Enabled" },
+				defaultValue = false,
+				category = "hud",
+				valueType = "bool",
+				hideValues = { false },
+				children = { "killfeedcolor" },
+				applyFunction = function()
+					CHUDRestartScripts({ "GUIDeathMessages" })
+				end,
+				sort = "D9c",
+			},
 			killfeedcolor = {
 				name = "CHUD_KillFeedHighlightColor",
 				label = "Killfeed highlight color",
 				tooltip = "Chooses the color of the highlight border for your kills in the killfeed.",
-				defaultValue = 1,
+				defaultValue = 0xFF0000,
 				category = "hud",
 				valueType = "color",
 				applyFunction = function()
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
-				sort = "D9c",
+				sort = "D9d",
 				resetSettingInBuild = 265,
 			},
 			lowammowarning = {

@@ -7,6 +7,7 @@ Latest changes
 - //2015
 	- Removed NS2Stats button from End Game Stats and Scoreboard as the service is unavailable.
 	- Removed changelog from ingame menu as noone seemed to even notice that it was different from the main menu one and proceeded to ignore it.
+	- Added a toggle for the custom killfeed highlight color and the minimap arrow color to avoid certain instances of the setting getting resetted to black.
 
 - 04/05/2015
 	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).
