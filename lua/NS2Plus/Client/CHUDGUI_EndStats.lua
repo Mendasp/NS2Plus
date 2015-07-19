@@ -2175,7 +2175,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.killGraph:SetYBounds(0, yElems, true)
 			local gameLength = miscDataTable.gameLengthMinutes*60
 			local xSpacing = GetXSpacing(gameLength)
-			local ySpacing = GetXSpacing(yElems)
+			local ySpacing = GetYSpacing(yElems)
 			
 			self.killGraph:SetXBounds(0, gameLength)
 			self.killGraph:SetXGridSpacing(xSpacing)
