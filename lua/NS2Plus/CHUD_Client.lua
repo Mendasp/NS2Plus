@@ -20,6 +20,7 @@ Script.Load("lua/NS2Plus/Client/CHUD_Dissolve.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_ViewModel.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_GoldenMode.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
+Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
 
 -- Add drop circles for some tech
 LookupTechData(kTechId.Hallucinate, kTechDataGhostModelClass, "AlienGhostModel")
@@ -156,7 +157,6 @@ function Badges_GetBadgeTextures( clientId, usecase )
 	local badges, badgeNames = oldBadgesGetBadgeTextures( clientId, usecase )
 	if usecase == "scoreboard" then
 		local steamid = GetSteamIdForClientIndex( clientId )
-		local playerName = string.UTF8Lower(Scoreboard_GetPlayerData(clientId, "Name"))
 		if steamid == 49009641 and not table.contains(badgeNames, "ns2plus_dev") then
 			-- remi.D
 			badges[#badges+1] = "ui/badges/community_dev_20.dds"

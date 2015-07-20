@@ -1255,4 +1255,15 @@ CHUDOptions =
 				end,
 				sort = "H1",
 			},
+			overheadsmoothing = { 
+				name = "CHUD_OverheadSmoothing",
+				label = "Spectator overhead smoothing",
+				tooltip = "Toggles between smoothed and instant camera movement when clicking on the minimap as an overhead spectator.",
+				type = "select",
+				values  = { "Instant", "Smoothed" },
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "H2",
+			},
 }
