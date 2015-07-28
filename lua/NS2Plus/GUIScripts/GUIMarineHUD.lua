@@ -277,12 +277,19 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		
 		-- If it's an Exo with hidden viewmodels, display armor in the HUD
 		if player and player:isa("Exo") and (CHUDGetOption("drawviewmodel") == 1 or CHUDGetOption("drawviewmodel") == 3) then
+			self:SetStatusDisplayVisible(true)
 			self.statusDisplay.statusbackground:SetColor(Color(1,1,1,0))
 			self.statusDisplay.healthBorderMask:SetColor(Color(1,1,1,0))
 			self.statusDisplay.scanLinesForeground:SetColor(Color(147/255, 206/255, 1,0))
 			self.statusDisplay.healthBar:SetIsVisible(false)
-			self.statusDisplay.armorText:SetIsVisible(true)
 			self.statusDisplay.healthText:SetIsVisible(false)
+			self.statusDisplay.armorText:SetIsVisible(true)
+		else
+			if mingui then
+				self.statusDisplay.scanLinesForeground:SetColor(kBrightColorTransparent)
+			end
+			self.statusDisplay.healthBar:SetIsVisible(hpbar)
+			self.statusDisplay.healthText:SetIsVisible(true)
 		end
 		
 		-- In vanilla, the commander name doesn't get updated (or show!) if we use low detail HUD

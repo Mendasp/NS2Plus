@@ -4,12 +4,13 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- //2015
+- 29/07/2015
 	- Removed NS2Stats button from End Game Stats and Scoreboard as the service is unavailable.
 	- Removed changelog from ingame menu as noone seemed to even notice that it was different from the main menu one and proceeded to ignore it.
 	- Added a toggle for the custom killfeed highlight color and the minimap arrow color to avoid certain instances of the setting getting reset to black.
 	- Added toggle for the new overhead camera smoothing. Available in Misc. tab.
 	- Added missing Derelict loading screens.
+	- Fixed armor value not showing up for Exos with hidden viewmodels.
 
 - 04/05/2015
 	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).

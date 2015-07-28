@@ -10,7 +10,7 @@ function UnitStatusMixin:GetUnitHint(forEntity)
 		hintTable.Hint = originalGetUnitHint(self, forEntity)
 		
 		local status = string.format("%d/%d",math.max(1, math.ceil(self:GetHealth())),math.ceil(self:GetArmor()))
-		if self:isa("Exo") then
+		if self:isa("Exo") or self:isa("Exosuit") then
 			status = string.format("%d",math.max(1, math.ceil(self:GetArmor())))
 		end
 		hintTable.Status = status
