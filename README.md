@@ -9,6 +9,7 @@ Latest changes
 	- Removed changelog from ingame menu as noone seemed to even notice that it was different from the main menu one and proceeded to ignore it.
 	- Added a toggle for the custom killfeed highlight color and the minimap arrow color to avoid certain instances of the setting getting resetted to black.
 	- Added toggle for the new overhead camera smoothing. Available in Misc. tab.
+	- Added missing Derelict loading screens.
 
 - 04/05/2015
 	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).
