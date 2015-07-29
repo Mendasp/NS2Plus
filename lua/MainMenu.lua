@@ -317,7 +317,7 @@ function MainMenu_GetMapNameList()
 end
 
 function MainMenu_GetMenuBackgrounds()
-    local menus = { "Default", "Eclipse", "Kodiak", "Biodome", "Descent", "Docking", "Mineshaft", "Refinery", "Summit", "Tram", "Veil", "Random" }
+    local menus = { "Default", "Derelict", "Eclipse", "Kodiak", "Biodome", "Descent", "Docking", "Mineshaft", "Refinery", "Summit", "Tram", "Veil", "Random" }
     return menus
 end
 
