@@ -16,6 +16,7 @@ function CHUDGUI_HiddenViewmodel:Initialize()
 	self.leftIndicator:SetLayer(kGUILayerPlayerHUD)
 	self.leftIndicator:SetIsVisible(true)
 	self.leftIndicator:SetIsScaling(false)
+	self.leftIndicator:SetColor(kAlienFontColor)
 	self.leftIndicator:SetSize(iconSize)
 
 	self.umbraIndicator = self:CreateAnimatedGraphicItem()
@@ -72,9 +73,9 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 			self.leftIndicator:SetTexture(buildTexture)
 			self.leftIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Phantom)))
 			
-			local color = kAlienFontColor
+			local color = self.leftIndicator:GetColor()
 			color.a = player:GetCloakFraction()
-			self.leftIndicator:SetColor(color)
+			self.leftIndicator:SetColor(kAlienFontColor)
 		end
 		
 		if umbra then
