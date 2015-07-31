@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 01/08/2015
+	- Fixed edge case where alien colored text would be faded when using disabled viewmodels and cloaking.
+	- Fixed minimap/commander highlight colors not being applied.
+
 - 29/07/2015
 	- Removed NS2Stats button from End Game Stats and Scoreboard as the service is unavailable.
 	- Removed changelog from ingame menu as noone seemed to even notice that it was different from the main menu one and proceeded to ignore it.

@@ -123,62 +123,50 @@ local alienPlayers = set {
 	kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
 }
 
-local OnSameMinimapBlipTeam = MinimapMappableMixin.OnSameMinimapBlipTeam
-local MinimapBlipTeamIsActive = MinimapMappableMixin.MinimapBlipTeamIsActive
-local PulseRed = MinimapMappableMixin.PulseRed
-local PulseDarkRed = MinimapMappableMixin.PulseDarkRed
-
-local OldGUIItemSetColor = GUIItem.SetColor
-local function NewGUIItemSetColor( blip, blipColor )
-	local vars = GetLocalsFromCallingFunction()
-	local blipType, isHallucination, playerTeam, blipTeam, spectating, underAttack = 
-		vars.blipType, vars.isHallucination, vars.playerTeam, vars.blipTeam, vars.spectating, vars.underAttack
+local originalMapBlipGetMapBlipColor
+originalMapBlipGetMapBlipColor = Class_ReplaceMethod( "MapBlip", "GetMapBlipColor",
+function(self, minimap, item)
+	local returnColor = originalMapBlipGetMapBlipColor(self, minimap, item)
+	
 	local player = Client.GetLocalPlayer()
 	local highlight = CHUDGetOption("commhighlight")
 	local highlightColor = ColorIntToColor(CHUDGetOption("commhighlightcolor"))
+	local blipTeam = self:GetMapBlipTeam(minimap)
 	local isHighlighted = false
 	
-	if blipType and playerTeam and blipTeam then
-		if marinePlayers[blipType] then
-			blipColor = ColorIntToColor(CHUDGetOption("playercolor_m"))
-		elseif alienPlayers[blipType] then
-			blipColor = ColorIntToColor(CHUDGetOption("playercolor_a"))
-		elseif player and player:GetIsCommander() and highlight and EnumToString(kTechId, player:GetGhostModelTechId()) == EnumToString(kMinimapBlipType, blipType) then
-			blipColor = highlightColor
-			isHighlighted = true
-		end
-			
-		if blip and blipColor and not isHallucination then
-			if OnSameMinimapBlipTeam(playerTeam, blipTeam) or spectating then
-
-				if underAttack then
-					if MinimapBlipTeamIsActive(blipTeam) then
-						if isHighlighted then
-							local percentage = (math.cos(Shared.GetTime() * 10) + 1) * 0.5
-							blipColor = LerpColor(kRed, highlightColor, percentage)
-						else
-							blipColor = PulseRed(1.0)
-						end
+	if marinePlayers[self.mapBlipType] then
+		returnColor = ColorIntToColor(CHUDGetOption("playercolor_m"))
+	elseif alienPlayers[self.mapBlipType] then
+		returnColor = ColorIntToColor(CHUDGetOption("playercolor_a"))
+	elseif player and player:GetIsCommander() and highlight and EnumToString(kTechId, player:GetGhostModelTechId()) == EnumToString(kMinimapBlipType, self.mapBlipType) then
+		returnColor = highlightColor
+		isHighlighted = true
+	end
+	
+	if not self.isHallucination then
+		if self.OnSameMinimapBlipTeam(minimap.playerTeam, blipTeam) or minimap.spectating then
+			if self.isInCombat then
+				if self.MinimapBlipTeamIsActive(blipTeam) then
+					if isHighlighted then
+						local percentage = (math.cos(Shared.GetTime() * 10) + 1) * 0.5
+						returnColor = LerpColor(kRed, highlightColor, percentage)
 					else
-						blipColor = PulseDarkRed(blipColor)
+						returnColor = self.PulseRed(1.0)
 					end
+				else
+					returnColor = self.PulseDarkRed(returnColor)
 				end
 			end
 		end
 	end
 	
-	OldGUIItemSetColor( blip, blipColor )
-end
-
+	return returnColor
+end)
 
 local originalMinimapUpdate
 originalMinimapUpdate = Class_ReplaceMethod( "GUIMinimap", "Update",
 function(self, deltaTime)
-	GUIItem.SetColor = NewGUIItemSetColor
-	
 	originalMinimapUpdate(self, deltaTime)
-	
-	GUIItem.SetColor = OldGUIItemSetColor
 	
 	local mingui = CHUDGetOption("mingui")
 	if self.lastMinGUI ~= mingui then
@@ -187,7 +175,6 @@ function(self, deltaTime)
 	end
 
 end)
-
 
 local originalLocationNameInit
 originalLocationNameInit = Class_ReplaceMethod( "GUIMinimap", "InitializeLocationNames",
