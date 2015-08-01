@@ -128,7 +128,8 @@ local oldUnitStatusUpdate
 oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	function(self, deltaTime)
 		CHUDHint = true
-		ReplaceUpValue(PlayerUI_GetUnitStatusInfo, "kUnitStatusDisplayRange", ConditionalValue(PlayerUI_GetIsSpecating(), 30, CHUDGetOption("nameplatesdistance")), { LocateRecurse = true })
+		local FindUnitsToDisplayStatusFor = GetUpValue(GUIUnitStatus.Update, "FindUnitsToDisplayStatusFor", { LocateRecurse = true })
+		ReplaceUpValue(FindUnitsToDisplayStatusFor, "kMaxUnitStatusDistance", ConditionalValue(PlayerUI_GetIsSpecating(), 30, CHUDGetOption("nameplatesdistance")), { LocateRecurse = true })
 		oldUnitStatusUpdate( self, deltaTime )
 		CHUDHint = false
 		
