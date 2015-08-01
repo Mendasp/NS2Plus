@@ -8,7 +8,8 @@ Latest changes
 	- Fixed edge case where alien colored text would be faded when using disabled viewmodels and cloaking.
 	- Fixed minimap/commander highlight colors not being applied.
 	- Fixed nameplates distance setting not taking effect.
-	- Fixed vanilla bug where dropped weapon expire timers didn't work for Commanders.
+	- Fixed vanilla bug where dropped weapon expire timers and respawn timers didn't work for Commanders.
+	- Updated spectator help text with updated drawing/clearing binds.
 
 - 29/07/2015
 	- Removed NS2Stats button from End Game Stats and Scoreboard as the service is unavailable.

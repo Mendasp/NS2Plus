@@ -124,6 +124,24 @@ end
 
 ReplaceUpValue( parent, "UpdateUnitStatusBlip", NewUpdateUnitStatusBlip, { LocateRecurse = true } )
 
+local oldFindUnitsToDisplayStatusFor = GetUpValue(GUIUnitStatus.Update, "FindUnitsToDisplayStatusFor", { LocateRecurse = true })
+
+local function newFindUnitsToDisplayStatusFor(player)
+	local result = oldFindUnitsToDisplayStatusFor(player)
+	
+	local teamNumber = player:GetTeamNumber()
+	-- Fix bug where dropped weapon expire time and other things didn't show up for comms
+	if player:isa("Commander") then
+		for _, selectable in ipairs(GetEntitiesWithMixin("UnitStatus")) do
+			table.insert(result, selectable)
+		end
+	end
+	
+	return result
+end
+
+ReplaceUpValue(GUIUnitStatus.Update, "FindUnitsToDisplayStatusFor", newFindUnitsToDisplayStatusFor)
+
 local oldUnitStatusUpdate
 oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	function(self, deltaTime)
