@@ -20,7 +20,7 @@ originalOverheadUpdate = Class_ReplaceMethod("GUIInsight_Overhead", "Update",
 	function(self, deltaTime)
 		if self.keyHints then
 			self.keyHints:SetIsVisible(keyHintsVisible)
-			self.keyHints:SetText(string.format("[%s] Stats [%s] Toggle health [%s] Toggle outlines [%s/%s] Zoom [%s] Reset zoom [%s] Draw on level [%s] Draw on screen [%s] Clear screen [%s] Toggle this help", BindingsUI_GetInputValue("RequestHealth"), BindingsUI_GetInputValue("Use"),BindingsUI_GetInputValue("ToggleFlashlight"), BindingsUI_GetInputValue("OverHeadZoomIncrease"), BindingsUI_GetInputValue("OverHeadZoomDecrease"), BindingsUI_GetInputValue("OverHeadZoomReset"), "Mouse 2", "Mouse 3", "Backspace", BindingsUI_GetInputValue("RequestAmmo")))
+			self.keyHints:SetText(string.format("[%s] Stats [%s] Toggle health [%s] Toggle outlines [%s/%s] Zoom [%s] Reset zoom [%s] Draw on screen [%s] Clear screen [%s] Toggle this help", BindingsUI_GetInputValue("RequestHealth"), BindingsUI_GetInputValue("Use"),BindingsUI_GetInputValue("ToggleFlashlight"), BindingsUI_GetInputValue("OverHeadZoomIncrease"), BindingsUI_GetInputValue("OverHeadZoomDecrease"), BindingsUI_GetInputValue("OverHeadZoomReset"), BindingsUI_GetInputValue("SecondaryAttack"), BindingsUI_GetInputValue("Reload"), BindingsUI_GetInputValue("RequestAmmo")))
 		end
 		
 		if CHUDGetOption("deselectspec") then
