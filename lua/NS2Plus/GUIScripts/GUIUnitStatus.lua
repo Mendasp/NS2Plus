@@ -129,11 +129,15 @@ local oldFindUnitsToDisplayStatusFor = GetUpValue(GUIUnitStatus.Update, "FindUni
 local function newFindUnitsToDisplayStatusFor(player)
 	local result = oldFindUnitsToDisplayStatusFor(player)
 	
-	local teamNumber = player:GetTeamNumber()
 	-- Fix bug where dropped weapon expire time and other things didn't show up for comms
 	if player:isa("Commander") then
 		for _, selectable in ipairs(GetEntitiesWithMixin("UnitStatus")) do
 			table.insert(result, selectable)
+		end
+	-- Fix bug where nameplates still show for overhead specs if you're close enough to players
+	elseif player:isa("Spectator") then
+		if player.specMode ~= nil and player.specMode == kSpectatorMode.Overhead then
+			return {}
 		end
 	end
 	
