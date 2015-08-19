@@ -124,28 +124,6 @@ end
 
 ReplaceUpValue( parent, "UpdateUnitStatusBlip", NewUpdateUnitStatusBlip, { LocateRecurse = true } )
 
-local oldFindUnitsToDisplayStatusFor = GetUpValue(GUIUnitStatus.Update, "FindUnitsToDisplayStatusFor", { LocateRecurse = true })
-
-local function newFindUnitsToDisplayStatusFor(player)
-	local result = oldFindUnitsToDisplayStatusFor(player)
-	
-	-- Fix bug where dropped weapon expire time and other things didn't show up for comms
-	if player:isa("Commander") then
-		for _, selectable in ipairs(GetEntitiesWithMixin("UnitStatus")) do
-			table.insert(result, selectable)
-		end
-	-- Fix bug where nameplates still show for overhead specs if you're close enough to players
-	elseif player:isa("Spectator") then
-		if player.specMode ~= nil and player.specMode == kSpectatorMode.Overhead then
-			return {}
-		end
-	end
-	
-	return result
-end
-
-ReplaceUpValue(GUIUnitStatus.Update, "FindUnitsToDisplayStatusFor", newFindUnitsToDisplayStatusFor)
-
 local oldUnitStatusUpdate
 oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	function(self, deltaTime)
