@@ -17,13 +17,14 @@ function CHUDGUI_ClassicAmmo:Initialize()
 	end
 	
 	self.ammoText = self:CreateAnimatedTextItem()
-	self.ammoText:SetFontName(kFontName)
 	self.ammoText:SetAnchor(GUIItem.Right, GUIItem.Bottom)    
 	self.ammoText:SetTextAlignmentX(GUIItem.Align_Min)    
 	self.ammoText:SetTextAlignmentY(GUIItem.Align_Center)    
 	self.ammoText:SetColor(kAmmoColor)
-	self.ammoText:SetScale(GetScaledVector())
 	self.ammoText:SetPosition(self.kAmmoPos)
+	self.ammoText:SetFontName(kFontName)
+	self.ammoText:SetScale(GetScaledVector())
+	GUIMakeFontScale(self.ammoText)
 	
 end
 
@@ -31,8 +32,17 @@ function CHUDGUI_ClassicAmmo:Reset()
 
 	GUIAnimatedScript.Reset(self)
 	
+	self.ammoText:SetFontName(kFontName)
 	self.ammoText:SetScale(GetScaledVector())
+	GUIMakeFontScale(self.ammoText)
 	
+end
+
+function CHUDGUI_ClassicAmmo:OnResolutionChanged(oldX, oldY, newX, newY)
+
+	self:Uninitialize()
+	self:Initialize()
+
 end
 
 local pulsateTime = 0
