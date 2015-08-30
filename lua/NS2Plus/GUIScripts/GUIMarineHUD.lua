@@ -105,9 +105,6 @@ function(self)
 	self.statusDisplay.statusbackground:SetColor(Color(1,1,1,alpha))
 	self.statusDisplay.scanLinesForeground:SetColor(Color(147/255, 206/255, 1,alpha*0.3))
 	
-	self:ShowNewWeaponLevel(PlayerUI_GetWeaponLevel())
-	self:ShowNewArmorLevel(PlayerUI_GetArmorLevel())
-		
 	self.statusDisplay.healthBar:SetIsVisible(hpbar)
 	self.statusDisplay.armorBar:SetIsVisible(hpbar)
 	
