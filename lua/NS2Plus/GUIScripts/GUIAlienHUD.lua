@@ -9,28 +9,11 @@ Class_AddMethod( "GUIAlienHUD", "CHUDRepositionGUI",
 		local biomass = ClientUI.GetScript("GUIBioMassDisplay")
 		local location = ClientUI.GetScript("GUINotifications")
 		
-		// Avoids overlap in lower resolutions
-		location.locationText:SetPosition(GUIScale(Vector(20, 10, 0)))
-		
-		// Position of toggleable elements
-		local y = 76
-		
-		if showcomm then
-			self.resourceDisplay.teamText:SetUniformScale(self.scale)
-			self.resourceDisplay.teamText:SetPosition(Vector(20, y, 0))
-			y = y + 30
-		end
-		
 		if gametime and self.gameTime then
-			self.gameTime:SetUniformScale(self.scale)
 			self.gameTime:SetScale(GetScaledVector()*1.15)
-			self.gameTime:SetPosition(Vector(20, y, 0))
-			y = y + 30
+			self.gameTime:SetPosition(Vector(20, self.resourceDisplay.teamText:GetPosition().y+25, 0))
+			GUIMakeFontScale(self.gameTime)
 		end
-		
-		y = y - 20
-		biomass.background:SetPosition(GUIScale(Vector(20, y, 0)))
-		biomass.smokeyBackground:SetPosition(GUIScale(Vector(-100, y-75, 0)))
 		
 		local biomassTexture = ConditionalValue(mingui, "ui/biomass_bar.dds", "ui/transparent.dds")
 		
