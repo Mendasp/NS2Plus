@@ -125,18 +125,6 @@ function CHUDLoadLights()
 		
 	end
 	
-	if CHUDOptions["mapatmos"] ~= nil and CHUDOptions["mapatmos"].applyFunction then
-		CHUDOptions["mapatmos"].applyFunction()
-	end
-	
-end
-
-local oldEnableAtmosphericDensity = EnableAtmosphericDensity
-function EnableAtmosphericDensity()
-	
-	oldEnableAtmosphericDensity()
-	CHUDOptions["mapatmos"].applyFunction()
-
 end
 
 Event.Hook("Console_savelights", OnCommandSaveLights)
