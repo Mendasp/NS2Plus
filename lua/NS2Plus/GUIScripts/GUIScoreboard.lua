@@ -68,23 +68,25 @@ function(self)
 	
 	self.avgSkillItem = GUIManager:CreateTextItem()
 	self.avgSkillItem:SetFontName(GUIScoreboard.kGameTimeFontName)
+	self.avgSkillItem:SetScale(Vector(1, 1, 1) * GUIScoreboard.kScalingFactor)
 	self.avgSkillItem:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.avgSkillItem:SetTextAlignmentX(GUIItem.Align_Center)
 	self.avgSkillItem:SetTextAlignmentY(GUIItem.Align_Center)
 	self.avgSkillItem:SetColor(ColorIntToColor(kMarineTeamColor))
 	self.avgSkillItem:SetText("")
 	self.avgSkillItem:SetLayer(kGUILayerScoreboard)
-	self.scoreboardBackground:AddChild(self.avgSkillItem)
+	GUIMakeFontScale(self.avgSkillItem)
 	
 	self.avgSkillItem2 = GUIManager:CreateTextItem()
 	self.avgSkillItem2:SetFontName(GUIScoreboard.kGameTimeFontName)
+	self.avgSkillItem2:SetScale(Vector(1, 1, 1) * GUIScoreboard.kScalingFactor)
 	self.avgSkillItem2:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.avgSkillItem2:SetTextAlignmentX(GUIItem.Align_Center)
 	self.avgSkillItem2:SetTextAlignmentY(GUIItem.Align_Center)
 	self.avgSkillItem2:SetColor(kRedColor)
 	self.avgSkillItem2:SetText("")
 	self.avgSkillItem2:SetLayer(kGUILayerScoreboard)
-	self.scoreboardBackground:AddChild(self.avgSkillItem2)
+	GUIMakeFontScale(self.avgSkillItem2)
 end)
 
 local originalScoreboardUpdate
@@ -111,12 +113,14 @@ function(self, deltaTime)
 
 			-- Check if the teams are on top of each other or not
 			local isVerticalSB = GetTeamItemWidth()*2 > self.scoreboardBackground:GetSize().x
-			local textHeight = self.avgSkillItem:GetTextHeight("Avg")
+			local textHeight = self.avgSkillItem:GetTextHeight("Avg") * self.avgSkillItem:GetScale().y
 			local scoreBgVis = self.slidebarBg:GetIsVisible()
 			
 			self.avgSkillItemBg:SetIsVisible(not scoreBgVis)
 			self.avgSkillItem2Bg:SetIsVisible(not scoreBgVis)
 			
+			self.scoreboardBackground:AddChild(self.avgSkillItem)
+			self.scoreboardBackground:AddChild(self.avgSkillItem2)
 			if team1Players > 0 and team2Players > 0 and team1Skill and team2Skill then
 				local team1Text = string.format("Avg. marine skill: %d", team1Skill)
 				local team2Text = string.format("Avg. alien skill: %d", team2Skill)
@@ -125,17 +129,22 @@ function(self, deltaTime)
 				self.avgSkillItem2:SetText(team2Text)
 				hasText = true
 				
+				local team1TextWidth = self.avgSkillItem:GetTextWidth(self.avgSkillItem:GetText()) * self.avgSkillItem:GetScale().x
+				local team2TextWidth = self.avgSkillItem2:GetTextWidth(self.avgSkillItem2:GetText()) * self.avgSkillItem2:GetScale().x
+				
 				if isVerticalSB then
-					self.avgSkillItem:SetPosition(Vector(-20-self.avgSkillItem:GetTextWidth(team1Text)/2, textHeight, 0))
-					self.avgSkillItem2:SetPosition(Vector(20+self.avgSkillItem2:GetTextWidth(team2Text)/2,textHeight, 0))
+					self.avgSkillItem:SetPosition(Vector(-20*GUIScoreboard.kScalingFactor-team1TextWidth/2, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
+					self.avgSkillItem2:SetPosition(Vector(20*GUIScoreboard.kScalingFactor+team2TextWidth/2, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 					self.avgSkillItem2Bg:SetIsVisible(false)
 				else
-					self.avgSkillItem:SetPosition(Vector(self.teams[2].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, textHeight, 0))
-					self.avgSkillItem2:SetPosition(Vector(self.teams[3].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, textHeight, 0))
+					self.avgSkillItemBg:AddChild(self.avgSkillItem)
+					self.avgSkillItem2Bg:AddChild(self.avgSkillItem2)
+					self.avgSkillItem:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
+					self.avgSkillItem2:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 				end
 			elseif team1Players > 0 and team1Skill then
 				self.avgSkillItem:SetText(string.format("Avg. marine skill: %d", team1Skill))
-				self.avgSkillItem:SetPosition(Vector(0, textHeight, 0))
+				self.avgSkillItem:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 				
 				self.avgSkillItem2:SetText("")
 				self.avgSkillItem2Bg:SetIsVisible(false)
@@ -143,7 +152,7 @@ function(self, deltaTime)
 				hasText = true
 			elseif team2Players > 0 and team2Skill then
 				self.avgSkillItem2:SetText(string.format("Avg. alien skill: %d", team2Skill))
-				self.avgSkillItem2:SetPosition(Vector(0, textHeight, 0))
+				self.avgSkillItem2:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 				
 				self.avgSkillItem:SetText("")
 				self.avgSkillItemBg:SetIsVisible(false)
@@ -157,7 +166,7 @@ function(self, deltaTime)
 				self.avgSkillItem2Bg:SetIsVisible(false)
 			end
 			
-			local sliderbarBgYSize = GUIScoreboard.kBgMaxYSpace-20
+			local sliderbarBgYSize = GUIScoreboard.kBgMaxYSpace-20*GUIScoreboard.kScalingFactor
 			if hasText then
 				self.background:SetPosition(Vector(self.background:GetPosition().x, self.background:GetPosition().y+textHeight, 0))
 				self.backgroundStencil:SetPosition(Vector(self.backgroundStencil:GetPosition().x, self.backgroundStencil:GetPosition().y+textHeight, 0))
@@ -166,16 +175,14 @@ function(self, deltaTime)
 					sliderbarBgYSize = sliderbarBgYSize-textHeight
 				end
 				
-				local team1TextWidth = self.avgSkillItem:GetTextWidth(self.avgSkillItem:GetText())
-				local team2TextWidth = self.avgSkillItem2:GetTextWidth(self.avgSkillItem2:GetText())
 				local team1Width = self.teams[2].GUIs.Background:GetSize().x
 				local team2Width = self.teams[3].GUIs.Background:GetSize().x
 				
-				self.avgSkillItemBg:SetSize(Vector(team1Width, textHeight+5, 0))
-				self.avgSkillItem2Bg:SetSize(Vector(team2Width, textHeight+5, 0))
+				self.avgSkillItemBg:SetSize(Vector(team1Width, textHeight+5*GUIScoreboard.kScalingFactor, 0))
+				self.avgSkillItem2Bg:SetSize(Vector(team2Width, textHeight+5*GUIScoreboard.kScalingFactor, 0))
 				
-				self.avgSkillItemBg:SetPosition(Vector(-(team1Width/2)+self.teams[2].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, 5, 0))
-				self.avgSkillItem2Bg:SetPosition(Vector(-(team2Width/2)+self.teams[3].GUIs.Background:GetPosition().x+GetTeamItemWidth()/2, 5, 0))
+				self.avgSkillItemBg:SetPosition(Vector(self.teams[2].GUIs.Background:GetPosition().x, ConditionalValue(GUIScoreboard.kScalingFactor == 1, 5*GUIScoreboard.kScalingFactor, 0), 0))
+				self.avgSkillItem2Bg:SetPosition(Vector(self.teams[3].GUIs.Background:GetPosition().x,  ConditionalValue(GUIScoreboard.kScalingFactor == 1, 5*GUIScoreboard.kScalingFactor, 0), 0))
 				
 				-- Reposition the slider
 				local sliderPos = (self.slidePercentage * self.slidebarBg:GetSize().y/100)
