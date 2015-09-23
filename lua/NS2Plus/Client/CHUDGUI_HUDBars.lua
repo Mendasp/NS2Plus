@@ -40,8 +40,8 @@ function CHUDGUI_HUDBars:Initialize()
 	hudbars = isMarine and CHUDGetOption("hudbars_m") or CHUDGetOption("hudbars_a")
 	
 	local textureMode = hudbars == 1 and 3 or self.team
-	kBarSize = { Vector(32, 64, 0), GUIScale(Vector(128, kBaseScreenHeight/3, 0)) }
-	kXOffset = { 32, 0 }
+	kBarSize = { GUIScale(Vector(32, 64, 0))*CHUDGetOption("crosshairscale"), Vector(GUIScale(128), Client.GetScreenHeight()/3, 0) }
+	kXOffset = { GUIScale(32)*CHUDGetOption("crosshairscale"), 0 }
 	leftBarXOffset = { -kXOffset[hudbars]-kBarSize[hudbars].x, 0 }
 	rightBarXOffset = { -leftBarXOffset[1], 0 }
 	yOffset = { kBarSize[hudbars].y/2, hudbars == 2 and isMarine and GUIScale(-16) or 0 }
@@ -102,7 +102,9 @@ function CHUDGUI_HUDBars:Initialize()
 	self.healthTextBg:SetIsVisible(true)
 	self.healthTextBg:SetIsScaling(false)
 	self.healthTextBg:SetColor(Color(0,0,0,1))
-	self.healthTextBg:SetPosition(Vector(leftBarXOffset[hudbars]/2-10, kBarSize[hudbars].y/2+10, 0))
+	self.healthTextBg:SetPosition(Vector(leftBarXOffset[hudbars]/2-GUIScale(10), kBarSize[hudbars].y/2+GUIScale(10), 0))
+	self.healthTextBg:SetScale(GetScaledVector()*CHUDGetOption("crosshairscale"))
+	GUIMakeFontScale(self.healthTextBg)
 	
 	self.healthText = self:CreateAnimatedTextItem()
 	self.healthText:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -112,7 +114,9 @@ function CHUDGUI_HUDBars:Initialize()
 	self.healthText:SetIsVisible(true)
 	self.healthText:SetIsScaling(false)
 	self.healthText:SetColor(Color(1,1,1,1))
-	self.healthText:SetPosition(Vector(leftBarXOffset[hudbars]/2-12, kBarSize[hudbars].y/2+8, 0))
+	self.healthText:SetPosition(Vector(leftBarXOffset[hudbars]/2-GUIScale(12), kBarSize[hudbars].y/2+GUIScale(8), 0))
+	self.healthText:SetScale(GetScaledVector()*CHUDGetOption("crosshairscale"))
+	GUIMakeFontScale(self.healthText)
 	
 	self.ammoTextBg = self:CreateAnimatedTextItem()
 	self.ammoTextBg:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -122,7 +126,9 @@ function CHUDGUI_HUDBars:Initialize()
 	self.ammoTextBg:SetIsVisible(true)
 	self.ammoTextBg:SetIsScaling(false)
 	self.ammoTextBg:SetColor(Color(0,0,0,1))
-	self.ammoTextBg:SetPosition(Vector(rightBarXOffset[hudbars]/2+12, kBarSize[hudbars].y/2+10, 0))
+	self.ammoTextBg:SetPosition(Vector(rightBarXOffset[hudbars]/2+GUIScale(12), kBarSize[hudbars].y/2+GUIScale(10), 0))
+	self.ammoTextBg:SetScale(GetScaledVector()*CHUDGetOption("crosshairscale"))
+	GUIMakeFontScale(self.ammoTextBg)
 	
 	self.ammoText = self:CreateAnimatedTextItem()
 	self.ammoText:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -132,7 +138,9 @@ function CHUDGUI_HUDBars:Initialize()
 	self.ammoText:SetIsVisible(true)
 	self.ammoText:SetIsScaling(false)
 	self.ammoText:SetColor(Color(1,1,1,1))
-	self.ammoText:SetPosition(Vector(rightBarXOffset[hudbars]/2+10, kBarSize[hudbars].y/2+8, 0))
+	self.ammoText:SetPosition(Vector(rightBarXOffset[hudbars]/2+GUIScale(10), kBarSize[hudbars].y/2+GUIScale(8), 0))
+	self.ammoText:SetScale(GetScaledVector()*CHUDGetOption("crosshairscale"))
+	GUIMakeFontScale(self.ammoText)
 
 	self.reloadIndicatorTextBG = self:CreateAnimatedTextItem()
 	self.reloadIndicatorTextBG:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -143,7 +151,9 @@ function CHUDGUI_HUDBars:Initialize()
 	self.reloadIndicatorTextBG:SetIsScaling(false)
 	self.reloadIndicatorTextBG:SetText("R")
 	self.reloadIndicatorTextBG:SetColor(Color(0,0,0,1))
-	self.reloadIndicatorTextBG:SetPosition(Vector(2, kBarSize[hudbars].y/2+10, 0))
+	self.reloadIndicatorTextBG:SetPosition(Vector(GUIScale(2), kBarSize[hudbars].y/2+GUIScale(10), 0))
+	self.reloadIndicatorTextBG:SetScale(GetScaledVector()*CHUDGetOption("crosshairscale"))
+	GUIMakeFontScale(self.reloadIndicatorTextBG)
 
 	self.reloadIndicatorText = self:CreateAnimatedTextItem()
 	self.reloadIndicatorText:SetAnchor(GUIItem.Middle, GUIItem.Center)
@@ -154,7 +164,9 @@ function CHUDGUI_HUDBars:Initialize()
 	self.reloadIndicatorText:SetIsScaling(false)
 	self.reloadIndicatorText:SetText("R")
 	self.reloadIndicatorText:SetColor(Color(1,1,1,1))
-	self.reloadIndicatorText:SetPosition(Vector(0, kBarSize[hudbars].y/2+8, 0))
+	self.reloadIndicatorText:SetPosition(Vector(0, kBarSize[hudbars].y/2+GUIScale(8), 0))
+	self.reloadIndicatorText:SetScale(GetScaledVector()*CHUDGetOption("crosshairscale"))
+	GUIMakeFontScale(self.reloadIndicatorText)
 	
 	if hudbars == 2 and isMarine then
 		self.reserveBar = self:CreateAnimatedGraphicItem()

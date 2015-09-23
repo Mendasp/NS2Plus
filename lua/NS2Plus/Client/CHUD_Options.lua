@@ -855,6 +855,9 @@ CHUDOptions =
 				valueType = "float",
 				applyFunction = function()
 					CHUDRestartScripts({ "GUICrosshair" })
+					if GetGUIManager and GetGUIManager():GetGUIScriptSingle("NS2Plus/Client/CHUDGUI_HUDBars") then
+						GetGUIManager():GetGUIScriptSingle("NS2Plus/Client/CHUDGUI_HUDBars"):Reset()
+					end
 				end,
 				sort = "E5",
 			},
