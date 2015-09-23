@@ -13,6 +13,7 @@ originalOverheadInit = Class_ReplaceMethod("GUIInsight_Overhead", "Initialize",
 		self.keyHints:SetAnchor(GUIItem.Left, GUIItem.Bottom)
 		self.keyHints:SetPosition(Vector(GUIScale(10), -GUIScale(20), 0))
 		self.keyHints:SetColor(kWhite)
+		GUIMakeFontScale(self.keyHints)
 	end)
 
 local originalOverheadUpdate
@@ -127,8 +128,10 @@ originalOverheadOnResChanged = Class_ReplaceMethod("GUIInsight_Overhead", "OnRes
 		originalOverheadOnResChanged(self, oldX, oldY, newX, newY)
 		
 		if self.keyHints then
+			self.keyHints:SetFontName(Fonts.kAgencyFB_Tiny)
 			self.keyHints:SetScale(GetScaledVector())
 			self.keyHints:SetPosition(Vector(GUIScale(10), -GUIScale(20), 0))
+			GUIMakeFontScale(self.keyHints)
 		end
 	end)
 	
