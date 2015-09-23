@@ -943,28 +943,6 @@ CHUDOptions =
 				valueType = "float",
 				sort = "C1",
 			},
-			mapatmos = { 
-				name = "CHUD_MapAtmos",
-				label = "Map atmospherics",
-				tooltip = "Sets the atmospheric density of the map lights.",
-				type = "slider",
-				defaultValue = 1,
-				minValue = 0,
-				maxValue = 1,
-				multiplier = 100,
-				category = "comp",
-				valueType = "float",
-				sort = "C2",
-				applyFunction = function()
-					if Client.lightList then
-						for index, light in ipairs(Client.lightList) do
-							if light.originalAtmosphericDensity then
-								light:SetAtmosphericDensity(light.originalAtmosphericDensity * CHUDGetOption("mapatmos"))
-							end
-						end
-					end
-				end,
-			},
 			deathstats = { 
 				name = "CHUD_DeathStats",
 				label = "Stats UI",
