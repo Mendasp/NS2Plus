@@ -10,6 +10,7 @@ Class_AddMethod( "GUIAlienHUD", "CHUDRepositionGUI",
 		local location = ClientUI.GetScript("GUINotifications")
 		
 		if gametime and self.gameTime then
+			self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 			self.gameTime:SetScale(GetScaledVector()*1.15)
 			self.gameTime:SetPosition(Vector(20, self.resourceDisplay.teamText:GetPosition().y+25, 0))
 			GUIMakeFontScale(self.gameTime)

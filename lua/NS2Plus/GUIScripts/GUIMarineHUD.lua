@@ -19,15 +19,15 @@ Class_AddMethod( "GUIMarineHUD", "CHUDRepositionGUI",
 		if showcomm then
 			self.commanderName:SetPosition(Vector(20, y, 0))
 			y = y + 30
-			self.resourceDisplay.teamText:SetUniformScale(self.scale)
 			self.resourceDisplay.teamText:SetPosition(Vector(20, y, 0))
 			y = y + 30
 		end
 		
 		if gametime and self.gameTime then
-			self.gameTime:SetUniformScale(self.scale)
+			self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 			self.gameTime:SetScale(GetScaledVector()*1.15)
 			self.gameTime:SetPosition(Vector(20, y, 0))
+			GUIMakeFontScale(self.gameTime)
 			y = y + 30
 		end
 		
