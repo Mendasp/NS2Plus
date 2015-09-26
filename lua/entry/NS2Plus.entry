@@ -1,0 +1,7 @@
+modEntry = {
+	Client = "lua/NS2Plus/CHUD_Client.lua",
+	Server = "lua/NS2Plus/CHUD_Server.lua",
+	Shared = "lua/NS2Plus/CHUD_Shared.lua",
+	FileHooks = "lua/NS2Plus/CHUD_FileHooks.lua",
+	Priority = 50
+}

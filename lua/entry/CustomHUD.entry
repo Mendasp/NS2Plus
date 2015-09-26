@@ -1,6 +1,0 @@
-modEntry = [[
-	Client: lua/NS2Plus/CHUD_Client.lua,
-	Server: lua/NS2Plus/CHUD_Server.lua,
-	Predict: lua/NS2Plus/CHUD_Predict.lua,
-	Priority: 50
-]]

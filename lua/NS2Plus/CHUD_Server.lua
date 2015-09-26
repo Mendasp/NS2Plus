@@ -1,5 +1,3 @@
-Script.Load("lua/NS2Plus/CHUD_Shared.lua")
-
 -- Allow customizations for our HUD textures
 Server.RemoveFileHashes("ui/centerhud.dds")
 Server.RemoveFileHashes("ui/bottomhudbar*.dds")

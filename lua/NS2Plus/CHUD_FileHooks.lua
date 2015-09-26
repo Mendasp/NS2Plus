@@ -1,0 +1,1 @@
+ModLoader.SetupFileHook( "lua/MainMenu.lua", "lua/NS2Plus/Client/CHUD_MainMenuHooks.lua", "post" )

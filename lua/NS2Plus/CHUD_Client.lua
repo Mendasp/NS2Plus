@@ -1,5 +1,3 @@
-Script.Load("lua/NS2Plus/CHUD_Shared.lua")
-
 Script.Load("lua/NS2Plus/Client/CHUD_Particles.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_MainMenu.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_Settings.lua")
