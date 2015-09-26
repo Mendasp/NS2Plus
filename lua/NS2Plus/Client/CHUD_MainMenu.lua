@@ -596,11 +596,6 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 		input:SetCSSClass(inputClass)
 		input:SetTopOffset(y)
 		
-		-- Remove horrid white dot
-		if input.label then
-			input.label:SetIsVisible(false)
-		end
-		
 		local label = CreateMenuElement(form, "Font", false)
 		label:SetCSSClass("option_label")
 		label:SetText(string.upper(option.label) .. ":")
