@@ -1147,7 +1147,6 @@ originalShotgunFirePrimary = Class_ReplaceMethod( "Shotgun", "FirePrimary",
 			
 		end
 		
-		TEST_EVENT("Shotgun primary attack")
 	end)
 CopyUpValues( Shotgun.FirePrimary, originalShotgunFirePrimary )
 	
