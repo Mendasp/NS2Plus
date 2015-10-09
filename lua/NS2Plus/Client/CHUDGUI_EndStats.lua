@@ -95,6 +95,7 @@ local rtGraphTable = {}
 local commanderStats = nil
 local killGraphTable = {}
 local buildingSummaryTable = {}
+local statusSummaryTable = {}
 local techLogTable = {}
 
 local lastStatsMsg = -100
@@ -1323,6 +1324,7 @@ function CHUDGUI_EndStats:Initialize()
 				techLogTable = parsedFile.techLogTable or {}
 				killGraphTable = parsedFile.killGraphTable or {}
 				buildingSummaryTable = parsedFile.buildingSummaryTable or {}
+				statusSummaryTable = parsedFile.statusSummaryTable or {}
 			end
 			
 			self.saved = true
@@ -2249,6 +2251,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			savedStats.commanderStats = commanderStats
 			savedStats.killGraphTable = killGraphTable
 			savedStats.buildingSummaryTable = buildingSummaryTable
+			savedStats.statusSummaryTable = statusSummaryTable
 			savedStats.techLogTable = techLogTable
 			
 			local savedFile = io.open(lastRoundFile, "w+")
@@ -2267,6 +2270,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		commanderStats = nil
 		killGraphTable = {}
 		buildingSummaryTable = {}
+		statusSummaryTable = {}
 		techLogTable = {}
 	end
 end
@@ -2399,6 +2403,34 @@ local function CHUDSetWeaponStats(message)
 	end
 
 	table.insert(cardsTable, cardEntry)
+	
+	lastStatsMsg = Shared.GetTime()
+end
+
+local function CHUDSetStatusStats(message)
+	
+	local kStatusString = {
+		[kPlayerStatus.Dead]="Dead",
+		[kPlayerStatus.Commander]="Commander",
+		[kPlayerStatus.Exo]="Exo",
+		[kPlayerStatus.GrenadeLauncher]="Grenade Launcher",
+		[kPlayerStatus.Rifle]= "Rifle",
+		[kPlayerStatus.Shotgun]="Shotgun",
+		[kPlayerStatus.Flamethrower]="Flamethrower",
+		[kPlayerStatus.Void]="Other",
+		[kPlayerStatus.Spectator]="Spectator",
+		[kPlayerStatus.Embryo]="Egg",
+		[kPlayerStatus.Skulk]="Skulk",
+		[kPlayerStatus.Gorge]="Gorge",
+		[kPlayerStatus.Lerk]="Lerk",
+		[kPlayerStatus.Fade]="Fade",
+		[kPlayerStatus.Onos]="Onos",
+	}
+	
+	local entry = {}
+	entry.className = kStatusString[message.statusId] or "Unknown"
+	entry.timeMinutes = message.timeMinutes
+	table.insert(statusSummaryTable, entry)
 	
 	lastStatsMsg = Shared.GetTime()
 end
@@ -2766,6 +2798,7 @@ gTechIdPosition[kTechId.Hydra] = kDeathMessageIcon.HydraSpike
 Client.HookNetworkMessage("CHUDPlayerStats", CHUDSetPlayerStats)
 Client.HookNetworkMessage("CHUDGameData", CHUDSetGameData)
 Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetWeaponStats)
+Client.HookNetworkMessage("CHUDEndStatsStatus", CHUDSetStatusStats)
 Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetCommStats)
 Client.HookNetworkMessage("CHUDGlobalCommStats", CHUDSetGlobalCommStats)
 Client.HookNetworkMessage("CHUDRTGraph", CHUDSetRTGraph)

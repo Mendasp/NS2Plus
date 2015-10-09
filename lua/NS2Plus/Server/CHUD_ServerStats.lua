@@ -191,6 +191,7 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 			ResetCHUDLastLifeStats(steamId)
 			
 			CHUDClientStats[steamId]["weapons"] = {}
+			CHUDClientStats[steamId]["status"] = {}
 		elseif (teamNumber ~= nil and CHUDClientStats[steamId].lastTeam ~= teamNumber) then
 			CHUDClientStats[steamId].lastTeam = teamNumber
 			
@@ -372,6 +373,14 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 		return true
 	end)
 	
+local statusGrouping = {}
+statusGrouping[kPlayerStatus.SkulkEgg] = kPlayerStatus.Embryo
+statusGrouping[kPlayerStatus.GorgeEgg] = kPlayerStatus.Embryo
+statusGrouping[kPlayerStatus.LerkEgg] = kPlayerStatus.Embryo
+statusGrouping[kPlayerStatus.FadeEgg] = kPlayerStatus.Embryo
+statusGrouping[kPlayerStatus.OnosEgg] = kPlayerStatus.Embryo
+statusGrouping[kPlayerStatus.Evolving] = kPlayerStatus.Embryo
+
 -- Add commander playing teams separate per team
 -- Vanilla only tracks overall commanding time
 local originalScoringOnMove = ScoringMixin.OnProcessMove
@@ -382,12 +391,19 @@ function ScoringMixin:OnProcessMove(input)
 		local steamId = GetSteamIdForClientIndex(self.clientIndex)
 		local teamNumber = self:GetTeamNumber()
 		if steamId and steamId > 0 and (teamNumber == 1 or teamNumber == 2) and CHUDClientStats[steamId] then
+			local statusRoot = CHUDClientStats[steamId]["status"]
 			local stat = CHUDClientStats[steamId][teamNumber]
 			if self:GetIsPlaying() then
 				if self:isa("Commander") then
 					stat.commanderTime = stat.commanderTime + input.time
 				end
 				stat.timePlayed = stat.timePlayed + input.time
+				local status = statusGrouping[self:GetPlayerStatusDesc()] ~= nil and statusGrouping[self:GetPlayerStatusDesc()] or self:GetPlayerStatusDesc()
+				
+				if statusRoot[status] == nil then
+					statusRoot[status] = 0
+				end
+				statusRoot[status] = statusRoot[status] + input.time
 			end
 		end
 	end
@@ -730,6 +746,14 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					msg.teamNumber = wStats.teamNumber
 					
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
+				end
+				
+				for statusId, classTime in pairs(stats["status"]) do
+					local msg = {}
+					msg.statusId = statusId
+					msg.timeMinutes = classTime/60
+					
+					Server.SendNetworkMessage(client, "CHUDEndStatsStatus", msg, true)
 				end
 			end
 		

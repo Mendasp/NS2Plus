@@ -106,6 +106,12 @@ if not CHUDMainMenu then
 		steamId = "integer",
 	}
 
+	local kCHUDEndStatsStatusMessage =
+	{
+		statusId = "enum kPlayerStatus",
+		timeMinutes = "float (0 to 1023 by 0.01)",
+	}
+
 	local kCHUDOptionMessage =
 	{
 		disabledOption = "string (32)"
@@ -141,6 +147,7 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDKillGraph", kCHUDKillGraphMessage)
 	Shared.RegisterNetworkMessage( "CHUDTechLog", kCHUDTechLogMessage)
 	Shared.RegisterNetworkMessage( "CHUDBuildingSummary", kCHUDBuildingSummaryMessage)
+	Shared.RegisterNetworkMessage( "CHUDEndStatsStatus", kCHUDEndStatsStatusMessage)
 
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
