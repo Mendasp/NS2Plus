@@ -84,6 +84,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "func",
 				valueType = "bool",
+				applyFunction = function() CHUDRestartScripts({ "GUIUnitStatus" }) end,
 				sort = "A6",
 			},
 			nameplatesdistance = {

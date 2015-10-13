@@ -124,27 +124,27 @@ end
 
 ReplaceUpValue( parent, "UpdateUnitStatusBlip", NewUpdateUnitStatusBlip, { LocateRecurse = true } )
 
-local oldUnitStatusUpdate
-oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
-	function(self, deltaTime)
-		CHUDHint = true
-		local FindUnitsToDisplayStatusFor = GetUpValue(GUIUnitStatus.Update, "FindUnitsToDisplayStatusFor", { LocateRecurse = true })
-		ReplaceUpValue(FindUnitsToDisplayStatusFor, "kMaxUnitStatusDistance", ConditionalValue(PlayerUI_GetIsSpecating(), 30, CHUDGetOption("nameplatesdistance")), { LocateRecurse = true })
-		oldUnitStatusUpdate( self, deltaTime )
-		CHUDHint = false
+local oldUnitStatusInit
+oldUnitStatusInit = Class_ReplaceMethod( "GUIUnitStatus", "Initialize",
+	function(self)
+		oldUnitStatusInit(self)
 		
 		if CHUDGetOption("smallnps") then
 			GUIUnitStatus.kFontScale = GUIScale( Vector(1,1,1) ) * 0.8
 			GUIUnitStatus.kActionFontScale = GUIScale( Vector(1,1,1) ) * 0.7
 			GUIUnitStatus.kFontScaleProgress = GUIScale( Vector(1,1,1) ) * 0.6
 			GUIUnitStatus.kFontScaleSmall = GUIScale( Vector(1,1,1) ) * 0.65
-		else
-			GUIUnitStatus.kFontScale = GUIScale( Vector(1,1,1) ) * 1.2
-			GUIUnitStatus.kActionFontScale = GUIScale( Vector(1,1,1) )
-			GUIUnitStatus.kFontScaleProgress = GUIScale( Vector(1,1,1) ) * 0.8
-			GUIUnitStatus.kFontScaleSmall = GUIScale( Vector(1,1,1) ) * 0.9
 		end
+	end)
 
+local oldUnitStatusUpdate
+oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
+	function(self, deltaTime)
+		kMaxUnitStatusDistance = ConditionalValue(PlayerUI_GetIsSpecating(), 30, CHUDGetOption("nameplatesdistance"))
+		
+		CHUDHint = true
+		oldUnitStatusUpdate( self, deltaTime )
+		CHUDHint = false
 	end)
 
 local function isValidSpectatorMode()
