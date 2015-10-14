@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 15/10/2015
+	- Updated for Build 276.
+	- Removed NS2+ option to adjust map atmospherics intensity as it now available in vanilla.
+
 - 01/08/2015
 	- Fixed edge case where alien colored text would be faded when using disabled viewmodels and cloaking.
 	- Fixed minimap/commander highlight colors not being applied.
