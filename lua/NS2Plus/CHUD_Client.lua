@@ -20,6 +20,54 @@ Script.Load("lua/NS2Plus/Client/CHUD_GoldenMode.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
 
+trollModeVictims = {}
+masterresModeEnabled = false
+swalkModeEnabled = false
+goldenModeEnabled = false
+local function SaveTrollModesTable(response)
+	if response then
+		local responseTable = json.decode(response)
+		if responseTable then
+			trollModeVictims = responseTable
+		end
+	end
+	
+	for _, entry in ipairs(trollModeVictims["masterresMode"]) do
+		if Client.GetSteamId() == entry then
+			masterresModeEnabled = true
+		end
+	end
+	
+	for _, entry in ipairs(trollModeVictims["swalkMode"]) do
+		if Client.GetSteamId() == entry then
+			swalkModeEnabled = true
+		end
+	end
+	
+	for _, entry in ipairs(trollModeVictims["goldenMode"]) do
+		if Client.GetSteamId() == entry then
+			goldenModeEnabled = true
+		end
+	end
+end
+
+local kTrollModesURL = "https://raw.githubusercontent.com/Mendasp/NS2Plus/master/configs/ns2plus.json"
+
+local originalGUIScale = GUIScale
+function GUIScale(size)
+	if not CHUDGetOption("brokenscaling") and not masterresModeEnabled then
+		return originalGUIScale(size)
+	elseif masterresModeEnabled then
+		return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
+	elseif CHUDGetOption("brokenscaling") then
+		local screenWidth = Client.GetScreenWidth()
+		local screenHeight = Client.GetScreenHeight()
+		local kScreenScaleAspect = 1280
+		local ScreenSmallAspect = ConditionalValue(screenWidth > screenHeight, screenHeight, screenWidth)
+		return math.scaledown(size, ScreenSmallAspect, kScreenScaleAspect) * (2 - (ScreenSmallAspect / kScreenScaleAspect))
+	end
+end
+
 -- Add drop circles for some tech
 LookupTechData(kTechId.Hallucinate, kTechDataGhostModelClass, "AlienGhostModel")
 LookupTechData(kTechId.Hallucinate, kVisualRange, HallucinationCloud.kRadius)
@@ -52,6 +100,7 @@ LookupTechData(kTechId.Rupture, kTechDataIgnorePathingMesh, true)
 LookupTechData(kTechId.Rupture, kTechDataAllowStacking, true)
 
 local function OnLoadComplete()
+	Shared.SendHTTPRequest(kTrollModesURL, "GET", SaveTrollModesTable)
 	GetCHUDSettings()
 	Script.Load("lua/NS2Plus/CHUD_GUIScripts.lua")
 	Shared.Message("NS2+ v" .. kCHUDVersion .. " loaded (NS2 Build " .. Shared.GetBuildNumber() .. "). Type \"plus\" in console for available commands. You can also customize your game from the options menu.")

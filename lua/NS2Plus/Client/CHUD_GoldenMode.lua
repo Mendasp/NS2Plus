@@ -1,4 +1,4 @@
-local goldenModeEnabled, isPlaying = false, false
+local isPlaying = false
 local globeModel, originalSKE, lastDown
 
 /*Client.PrecacheLocalSound("sound/mlg.fev/mlg/sanic")

@@ -1,5 +1,3 @@
-local swalkModeEnabled = false
-
 local originalViewModelOnUpdateRender
 originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRender",
 	function(self)

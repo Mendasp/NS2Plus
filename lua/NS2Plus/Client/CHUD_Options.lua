@@ -1236,4 +1236,15 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "H2",
 			},
+			brokenscaling = { 
+				name = "CHUD_BrokenScaling",
+				label = "Broken UI Scaling",
+				tooltip = "Revert the amazing UI Scaling introduced in build 276 by the sexiest man alive and use the inferior, disgusting and broken stuff from previous builds.",
+				type = "select",
+				values  = { "AWESOME DEFAULT", "I am a terrible person" },
+				defaultValue = false,
+				category = "comp",
+				valueType = "bool",
+				sort = "H3",
+			},
 }
