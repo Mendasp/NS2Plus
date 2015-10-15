@@ -8,14 +8,15 @@ originalTooltipInit = Class_ReplaceMethod("GUIHoverTooltip", "Initialize",
 		self.image:SetInheritsParentAlpha(true)
 		self.background:AddChild(self.image)
 	end)
-
+	
 local originalTooltipSetText
 originalTooltipSetText = Class_ReplaceMethod("GUIHoverTooltip", "SetText",
 	function(self, string, texture, textureSize)
 		originalTooltipSetText(self, string)
 		
-		local offset = GetUpValue(GUIHoverTooltip.SetText, "offset", { LocateRecurse = true })
-		local UpdateBorders = GetUpValue(GUIHoverTooltip.SetText, "UpdateBorders", { LocateRecurse = true })
+		local offset = GetUpValue(originalTooltipSetText, "offset", { LocateRecurse = true })
+		local UpdateBorders = GetUpValue(originalTooltipSetText, "UpdateBorders", { LocateRecurse = true })
+		
 		if texture then
 			textureSize = GUIScale(textureSize)
 			
