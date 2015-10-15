@@ -1194,18 +1194,6 @@ CHUDOptions =
 				end,
 				resetSettingInBuild = 214,
 			},
-			deselectspec = { 
-				name = "CHUD_DeselectSpec",
-				label = "Deselect on death",
-				tooltip = "When spectating and using the autofollow feature in overhead spectator, this lets you choose if you want to keep following the player when it respawns or deselect it when it dies.",
-				type = "select",
-				values  = { "Off", "On" },
-				defaultValue = true,
-				category = "comp",
-				valueType = "bool",
-				ignoreCasterMode = true,
-				sort = "G8",
-			},
 			sbcenter = { 
 				name = "CHUD_SBCenter",
 				label = "Auto-center scoreboard",
@@ -1215,7 +1203,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "comp",
 				valueType = "bool",
-				sort = "G9",
+				sort = "G8",
 			},
 			castermode = { 
 				name = "CHUD_CasterMode",

@@ -1,6 +1,8 @@
 Script.Load("lua/GUIInsight_OtherHealthbars.lua")
 
 local isEnabled = Client.GetOptionBoolean("CHUD_SpectatorHPInsight", false)
+local kAmmoColors = GetUpValue(GUIInsight_PlayerHealthbars.UpdatePlayers, "kAmmoColors", { LocateRecurse = true })
+local kOtherHealthBarTextureSize = GetUpValue(GUIInsight_OtherHealthbars.Update, "kOtherHealthBarTextureSize", { LocateRecurse = true })
 
 local originalIOHBCreateOther
 originalIOHBCreateOther = Class_ReplaceMethod("GUIInsight_OtherHealthbars", "CreateOtherGUIItem",
@@ -21,7 +23,23 @@ originalIOHBCreateOther = Class_ReplaceMethod("GUIInsight_OtherHealthbars", "Cre
 		return otherUI
 	end)
 
-local kOtherHealthBarTextureSize = GetUpValue(GUIInsight_OtherHealthbars.Update, "kOtherHealthBarTextureSize", { LocateRecurse = true })
+local kOtherHealthBarSize
+local originalIOHBSetVis
+originalIOHBInit = Class_ReplaceMethod("GUIInsight_OtherHealthbars", "Initialize",
+	function (self)
+		originalIOHBInit(self)
+		
+		kOtherHealthBarSize = GetUpValue(GUIInsight_OtherHealthbars.Update, "kOtherHealthBarSize", { LocateRecurse = true })
+	end)
+
+local isVisible = true
+local originalIOHBSetVis
+originalIOHBSetVis = Class_ReplaceMethod("GUIInsight_OtherHealthbars", "SetisVisible",
+	function (self, bool)
+		originalIOHBSetVis(self, bool)
+		isVisible = bool
+	end)
+
 local originalIOHBUpdate
 originalIOHBUpdate = Class_ReplaceMethod("GUIInsight_OtherHealthbars", "Update",
 	function(self, deltaTime)
@@ -43,9 +61,6 @@ originalIOHBUpdate = Class_ReplaceMethod("GUIInsight_OtherHealthbars", "Update",
 		end
 		
 		-- Weapon expire times
-		local kAmmoColors = GetUpValue(GUIInsight_PlayerHealthbars.UpdatePlayers, "kAmmoColors", { LocateRecurse = true })
-		local isVisible = GetUpValue(GUIInsight_OtherHealthbars.Update, "isVisible", { LocateRecurse = true })
-		local kOtherHealthBarSize = GetUpValue(GUIInsight_OtherHealthbars.Update, "kOtherHealthBarSize", { LocateRecurse = true })
 		for index, other in ientitylist(Shared.GetEntitiesWithClassname("Weapon")) do
 			local otherIndex = other:GetId()
 			local expireFraction = other.GetExpireTimeFraction and other:GetExpireTimeFraction() or 0
