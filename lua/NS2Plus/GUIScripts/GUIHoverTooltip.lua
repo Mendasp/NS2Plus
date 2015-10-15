@@ -16,6 +16,8 @@ originalTooltipSetText = Class_ReplaceMethod("GUIHoverTooltip", "SetText",
 	function(self, string, texture, textureSize)
 		originalTooltipSetText(self, string)
 		
+		local offset = GetUpValue(GUIHoverTooltip.SetText, "offset", { LocateRecurse = true })
+		local UpdateBorders = GetUpValue(GUIHoverTooltip.SetText, "UpdateBorders", { LocateRecurse = true })
 		if texture then
 			textureSize = GUIScale(textureSize)
 			
