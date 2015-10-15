@@ -89,6 +89,7 @@ function(self)
 	GUIMakeFontScale(self.avgSkillItem2)
 end)
 
+local GetTeamItemWidth = GetUpValue( GUIScoreboard.Update, "GetTeamItemWidth", { LocateRecurse = true } )
 local originalScoreboardUpdate
 originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
 function(self, deltaTime)
@@ -105,8 +106,6 @@ function(self, deltaTime)
 		self.showAvgSkill = GetGameInfoEntity().showAvgSkill
 
 		if self.showAvgSkill == true then
-			local GetTeamItemWidth = GetUpValue( GUIScoreboard.Update, "GetTeamItemWidth", { LocateRecurse = true } )
-			
 			local team1Players = #self.teams[2]["GetScores"]()
 			local team2Players = #self.teams[3]["GetScores"]()
 			local hasText = false
