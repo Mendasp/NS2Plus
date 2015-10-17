@@ -528,7 +528,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "float",
 				applyFunction = function()
-					OnCommandSetMapLocationColor("255", "255", "255", tostring(tonumber(CHUDGetOption("locationalpha"))*255))
+					Shared.ConsoleCommand("setmaplocationcolor 255 255 255 " .. tostring(tonumber(CHUDGetOption("locationalpha"))*255))
 				end,
 				sort = "C9",
 			},

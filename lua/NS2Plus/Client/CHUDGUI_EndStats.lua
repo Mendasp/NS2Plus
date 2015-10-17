@@ -48,6 +48,7 @@ local comparisonSize
 local kMarineStatsColor = Color(0, 0.75, 0.88, 0.65)
 local kAlienStatsColor = Color(0.84, 0.48, 0.17, 0.65)
 local kCommanderStatsColor = Color(0.75, 0.75, 0, 0.65)
+local kStatusStatsColor = Color(1, 1, 1, 0.65)
 local kStatsHeaderBgColor = Color(0, 0, 0, 0.9)
 local kStatsHeaderTextColor = Color(1, 1, 1, 1)
 local kPlayerStatsTextColor = Color(1, 1, 1, 1)
@@ -485,9 +486,6 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 
 	local item = {}
 	
-	logoSizeX = GUILinearScale(logoSizeX)
-	logoSizeY = GUILinearScale(logoSizeY)
-	
 	item.background = GUIManager:CreateGraphicItem()
 	item.background:SetStencilFunc(GUIItem.NotEqual)
 	item.background:SetColor(color)
@@ -526,6 +524,9 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	local xOffset = kLogoOffset
 	
 	if logoTexture then
+		logoSizeX = GUILinearScale(logoSizeX)
+		logoSizeY = GUILinearScale(logoSizeY)
+		
 		item.logo = GUIManager:CreateGraphicItem()
 		item.logo:SetStencilFunc(GUIItem.NotEqual)
 		item.logo:SetAnchor(GUIItem.Left, GUIItem.Center)
@@ -548,8 +549,9 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.textShadow:SetColor(Color(0,0,0,1))
 	item.textShadow:SetScale(scaledVector)
 	GUIMakeFontScale(item.textShadow)
-	item.textShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.textShadow:SetAnchor(ConditionalValue(logoTexture, GUIItem.Left, GUIItem.Middle), GUIItem.Top)
 	item.textShadow:SetText(text)
+	item.textShadow:SetTextAlignmentX(ConditionalValue(logoTexture, GUIItem.Align_Min, GUIItem.Align_Center))
 	item.textShadow:SetTextAlignmentY(GUIItem.Align_Center)
 	item.textShadow:SetPosition(Vector(xOffset + kTextShadowOffset, kCardSize.y/2 + kTextShadowOffset, 0))
 	item.textShadow:SetLayer(kGUILayerMainMenu)
@@ -561,8 +563,9 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 	item.text:SetColor(Color(1,1,1,1))
 	item.text:SetScale(scaledVector)
 	GUIMakeFontScale(item.text)
-	item.text:SetAnchor(GUIItem.Left, GUIItem.Top)
+	item.text:SetAnchor(ConditionalValue(logoTexture, GUIItem.Left, GUIItem.Middle), GUIItem.Top)
 	item.text:SetText(text)
+	item.text:SetTextAlignmentX(ConditionalValue(logoTexture, GUIItem.Align_Min, GUIItem.Align_Center))
 	item.text:SetTextAlignmentY(GUIItem.Align_Center)
 	item.text:SetPosition(Vector(xOffset, kCardSize.y/2, 0))
 	item.text:SetLayer(kGUILayerMainMenu)
@@ -1993,6 +1996,33 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		self.gameLength:SetText("Game length: " .. miscDataTable.gameLength)
 		self.serverName:SetText("Server name: " .. miscDataTable.serverName)
 		self.mapName:SetText("Map: " .. miscDataTable.mapName)
+		
+		table.sort(statusSummaryTable, function(a, b)
+			if a.timeMinutes == b.timeMinutes then
+				return a.className < b.className
+			else
+				return a.timeMinutes > b.timeMinutes
+			end
+		end)
+		if #statusSummaryTable > 0 then
+			local bgColor = kStatusStatsColor
+			local statCard = self:CreateGraphicHeader("Class time distribution", bgColor)
+			statCard.rows = {}
+			statCard.teamNumber = -2
+			
+			local totalTime = 0
+			for index, row in ipairs(statusSummaryTable) do
+				totalTime = totalTime + row.timeMinutes
+			end
+			for index, row in ipairs(statusSummaryTable) do
+				bgColor = ConditionalValue(index % 2 == 0, kMarinePlayerStatsEvenColor, kMarinePlayerStatsOddColor)
+				local minutes = math.floor(row.timeMinutes)
+				local seconds = (row.timeMinutes % 1)*60
+				local percentage = row.timeMinutes / totalTime * 100
+				table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.className, string.format("%d:%02d (%s%%)", minutes, seconds, printNum(percentage))))
+			end
+			table.insert(self.statsCards, statCard)
+		end
 		
 		for _, card in ipairs(cardsTable) do
 			local bgColor

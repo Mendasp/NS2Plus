@@ -61,7 +61,7 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 		end
 	end)
 
-local minimapScript
+local minimapScript, gameTime
 
 local originalMinimapInit
 originalMinimapInit = Class_ReplaceMethod( "GUIMinimap", "Initialize",
@@ -79,8 +79,20 @@ function(self)
 	
 	minimapScript = self
 end)
+
+local originalMinimapOnResChanged
+originalMinimapOnResChanged = Class_ReplaceMethod( "GUIMinimap", "OnResolutionChanged",
+function(self, oldX, oldY, newX, newY)
+	originalMinimapOnResChanged(self, oldX, oldY, newX, newY)
 	
-	
+	if gameTime then
+		gameTime:SetFontName(GUIMarineHUD.kTextFontName)
+		gameTime:SetScale(GetScaledVector())
+		gameTime:SetPosition(GUIScale(Vector(35, 60, 0)))
+		GUIMakeFontScale(gameTime)
+	end
+end)
+
 local originalCommanderInit
 originalCommanderInit = Class_ReplaceMethod( "Commander", "OnInitLocalClient",
 function(self)
@@ -89,11 +101,15 @@ function(self)
 	minimapScript:UpdateCHUDCommSettings()
 	
 	self.gameTime = GUIManager:CreateTextItem()
-	self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 	self.gameTime:SetFontIsBold(true)
 	self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
 	self.gameTime:SetColor(Color(0.5, 0.5, 0.5, 1))
-	self.gameTime:SetPosition(Vector(35, 60, 0))
+	self.gameTime:SetPosition(GUIScale(Vector(35, 60, 0)))
+	self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
+	self.gameTime:SetScale(GetScaledVector())
+	GUIMakeFontScale(self.gameTime)
+	
+	gameTime = self.gameTime
 end)
 
 local originalCommanderUpdate

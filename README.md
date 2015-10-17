@@ -6,6 +6,9 @@ Latest changes
 ==============
 - 17/10/2015
 	- Fixed average team skill not showing under some circumstances.
+	- Fixed gametime not adapting to resolution changes correctly.
+	- Fixed script error when switching Caster Mode in certain conditions.
+	- End game stats now displays class time distribution (time spent as Skulk, Fade, Rifle, Dead, etc).
 
 - 15/10/2015
 	- Updated for Build 276.
