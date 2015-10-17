@@ -47,7 +47,7 @@ originalIPHBUpdatePlayers = Class_ReplaceMethod("GUIInsight_PlayerHealthbars", "
 					
 					local nameHeight = 0
 					if isEnabled then
-						nameHeight = -(playerList[playerIndex].Name:GetTextHeight(playerList[playerIndex].Name:GetText()))/2
+						nameHeight = -(playerList[playerIndex].Name:GetTextHeight(playerList[playerIndex].Name:GetText()) * playerList[playerIndex].Name:GetScale().y) + GUIScale(5)
 					end
 					playerList[playerIndex].Name:SetPosition(Vector(0,nameHeight,0))
 					
