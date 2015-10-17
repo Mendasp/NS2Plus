@@ -114,10 +114,9 @@ function(self, deltaTime)
 			-- Check if the teams are on top of each other or not
 			local isVerticalSB = GetTeamItemWidth()*2 > self.scoreboardBackground:GetSize().x
 			local textHeight = self.avgSkillItem:GetTextHeight("Avg") * self.avgSkillItem:GetScale().y
-			local scoreBgVis = self.slidebarBg:GetIsVisible()
 			
-			self.avgSkillItemBg:SetIsVisible(not scoreBgVis)
-			self.avgSkillItem2Bg:SetIsVisible(not scoreBgVis)
+			self.avgSkillItemBg:SetIsVisible(true)
+			self.avgSkillItem2Bg:SetIsVisible(true)
 			
 			self.scoreboardBackground:AddChild(self.avgSkillItem)
 			self.scoreboardBackground:AddChild(self.avgSkillItem2)

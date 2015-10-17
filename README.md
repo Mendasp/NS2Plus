@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 17/10/2015
+	- Fixed average team skill not showing under some circumstances.
+
 - 15/10/2015
 	- Updated for Build 276.
 	- Removed NS2+ option to adjust map atmospherics intensity as it now available in vanilla.
