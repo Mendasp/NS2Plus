@@ -59,7 +59,8 @@ function GUIScale(size)
 		local scale = CHUDGetOption("uiscale") or 1
 		return originalGUIScale(size*scale)
 	elseif masterresModeEnabled then
-		return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
+		//return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
+		return originalGUIScale(size)
 	elseif CHUDGetOption("brokenscaling") then
 		local screenWidth = Client.GetScreenWidth()
 		local screenHeight = Client.GetScreenHeight()
