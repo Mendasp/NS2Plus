@@ -56,7 +56,8 @@ local kTrollModesURL = "https://raw.githubusercontent.com/Mendasp/NS2Plus/master
 local originalGUIScale = GUIScale
 function GUIScale(size)
 	if not CHUDGetOption("brokenscaling") and not masterresModeEnabled then
-		return originalGUIScale(size)
+		local scale = CHUDGetOption("uiscale") or 1
+		return originalGUIScale(size*scale)
 	elseif masterresModeEnabled then
 		return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
 	elseif CHUDGetOption("brokenscaling") then

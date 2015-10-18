@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 18/10/2015
+	- Added UI Scale slider.
+
 - 17/10/2015
 	- Fixed average team skill not showing under some circumstances.
 	- Fixed gametime not adapting to resolution changes correctly.

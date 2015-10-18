@@ -10,6 +10,22 @@ local function CHUDRestartScripts(scripts)
 	
 end
 
+local uiScaleTime = 0
+local function CHUDApplyNewUIScale()
+	uiScaleTime = Shared.GetTime()
+end
+
+local function CheckUIScaleTime()
+	if uiScaleTime ~= 0 and uiScaleTime + 1 < Shared.GetTime() then
+		local xRes = Client.GetScreenWidth()
+		local yRes = Client.GetScreenHeight()
+		GetGUIManager():OnResolutionChanged(xRes, yRes, xRes, yRes)
+		uiScaleTime = 0
+	end
+end
+
+Event.Hook("UpdateRender", CheckUIScaleTime)
+
 CHUDOptions =
 {
 			mingui = {
@@ -1238,13 +1254,34 @@ CHUDOptions =
 			},
 			brokenscaling = { 
 				name = "CHUD_BrokenScaling",
-				label = "Broken UI Scaling",
-				tooltip = "Revert the amazing UI Scaling introduced in build 276 by the sexiest man alive and use the inferior, disgusting and broken stuff from previous builds. This setting will not fully apply until the game is restarted.",
+				label = "UI Scaling version",
+				tooltip = "Revert the amazing UI Scaling introduced in build 276 by the sexiest man alive and use the inferior, disgusting and broken stuff from previous builds. Use at your own risk.",
 				type = "select",
-				values  = { "AWESOME DEFAULT", "I am a terrible person" },
+				values  = { "Default", "Old" },
 				defaultValue = false,
 				category = "comp",
 				valueType = "bool",
+				applyFunction = function()
+					CHUDApplyNewUIScale()
+				end,
+				children = { "uiscale" },
+				hideValues = { true },
 				sort = "H3",
+			},
+			uiscale = { 
+				name = "CHUD_UIScaling",
+				label = "UI Scaling",
+				tooltip = "Change the scaling for the UI. Note that not everything will adapt to this as not everything is using the same scaling function and some elements might break. Use at your own risk.",
+				type = "slider",
+				defaultValue = 1,
+				minValue = 0.05,
+				maxValue = 2,
+				multiplier = 100,
+				category = "comp",
+				valueType = "float",
+				applyFunction = function()
+					CHUDApplyNewUIScale()
+				end,
+				sort = "H4",
 			},
 }
