@@ -125,7 +125,6 @@ function(self)
 		self.weaponLevel:SetPosition(Vector(pos.x, pos.y-200, 0))
 		pos = self.welderIcon:GetPosition()
 		self.welderIcon:SetPosition(Vector(pos.x, pos.y-200, 0))
-		
 	end
 	
 end)
