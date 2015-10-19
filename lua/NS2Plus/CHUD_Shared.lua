@@ -164,15 +164,6 @@ if not CHUDMainMenu then
 	}
 
 	Class_Reload("GameInfo", gameInfoNetworkVars)
-	
-	kMaxPlayerSkill = 4095 -- In Vanilla this is 3000, set it to max with same bw cost
-	
-	local playerInfoNetworkVars =
-	{
-		playerSkill = string.format("integer (0 to %d)", kMaxPlayerSkill),
-	}
-
-	Class_Reload("PlayerInfoEntity", playerInfoNetworkVars)
 end
 
 CHUDTagBitmask = {
