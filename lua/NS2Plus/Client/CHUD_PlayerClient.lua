@@ -32,8 +32,8 @@ local lastIngameNumPlayers = 0
 local totalNumPlayers = 0
 local nextUpdateTotalNumPlayers = 0
 
-local lastChatCommand = Shared.GetTime(true)
 local chatInterval = 15
+local lastChatCommand = -chatInterval
 
 local function ClientSay(...)
 
