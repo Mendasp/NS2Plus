@@ -541,6 +541,8 @@ function CHUDGUI_EndStats:CreateGraphicHeader(text, color, logoTexture, logoCoor
 		item.background:AddChild(item.logo)
 		
 		xOffset = xOffset + logoSizeX + kTeamNameOffset
+	else
+		xOffset = 0
 	end
 	
 	item.textShadow = GUIManager:CreateTextItem()
