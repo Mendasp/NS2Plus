@@ -88,6 +88,9 @@ function(self)
 	self.avgSkillItem2:SetLayer(kGUILayerScoreboard)
 	GUIMakeFontScale(self.avgSkillItem2)
 	
+	self.avgSkillItemBg:SetIsVisible(false)
+	self.avgSkillItem2Bg:SetIsVisible(false)
+	
 	teamItemWidth = self.teams[1].GUIs.Background:GetSize().x
 	textHeight = self.avgSkillItem:GetTextHeight("Avg") * self.avgSkillItem:GetScale().y
 	
