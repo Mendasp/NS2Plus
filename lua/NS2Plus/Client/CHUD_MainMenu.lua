@@ -50,10 +50,10 @@ local function CHUDSetOptionVisible(option, visible)
 end
 
 local function CHUDResortForm()
-	if mainMenu ~= nil and mainMenu.sortedOptionTables ~= nil then
-		for _, optionsTable in ipairs(mainMenu.sortedOptionTables) do
+	if mainMenu ~= nil and mainMenu.CHUDOptionsMenu ~= nil then
+		for _, optionsTable in ipairs(mainMenu.CHUDOptionsMenu) do
 			local y = 0
-			for index, option in ipairs(optionsTable) do
+			for _, option in ipairs(optionsTable.options) do
 				local optionElem = mainMenu.CHUDOptionElements[option.name]
 				if optionElem:GetIsVisible() then
 					optionElem:SetTopOffset(y)
@@ -67,6 +67,11 @@ local function CHUDResortForm()
 					optionElem.resetOption:SetTopOffset(y)
 					y = y + 50
 				end
+			end
+			optionsTable.form:SetHeight(y)
+			if optionsTable.form:GetIsVisible() then
+				mainMenu.CHUDOptionWindow.slideBar:ScrollMin()
+				mainMenu.CHUDOptionWindow.slideBar:ScrollMax()
 			end
 		end
 	end
@@ -161,15 +166,6 @@ local function BoolToIndex(value)
 	return 1
 end
 
--- Set appropriate form size without CSS
-local originalMenuCreateOptions
-originalMenuCreateOptions = Class_ReplaceMethod( "GUIMainMenu", "CreateOptionsForm",
-	function(mainMenu, content, options, optionElements)
-		local form = originalMenuCreateOptions(mainMenu, content, options, optionElements)
-		form:SetHeight(#options*50)
-		return form
-	end)
-	
 -- Add join button to server details window
 local originalMenuServerDetails
 originalMenuServerDetails = Class_ReplaceMethod( "GUIMainMenu", "CreateServerDetailsWindow",
@@ -185,15 +181,6 @@ originalMenuServerDetails = Class_ReplaceMethod( "GUIMainMenu", "CreateServerDet
 		self.serverDetailsWindow.slideBar:SetHeight(380)
 		self.serverDetailsWindow:GetContentBox():SetHeight(380)
 	end)
-
-local CreateKeyBindingsForm = GetUpValue(GUIMainMenu.CreateOptionWindow, "CreateKeyBindingsForm", { LocateRecurse = true })
-local function newCreateKeyBindingsForm(self, content)
-	local form = CreateKeyBindingsForm(self, content)
-	local bindingsTable = BindingsUI_GetBindingsTable()
-		form:SetHeight(#bindingsTable*50)
-	return form
-end
-ReplaceUpValue(GUIMainMenu.CreateOptionWindow, "CreateKeyBindingsForm", newCreateKeyBindingsForm, { LocateRecurse = true })
 
 originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks", function(self)
 		mainMenu = self
@@ -229,6 +216,7 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 			mainMenu.mainWindow:SetBackgroundTexture("ui/menu/grid.dds")
 			mainMenu.mainWindow:SetBackgroundRepeat(true)
 		end
+		CHUDResortForm()
 	end)
 
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
@@ -363,8 +351,8 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 		table.sort(CompOptionsMenu, CHUDOptionsSort)
 	end
 	
-	local CHUD_HUDForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, HUDOptionsMenu, self.CHUDOptionElements)
 	local CHUD_FuncForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, FuncOptionsMenu, self.CHUDOptionElements)
+	local CHUD_HUDForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, HUDOptionsMenu, self.CHUDOptionElements)
 	local CHUD_CompForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, CompOptionsMenu, self.CHUDOptionElements)
 
 	local tabs = 
@@ -414,10 +402,10 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	
 	InitOptionWindow()
 	
-	self.sortedOptionTables = {}
-	table.insert(self.sortedOptionTables, CompOptionsMenu)
-	table.insert(self.sortedOptionTables, FuncOptionsMenu)
-	table.insert(self.sortedOptionTables, HUDOptionsMenu)
+	self.CHUDOptionsMenu = {}
+	table.insert(self.CHUDOptionsMenu, { formName = "func", form = CHUD_FuncForm, options = FuncOptionsMenu })
+	table.insert(self.CHUDOptionsMenu, { formName = "hud", form = CHUD_HUDForm, options = HUDOptionsMenu })
+	table.insert(self.CHUDOptionsMenu, { formName = "func", form = CHUD_CompForm, options = CompOptionsMenu })
 	
 	CHUDResortForm()
 end
@@ -649,7 +637,6 @@ GUIMainMenu.CreateCHUDOptionsForm = function(mainMenu, content, options, optionE
 	end
 	
 	form:SetCSSClass("options")
-	form:SetHeight(y)
 
 	return form
 

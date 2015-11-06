@@ -210,6 +210,15 @@ originalLocationNameInit = Class_ReplaceMethod( "GUIMinimap", "InitializeLocatio
 		end
 	end)
 
+-- Bugfix for UI Scaling breaking sometimes
+local originalLocationNameUninit
+originalLocationNameUninit = Class_ReplaceMethod( "GUIMinimap", "UninitializeLocationNames",
+	function(self)
+		originalLocationNameUninit(self)
+		
+		ReplaceUpValue(originalLocationNameInit, "gLocationItems", self.locationItems, { LocateRecurse = true })
+	end)
+
 local originalMinimapSendKeyEvent
 originalMinimapSendKeyEvent = Class_ReplaceMethod( "GUIMinimap", "SendKeyEvent",
 	function(self, key, down)
