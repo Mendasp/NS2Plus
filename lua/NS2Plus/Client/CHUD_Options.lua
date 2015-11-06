@@ -614,6 +614,15 @@ CHUDOptions =
 				sort = "C9e",
 				resetSettingInBuild = 264,
 			},
+			mapelementscolor = {
+				name = "CHUD_MapElementsColor",
+				label = "Tech point/Res node minimap color",
+				tooltip = "Sets the color for the empty Tech Points and Resource Nodes in the minimap.",
+				defaultValue = 0xFFFFA0,
+				category = "hud",
+				valueType = "color",
+				sort = "C9f",
+			},
 			pglines = { 
 				name = "CHUD_MapConnectorLines",
 				label = "Phase Gate Lines",

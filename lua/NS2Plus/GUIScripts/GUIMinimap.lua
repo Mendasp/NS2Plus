@@ -136,7 +136,11 @@ local marinePlayers = set {
 	kMinimapBlipType.Marine, kMinimapBlipType.JetpackMarine, kMinimapBlipType.Exo
 }
 local alienPlayers = set {
-	kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos, 
+	kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos 
+}
+
+local mapElements = set {
+	kMinimapBlipType.TechPoint, kMinimapBlipType.ResourcePoint
 }
 
 local originalMapBlipGetMapBlipColor
@@ -154,6 +158,8 @@ function(self, minimap, item)
 		returnColor = ColorIntToColor(CHUDGetOption("playercolor_m"))
 	elseif alienPlayers[self.mapBlipType] then
 		returnColor = ColorIntToColor(CHUDGetOption("playercolor_a"))
+	elseif mapElements[self.mapBlipType] then
+		returnColor = ColorIntToColor(CHUDGetOption("mapelementscolor"))
 	elseif player and player:GetIsCommander() and highlight and EnumToString(kTechId, player:GetGhostModelTechId()) == EnumToString(kMinimapBlipType, self.mapBlipType) then
 		returnColor = highlightColor
 		isHighlighted = true

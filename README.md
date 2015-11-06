@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 06/11/2015
+	- Made empty Tech Points and Resource Nodes colored so they're easier to distinguish. Color is customizable. Available in HUD tab.
+
 - 18/10/2015
 	- Added UI Scale slider.
 
@@ -68,62 +71,6 @@ Latest changes
 	- Added name change limiter, it will limit the amount of name changes allowed under a certain time.
 	- Added "unbind" console command as an alias of "clear_binding", as it's easier to remember.
 
-- 01/04/2015
-	- Added accuracies without Onos hits to the Last Life Stats.
-	- Added a color picker for all the options with customizable colors.
-	- End games stats now uses different commader icons to distinguish the Commander with most commanding time.
-	- Enabled last life stats and the ability to check the previous round stats during PreGamePlus.
-	- Fixed tooltip still being visible when closing the stats while hovering the Commander badge.
-	- Fixed Stomp not showing up properly on the personal weapon stats.
-
-- 29/03/2015
-	- Fixed drifter abilities requiring to click empty space to be used.
-	- Added outline to the wrench icon if you have a welder.
-	- Added option to disable the new wrench icon coloring and revert to the previous behavior. Available in Misc. tab.
-	- Reduced size of last life stats.
-	- Fixed Spurs not being tracked in the tech log.
-	- Fixed upgraded Hives counting as separate buildings lost.
-
-- 28/03/2015
-	- Fixed wrench icon not being color coded if you had a welder.
-	- Made dropped welders display the outline even if you already have a welder for easy recycling.
-
-- 27/03/2015
-	- Added played time and Commander time to the stats UI.
-	- Added Kill Graph to end game stats.
-	- Player stats are now kept when switching teams so one player can show up on both teams.
-	- Last life stats now use the same graphics style as the End game stats.
-	- Added "Weapon Inventory" option to customize the behavior for the inventory, the options allow you to have it always on, disabled, or showing weapon ammo for marines. Available in HUD tab.
-	- Added option to display a welder icon under the armor and weapon levels when there's one equipped. Available in HUD tab.
-	- Renamed "Minimal Nameplates" option to "Nameplate style" and added a third style to show only the bars. The options now are: "Default", "Percentages", "Bars only".
-	- Changed crosshair resolution scaling option with a slider that allows users to choose scaling themselves (from 1% to 200%).
-	- The Classic Ammo and HUD Bars options now use the same code to fetch weapon info. They now also display mines and grenades.
-	- Added "Request Weld" and other voiceover menu options to the Bindings menu.
-	- Added range circles for Mucous, Enzyme, Hallucination Cloud, Nutrient Mist and Rupture.
-	- Hovering over the player cards in Insight will display their current HP/AP values.
-	- The use key will toggle displaying HP/AP values over the healthbars in Insight.
-	- Color coded marine wrench icon for teammates and buildings depending on the damage received.
-	- Moving the mouse over the tech icons in Insight will now display the tech name.
-	- NS2+ console output will now wrap the text correctly on low resolutions.
-	- NS2+ console commands now allow you to reset settings to their individual defaults.
-	- Improved tooltips, some of them now include an example image for the NS2+ options.
-	- Fixed vanilla bug where server browser tooltips could get stuck on the screen.
-	- Removed message about players not being able to join when detecting mod updates if the server has a mod backup server enabled. Now it will just display the mods updated once.
-
-- 19/03/2015
-	- Classic Ammo now supports the Exo.
-	- Added Tech Log and RT Graph to end game stats.
-
-- 16/03/2015
-	- Added a structure counter (current/max) for the Gorge building "weapon" inside the energy circle.
-	- Added player and structure damage stats per-weapon to the end stats.
-	
-- 12/03/2015
-	- Added button to NS2+ options menu to reset values individually.
-	- Replaced Changelog button that noone ever noticed with "Reset all NS2+ settings" in the NS2+ options menu.
-	- Added console command to export NS2+ settings to a text file (plus_export). The file will be in %APPDATA%\Natural Selection 2\NS2Plus\ExportedSettings.txt
-	- Added server option to disable all connections to Hive. Disabling this will break the Force Even Teams vote, badges, player skill display and player skill reporting. It's an option purely just in case Hive is acting up. Servers can toggle it with "sv_plus hiveconnection true/false" in console or modifying NS2PlusServerConfig.json.
-
 =================
 Credits/Thanks to
 =================
@@ -143,6 +90,8 @@ Credits/Thanks to
 =================
 Past NS2+ features now included in vanilla NS2:
 =================
+- [276] Added extra bindings for voiceover options: "Weld me", "Follow me", etc.
+- [276] Dropped weapon expire times now are displayed for the commander.
 - [273] You can click on the scoreboard to check a player's Steam/NS2 profile.
 - [273] Scoreboard displays if someone is your steam friend.
 - [273] You can mute voice/text independently and it's persistent across map changes up to 6 hours.
@@ -193,6 +142,9 @@ Past NS2+ features now included in vanilla NS2:
 =================
 Past NS2+ fixes now included in vanilla NS2:
 =================
+- [274] Fixed scoreboard hiding the GUIHoverMenu every frame as long as the scoreboard wasn't up.
+- [274] Fixed jetpacks left behind by dead marines not dissolving with the body on death.
+- [274] Fixed Medpacks/Ammo/Catpacks not showing the pickup icons.
 - [272] Fixed server crash related to picking up a jetpack and a weapon at the same time.
 - [272] Fixed kill feed being obscured by the death screen fade to black.
 - [270] Fixed players having voice communication cut off while entering or exiting commander mode.
