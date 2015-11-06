@@ -32,21 +32,23 @@ local function SaveTrollModesTable(response)
 		end
 	end
 	
-	for _, entry in ipairs(trollModeVictims["masterresMode"]) do
-		if Client.GetSteamId() == entry then
-			masterresModeEnabled = true
+	if type(trollModeVictims) == "table" then
+		for _, entry in ipairs(trollModeVictims["masterresMode"]) do
+			if Client.GetSteamId() == entry then
+				masterresModeEnabled = true
+			end
 		end
-	end
-	
-	for _, entry in ipairs(trollModeVictims["swalkMode"]) do
-		if Client.GetSteamId() == entry then
-			swalkModeEnabled = true
+		
+		for _, entry in ipairs(trollModeVictims["swalkMode"]) do
+			if Client.GetSteamId() == entry then
+				swalkModeEnabled = true
+			end
 		end
-	end
-	
-	for _, entry in ipairs(trollModeVictims["goldenMode"]) do
-		if Client.GetSteamId() == entry then
-			goldenModeEnabled = true
+		
+		for _, entry in ipairs(trollModeVictims["goldenMode"]) do
+			if Client.GetSteamId() == entry then
+				goldenModeEnabled = true
+			end
 		end
 	end
 end
