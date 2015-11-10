@@ -6,7 +6,8 @@ originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRend
 		local player = Client.GetLocalPlayer()
 		local isVisible = self:GetIsVisible()
 		local drawviewmodel = CHUDGetOption("drawviewmodel")
-		local hideViewModel = player and ((drawviewmodel == 3) or (drawviewmodel == 1 and (player:isa("Marine") or player:isa("Exo"))) or (drawviewmodel == 2 and player:isa("Alien")))
+		local hideViewModel = player and ((drawviewmodel == 3) or (drawviewmodel == 1 and (player:isa("Marine")
+				or player:isa("Exo"))) or (drawviewmodel == 2 and player:isa("Alien")) or (drawviewmodel == 4 and not player:isa("Exo")))
 
 		self:SetIsVisible(swalkModeEnabled or self:GetIsVisible() and not hideViewModel)
 
