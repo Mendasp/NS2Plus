@@ -1208,16 +1208,62 @@ CHUDOptions =
 				label = "Draw viewmodel",
 				tooltip = "Enables or disables showing the viewmodel.",
 				type = "select",
-				values  = { "Display all", "Hide marines", "Hide aliens", "Hide both" },
+				values  = { "Display all", "Hide all", "Custom" },
 				defaultValue = 0,
 				category = "comp",
 				valueType = "int",
-				sort = "G7",
+				sort = "G7a",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
 				end,
-				resetSettingInBuild = 214,
+				children = { "drawviewmodel_m", "drawviewmodel_a", "drawviewmodel_exo" },
+				hideValues = { 0, 1 },
+				resetSettingInBuild = 290,
+			},
+			drawviewmodel_m = { 
+				name = "CHUD_DrawViewModel_M",
+				label = "Marine viewmodel",
+				tooltip = "Enables or disables showing the marine viewmodel.",
+				type = "select",
+				values  = { "Hide", "Display" },
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "G7b",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
+				end,
+			},
+			drawviewmodel_a = { 
+				name = "CHUD_DrawViewModel_A",
+				label = "Alien viewmodel",
+				tooltip = "Enables or disables showing the alien viewmodel.",
+				type = "select",
+				values  = { "Hide", "Display" },
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "G7c",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
+			},
+			drawviewmodel_exo = { 
+				name = "CHUD_DrawViewModel_Exo",
+				label = "Exo viewmodel",
+				tooltip = "Enables or disables showing the exo viewmodel.",
+				type = "select",
+				values  = { "Hide", "Display" },
+				defaultValue = true,
+				category = "comp",
+				valueType = "bool",
+				sort = "G7d",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
+				end,
 			},
 			sbcenter = { 
 				name = "CHUD_SBCenter",

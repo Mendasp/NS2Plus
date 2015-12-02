@@ -272,7 +272,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		end
 		
 		-- If it's an Exo with hidden viewmodels, display armor in the HUD
-		if player and player:isa("Exo") and (CHUDGetOption("drawviewmodel") == 1 or CHUDGetOption("drawviewmodel") == 3) then
+		if player and player:isa("Exo") and gCHUDHiddenViewModel then
 			self:SetStatusDisplayVisible(true)
 			self.statusDisplay.statusbackground:SetColor(Color(1,1,1,0))
 			self.statusDisplay.healthBorderMask:SetColor(Color(1,1,1,0))

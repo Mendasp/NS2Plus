@@ -1,14 +1,19 @@
+gCHUDHiddenViewModel = true
 local originalViewModelOnUpdateRender
 originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRender",
 	function(self)
 		originalViewModelOnUpdateRender(self)
 		
 		local player = Client.GetLocalPlayer()
-		local isVisible = self:GetIsVisible()
 		local drawviewmodel = CHUDGetOption("drawviewmodel")
-		local hideViewModel = player and ((drawviewmodel == 3) or (drawviewmodel == 1 and (player:isa("Marine") or player:isa("Exo"))) or (drawviewmodel == 2 and player:isa("Alien")))
+		gCHUDHiddenViewModel = drawviewmodel == 1 or
+			(drawviewmodel == 2 and
+				((player:isa("Marine") and not CHUDGetOption("drawviewmodel_m")) or
+				(player:isa("Alien") and not CHUDGetOption("drawviewmodel_a")) or
+				(player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo")))
+			)
 
-		self:SetIsVisible(swalkModeEnabled or self:GetIsVisible() and not hideViewModel)
+		self:SetIsVisible(swalkModeEnabled or self:GetIsVisible() and not gCHUDHiddenViewModel)
 
 	end)
 

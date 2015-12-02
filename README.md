@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 02/12/2015
+	- Hidden viewmodels option now only has the following entries: "Display all", "Hide all" and "Custom". Added individual customizable options for Marine, Alien, and Exo viewmodels for the Custom option.
+
 - 06/11/2015
 	- Made empty Tech Points and Resource Nodes colored so they're easier to distinguish. Color is customizable. Available in HUD tab.
 

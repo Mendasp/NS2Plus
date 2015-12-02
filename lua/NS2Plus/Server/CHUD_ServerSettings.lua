@@ -87,6 +87,7 @@ CHUDServerOptions =
 		},
 }
 
+-- Compmod servers allow hidden viewmodels by default
 for modNum = 1, Server.GetNumActiveMods() do
 	if Server.GetActiveModId(modNum) == "e5ffa15" then
 		CHUDServerOptions["allow_drawviewmodel"] = nil

@@ -229,6 +229,14 @@ if Client then
 		if not player then return end
 		
 		local teamNumber = player:GetTeamNumber()
+		local drawviewmodel = CHUDGetOption("drawviewmodel")
+		-- Cannot use the gCHUDHiddenViewModel global as it changes in the frame after this is run
+		local isViewModelHidden = drawviewmodel == 1 or
+			(drawviewmodel == 2 and
+				((player:isa("Marine") and not CHUDGetOption("drawviewmodel_m")) or
+				(player:isa("Alien") and not CHUDGetOption("drawviewmodel_a")) or
+				(player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo")))
+			)
 		
 		local classicammo = false
 		local customhud = false
@@ -239,7 +247,7 @@ if Client then
 		local hiddenviewmodelScript = "NS2Plus/Client/CHUDGUI_HiddenViewmodel"
 		if not player:isa("Commander") then
 			if teamNumber == kTeam1Index then
-				if CHUDGetOption("classicammo") or (player:isa("Exo") and (CHUDGetOption("drawviewmodel") == 1 or CHUDGetOption("drawviewmodel") == 3)) then
+				if CHUDGetOption("classicammo") or (player:isa("Exo") and isViewModelHidden) then
 					GetGUIManager():CreateGUIScriptSingle(classicammoScript)
 					classicammo = true
 				end
@@ -253,7 +261,7 @@ if Client then
 					GetGUIManager():CreateGUIScriptSingle(hudbarsScript)
 					customhud = true
 				end
-				if CHUDGetOption("drawviewmodel") > 1 then
+				if isViewModelHidden then
 					GetGUIManager():CreateGUIScriptSingle(hiddenviewmodelScript)
 					hiddenviewmodel = true
 				end
