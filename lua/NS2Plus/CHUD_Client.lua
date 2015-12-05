@@ -202,39 +202,6 @@ function Client.AddWorldMessage(messageType, message, position, entityId)
 	
 end
 
-local kNS2PlusDevBadgeTexture = PrecacheAsset("ui/badges/ns2plus_dev_20.dds")
-local oldBadgesGetBadgeTextures = Badges_GetBadgeTextures
-function Badges_GetBadgeTextures( clientId, usecase )
-	local badges, badgeNames = oldBadgesGetBadgeTextures( clientId, usecase )
-	if usecase == "scoreboard" then
-		local steamid = GetSteamIdForClientIndex( clientId )
-		if steamid == 49009641 and not table.contains(badgeNames, "ns2plus_dev") then
-			-- remi.D
-			badges[#badges+1] = "ui/badges/community_dev_20.dds"
-			badgeNames[#badgeNames+1] = "community_dev"
-			badges[#badges+1] = kNS2PlusDevBadgeTexture
-			badgeNames[#badgeNames+1] = "ns2plus_dev"
-		end
-		if steamid == 39843 and not table.contains(badgeNames, "ns2plus_god") then
-			-- mendasp
-			badges[#badges+1] = kNS2PlusDevBadgeTexture
-			badgeNames[#badgeNames+1] = "ns2plus_god"
-		end
-	end
-	return badges, badgeNames
-end
-
-local oldGetBadgeFormalName = GetBadgeFormalName
-function GetBadgeFormalName( name )
-	if name ~= "ns2plus_dev" and name ~= "ns2plus_god" then
-		return oldGetBadgeFormalName( name )
-	elseif name == "ns2plus_dev" then
-		return "NS2+ Developer"
-	else
-		return "NS2+ God / Developer"
-	end
-end
-
 local function OnCommandClearBinding(keyName)
 	if keyName then
 		Shared.ConsoleCommand("clear_binding " .. tostring(keyName))

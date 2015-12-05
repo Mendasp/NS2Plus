@@ -154,6 +154,7 @@ if not CHUDMainMenu then
 	Script.Load("lua/NS2Plus/Shared/CHUD_LayMines.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_Welder.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_PredictedBlood.lua")
+	Script.Load("lua/NS2Plus/Shared/CHUD_Badges.lua")
 	
 	local gameInfoNetworkVars =
 	{
