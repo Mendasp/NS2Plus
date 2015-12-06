@@ -3,7 +3,9 @@ local kCHUDBadges = "https://raw.githubusercontent.com/Mendasp/NS2Plus/master/co
 gCHUDBadgesData = {}
 gCHUDBadgesData["ns2plus_dev"] = {scoreboardTexture = "ui/badges/ns2plus_dev_20.dds", formalName = "NS2+ Developer"}
 gCHUDBadgesData["ns2plus_god"] = {scoreboardTexture = "ui/badges/ns2plus_dev_20.dds", formalName = "NS2+ God / Developer"}
-gCHUDBadgesData["ns2news"] = {scoreboardTexture = "ui/badges/ns2news_20.dds", formalName = "NS2News Contributor"}
+gCHUDBadgesData["ns2wc_winner"] = {scoreboardTexture = "ui/badges/ns2wc_winner_20.dds", formalName = "NS2WC 2014 Winner"}
+gCHUDBadgesData["ns2wc_runnerup"] = {scoreboardTexture = "ui/badges/ns2wc_runnerup_20.dds", formalName = "NS2WC 2014 Finalist"}
+gCHUDBadgesData["ns2wc_semi"] = {scoreboardTexture = "ui/badges/ns2wc_semi_20.dds", formalName = "NS2WC 2014 Semifinalist"}
 
 local CHUDBadgesTable = {}
 local kCHUDBadgesMessage = 
@@ -89,8 +91,21 @@ local function SaveBadgesJSON(response)
 end
 
 if Server then
-	Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
-
+	function LoadBadges()
+		Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
+	end
+	
+	-- For local testing
+	/*local openedFile = io.open("configs/badges.json", "r")
+	if openedFile then
+		local parsedFile = openedFile:read("*all")
+		io.close(openedFile)
+		
+		if parsedFile then
+			SaveBadgesJSON(parsedFile)
+		end
+	end*/
+	
 	local function SendBadges(client)
 		for _, msg in ipairs(CHUDBadgesTable) do
 			Server.SendNetworkMessage(client, "CHUDBadges", msg, true)
@@ -98,4 +113,5 @@ if Server then
 	end
 	
 	Event.Hook("ClientConnect", SendBadges)
+	Event.Hook("MapPostLoad", LoadBadges)
 end
