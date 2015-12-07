@@ -69,42 +69,55 @@ local function SaveBadgesJSON(response)
 		end
 	end
 	
-	-- Make a lookup table by steamId
-	local tmp = {}
-	for badgeName, steamIds in pairs(finalResponseTable) do
-		for _, curSteamId in ipairs(steamIds) do
-			if not tmp[curSteamId] then
-				tmp[curSteamId] = {}
+	if finalResponseTable["finishedLoading"] then
+		-- Make a lookup table by steamId
+		local tmp = {}
+		for badgeName, steamIds in pairs(finalResponseTable) do
+			if type(steamIds) == "table" then
+				for _, curSteamId in ipairs(steamIds) do
+					if not tmp[curSteamId] then
+						tmp[curSteamId] = {}
+					end
+					table.insert(tmp[curSteamId], badgeName)
+				end
 			end
-			table.insert(tmp[curSteamId], badgeName)
 		end
-	end
-	
-	-- Now construct a table of messages to send players
-	for steamid, badges in pairs(tmp) do
-		local msg = { steamId = steamid }
-		for badgeName, _ in pairs(gCHUDBadgesData) do
-			msg[badgeName] = table.contains(badges, badgeName)
+		
+		-- Now construct a table of messages to send players
+		for steamid, badges in pairs(tmp) do
+			local msg = { steamId = steamid }
+			for badgeName, _ in pairs(gCHUDBadgesData) do
+				msg[badgeName] = table.contains(badges, badgeName)
+			end
+			table.insert(CHUDBadgesTable, msg)
 		end
-		table.insert(CHUDBadgesTable, msg)
 	end
 end
 
 if Server then
 	function LoadBadges()
-		Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
-	end
-	
-	-- For local testing
-	/*local openedFile = io.open("configs/badges.json", "r")
-	if openedFile then
-		local parsedFile = openedFile:read("*all")
-		io.close(openedFile)
-		
-		if parsedFile then
-			SaveBadgesJSON(parsedFile)
+		local i = 0
+		-- Retry 5 times
+		while i < 5 and #CHUDBadgesTable == 0 do
+			i = i+1
+			Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
+			
+			-- For local testing
+			/*local openedFile = io.open("configs/badges.json", "r")
+			if openedFile then
+				local parsedFile = openedFile:read("*all")
+				io.close(openedFile)
+				
+				if parsedFile then
+					SaveBadgesJSON(parsedFile)
+				end
+			end*/
 		end
-	end*/
+		
+		if #CHUDBadgesTable == 0 then
+			Shared.Message("[NS2+] Failed to retrieve NS2+ badges file. This isn't a critical error. Move along citizen.")
+		end
+	end
 	
 	local function SendBadges(client)
 		for _, msg in ipairs(CHUDBadgesTable) do
