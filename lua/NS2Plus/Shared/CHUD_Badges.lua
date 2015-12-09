@@ -60,6 +60,8 @@ if Client then
 		end)
 end
 
+local processing = false
+local retries = 0
 local function SaveBadgesJSON(response)
 	local finalResponseTable = {}
 	if response then
@@ -92,15 +94,23 @@ local function SaveBadgesJSON(response)
 			table.insert(CHUDBadgesTable, msg)
 		end
 	end
+	
+	-- Retry 5 times if it fails
+	if #CHUDBadgesTable == 0 then
+		if retries < 5 then
+			retries = retries + 1
+			processing = false
+		else
+			Shared.Message("[NS2+] Failed to retrieve NS2+ badges file. This isn't a critical error. Move along citizen.")
+		end
+	end
 end
 
 if Server then
 	function LoadBadges()
-		local i = 0
-		-- Retry 5 times
-		while i < 5 and #CHUDBadgesTable == 0 do
-			i = i+1
+		if processing == false then
 			Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
+			processing = true
 			
 			-- For local testing
 			/*local openedFile = io.open("configs/badges.json", "r")
@@ -113,10 +123,6 @@ if Server then
 				end
 			end*/
 		end
-		
-		if #CHUDBadgesTable == 0 then
-			Shared.Message("[NS2+] Failed to retrieve NS2+ badges file. This isn't a critical error. Move along citizen.")
-		end
 	end
 	
 	local function SendBadges(client)
@@ -126,5 +132,5 @@ if Server then
 	end
 	
 	Event.Hook("ClientConnect", SendBadges)
-	Event.Hook("MapPostLoad", LoadBadges)
+	Event.Hook("UpdateServer", LoadBadges)
 end
