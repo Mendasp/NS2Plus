@@ -70,8 +70,8 @@ local function CHUDResortForm()
 			end
 			optionsTable.form:SetHeight(y)
 			if optionsTable.form:GetIsVisible() then
-				mainMenu.CHUDOptionWindow.slideBar:ScrollMin()
 				mainMenu.CHUDOptionWindow.slideBar:ScrollMax()
+				mainMenu.CHUDOptionWindow.slideBar:ScrollMin()
 			end
 		end
 	end
@@ -320,64 +320,66 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	self.warningLabel:SetIsVisible(false)
 
 	-- save our option elements for future reference
-	self.CHUDOptionElements = { }
+	self.CHUDOptionElements = {}
 	
-	local HUDOptionsMenu = { }
-	local FuncOptionsMenu = { }
-	local CompOptionsMenu = { }
+	local OptionsMenuTable = {}
+	local categoryOrder = {
+		ui = 1,
+		hud = 2,
+		damage = 3,
+		minimap = 4,
+		sound = 5,
+		graphics = 6,
+		stats = 7,
+		misc = 8
+	}
 	
-	-- Put the options in the correct tab
 	for idx, option in pairs(CHUDOptions) do
-		if option.category == "hud" then
-			table.insert(HUDOptionsMenu, CHUDOptions[idx])
-		elseif option.category == "func" then
-			table.insert(FuncOptionsMenu, CHUDOptions[idx])
-		elseif option.category == "comp" then
-			table.insert(CompOptionsMenu, CHUDOptions[idx])
+		if not OptionsMenuTable[option.category] then
+			OptionsMenuTable[option.category] = {}
 		end
-		
-		local function CHUDOptionsSort(a, b)
-			if a.sort == nil then
-				a.sort = "Z" .. a.name
-			end
-			if b.sort == nil then
-				b.sort = "Z" .. b.name
-			end
-			
-			return a.sort < b.sort
-		end
-		table.sort(HUDOptionsMenu, CHUDOptionsSort)
-		table.sort(FuncOptionsMenu, CHUDOptionsSort)
-		table.sort(CompOptionsMenu, CHUDOptionsSort)
+		table.insert(OptionsMenuTable[option.category], CHUDOptions[idx])
 	end
 	
-	local CHUD_FuncForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, FuncOptionsMenu, self.CHUDOptionElements)
-	local CHUD_HUDForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, HUDOptionsMenu, self.CHUDOptionElements)
-	local CHUD_CompForm = GUIMainMenu.CreateCHUDOptionsForm(self, content, CompOptionsMenu, self.CHUDOptionElements)
-
-	local tabs = 
-		{
-			{ label = "VISUAL", form = CHUD_FuncForm, scroll=true  },
-			{ label = "HUD", form = CHUD_HUDForm, scroll=true  },
-			{ label = "MISC", form = CHUD_CompForm, scroll=true  },
-		}
+	local function CHUDOptionsSort(a, b)
+		if a.sort == nil then
+			a.sort = "Z" .. a.name
+		end
+		if b.sort == nil then
+			b.sort = "Z" .. b.name
+		end
 		
-	local xTabWidth = 256
-
+		return a.sort < b.sort
+	end
+	
+	self.CHUDOptionsMenu = {}
+	for name, category in pairs(OptionsMenuTable) do
+		table.sort(category, CHUDOptionsSort)
+		table.insert(self.CHUDOptionsMenu, {
+			label = string.upper(name),
+			form = GUIMainMenu.CreateCHUDOptionsForm(self, content, OptionsMenuTable[name], self.CHUDOptionElements),
+			scroll = true,
+			options = OptionsMenuTable[name],
+			sort = categoryOrder[name],
+		})
+	end
+	
+	table.sort(self.CHUDOptionsMenu, CHUDOptionsSort)
+	
 	local tabBackground = CreateMenuElement(self.CHUDOptionWindow, "Image")
-	tabBackground:SetCSSClass("tab_background")
+	tabBackground:SetCSSClass("tab_background_chudmenu")
 	tabBackground:SetIgnoreEvents(true)
 	
 	local tabAnimateTime = 0.1
 		
-	for i = 1,#tabs do
+	for i = 1,#self.CHUDOptionsMenu do
 	
-		local tab = tabs[i]
+		local tab = self.CHUDOptionsMenu[i]
 		local tabButton = CreateMenuElement(self.CHUDOptionWindow, "MenuButton")
 		
 		local function ShowTab()
-			for j =1,#tabs do
-				tabs[j].form:SetIsVisible(i == j)
+			for j =1,#self.CHUDOptionsMenu do
+				self.CHUDOptionsMenu[j].form:SetIsVisible(i == j)
 				self.CHUDOptionWindow:ResetSlideBar()
 				self.CHUDOptionWindow:SetSlideBarVisible(tab.scroll == true)
 				local tabPosition = tabButton.background:GetPosition()
@@ -385,7 +387,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 			end
 		end
 	
-		tabButton:SetCSSClass("tab")
+		tabButton:SetCSSClass("tab_chudmenu")
 		tabButton:SetText(tab.label)
 		tabButton:AddEventCallbacks({ OnClick = ShowTab })
 		
@@ -401,11 +403,6 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	end
 	
 	InitOptionWindow()
-	
-	self.CHUDOptionsMenu = {}
-	table.insert(self.CHUDOptionsMenu, { formName = "func", form = CHUD_FuncForm, options = FuncOptionsMenu })
-	table.insert(self.CHUDOptionsMenu, { formName = "hud", form = CHUD_HUDForm, options = HUDOptionsMenu })
-	table.insert(self.CHUDOptionsMenu, { formName = "func", form = CHUD_CompForm, options = CompOptionsMenu })
 	
 	CHUDResortForm()
 end

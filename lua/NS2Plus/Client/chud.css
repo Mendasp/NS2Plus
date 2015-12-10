@@ -137,4 +137,27 @@ form textinput.display_input_chud
     font-name: fonts/AgencyFB_small.fnt; 
     background-color: rgba(0, 0, 0, 0.4); 
 } 
+
+button.tab_chudmenu
+{     
+    height: 64px; 
+    width: 115px; 
+    border-width: 0px;     
+    font-name: fonts/AgencyFB_medium.fnt; 
+    text-color: #8bb4c1; 
+    background-color: #000000; 
+    background-image: none; 
+    opacity: 0; 
+    hover-background-color: rgba(0,0,0,0); 
+    vertical-text-align: center; 
+    text-align: center; 
+} 
+
+image.tab_background_chudmenu
+{     
+    height: 64px; 
+    width: 115px; 
+    border-width: 0px; 
+    background-image: path(ui/menu/tabbackground.dds); 
+} 
 ]] 

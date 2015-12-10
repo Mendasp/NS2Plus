@@ -413,19 +413,25 @@ local function OnCommandPlusExport()
 	local settingsFileName = "config://NS2Plus/ExportedSettings.txt"
 	local settingsFile = io.open(settingsFileName, "w+")
 	if settingsFile then
-		local HUDOptionsMenu = { }
-		local FuncOptionsMenu = { }
-		local CompOptionsMenu = { }
 		local skipOptions = { }
+		local OptionsMenuTable = {}
+		local categoryOrder = {
+			ui = 1,
+			hud = 2,
+			damage = 3,
+			minimap = 4,
+			sound = 5,
+			graphics = 6,
+			stats = 7,
+			misc = 8
+		}
 		
-		for idx, option in pairs(CHUDOptions) do
-			if option.category == "hud" then
-				table.insert(HUDOptionsMenu, CHUDOptions[idx])
-			elseif option.category == "func" then
-				table.insert(FuncOptionsMenu, CHUDOptions[idx])
-			elseif option.category == "comp" then
-				table.insert(CompOptionsMenu, CHUDOptions[idx])
-			end
+		
+			for idx, option in pairs(CHUDOptions) do
+				if not OptionsMenuTable[option.category] then
+					OptionsMenuTable[option.category] = {}
+				end
+				table.insert(OptionsMenuTable[option.category], CHUDOptions[idx])
 			
 			-- Add the options that are hidden in the options menu here so we don't print them later
 			if option.children then
@@ -444,20 +450,30 @@ local function OnCommandPlusExport()
 				end
 			end
 			
-			local function CHUDOptionsSort(a, b)
-				if a.sort == nil then
-					a.sort = "Z" .. a.name
-				end
-				if b.sort == nil then
-					b.sort = "Z" .. b.name
-				end
-				
-				return a.sort < b.sort
-			end
-			table.sort(HUDOptionsMenu, CHUDOptionsSort)
-			table.sort(FuncOptionsMenu, CHUDOptionsSort)
-			table.sort(CompOptionsMenu, CHUDOptionsSort)
 		end
+		
+		local function CHUDOptionsSort(a, b)
+			if a.sort == nil then
+				a.sort = "Z" .. a.name
+			end
+			if b.sort == nil then
+				b.sort = "Z" .. b.name
+			end
+			
+			return a.sort < b.sort
+		end
+		
+		local CHUDOptionsMenu = {}
+		for name, category in pairs(OptionsMenuTable) do
+			table.sort(category, CHUDOptionsSort)
+			table.insert(CHUDOptionsMenu, {
+				name = string.upper(name) .. " TAB",
+				options = OptionsMenuTable[name],
+				sort = categoryOrder[name],
+			})
+		end
+		
+		table.sort(CHUDOptionsMenu, CHUDOptionsSort)
 		
 		local function PrintSetting(optionIdx)
 			if not skipOptions[optionIdx.name] then
@@ -485,22 +501,12 @@ local function OnCommandPlusExport()
 			end
 		end
 		
-		settingsFile:write("VISUAL TAB:\r\n-----------\r\n")
-		for _, option in ipairs(FuncOptionsMenu) do
-			PrintSetting(option)
-		end
-		
-		settingsFile:write("\r\nHUD TAB:\r\n-----------\r\n")
-		for _, option in ipairs(HUDOptionsMenu) do
-			PrintSetting(option)
-		end
-		
-		local hitsounds
-		local fov
-		local sens
-		settingsFile:write("\r\nMISC TAB:\r\n-----------\r\n")
-		for _, option in ipairs(CompOptionsMenu) do
-			PrintSetting(option)
+		for _, category in pairs(CHUDOptionsMenu) do
+			settingsFile:write(category.name .. "\r\n-----------\r\n")
+			for _, option in ipairs(category.options) do
+				PrintSetting(option)
+			end
+			settingsFile:write("\r\n")
 		end
 		
 		settingsFile:write("\r\nDate exported: " .. CHUDFormatDateTimeString(Shared.GetSystemTime()))

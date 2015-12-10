@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 10/12/2015
+	- Reorganized the NS2+ Options settings so settings are a bit easier to find.
+
 - 02/12/2015
 	- Hidden viewmodels option now only has the following entries: "Display all", "Hide all" and "Custom". Added individual customizable options for Marine, Alien, and Exo viewmodels for the Custom option.
 
