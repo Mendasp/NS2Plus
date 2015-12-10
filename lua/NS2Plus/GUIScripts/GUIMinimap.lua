@@ -128,6 +128,7 @@ originalCommanderOnDestroy = Class_ReplaceMethod( "Commander", "OnDestroy",
 function(self)
 	GUI.DestroyItem(self.gameTime)
 	self.gameTime = nil
+	gameTime = nil
 	originalCommanderOnDestroy(self)
 end)
 
