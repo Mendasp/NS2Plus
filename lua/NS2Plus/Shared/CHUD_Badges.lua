@@ -31,20 +31,18 @@ if Client then
 		if usecase == "scoreboard" then
 			local steamid = GetSteamIdForClientIndex( clientId )
 			if CHUDBadgesTable[steamid] then
-				if steamid == 49009641 then
+				if steamid == 49009641 and not table.contains(badgeNames, "community_dev") then
 					-- remi.D
 					-- Hive doesn't allow to choose only 1, so do it by hand
 					badges[#badges+1] = "ui/badges/community_dev_20.dds"
 					badgeNames[#badgeNames+1] = "community_dev"
 				end
 				for key, value in pairs(CHUDBadgesTable[steamid]) do
-					if value == true then
+					if value == true and not table.contains(badgeNames, key) then
 						badges[#badges+1] = gCHUDBadgesData[key]["scoreboardTexture"]
 						badgeNames[#badgeNames+1] = key
 					end
 				end
-				-- Once it's added, don't go through this again
-				CHUDBadgesTable[steamid] = false
 			end
 		end
 		return badges, badgeNames
