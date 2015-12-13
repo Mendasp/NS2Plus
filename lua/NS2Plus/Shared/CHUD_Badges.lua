@@ -7,6 +7,7 @@ gCHUDBadgesData["ns2news"] = {scoreboardTexture = "ui/badges/ns2news_20.dds", fo
 gCHUDBadgesData["ns2wc_winner"] = {scoreboardTexture = "ui/badges/ns2wc_winner_20.dds", formalName = "NS2WC 2014 Winner"}
 gCHUDBadgesData["ns2wc_runnerup"] = {scoreboardTexture = "ui/badges/ns2wc_runnerup_20.dds", formalName = "NS2WC 2014 Finalist"}
 gCHUDBadgesData["ns2wc_semi"] = {scoreboardTexture = "ui/badges/ns2wc_semi_20.dds", formalName = "NS2WC 2014 Semifinalist"}
+gCHUDBadgesData["golden_pax"] = {scoreboardTexture = "ui/badges/golden_pax_20.dds", formalName = "PAX 2012 (Smurfing Golden exclusive)"}
 
 local CHUDBadgesTable = {}
 local kCHUDBadgesMessage = 
@@ -110,11 +111,11 @@ end
 if Server then
 	function LoadBadges()
 		if processing == false then
-			Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
+			//Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
 			processing = true
 			
 			-- For local testing
-			/*local openedFile = io.open("configs/badges.json", "r")
+			local openedFile = io.open("configs/badges.json", "r")
 			if openedFile then
 				local parsedFile = openedFile:read("*all")
 				io.close(openedFile)
@@ -122,7 +123,7 @@ if Server then
 				if parsedFile then
 					SaveBadgesJSON(parsedFile)
 				end
-			end*/
+			end
 		end
 	end
 	
