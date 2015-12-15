@@ -170,3 +170,5 @@ Past NS2+ fixes now included in vanilla NS2:
 - [265] Fixed skulk growl sound when walking.
 - [265] Fixed inactive/unbuilt structures not blinking red when under attack.
 - [265] Fixed alien structures not blinking red when uncysted.
+
+Copyright 2015 - [Mendasp](http://steamcommunity.com/profiles/76561197960305571/). All rights reserved.
