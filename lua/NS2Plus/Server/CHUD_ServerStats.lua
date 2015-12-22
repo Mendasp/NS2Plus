@@ -1011,13 +1011,7 @@ originalClipWeaponFirePrimary = Class_ReplaceMethod( "ClipWeapon", "FirePrimary"
 			local targets, trace, hitPoints = GetBulletTargets(startPoint, endPoint, spreadDirection, bulletSize, filter)        
 			local damage = self:GetBulletDamage()
 
-			/*
-			// Check prediction
-			local values = GetPredictionValues(startPoint, endPoint, trace)
-			if not CheckPredictionData( string.format("attack%d", bullet), true, values ) then
-				Server.PlayPrivateSound(player, "sound/NS2.fev/marine/voiceovers/game_start", player, 1.0, Vector(0, 0, 0))
-			end
-			*/
+			HandleHitregAnalysis(player, startPoint, endPoint, trace)
 
 			local direction = (trace.endPoint - startPoint):GetUnit()
 			local hitOffset = direction * kHitEffectOffset
@@ -1110,14 +1104,8 @@ originalShotgunFirePrimary = Class_ReplaceMethod( "Shotgun", "FirePrimary",
 			
 			local damage = 0
 
-			/*
-			// Check prediction
-			local values = GetPredictionValues(startPoint, endPoint, trace)
-			if not CheckPredictionData( string.format("attack%d", bullet), true, values ) then
-				Server.PlayPrivateSound(player, "sound/NS2.fev/marine/voiceovers/game_start", player, 1.0, Vector(0, 0, 0))
-			end
-			*/
-				
+			HandleHitregAnalysis(player, startPoint, endPoint, trace)  
+			
 			local direction = (trace.endPoint - startPoint):GetUnit()
 			local hitOffset = direction * kHitEffectOffset
 			local impactPoint = trace.endPoint - hitOffset
