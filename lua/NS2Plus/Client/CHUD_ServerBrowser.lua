@@ -14,10 +14,6 @@ function BuildServerEntry(serverIndex)
 		end
 	end
 	
-	if serverEntry.CHUDBitmask ~= nil and serverEntry.mode == "ns2" then
-		serverEntry.mode = "ns2+"
-	end
-	
 	return serverEntry
 	
 end
@@ -25,13 +21,24 @@ end
 local originalSetServerData
 originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
+
+		--save the gamemode and write it back later to not interfere with other functions
+		local oldMode = serverData.mode
+
+		--replce the ns2 gamemode tag with ns2+ if ns2+ is running on given server
+		if serverData.CHUDBitmask then
+			serverData.mode = serverData.mode:gsub("ns2", "ns2+", 1)
+		end
+
 		originalSetServerData(self, serverData)
-		
-		if serverData.CHUDBitmask ~= nil then
+
+		serverData.mode = oldMode
+
+		if serverData.CHUDBitmask then
 		
 			self.modName:SetColor(kYellow)
 			
-			local blockedString = nil
+			local blockedString
 			for index, mask in pairs(CHUDTagBitmask) do
 				if CheckCHUDTagOption(serverData.CHUDBitmask, mask) then
 					if index == "mcr" then
