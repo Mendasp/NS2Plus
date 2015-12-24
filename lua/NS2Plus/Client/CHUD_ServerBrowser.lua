@@ -3,19 +3,30 @@ function BuildServerEntry(serverIndex)
 
 	local serverEntry = oldBuildServerEntry(serverIndex)
 
-	local serverTags = { }
-	Client.GetServerTags(serverIndex, serverTags)
-	
-	for t = 1, #serverTags do
-		local _, pos = string.find(serverTags[t], "CHUD_0x")
-		if pos then
-			serverEntry.CHUDBitmask = tonumber(string.sub(serverTags[t], pos+1))
-			break
+	local serverBrowserOpen = false
+	local mainMenu = GetCHUDMainMenu()
+	if mainMenu and mainMenu.playWindow and mainMenu.playWindow:GetIsVisible() then
+		serverBrowserOpen = true
+		local serverTags = { }
+		Client.GetServerTags(serverIndex, serverTags)
+		
+		for t = 1, #serverTags do
+			local _, pos = string.find(serverTags[t], "CHUD_0x")
+			if pos then
+				serverEntry.CHUDBitmask = tonumber(string.sub(serverTags[t], pos+1))
+				break
+			end
+		end
+		
+		if serverEntry.CHUDBitmask ~= nil then
+			serverEntry.originalMode = serverEntry.mode
+			serverEntry.mode = serverEntry.mode:gsub("ns2", "ns2+", 1)
 		end
 	end
 	
-	if serverEntry.CHUDBitmask ~= nil and serverEntry.mode == "ns2" then
-		serverEntry.mode = "ns2+"
+	-- Revert to the original mode if we're not in the server browser
+	if serverEntry.originalMode and not serverBrowserOpen then
+		serverEntry.mode = serverEntry.originalMode
 	end
 	
 	return serverEntry
@@ -31,7 +42,7 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 		
 			self.modName:SetColor(kYellow)
 			
-			local blockedString = nil
+			local blockedString
 			for index, mask in pairs(CHUDTagBitmask) do
 				if CheckCHUDTagOption(serverData.CHUDBitmask, mask) then
 					if index == "mcr" then
