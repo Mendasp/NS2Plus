@@ -25,7 +25,7 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 		--save the gamemode and write it back later to not interfere with other functions
 		local oldMode = serverData.mode
 
-		--replce the ns2 gamemode tag with ns2+ if ns2+ is running on given server
+		--replace the ns2 gamemode tag with ns2+ if ns2+ is running on given server
 		if serverData.CHUDBitmask then
 			serverData.mode = serverData.mode:gsub("ns2", "ns2+", 1)
 		end
