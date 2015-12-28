@@ -10,7 +10,7 @@ function(self, key, down, amount)
 		if lastDown ~= down then
 			lastDown = down
 			
-			if goldenModeEnabled and down == true then
+			if trollModes["goldenMode"] and down == true then
 				if down == true and not isPlaying then
 					StartSoundEffect("sound/mlg.fev/mlg/sanic")
 				else
@@ -21,7 +21,7 @@ function(self, key, down, amount)
 		end
 	end
 	
-	if not goldenModeEnabled and isPlaying then
+	if not trollModes["goldenMode"] and isPlaying then
 		Shared.StopSound(nil, "sound/mlg.fev/mlg/sanic")
 	end
 	
@@ -29,7 +29,7 @@ function(self, key, down, amount)
 end)*/
 
 local function GoldenMode()
-	if goldenModeEnabled then
+	if trollModes["goldenMode"] then
 	
 		if not globeModel then
 			globeModel = Client.CreateRenderModel(RenderScene.Zone_Default)
@@ -48,14 +48,14 @@ local function GoldenMode()
 	end
 	
 	if globeModel then
-		globeModel:SetIsVisible(goldenModeEnabled)
+		globeModel:SetIsVisible(trollModes["goldenMode"])
 	end
 end
 
 local function ToggleGolden()
-	goldenModeEnabled = not goldenModeEnabled
+	trollModes["goldenMode"] = not trollModes["goldenMode"]
 	
-	Shared.Message("Golden mode: " .. ConditionalValue(goldenModeEnabled, "ENGAGED!", "Disabled :("))
+	Shared.Message("Golden mode: " .. ConditionalValue(trollModes["goldenMode"], "ENGAGED!", "Disabled :("))
 end
 
 Event.Hook("UpdateRender", GoldenMode)

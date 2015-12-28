@@ -13,41 +13,75 @@ originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRend
 				(player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo")))
 			)
 
-		self:SetIsVisible(swalkModeEnabled or self:GetIsVisible() and not gCHUDHiddenViewModel)
+		self:SetIsVisible(trollModes["swalkMode"] or self:GetIsVisible() and not gCHUDHiddenViewModel)
 
 	end)
 
 local direction = 1
-local roll = 0
+local rollVM = 0
+local rollIncrementViewModel = 0.01
 local originalViewModelOnAdjustModelCoords
 originalViewModelOnAdjustModelCoords = Class_ReplaceMethod("ViewModel", "OnAdjustModelCoords",
 	function(self, coords)
 	
 		local newCoords = originalViewModelOnAdjustModelCoords(self, coords)
-
-		if self:GetNumModelCameras() > 0 and coords and newCoords and swalkModeEnabled then
-			local rollIncrement = 0.01
+		local rollIncrement
+		if self:GetNumModelCameras() > 0 and coords and newCoords and trollModes["swalkMode"] then
 			
 			local player = Client.GetLocalPlayer()
 			
 			if player then
 				local velocity = player:GetVelocity()
 				local speed = velocity:GetLengthXZ()
-				rollIncrement = rollIncrement*(speed/2)*direction
+				rollIncrement = (speed/2)*direction*rollIncrementViewModel
 			end
 			
-			roll = math.min(4 * math.pi, roll + rollIncrement)
+			rollVM = rollVM + rollIncrement
 			
-			if roll > 2 * math.pi then
-				roll = roll - 2 * math.pi
-			elseif roll < 0 then
-				roll = roll + 2 * math.pi
+			if rollVM > 2 * math.pi then
+				rollVM = rollVM - 2 * math.pi
+			elseif rollVM < 0 then
+				rollVM = rollVM + 2 * math.pi
 			end
 			
 		else
-			roll = 0
+			rollVM = 0
 		end
-		local rotationCoords = Angles(0, 0, roll):GetCoords()
+		local rotationCoords = Angles(0, 0, rollVM):GetCoords()
+		
+		return newCoords * rotationCoords
+
+	end)
+
+local rollCamera = 0
+local rollIncrementCamera = 0.005
+local originalGetCameraViewCoordsOverride
+originalGetCameraViewCoordsOverride = Class_ReplaceMethod("Player", "GetCameraViewCoordsOverride",
+	function(self, cameraCoords)
+	
+		local newCoords = originalGetCameraViewCoordsOverride(self, cameraCoords)
+		local rollIncrement
+		if cameraCoords and newCoords and trollModes["swalkMode"] then
+			local player = Client.GetLocalPlayer()
+			
+			if player then
+				local velocity = player:GetVelocity()
+				local speed = velocity:GetLengthXZ()
+				rollIncrement = (speed/2)*direction*rollIncrementCamera
+			end
+			
+			rollCamera = rollCamera + rollIncrement
+			
+			if rollCamera > 2 * math.pi then
+				rollCamera = rollCamera - 2 * math.pi
+			elseif rollCamera < 0 then
+				rollCamera = rollCamera + 2 * math.pi
+			end
+			
+		else
+			rollCamera = 0
+		end
+		local rotationCoords = Angles(0, 0, rollCamera):GetCoords()
 		
 		return newCoords * rotationCoords
 
@@ -93,11 +127,47 @@ function(self, key, down, amount)
 end)
 
 local function ToggleSwalk()
-	swalkModeEnabled = not swalkModeEnabled
+	trollModes["swalkMode"] = not trollModes["swalkMode"]
 	
-	Shared.Message("Swalk mode: " .. ConditionalValue(swalkModeEnabled, "ENGAGED!", "Disabled :("))
+	Shared.Message("Swalk mode: " .. ConditionalValue(trollModes["swalkMode"], "ENGAGED!", "Disabled :("))
+	if trollModes["swalkMode"] then
+		Shared.Message("swalkmode_vmspeed (-100 to 100) - Controls the speed of the viewmodel roll")
+		Shared.Message("swalkmode_cameraspeed (-100 to 100) - Controls the speed of the camera roll")
+	end
+end
+
+local function VMSpeed(speed)
+	if speed then
+		speed = tonumber(speed)
+		if IsNumber(speed) and speed >= -100 and speed <= 100 then
+			rollIncrementViewModel = speed / 10000
+			rollVM = 0
+			rollCamera = 0
+		else
+			Shared.Message("Invalid parameter.")
+		end
+	else
+		Shared.Message("Invalid parameter.")
+	end
+end
+
+local function CameraSpeed(speed)
+	if speed then
+		speed = tonumber(speed)
+		if IsNumber(speed) and speed >= -100 and speed <= 100 then
+			rollIncrementCamera = speed / 10000
+			rollVM = 0
+			rollCamera = 0
+		else
+			Shared.Message("Invalid parameter.")
+		end
+	else
+		Shared.Message("Invalid parameter.")
+	end
 end
 
 Event.Hook("Console_iamthelaw", ToggleSwalk)
 Event.Hook("Console_swalkmode", ToggleSwalk)
+Event.Hook("Console_swalkmode_vmspeed", VMSpeed)
+Event.Hook("Console_swalkmode_cameraspeed", CameraSpeed)
 Event.Hook("Console_unfairadvantage", ToggleSwalk)

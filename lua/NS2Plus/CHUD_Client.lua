@@ -21,9 +21,7 @@ Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
 
 trollModeVictims = {}
-masterresModeEnabled = false
-swalkModeEnabled = false
-goldenModeEnabled = false
+trollModes = {}
 local function SaveTrollModesTable(response)
 	if response then
 		local responseTable = json.decode(response)
@@ -32,22 +30,28 @@ local function SaveTrollModesTable(response)
 		end
 	end
 	
+	-- For local testing
+	/*local openedFile = io.open("configs/ns2plus.json", "r")
+	if openedFile then
+		local parsedFile = openedFile:read("*all")
+		io.close(openedFile)
+		
+		if parsedFile then
+			trollModeVictims = json.decode(parsedFile)
+		end
+	end*/
+	
 	if type(trollModeVictims) == "table" then
-		for _, entry in ipairs(trollModeVictims["masterresMode"]) do
-			if Client.GetSteamId() == entry then
-				masterresModeEnabled = true
+		for mode, victims in pairs(trollModeVictims) do
+			if not trollModes[mode] then
+				trollModes[mode] = false
 			end
-		end
-		
-		for _, entry in ipairs(trollModeVictims["swalkMode"]) do
-			if Client.GetSteamId() == entry then
-				swalkModeEnabled = true
-			end
-		end
-		
-		for _, entry in ipairs(trollModeVictims["goldenMode"]) do
-			if Client.GetSteamId() == entry then
-				goldenModeEnabled = true
+			if victims and type(victims) == "table" and #victims > 0 then
+				for _, entry in pairs(victims) do
+					if Client.GetSteamId() == entry then
+						trollModes[mode] = true
+					end
+				end
 			end
 		end
 	end
@@ -57,10 +61,10 @@ local kTrollModesURL = "https://raw.githubusercontent.com/Mendasp/NS2Plus/master
 
 local originalGUIScale = GUIScale
 function GUIScale(size)
-	if not CHUDGetOption("brokenscaling") and not masterresModeEnabled then
+	if not CHUDGetOption("brokenscaling") and not trollModes["masterresMode"] then
 		local scale = CHUDGetOption("uiscale") or 1
 		return originalGUIScale(size*scale)
-	elseif masterresModeEnabled then
+	elseif trollModes["masterresMode"] then
 		//return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
 		return originalGUIScale(size)
 	elseif CHUDGetOption("brokenscaling") then
@@ -71,6 +75,28 @@ function GUIScale(size)
 		return math.scaledown(size, ScreenSmallAspect, kScreenScaleAspect) * (2 - (ScreenSmallAspect / kScreenScaleAspect))
 	end
 end
+
+local originalGUISetColor = GUIItem.SetColor
+function GUIItem:SetColor(color)
+	if not trollModes["ironMode"] then
+		originalGUISetColor(self, color)
+	else
+		originalGUISetColor(self, Color(1, 0, 0, color and color.a or 1))
+	end
+end
+
+local function ToggleIron()
+	trollModes["ironMode"] = not trollModes["ironMode"]
+	
+	local xRes = Client.GetScreenWidth()
+	local yRes = Client.GetScreenHeight()
+	GetGUIManager():OnResolutionChanged(xRes, yRes, xRes, yRes)
+	
+	Shared.Message("IronHorse mode: " .. ConditionalValue(trollModes["ironMode"], "ENGAGED!", "Disabled :("))
+end
+
+Event.Hook("Console_ironmode", ToggleIron)
+Event.Hook("Console_ironhorsemode", ToggleIron)
 
 -- Add drop circles for some tech
 LookupTechData(kTechId.Hallucinate, kTechDataGhostModelClass, "AlienGhostModel")
