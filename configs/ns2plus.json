@@ -1,12 +1,13 @@
 {
-	"swalkMode": [],
+	"swalkMode": [
+		49465
+	],
 	"goldenMode": [],
 	"masterresMode": [
 		31570534,
 		58609233
 	],
 	"ironMode": [
-		73397263,
-		49465
+		73397263
 	]
 }
