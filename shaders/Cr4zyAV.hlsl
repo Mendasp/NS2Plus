@@ -101,15 +101,15 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
 	//AV Colouring
 	//green to blue | red bite
 		float4 colourOne = float4(0.1, 0.95, -0.2, 1);
-		float4 colourTwo = float4(.05, .8, .2, 1);
-		float4 colourThree = float4(0, .7, .5, 0);
-		float4 colourFour = float4(0, 0.6, 2, 0);
+		float4 colourTwo = float4(.05, .85, 0, 1);
+		float4 colourThree = float4(0, .75, .12, 0);
+		float4 colourFour = float4(-.1, 0.2, .3, 0);
 		//float4 colourBite = float4(10, 0, 0, 1);
 	//colour for bite when av disabled
 		//float4 disabledBite = float4(10, 2, 1, 1);
 	
 	//set up screen center colouring
-		float4 mainColour = model * edge * colourOne * 2 * clamp(fadedist*2.25,0,1) + model * edge * colourTwo * 1.2 * clamp(1-fadedist*2.5,0,1) * clamp(fadedist*11,0.02,1) + model * edge * colourThree * 1 * (1-clamp(fadedist*9,0.02,1)) * clamp(fadedist*25,0.02,1)  *  1.5 + model * edge * colourFour * 1 * (1-clamp(fadedist*30,0.02,1)) * 2; 
+		float4 mainColour = model * edge * colourOne * 2 * clamp(fadedist*2.25,0,1) + model * edge * colourTwo * 1.2 * clamp(1-fadedist*2.5,0,1) * clamp(fadedist*11,0.02,1) + model * edge * colourThree * 1 * (1-clamp(fadedist*9,0.02,1)) * clamp(fadedist*25,0.02,1)  *  1.5 + model * edge * colourFour * 1 * (1-clamp(fadedist*30,0.02,1)) * 1.5; 
 
 	
 	//set up screen edge colouring
@@ -117,7 +117,7 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
 
 	
 	//outlines for when av is off, edges only
-		float4 offOutline = model * (edge * edge * colourOne * 2 * clamp(fadedist*2.25,0,1) + edge * edge * colourTwo * 1.2 * clamp(1-fadedist*2.5,0,1) * clamp(fadedist*11,0.02,1) + edge * edge * colourThree * 1 * (1-clamp(fadedist*9,0.02,1)) * clamp(fadedist*25,0.02,1) * 1.5 + edge * edge * colourFour * 1 * (1-clamp(fadedist*30,0.02,1)) * 2);
+		float4 offOutline = model * (edge * edge * colourOne * 2 * clamp(fadedist*2.25,0,1) + edge * edge * colourTwo * 1.2 * clamp(1-fadedist*2.5,0,1) * clamp(fadedist*11,0.02,1) + edge * edge * colourThree * 1 * (1-clamp(fadedist*9,0.02,1)) * clamp(fadedist*25,0.02,1) * 1.5 + edge * edge * colourFour * 1.7 * (1-clamp(fadedist*30,0.02,1)) * 3);
 
 	
 	//lerp it together
