@@ -946,7 +946,6 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			Server.SendNetworkMessage("CHUDGlobalCommStats", msg, true)
 		end
 		
-		if CHUDServerOptions["savestats"].currentValue == true then
 			lastRoundStats = {}
 			lastRoundStats.CommStats = CHUDCommStats
 			lastRoundStats.ClientStats = CHUDClientStats
@@ -956,10 +955,12 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.ResearchTree = CHUDResearchTree
 			lastRoundStats.BuildingSummary = CHUDBuildingSummary
 
-			local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
-			if savedServerFile then
-				savedServerFile:write(json.encode(lastRoundStats, { indent = true }))
-				io.close(savedServerFile)
+			if CHUDServerOptions["savestats"].currentValue == true then
+				local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
+				if savedServerFile then
+					savedServerFile:write(json.encode(lastRoundStats, { indent = true }))
+					io.close(savedServerFile)
+				end
 			end
 		end
 	end)
