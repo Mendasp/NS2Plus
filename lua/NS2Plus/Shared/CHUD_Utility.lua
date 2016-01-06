@@ -25,9 +25,9 @@ if Server then
 			local messageList = CHUDWrapTextIntoTable(message, kMaxChatLength)
 			
 			for m = 1, #messageList do
-				Server.SendNetworkMessage("Chat", BuildChatMessage(false, "NS2+", -1, kTeamReadyRoom, kNeutralTeamType, messageList[m]), true)
-				Shared.Message("Chat All - NS2+: " .. messageList[m])
-				Server.AddChatToHistory(messageList[m], "NS2+", 0, kTeamReadyRoom, false)
+				Server.SendNetworkMessage("Chat", BuildChatMessage(false, "[NS2+]", -1, kTeamReadyRoom, kNeutralTeamType, messageList[m]), true)
+				Shared.Message("Chat All - [NS2+]: " .. messageList[m])
+				Server.AddChatToHistory(messageList[m], "[NS2+]", 0, kTeamReadyRoom, false)
 			end
 		
 		end
