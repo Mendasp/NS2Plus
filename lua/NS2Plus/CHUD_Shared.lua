@@ -95,6 +95,7 @@ if not CHUDMainMenu then
 		kills = string.format("integer (0 to %d)", kMaxKills),
 		assists = string.format("integer (0 to %d)", kMaxKills),
 		deaths = string.format("integer (0 to %d)", kMaxDeaths),
+		score = string.format("integer (0 to %d)", kMaxScore),
 		accuracy = "float (0 to 100 by 0.01)",
 		accuracyOnos = "float (-1 to 100 by 0.01)",
 		pdmg = "float (0 to 524287 by 0.01)",
@@ -104,6 +105,7 @@ if not CHUDMainMenu then
 		minutesComm = "float (0 to 1023 by 0.01)",
 		killstreak = "integer (0 to 254)",
 		steamId = "integer",
+		hiveSkill = "integer",
 	}
 
 	local kCHUDEndStatsStatusMessage =

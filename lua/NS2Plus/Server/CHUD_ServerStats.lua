@@ -6,6 +6,13 @@ local CHUDKillGraph = {}
 local CHUDResearchTree = {}
 local CHUDBuildingSummary = {}
 
+local serverStatsPath = "NS2Plus\\Stats\\"
+local lastRoundStats = {}
+
+function CHUDGetLastRoundStats()
+	return lastRoundStats
+end
+
 local function CHUDGetGameStarted()
 	local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
 	
@@ -172,6 +179,7 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 				entry.kills = 0
 				entry.assists = 0
 				entry.deaths = 0
+				entry.score = 0
 				entry.pdmg = 0
 				entry.sdmg = 0
 				entry.hits = 0
@@ -185,6 +193,7 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 			
 			-- These are team independent
 			CHUDClientStats[steamId].playerName = "NSPlayer"
+			CHUDClientStats[steamId].hiveSkill = -1
 			CHUDClientStats[steamId].lastTeam = teamNumber
 			
 			-- Initialize the last life stats
@@ -368,6 +377,7 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 		
 		if stat then
 			stat.playerName = self.playerName
+			stat.hiveSkill = self.playerSkill
 		end
 		
 		return true
@@ -457,6 +467,22 @@ function ScoringMixin:AddDeaths()
 	end
 end
 
+local originalScoringAddScore = ScoringMixin.AddScore
+function ScoringMixin:AddScore(points, res, wasKill)
+	originalScoringAddScore(self, points, res, wasKill)
+	
+	if points ~= nil and self.clientIndex and self.clientIndex > 0 then
+		local steamId = GetSteamIdForClientIndex(self.clientIndex)
+		local teamNumber = self:GetTeamNumber()
+		MaybeInitCHUDClientStats(steamId, nil, teamNumber)
+		local stat = CHUDClientStats[steamId] and CHUDClientStats[steamId][teamNumber]
+		
+		if stat then
+			stat.score = Clamp(stat.score + points, 0, kMaxScore)
+		end
+	end
+end
+
 local function OnSetCHUDOverkill(client, message)
 
 	if client then
@@ -542,14 +568,19 @@ local function CHUDResetStats()
 	CHUDTeamStats[1].onosHits = 0
 	CHUDTeamStats[1].misses = 0
 	CHUDTeamStats[1].rts = {lost = 0, built = 0}
+	-- Easier to read for servers parsing the jsons
+	CHUDTeamStats[1].teamNumber = 1
 	
 	CHUDTeamStats[2] = {}
 	CHUDTeamStats[2].hits = 0
 	CHUDTeamStats[2].misses = 0
 	CHUDTeamStats[2].rts = {lost = 0, built = 0}
+	-- Easier to read for servers parsing the jsons
+	CHUDTeamStats[2].teamNumber = 2
 
 	CHUDResearchTree = {}
 	
+	CHUDBuildingSummary = {}
 	CHUDBuildingSummary[1] = {}
 	CHUDBuildingSummary[2] = {}
 	
@@ -733,6 +764,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			if CHUDClientStats[playerInfo.steamId] and client then
 				local stats = CHUDClientStats[playerInfo.steamId]
 				
+				-- Easier format for easy parsing server-side
+				local newWeaponsTable = {}
 				for wTechId, wStats in pairs(stats["weapons"]) do
 					local accuracy, accuracyOnos = CHUDGetAccuracy(wStats.hits, wStats.misses, wStats.onosHits)
 					
@@ -746,15 +779,22 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					msg.teamNumber = wStats.teamNumber
 					
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
+					
+					newWeaponsTable[EnumToString(kTechId, wTechId)] = wStats
 				end
+				stats["weapons"] = newWeaponsTable
 				
+				-- Easier format for easy parsing server-side
+				local newStatusTable = {}
 				for statusId, classTime in pairs(stats["status"]) do
 					local msg = {}
 					msg.statusId = statusId
 					msg.timeMinutes = classTime/60
 					
+					table.insert(newStatusTable, {statusId = EnumToString(kPlayerStatus, statusId), classTime = classTime})
 					Server.SendNetworkMessage(client, "CHUDEndStatsStatus", msg, true)
 				end
+				stats["status"] = newStatusTable
 			end
 		
 		end
@@ -775,10 +815,12 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					
 					statEntry.isMarine = teamNumber == 1
 					statEntry.playerName = stats.playerName
+					statEntry.hiveSkill = stats.hiveSkill
 					statEntry.kills = entry.kills
 					statEntry.killstreak = entry.killstreak
 					statEntry.assists = entry.assists
 					statEntry.deaths = entry.deaths
+					statEntry.score = entry.score
 					statEntry.accuracy = accuracy
 					statEntry.accuracyOnos = accuracyOnos
 					statEntry.pdmg = entry.pdmg
@@ -819,6 +861,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				if entry.finishedMinute > 0 or entry.teamRes > 0 then
 					Server.SendNetworkMessage("CHUDTechLog", entry, true)
 				end
+				-- Translate for easy parsing server-side
+				entry.techId = EnumToString(kTechId, entry.techId)
 			end
 			
 			for _, entry in ipairs(CHUDRTGraph) do
@@ -829,6 +873,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
 			end
 			
+			local newBuildingSummaryTable = {}
 			for teamNumber, team in pairs(CHUDBuildingSummary) do
 				for techId, entry in pairs(team) do
 						local msg = {}
@@ -837,8 +882,12 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 						msg.built = entry.built
 						msg.lost = entry.lost
 						Server.SendNetworkMessage("CHUDBuildingSummary", msg, true)
+						
+						msg.techId = EnumToString(kTechId, techId)
+						table.insert(newBuildingSummaryTable, msg)
 				end
 			end
+			CHUDBuildingSummary = newBuildingSummaryTable
 		end
 		
 		for _, finalStat in ipairs(finalStats) do
@@ -895,6 +944,23 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			msg.catpackEfficiency = CHUDGetAccuracy(catpackHits, catpackMisses)
 			
 			Server.SendNetworkMessage("CHUDGlobalCommStats", msg, true)
+		end
+		
+		if CHUDServerOptions["savestats"].currentValue == true then
+			lastRoundStats = {}
+			lastRoundStats.CommStats = CHUDCommStats
+			lastRoundStats.ClientStats = CHUDClientStats
+			lastRoundStats.TeamStats = CHUDTeamStats
+			lastRoundStats.RTGraph = CHUDRTGraph
+			lastRoundStats.KillGraph = CHUDKillGraph
+			lastRoundStats.ResearchTree = CHUDResearchTree
+			lastRoundStats.BuildingSummary = CHUDBuildingSummary
+
+			local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
+			if savedServerFile then
+				savedServerFile:write(json.encode(lastRoundStats, { indent = true }))
+				io.close(savedServerFile)
+			end
 		end
 	end)
 

@@ -85,6 +85,12 @@ CHUDServerOptions =
 		valueType = "bool",
 		defaultValue = true,
 		},
+	savestats = {
+		label   = "Save round stats",
+		tooltip = "Saves the last round stats in the NS2Plus\\Stats\\ folder in your config path in json format. Each round played will be saved in a separate file. The file name for each round is the epoch time at round end.",
+		valueType = "bool",
+		defaultValue = false,
+		},
 }
 
 -- Compmod servers allow hidden viewmodels by default
