@@ -126,13 +126,15 @@ local techLogBuildings = set {
 	"Hive",
 }
 
-local oldResetGame
-oldResetGame = Class_ReplaceMethod("NS2Gamerules", "ResetGame",
-	function(self)
-		oldResetGame(self)
+local oldJoinTeam
+oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
+	function(self, player, newTeamNumber, force)
+		local retVals = { oldJoinTeam(self, player, newTeamNumber, force) }
 		
-		CHUDStartingTechPoints["1"] = self.startingLocationNameTeam1
-		CHUDStartingTechPoints["2"] = self.startingLocationNameTeam2
+		CHUDTeamStats[1].maxPlayers = math.max(CHUDTeamStats[1].maxPlayers, self.team1:GetNumPlayers())
+		CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
+		
+		return unpack(retVals)
 	end)
 
 local oldTechResearched = ResearchMixin.TechResearched
@@ -612,13 +614,22 @@ local function CHUDResetStats()
 	end
 end
 
-local oldNS2GamerulesResetGame = NS2Gamerules.ResetGame
-function NS2Gamerules:ResetGame()
-	-- Reset the stats before the actual game so we can get the RT counts correctly
-	CHUDResetStats()
-	
-	oldNS2GamerulesResetGame(self)
-end
+local oldResetGame
+oldResetGame = Class_ReplaceMethod("NS2Gamerules", "ResetGame",
+	function(self)
+		-- Reset the stats before the actual game so we can get the RT counts correctly
+		CHUDResetStats()
+		
+		oldResetGame(self)
+		
+		-- Add the team player counts on game reset
+		CHUDTeamStats[1].maxPlayers = math.max(0, self.team1:GetNumPlayers())
+		CHUDTeamStats[2].maxPlayers = math.max(0, self.team2:GetNumPlayers())
+		
+		-- Starting tech points
+		CHUDStartingTechPoints["1"] = self.startingLocationNameTeam1
+		CHUDStartingTechPoints["2"] = self.startingLocationNameTeam2
+	end)
 
 local function CHUDGetAccuracy(hits, misses, onosHits)
 	local accuracy = 0
@@ -724,14 +735,19 @@ local originalNS2GamerulesEndGame
 originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 	function(self, winningTeam)
 		local gameMinutes = CHUDGetGameTime(true)
+		local gameSeconds = CHUDGetGameTime()
 		
 		originalNS2GamerulesEndGame(self, winningTeam)
 		
+		local newCommStatsTable = {}
 		for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 			local client = Server.GetClientById(playerInfo.clientId)
 			
 			-- Commander stats
 			if CHUDCommStats[playerInfo.steamId] and client then
+				if playerInfo.steamId ~= 0 then
+					table.insert(newCommStatsTable, CHUDCommStats[playerInfo.steamId])
+				end
 				local msg = {}
 				msg.medpackAccuracy = 0
 				msg.medpackResUsed = 0
@@ -957,7 +973,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		end
 		
 		lastRoundStats = {}
-		lastRoundStats.CommStats = CHUDCommStats
+		lastRoundStats.CommStats = newCommStatsTable
 		lastRoundStats.ClientStats = CHUDClientStats
 		lastRoundStats.TeamStats = CHUDTeamStats
 		lastRoundStats.RTGraph = CHUDRTGraph
@@ -987,7 +1003,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		end
 		lastRoundStats.RoundInfo = {}
 		lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
-		lastRoundStats.RoundInfo["roundTime"] = Shared.GetTime()
+		lastRoundStats.RoundInfo["roundTime"] = gameSeconds
 		lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 		lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
 		lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
