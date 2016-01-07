@@ -5,6 +5,7 @@ local CHUDRTGraph = {}
 local CHUDKillGraph = {}
 local CHUDResearchTree = {}
 local CHUDBuildingSummary = {}
+local CHUDStartingTechPoints = {}
 
 local serverStatsPath = "NS2Plus\\Stats\\"
 local lastRoundStats = {}
@@ -33,7 +34,7 @@ local function CHUDGetGameTime(inMinutes)
 	return gameTime
 end
 
-local function AddRTStat(teamNumber, isBuilt, isDestroyed)
+local function AddRTStat(teamNumber, isBuilt, isDestroyed, position, locationName)
 	if teamNumber == 1 or teamNumber == 2 then
 		local rtsTable = CHUDTeamStats[teamNumber].rts
 		local finishedBuilding = isBuilt and not isDestroyed
@@ -41,7 +42,7 @@ local function AddRTStat(teamNumber, isBuilt, isDestroyed)
 			-- We're going to save this for the RT graph, we don't want unfinished nodes in the graph
 			-- We can reconstruct it considering that if destroyed is false it means it's a new one
 			-- This way we only send a bool instead of an int
-			table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = isDestroyed or false, gameMinute = CHUDGetGameTime(true)})
+			table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = isDestroyed or false, gameMinute = CHUDGetGameTime(true), position = position, locationName = locationName})
 		end
 		
 		-- The unfinished nodes will be computed on the overall built/lost data
@@ -125,13 +126,22 @@ local techLogBuildings = set {
 	"Hive",
 }
 
+local oldResetGame
+oldResetGame = Class_ReplaceMethod("NS2Gamerules", "ResetGame",
+	function(self)
+		oldResetGame(self)
+		
+		CHUDStartingTechPoints["1"] = self.startingLocationNameTeam1
+		CHUDStartingTechPoints["2"] = self.startingLocationNameTeam2
+	end)
+
 local oldTechResearched = ResearchMixin.TechResearched
 function ResearchMixin:TechResearched(structure, researchId)
 	oldTechResearched(self, structure, researchId)
 	if structure and structure:GetId() == self:GetId() then
 		if researchId == kTechId.Recycle then
 			if structure:isa("ResourceTower") then
-				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true)
+				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true, tostring(structure:GetOrigin()), structure:GetLocationName())
 			end
 		elseif techLoggedAsBuilding[researchId] then
 			AddBuildingStat(structure:GetTeamNumber(), researchId, false)
@@ -147,7 +157,7 @@ function ConstructMixin:OnConstructionComplete(builder)
 	oldConstructionComplete(self, builder)
 	
 	if self:isa("ResourceTower") then
-		AddRTStat(self:GetTeamNumber(), true, false)
+		AddRTStat(self:GetTeamNumber(), true, false, tostring(self:GetOrigin()), self:GetLocationName())
 	elseif self.GetClassName and techLogBuildings[self:GetClassName()] then
 		AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId())
 		AddBuildingStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
@@ -302,9 +312,9 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 	end
 end
 
-local function AddTeamGraphKill(teamNumber)
+local function AddTeamGraphKill(teamNumber, killerPosition, killerLocationName, victimPosition, victimLocationName)
 	if teamNumber == 1 or teamNumber == 2 then
-		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true)})
+		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = killerPosition, killerLocationName = killerLocationName, victimPosition = victimPosition, victimLocationName = victimLocationName})
 	end
 end
 
@@ -517,7 +527,7 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 		
 		if killedFromDamage then
 			if self:isa("ResourceTower") then
-				AddRTStat(targetTeam, self:GetIsBuilt(), true)
+				AddRTStat(targetTeam, self:GetIsBuilt(), true, tostring(self:GetOrigin()), self:GetLocationName())
 			elseif not self:isa("Player") and not self:isa("Weapon") and self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
 				AddBuildingStat(targetTeam, self.GetTechId and self:GetTechId(), true)
 			end
@@ -954,6 +964,29 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		lastRoundStats.KillGraph = CHUDKillGraph
 		lastRoundStats.ResearchTree = CHUDResearchTree
 		lastRoundStats.BuildingSummary = CHUDBuildingSummary
+		lastRoundStats.ServerInfo = {}
+		lastRoundStats.ServerInfo["ip"] = Server.GetIpAddress()
+		lastRoundStats.ServerInfo["port"] = Server.GetPort()
+		lastRoundStats.ServerInfo["name"] = Server.GetName()
+		lastRoundStats.ServerInfo["slots"] = Server.GetMaxPlayers()
+		lastRoundStats.ServerInfo["mods"] = {}
+		local modNum
+		local activeModIds = {}
+		
+		-- Can't get the mod title correctly unless we do this
+		-- GetModTitle can't get it from the active mod list index, it uses the normal one
+		for modNum = 1, Server.GetNumActiveMods() do
+			activeModIds[Server.GetActiveModId(modNum)] = true
+		end
+		for modNum = 1, Server.GetNumMods() do
+			if activeModIds[Server.GetModId(modNum)] then
+				table.insert(lastRoundStats.ServerInfo["mods"], {modId = Server.GetModId(modNum), name = Server.GetModTitle(modNum)})
+			end
+		end
+		lastRoundStats.RoundInfo = {}
+		lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
+		lastRoundStats.RoundInfo["roundTime"] = Shared.GetTime()
+		lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 
 		if CHUDServerOptions["savestats"].currentValue == true then
 			local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
@@ -1025,7 +1058,7 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 		
 		if killerSteamId and killerTeam ~= targetTeam and not self.isHallucination then
 			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
-			AddTeamGraphKill(killerTeam)
+			AddTeamGraphKill(killerTeam, tostring(killer:GetOrigin()), killer:GetLocationName(), tostring(self:GetOrigin()), self:GetLocationName())
 		end
 		
 	end)
