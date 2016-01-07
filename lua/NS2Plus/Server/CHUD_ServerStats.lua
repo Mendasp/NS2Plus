@@ -969,6 +969,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		lastRoundStats.ServerInfo["port"] = Server.GetPort()
 		lastRoundStats.ServerInfo["name"] = Server.GetName()
 		lastRoundStats.ServerInfo["slots"] = Server.GetMaxPlayers()
+		lastRoundStats.ServerInfo["buildNumber"] = Shared.GetBuildNumber()
+		lastRoundStats.ServerInfo["roundDate"] = Shared.GetSystemTime()
 		lastRoundStats.ServerInfo["mods"] = {}
 		local modNum
 		local activeModIds = {}
@@ -987,6 +989,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
 		lastRoundStats.RoundInfo["roundTime"] = Shared.GetTime()
 		lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
+		lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
+		lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
 
 		if CHUDServerOptions["savestats"].currentValue == true then
 			local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
