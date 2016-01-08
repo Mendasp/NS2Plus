@@ -4,31 +4,31 @@ CHUDServerOptions =
 {
 	allow_ambient = {
 		label   = "Ambient sounds",
-		tooltip = "Enables or disables the ambient sounds option for clients.",
+		tooltip = "Enables or disables the ability to disable map ambient sounds for clients.",
 		valueType = "bool",
 		defaultValue = true,
 		},
 	allow_mapparticles = {
 		label   = "Map particles",
-		tooltip = "Enables or disables the map particles option for clients.",
+		tooltip = "Enables or disables the ability to disable the map particles for clients.",
 		valueType = "bool",
 		defaultValue = true,
 		},
 	allow_nsllights = {
 		label   = "NSL Lights",
-		tooltip = "Enables or disables the NSL lights option for clients.",
+		tooltip = "Enables or disables the ability to use the NSL lights for clients.",
 		valueType = "bool",
 		defaultValue = true,
 		},
 	allow_deathstats = {
 		label   = "NS2+ personal stats",
-		tooltip = "Enables or disables the NS2+ stats display for clients.",
+		tooltip = "Enables or disables the display of stats when players die.",
 		valueType = "bool",
 		defaultValue = true,
 		},
 	allow_drawviewmodel = {
 		label   = "Draw viewmodel",
-		tooltip = "Enables or disables the draw viewmodel option for clients.",
+		tooltip = "Enables or disables the ability to hide player models for clients.",
 		valueType = "bool",
 		defaultValue = false,
 		},
@@ -75,7 +75,7 @@ CHUDServerOptions =
 		},
 	showplayerskill = {
 		label   = "Show player skill pregame",
-		tooltip = "Shows the player's Hive skill on the scoreboard before the game starts.",
+		tooltip = "Shows each player's Hive skill on the scoreboard before the game starts.",
 		valueType = "bool",
 		defaultValue = false,
 		},
