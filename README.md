@@ -103,7 +103,7 @@ Server operators can adjust some features for NS2+ through the console (typing "
 
 Stats format
 ============
-For the modders or people interested in making use of the stats gathered by NS2+, they can either call CHUDGetLastRoundStats(), or use the "savestats" server option, which will give them access to the tables that NS2+ uses to store the info during the round that gets sent to the players at the end of the game.
+For the modders or people interested in making use of the stats gathered by NS2+, they can either call CHUDGetLastRoundStats() after the round has ended, or use the "savestats" server option, which will give them access to the tables that NS2+ uses to store the info during the round that gets sent to the players at the end of the game.
 
 **ServerInfo**
 
@@ -165,8 +165,8 @@ It also has a table ("weapons") for the weapons used by the player, which contai
 | onosHits   | Number of attacks that hit an Onos.                   |
 | misses     | Number of attacks that missed.                        |
 | kills      | Number of kills with this weapon.                     |
-| pdmg       | Player damage.                                        |
-| sdmg       | Structure damage.                                     |
+| pdmg       | Player damage with this weapon.                       |
+| sdmg       | Structure damage with this weapon.                    |
 
 Also contains a status table ("status"), which shows the breakdown of classes for the player during the round:
 
@@ -247,13 +247,13 @@ Even though it is called ResearchTree it also logs the completion of certain imp
 
 **RTGraph**
 
-| Field        | Description                                                             |
-|--------------|-------------------------------------------------------------------------|
-| teamNumber   | Team that owns this RT (1 = Marines, 2 = Aliens).                       |
-| position     | Map coordinates for this RT.                                            |
-| gameMinute   | Minute of the game where this happened.                                 |
-| locationName | Name of the location for this RT.                                       |
-| destroyed    | **true** = The RT was built. **false** = The RT was recycled/destroyed. |
+| Field        | Description                                                                             |
+|--------------|-----------------------------------------------------------------------------------------|
+| teamNumber   | Team that owns this RT (1 = Marines, 2 = Aliens).                                       |
+| position     | Map coordinates for this RT.                                                            |
+| gameMinute   | Minute of the game where this happened.                                                 |
+| locationName | Name of the location for this RT.                                                       |
+| destroyed    | **true** = The RT was recycled/destroyed (-1 RT). **false** = The RT was built (+1 RT). |
 
 **KillGraph**
 
@@ -357,4 +357,4 @@ Past NS2+ fixes now included in vanilla NS2:
 - [265] Fixed inactive/unbuilt structures not blinking red when under attack.
 - [265] Fixed alien structures not blinking red when uncysted.
 
-Copyright 2015 - [Mendasp](http://steamcommunity.com/profiles/76561197960305571/). All rights reserved.
+Copyright 2016 - [Mendasp](http://steamcommunity.com/profiles/76561197960305571/). All rights reserved.
