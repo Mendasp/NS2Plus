@@ -746,7 +746,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			-- Commander stats
 			if CHUDCommStats[playerInfo.steamId] and client then
 				if playerInfo.steamId ~= 0 then
-					table.insert(newCommStatsTable, CHUDCommStats[playerInfo.steamId])
+					newCommStatsTable[playerInfo.steamId] = CHUDCommStats[playerInfo.steamId]
 				end
 				local msg = {}
 				msg.medpackAccuracy = 0
