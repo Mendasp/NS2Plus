@@ -80,7 +80,192 @@ Latest changes
 	- Added name change limiter, it will limit the amount of name changes allowed under a certain time.
 	- Added "unbind" console command as an alias of "clear_binding", as it's easier to remember.
 
-=================
+Server settings
+===============
+Server operators can adjust some features for NS2+ through the console (typing "sv_plus" in console), or change them in the NS2PlusServerSettings.json file located in the server config folder.
+- Enable/Disable client features
+	- **allow_ambient:** Enables or disables the ability to disable map ambient sounds for clients.
+	- **allow_mapparticles:** Enables or disables the ability to disable the map particles for clients.
+	- **allow_nsllights:** Enables or disables the ability to use the NSL lights for clients.
+	- **allow_deathstats:** Enables or disables the display of stats when players die.
+	- **allow_drawviewmodel:** Enables or disables the ability to hide player models. Disabled by default.
+	
+- Server features
+	- **autodisplayendstats:** Enables or disables the end game stats displaying automatically upon game end.
+	- **endstatsteambreakdown:** Enables or disables the end game stats displaying the full team breakdown. This is the table with kills, deaths, accuracy, etc.
+	- **modupdater:** Enables or disables the mod update checker. This will notify players that mods running on the server have been updated during the round and that new players cannot join until the map is changed. If the server is using a mod backup server it will display a different notification.
+	- **modupdatercheckinterval:** Sets the update check interval for the mod updater (in minutes).
+	- **modupdaterreminderinterval:** Sets the time between reminders when an update has been found. Set to 0 to disable (only shows once).
+	- **showavgteamskill:** Shows the average team skill at the top of the scoreboard for clients.
+	- **showplayerskill:** Shows each player's Hive skill on the scoreboard before the game starts.
+	- **hiveconnection:** Enables or disables the server trying to contact the Hive server. Which has info about player skill and badges. This will set everyone to 0 skill so FET voting will be broken.
+	- **savestats:** Saves the last round stats in the NS2Plus\\Stats\\ folder in your config path in json format. Each round played will be saved in a separate file. The file name for each round is the epoch time at round end. Disabled by default.
+
+Stats format
+============
+For the modders or people interested in making use of the stats gathered by NS2+, they can either call CHUDGetLastRoundStats(), or use the "savestats" server option, which will give them access to the tables that NS2+ uses to store the info during the round that gets sent to the players at the end of the game.
+
+**ServerInfo**
+
+| Field       | Description                                                                        |
+|-------------|------------------------------------------------------------------------------------|
+| roundDate   | Epoch time for the round.                                                          |
+| slots       | Number of slots for this server.                                                   |
+| mods        | Table that contains the modId and name for each of the mods active in this server. |
+| buildNumber | NS2 build number for this round.                                                   |
+| ip          | Server IP.                                                                         |
+| port        | Server port.                                                                       |
+| name        | Server name.                                                                       |
+
+**RoundInfo**
+
+| Field             | Description                                                                 |
+|-------------------|-----------------------------------------------------------------------------|
+| winningTeam       | Team that won the game (0 = Draw, 1 = Marines, 2 = Aliens).                 |
+| roundTime         | Round length, in seconds.                                                   |
+| tournamentMode    | Will show if the game had tournament mode enabled (true/false).             |
+| mapName           | Name of the map played.                                                     |
+| startingLocations | Table with the starting locations for each team, (1 = Marines, 2 = Aliens). |
+
+**BuildingSummary**
+
+| Field      | Description                                             |
+|------------|---------------------------------------------------------|
+| teamNumber | Team that owns this building (1 = Marines, 2 = Aliens). |
+| techId     | Name of the building in the TechId table.               |
+| built      | Number of buildings of this type completed.             |
+| lost       | Number of buildings of this type lost.                  |
+
+**ClientStats**
+
+The first field in this table is the SteamID for each recorded player in the game. Inside each table, you will find tables for each team that the player played in (1 = Marines, 2 = Aliens), each of these team tables has these fields:
+
+| Field         | Description                                                           |
+|---------------|-----------------------------------------------------------------------|
+| kills         | Number of kills.                                                      |
+| deaths        | Number of deaths.                                                     |
+| assists       | Number of assists.                                                    |
+| score         | Player score for the round.                                           |
+| timeBuilding  | Time that the player has spent building during the round, in seconds. |
+| hits          | Number of attacks that hit (this includes Onos hits).                 |
+| onosHits      | Number of attacks that hit an Onos.                                   |
+| misses        | Number of attacks that missed.                                        |
+| killstreak    | Best killstreak during the round.                                     |
+| timePlayed    | Time that the player was on this team for the round, in seconds.      |
+| commanderTime | Time that the player spent as commander for this team, in seconds.    |
+| pdmg          | Player damage.                                                        |
+| sdmg          | Structure damage.                                                     |
+
+It also has a table ("weapons") for the weapons used by the player, which contains the following:
+
+| Field      | Description                                           |
+|------------|-------------------------------------------------------|
+| teamNumber | The player's team (1 = Marines, 2 = Aliens).          |
+| hits       | Number of attacks that hit (this includes Onos hits). |
+| onosHits   | Number of attacks that hit an Onos.                   |
+| misses     | Number of attacks that missed.                        |
+| kills      | Number of kills with this weapon.                     |
+| pdmg       | Player damage.                                        |
+| sdmg       | Structure damage.                                     |
+
+Also contains a status table ("status"), which shows the breakdown of classes for the player during the round:
+
+| Field     | Description                     |
+|-----------|---------------------------------|
+| statusId  | Name of the class.              |
+| classTime | Time as this class, in seconds. |
+
+There is another table for the last life ("last"), which is used internally for sending the stats when the player dies, this shouldn't be of much use, but in case someone wants to use it, the fields are as follows:
+
+| Field    | Description                                                            |
+|----------|------------------------------------------------------------------------|
+| hits     | Number of attacks that hit in the last life (this includes Onos hits). |
+| onosHits | Number of attacks that hit an Onos in the last life.                   |
+| misses   | Number of attacks that missed in the last life.                        |
+| kills    | Number of kills in the last life.                                      |
+| pdmg     | Player damage in the last life.                                        |
+| sdmg     | Structure damage in the last life.                                     |
+
+These are the rest of the fields inside each SteamID entry:
+
+| Field      | Description                               |
+|------------|-------------------------------------------|
+| playerName | The player nickname ingame.               |
+| lastTeam   | Last team the player belonged to.         |
+| hiveSkill  | Hive Skill for the player for this round. |
+
+**CommStats**
+
+The first field in this table is the SteamID for each recorded marine Commander in the game. Inside each table, you will find a table for each type of drop, as follows:
+
+medpack
+
+| Field      | Description                                                                    |
+|------------|--------------------------------------------------------------------------------|
+| hits       | Number of medpacks dropped directly on players. Used for the medpack accuracy. |
+| picks      | Number of medpacks picked up by players at any point.                          |
+| misses     | Number of medpacks that are never picked up.                                   |
+| refilled   | Amount of health given to players through medpacks.                            |
+
+ammopack
+
+| Field      | Description                                           |
+|------------|-------------------------------------------------------|
+| hits       | Number of ammopacks picked up by players.             |
+| misses     | Number of ammopacks that are never picked up.         |
+| refilled   | Amount of bullets given to players through ammopacks. |
+
+catpack
+
+| Field  | Description                                  |
+|--------|----------------------------------------------|
+| hits   | Number of catpacks picked up by players.     |
+| misses | Number of catpacks that are never picked up. |
+
+**ResearchTree**
+
+Even though it is called ResearchTree it also logs the completion of certain important buildings.
+
+| Field          | Description                                              |
+|----------------|----------------------------------------------------------|
+| teamNumber     | Team that owns this research (1 = Marines, 2 = Aliens).  |
+| techId         | Name of the research in the TechId table.                |
+| activeRTs      | Number of RTs finished when the research was finished.   |
+| finishedMinute | Game minute when the research was finished.              |
+| teamRes        | Amount of team res when the research was finished.       |
+
+**TeamStats**
+
+| Field      | Description                                                           |
+|------------|-----------------------------------------------------------------------|
+| teamNumber | Team for the stats stored in this table (1 = Marines, 2 = Aliens).    |
+| hits       | Number of attacks that hit (this includes Onos hits).                 |
+| onosHits   | Number of attacks that hit an Onos.                                   |
+| misses     | Number of attacks that missed.                                        |
+| rts        | Table that includes the number of built and lost RTs during the game. |
+| maxPlayers | Maximum amount of players that this team had for the round.           |
+
+**RTGraph**
+
+| Field        | Description                                                             |
+|--------------|-------------------------------------------------------------------------|
+| teamNumber   | Team that owns this RT (1 = Marines, 2 = Aliens).                       |
+| position     | Map coordinates for this RT.                                            |
+| gameMinute   | Minute of the game where this happened.                                 |
+| locationName | Name of the location for this RT.                                       |
+| destroyed    | **true** = The RT was built. **false** = The RT was recycled/destroyed. |
+
+**KillGraph**
+
+| Field              | Description                                                |
+|--------------------|------------------------------------------------------------|
+| teamNumber         | Team that got awarded this kill (1 = Marines, 2 = Aliens). |
+| gameMinute         | Minute of the game where this happened.                    |
+| killerPosition     | Map coordinates for the killer's position.                 |
+| killerLocationName | Location name for the killer's position.                   |
+| victimPosition     | Map coordinates for the victim's position.                 |
+| victimLocationName | Location name for the victim's position.                   |
+
 Credits/Thanks to
 =================
 - Regular contributors
@@ -95,8 +280,7 @@ Credits/Thanks to
 	- [**Ghoul**](https://github.com/BrightPaul)
 	- **Sewlek**
 	- [**Person8880**](https://github.com/Person8880)
-	
-=================
+
 Past NS2+ features now included in vanilla NS2:
 =================
 - [276] Added extra bindings for voiceover options: "Weld me", "Follow me", etc.
@@ -148,7 +332,6 @@ Past NS2+ features now included in vanilla NS2:
 - [266] Connections between Phase Gates or Gorge Tunnels are now colored depending on the team. If there’s more than 2 PGs it will switch to lines with animated arrows.
 - [265] Parasited players display their name yellow for teammates and spectators.
 
-=================
 Past NS2+ fixes now included in vanilla NS2:
 =================
 - [274] Fixed scoreboard hiding the GUIHoverMenu every frame as long as the scoreboard wasn't up.
