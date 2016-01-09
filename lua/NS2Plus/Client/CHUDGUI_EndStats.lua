@@ -2643,6 +2643,12 @@ local function CHUDSetTechLog(message)
 		entry.iconSizeY = 24
 		entry.teamNumber = message.teamNumber
 		entry.name = GetDisplayNameForTechId(message.techId)
+		if message.built == false then
+			entry.name = string.format(Locale.ResolveString("UNBUILT_STRUCTURE"), entry.name)
+		end
+		if message.recycled == true then
+			entry.name = entry.name .. " (Recycled)"
+		end
 		
 		local minutes = math.floor(message.finishedMinute)
 		local seconds = (message.finishedMinute % 1)*60
@@ -2652,6 +2658,8 @@ local function CHUDSetTechLog(message)
 		entry.activeRTs = message.activeRTs
 		entry.teamRes = message.teamRes
 		entry.destroyed = message.destroyed
+		entry.built = message.built
+		entry.recycled = message.recycled
 		
 		table.insert(techLogTable, entry)
 	end

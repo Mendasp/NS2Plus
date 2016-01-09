@@ -79,6 +79,8 @@ if not CHUDMainMenu then
 		activeRTs = "integer (0 to 23)",
 		teamRes = "float (0 to " .. kMaxTeamResources .." by 0.01)",
 		destroyed = "boolean",
+		built = "boolean",
+		recycled = "boolean",
 	}
 	
 	local kCHUDBuildingSummaryMessage =

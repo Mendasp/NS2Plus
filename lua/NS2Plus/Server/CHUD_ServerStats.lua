@@ -43,30 +43,26 @@ local function CHUDGetGameTime(inMinutes)
 	return gameTime
 end
 
-local function AddRTStat(teamNumber, isBuilt, isDestroyed, position, locationName)
+local function AddRTStat(teamNumber, built, destroyed, recycled, position, locationName)
 	if teamNumber == 1 or teamNumber == 2 then
 		local rtsTable = CHUDTeamStats[teamNumber].rts
-		local finishedBuilding = isBuilt and not isDestroyed
-		if isBuilt then
-			-- We're going to save this for the RT graph, we don't want unfinished nodes in the graph
-			-- We can reconstruct it considering that if destroyed is false it means it's a new one
-			-- This way we only send a bool instead of an int
-			table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = isDestroyed or false, gameMinute = CHUDGetGameTime(true), position = position, locationName = locationName})
-		end
+		local finishedBuilding = built and not destroyed
+		
+		table.insert(CHUDRTGraph, {teamNumber = teamNumber, built = built, destroyed = destroyed, recycled = recycled, gameMinute = CHUDGetGameTime(true), position = position, locationName = locationName})
 		
 		-- The unfinished nodes will be computed on the overall built/lost data
-		rtsTable.lost = rtsTable.lost + ConditionalValue(isDestroyed, 1, 0)
+		rtsTable.lost = rtsTable.lost + ConditionalValue(destroyed, 1, 0)
 		rtsTable.built = rtsTable.built + ConditionalValue(finishedBuilding, 1, 0)
 	end
 end
 
-local function AddTechStat(teamNumber, techId, destroyed)
+local function AddTechStat(teamNumber, techId, built, destroyed, recycled)
 	if (teamNumber == 1 or teamNumber == 2) and techId then
 		local teamInfoEnt = GetTeamInfoEntity(teamNumber)
 		
 		-- Advanced armory displays both "Upgrade to advanced armory" and "Advanced weaponry", filter one
 		if techId ~= kTechId.AdvancedWeaponry then
-			table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = CHUDGetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources(), destroyed = destroyed })
+			table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = CHUDGetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources(), destroyed = destroyed, built = built, recycled = recycled })
 		end
 	end
 end
@@ -154,13 +150,16 @@ function ResearchMixin:TechResearched(structure, researchId)
 	if structure and structure:GetId() == self:GetId() then
 		if researchId == kTechId.Recycle then
 			if structure:isa("ResourceTower") then
-				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true, tostring(structure:GetOrigin()), structure:GetLocationName())
+				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true, true, tostring(structure:GetOrigin()), structure:GetLocationName())
+			elseif structure.GetClassName and techLogBuildings[structure:GetClassName()] then
+				AddTechStat(structure:GetTeamNumber(), structure.GetTechId and structure:GetTechId(), structure:GetIsBuilt(), true, true)
+				AddBuildingStat(structure:GetTeamNumber(), structure.GetTechId and structure:GetTechId(), true)
 			end
 		elseif techLoggedAsBuilding[researchId] then
 			AddBuildingStat(structure:GetTeamNumber(), researchId, false)
 		else
 			-- Don't add recycles to the tech log
-			AddTechStat(structure:GetTeamNumber(), researchId, false)
+			AddTechStat(structure:GetTeamNumber(), researchId, true, false, false)
 		end
 	end
 end
@@ -170,9 +169,9 @@ function ConstructMixin:OnConstructionComplete(builder)
 	oldConstructionComplete(self, builder)
 	
 	if self:isa("ResourceTower") then
-		AddRTStat(self:GetTeamNumber(), true, false, tostring(self:GetOrigin()), self:GetLocationName())
+		AddRTStat(self:GetTeamNumber(), true, false, false, tostring(self:GetOrigin()), self:GetLocationName())
 	elseif self.GetClassName and techLogBuildings[self:GetClassName()] then
-		AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
+		AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true, false, false)
 		AddBuildingStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
 	elseif self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
 		AddBuildingStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
@@ -553,19 +552,19 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 		
 		if killedFromDamage then
 			if self:isa("ResourceTower") then
-				AddRTStat(targetTeam, self:GetIsBuilt(), true, tostring(self:GetOrigin()), self:GetLocationName())
+				AddRTStat(targetTeam, self:GetIsBuilt(), true, false, tostring(self:GetOrigin()), self:GetLocationName())
 			elseif not self:isa("Player") and not self:isa("Weapon") then
 				if className then
 					if not notLoggedBuildings[className] then
 						AddBuildingStat(targetTeam, self.GetTechId and self:GetTechId(), true)
 					end
 					if techLogBuildings[className] then
-						AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true)
+						AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), self:GetIsBuilt(), true, false)
 						-- If a hive died, we add the biomass level to the tech log
 						-- If all hives died, we show biomass 1 as lost
 						-- This makes it possible to see the biomass level during the game
 						if biomassLevel then
-							AddTechStat(self:GetTeamNumber(), kBioMassTechIds[Clamp(biomassLevel, 1, 9)], biomassLevel == 0)
+							AddTechStat(self:GetTeamNumber(), kBioMassTechIds[Clamp(biomassLevel, 1, 9)], true, biomassLevel == 0, false)
 						end
 					end
 				end
@@ -928,8 +927,11 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				entry.techId = EnumToString(kTechId, entry.techId)
 			end
 			
+			-- Don't send unbuilt nodes, the RT graph will only show changes in finished nodes
 			for _, entry in ipairs(CHUDRTGraph) do
-				Server.SendNetworkMessage("CHUDRTGraph", entry, true)
+				if entry.built == true then
+					Server.SendNetworkMessage("CHUDRTGraph", entry, true)
+				end
 			end
 			
 			for _, entry in ipairs(CHUDKillGraph) do
