@@ -263,7 +263,7 @@ Even though it is called ResearchTree it also logs the completion and loss of ce
 
 **RTGraph**
 
-When "destroyed" is **false** it means that a new RT was completed. When destroyed is true, we have to take a look at the "built" and "recycled" fields to see if it was recycled or not and if it was finished or not. We can rebuild the RT graph by ignoring the entries of unbuilt RTs.
+When "destroyed" is **false** it means that a new RT was completed. When "destroyed" is **true**, we have to take a look at the "built" and "recycled" fields to see if it was recycled or not and if it was fully built or not. We can rebuild the RT graph by ignoring the entries of unbuilt RTs.
 
 | Field        | Description                                                                             |
 |--------------|-----------------------------------------------------------------------------------------|
