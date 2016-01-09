@@ -10,6 +10,15 @@ local CHUDStartingTechPoints = {}
 local serverStatsPath = "NS2Plus\\Stats\\"
 local lastRoundStats = {}
 
+local minimapExtents = {}
+local function OnMapLoadEntity(className, groupName, values)
+	if className == "minimap_extents" then
+		minimapExtents.scale = tostring(values.scale)
+		minimapExtents.origin = tostring(values.origin)
+	end
+end
+Event.Hook("MapLoadEntity", OnMapLoadEntity)
+
 function CHUDGetLastRoundStats()
 	return lastRoundStats
 end
@@ -51,13 +60,13 @@ local function AddRTStat(teamNumber, isBuilt, isDestroyed, position, locationNam
 	end
 end
 
-local function AddTechStat(teamNumber, techId)
+local function AddTechStat(teamNumber, techId, destroyed)
 	if (teamNumber == 1 or teamNumber == 2) and techId then
 		local teamInfoEnt = GetTeamInfoEntity(teamNumber)
 		
 		-- Advanced armory displays both "Upgrade to advanced armory" and "Advanced weaponry", filter one
 		if techId ~= kTechId.AdvancedWeaponry then
-			table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = CHUDGetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources()})
+			table.insert(CHUDResearchTree, { teamNumber = teamNumber, techId = techId, finishedMinute = CHUDGetGameTime(true), activeRTs = teamInfoEnt:GetNumResourceTowers(), teamRes = teamInfoEnt:GetTeamResources(), destroyed = destroyed })
 		end
 	end
 end
@@ -128,11 +137,13 @@ local techLogBuildings = set {
 
 local oldJoinTeam
 oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
-	function(self, player, newTeamNumber, force)
-		local retVals = { oldJoinTeam(self, player, newTeamNumber, force) }
+	function(self, ...)
+		local retVals = { oldJoinTeam(self, ...) }
 		
-		CHUDTeamStats[1].maxPlayers = math.max(CHUDTeamStats[1].maxPlayers, self.team1:GetNumPlayers())
-		CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
+		if CHUDGetGameStarted() then
+			CHUDTeamStats[1].maxPlayers = math.max(CHUDTeamStats[1].maxPlayers, self.team1:GetNumPlayers())
+			CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
+		end
 		
 		return unpack(retVals)
 	end)
@@ -149,7 +160,7 @@ function ResearchMixin:TechResearched(structure, researchId)
 			AddBuildingStat(structure:GetTeamNumber(), researchId, false)
 		else
 			-- Don't add recycles to the tech log
-			AddTechStat(structure:GetTeamNumber(), researchId)
+			AddTechStat(structure:GetTeamNumber(), researchId, false)
 		end
 	end
 end
@@ -161,7 +172,7 @@ function ConstructMixin:OnConstructionComplete(builder)
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false, tostring(self:GetOrigin()), self:GetLocationName())
 	elseif self.GetClassName and techLogBuildings[self:GetClassName()] then
-		AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId())
+		AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
 		AddBuildingStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
 	elseif self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
 		AddBuildingStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), false)
@@ -314,9 +325,9 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 	end
 end
 
-local function AddTeamGraphKill(teamNumber, killerPosition, killerLocationName, victimPosition, victimLocationName)
+local function AddTeamGraphKill(teamNumber, killer, victim)
 	if teamNumber == 1 or teamNumber == 2 then
-		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = killerPosition, killerLocationName = killerLocationName, victimPosition = victimPosition, victimLocationName = victimLocationName})
+		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = tostring(killer:GetOrigin()), killerLocationName = killer:GetLocationName(), killerClass = killer:GetPlayerStatusDesc(), victimPosition = tostring(victim:GetOrigin()), victimLocationName = victim:GetLocationName(), victimClass = victim:GetPlayerStatusDesc()})
 	end
 end
 
@@ -521,8 +532,21 @@ function SendDamageMessage( attacker, target, amount, point, overkill )
 	
 end
 
+local kBioMassTechIds = enum({ kTechId.BioMassOne, kTechId.BioMassTwo, kTechId.BioMassThree,
+						kTechId.BioMassFour, kTechId.BioMassFive, kTechId.BioMassSix,
+						kTechId.BioMassSeven, kTechId.BioMassEight, kTechId.BioMassNine })
 local oldTakeDamage = LiveMixin.TakeDamage
 function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUsed, healthUsed, damageType, preventAlert)
+		-- If a Hive dies, we'll log the biomass level
+		local className
+		local biomassLevel
+		if self.GetClassName then
+			className = self:GetClassName()
+			if className == "Hive" then
+				biomassLevel = self:GetTeam():GetBioMassLevel()-self:GetBioMassLevel()
+			end
+		end
+		
 		killedFromDamage, damageDone = oldTakeDamage(self, damage, attacker, doer, point, direction, armorUsed, healthUsed, damageType, preventAlert)
 		
 		local targetTeam = self:GetTeamNumber()
@@ -530,8 +554,21 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 		if killedFromDamage then
 			if self:isa("ResourceTower") then
 				AddRTStat(targetTeam, self:GetIsBuilt(), true, tostring(self:GetOrigin()), self:GetLocationName())
-			elseif not self:isa("Player") and not self:isa("Weapon") and self.GetClassName and not notLoggedBuildings[self:GetClassName()] then
-				AddBuildingStat(targetTeam, self.GetTechId and self:GetTechId(), true)
+			elseif not self:isa("Player") and not self:isa("Weapon") then
+				if className then
+					if not notLoggedBuildings[className] then
+						AddBuildingStat(targetTeam, self.GetTechId and self:GetTechId(), true)
+					end
+					if techLogBuildings[className] then
+						AddTechStat(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true)
+						-- If a hive died, we add the biomass level to the tech log
+						-- If all hives died, we show biomass 1 as lost
+						-- This makes it possible to see the biomass level during the game
+						if biomassLevel then
+							AddTechStat(self:GetTeamNumber(), kBioMassTechIds[Clamp(biomassLevel, 1, 9)], biomassLevel == 0)
+						end
+					end
+				end
 			end
 		end
 		
@@ -887,7 +924,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				if entry.finishedMinute > 0 or entry.teamRes > 0 then
 					Server.SendNetworkMessage("CHUDTechLog", entry, true)
 				end
-				-- Translate for easy parsing server-side
+				-- Translate for easy parsing in the exported data
 				entry.techId = EnumToString(kTechId, entry.techId)
 			end
 			
@@ -897,6 +934,9 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			
 			for _, entry in ipairs(CHUDKillGraph) do
 				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
+				-- Translate for easy parsing in the exported data
+				entry.killerClass = EnumToString(kPlayerStatus, entry.killerClass)
+				entry.victimClass = EnumToString(kPlayerStatus, entry.victimClass)
 			end
 			
 			local newBuildingSummaryTable = {}
@@ -1003,6 +1043,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		end
 		lastRoundStats.RoundInfo = {}
 		lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
+		lastRoundStats.RoundInfo["minimapExtents"] = minimapExtents
 		lastRoundStats.RoundInfo["roundTime"] = gameSeconds
 		lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 		lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
@@ -1017,11 +1058,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		end
 	end)
 
-local originalPlayerOnKill
-originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
+Class_AddMethod("Player", "PreOnKill",
 	function (self, killer, doer, point, direction)
-		originalPlayerOnKill(self, killer, doer, point, direction)
-
 		-- Send stats to the player on death
 		local steamId = GetSteamIdForClientIndex(self:GetClientIndex())
 		if steamId and steamId > 0 then
@@ -1078,7 +1116,7 @@ originalPlayerOnKill = Class_ReplaceMethod("Player", "OnKill",
 		
 		if killerSteamId and killerTeam ~= targetTeam and not self.isHallucination then
 			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
-			AddTeamGraphKill(killerTeam, tostring(killer:GetOrigin()), killer:GetLocationName(), tostring(self:GetOrigin()), self:GetLocationName())
+			AddTeamGraphKill(killerTeam, killer, self)
 		end
 		
 	end)

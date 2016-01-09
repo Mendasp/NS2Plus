@@ -60,6 +60,8 @@ local kCurrentPlayerStatsColor = Color(1, 1, 1, 0.75)
 local kCurrentPlayerStatsTextColor = Color(0, 0, 0, 1)
 local kCommanderStatsEvenColor = kMarinePlayerStatsEvenColor
 local kCommanderStatsOddColor = kMarinePlayerStatsOddColor
+local kLostTechEvenColor = Color(0.55, 0, 0, 1)
+local kLostTechOddColor = Color(0.65, 0, 0, 1)
 local kHeaderRowColor = Color(0, 0, 0, 0)
 local kMarineHeaderRowTextColor = Color(1, 1, 1, 1)
 local kMarineHeaderRowTextHighlightColor = Color(0, 0, 0, 1)
@@ -2056,7 +2058,11 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		if #techLogTable > 0 or #buildingSummaryTable > 0 then
 			table.sort(techLogTable, function(a, b)
 				if a.teamNumber == b.teamNumber then
-					return a.finishedMinute < b.finishedMinute
+					if a.finishedMinute == b.finishedMinute then
+						return a.name > b.name
+					else
+						return a.finishedMinute < b.finishedMinute
+					end
 				else
 					return a.teamNumber < b.teamNumber
 				end
@@ -2144,11 +2150,12 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				
 				for index, techLogEntry in ipairs(techLogTable) do
 					local isMarine = techLogEntry.teamNumber == 1
+					local isLost = techLogEntry.destroyed == true
 					local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
 					local logoColor = kIconColors[techLogEntry.teamNumber]
-					local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+					local bgColor = isLost and kLostTechOddColor or isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
 					if index % 2 == 0 then
-						bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+						bgColor = isLost and kLostTechEvenColor or isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
 					end
 					
 					table.insert(self.techLogs[techLogEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[techLogEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, techLogEntry.finishedTime, techLogEntry.name, techLogEntry.activeRTs, techLogEntry.teamRes, techLogEntry.iconTexture, techLogEntry.iconCoords, techLogEntry.iconSizeX, techLogEntry.iconSizeY, logoColor))
@@ -2644,6 +2651,7 @@ local function CHUDSetTechLog(message)
 		entry.finishedTime = string.format("%d:%.2d", minutes, seconds)
 		entry.activeRTs = message.activeRTs
 		entry.teamRes = message.teamRes
+		entry.destroyed = message.destroyed
 		
 		table.insert(techLogTable, entry)
 	end

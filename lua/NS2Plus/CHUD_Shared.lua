@@ -78,6 +78,7 @@ if not CHUDMainMenu then
 		finishedMinute = "float (0 to 1023 by 0.01)",
 		activeRTs = "integer (0 to 23)",
 		teamRes = "float (0 to " .. kMaxTeamResources .." by 0.01)",
+		destroyed = "boolean",
 	}
 	
 	local kCHUDBuildingSummaryMessage =

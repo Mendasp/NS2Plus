@@ -4,6 +4,15 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 09/01/2015
+	- Fixed bug that wouldn't ignore maxPlayers for each team while the game wasn't live.
+	- Removed server option for disabling Hive HTTP connections.
+	- New data points for the exported stats:
+		- Minimap extents for mapping coordinates to the overview graphic.
+		- Destroyed tech in Tech Log, also shows Biomass level on Hive death. If the last Hive was killed it will show as Biomass 1 being "destroyed".
+		- Killer/victim class in the kills table.
+	- End game stats now shows the loss of important buildings in the Tech Log and Biomass level on Hive death.
+
 - 06/01/2015
 	- Added "savestats" option to the server settings (default off). This option allows servers to save the round stats info in a json file located at (CONFIGFOLDER)\NS2Plus\Stats\. Each round will generate a separate file. Mods can also access this info directly by calling CHUDGetLastRoundStats().
 
@@ -98,7 +107,6 @@ Server operators can adjust some features for NS2+ through the console (typing "
 	- **modupdaterreminderinterval:** Sets the time between reminders when an update has been found. Set to 0 to disable (only shows once).
 	- **showavgteamskill:** Shows the average team skill at the top of the scoreboard for clients.
 	- **showplayerskill:** Shows each player's Hive skill on the scoreboard before the game starts.
-	- **hiveconnection:** Enables or disables the server trying to contact the Hive server. Which has info about player skill and badges. This will set everyone to 0 skill so FET voting will be broken.
 	- **savestats:** Saves the last round stats in the NS2Plus\\Stats\\ folder in your config path in json format. Each round played will be saved in a separate file. The file name for each round is the epoch time at round end. Disabled by default.
 
 Stats format
@@ -126,6 +134,7 @@ For the modders or people interested in making use of the stats gathered by NS2+
 | tournamentMode    | Will show if the game had tournament mode enabled (true/false).             |
 | mapName           | Name of the map played.                                                     |
 | startingLocations | Table with the starting locations for each team, (1 = Marines, 2 = Aliens). |
+| minimapExtents    | Table with the minimap extents to map coordinates to the overview. Contains "origin" and "scale". |
 
 **BuildingSummary**
 
@@ -224,15 +233,16 @@ catpack
 
 **ResearchTree**
 
-Even though it is called ResearchTree it also logs the completion of certain important buildings.
+Even though it is called ResearchTree it also logs the completion and loss of certain important buildings. When a Hive dies, it will show also the level of Biomass for the aliens, if Biomass Level is 0 (all Hives dead), it will show as Biomass Level 1 being "destroyed".
 
-| Field          | Description                                              |
-|----------------|----------------------------------------------------------|
-| teamNumber     | Team that owns this research (1 = Marines, 2 = Aliens).  |
-| techId         | Name of the research in the TechId table.                |
-| activeRTs      | Number of RTs finished when the research was finished.   |
-| finishedMinute | Game minute when the research was finished.              |
-| teamRes        | Amount of team res when the research was finished.       |
+| Field          | Description                                                    |
+|----------------|----------------------------------------------------------------|
+| teamNumber     | Team that owns this research (1 = Marines, 2 = Aliens).        |
+| techId         | Name of the research in the TechId table.                      |
+| activeRTs      | Number of RTs finished when the research was finished.         |
+| finishedMinute | Game minute when the research was finished.                    |
+| teamRes        | Amount of team res when the research was finished.             |
+| destroyed      | **true** = Building loss. **false** = Building/Tech completed. |
 
 **TeamStats**
 
@@ -261,8 +271,10 @@ Even though it is called ResearchTree it also logs the completion of certain imp
 |--------------------|------------------------------------------------------------|
 | teamNumber         | Team that got awarded this kill (1 = Marines, 2 = Aliens). |
 | gameMinute         | Minute of the game where this happened.                    |
+| killerClass        | The killer's class.                                        |
 | killerPosition     | Map coordinates for the killer's position.                 |
 | killerLocationName | Location name for the killer's position.                   |
+| victimClass        | The victim's class.                                        |
 | victimPosition     | Map coordinates for the victim's position.                 |
 | victimLocationName | Location name for the victim's position.                   |
 
