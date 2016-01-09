@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 10/01/2015
+	- RT graph table now contains if the node was recycled.
+	- Tech table now contains if (in case of buildings) it was finished and if it was recycled.
+
 - 09/01/2015
 	- Fixed bug that wouldn't ignore maxPlayers for each team while the game wasn't live.
 	- Removed server option for disabling Hive HTTP connections.
@@ -235,14 +239,16 @@ catpack
 
 Even though it is called ResearchTree it also logs the completion and loss of certain important buildings. When a Hive dies, it will show also the level of Biomass for the aliens, if Biomass Level is 0 (all Hives dead), it will show as Biomass Level 1 being "destroyed".
 
-| Field          | Description                                                    |
-|----------------|----------------------------------------------------------------|
-| teamNumber     | Team that owns this research (1 = Marines, 2 = Aliens).        |
-| techId         | Name of the research in the TechId table.                      |
-| activeRTs      | Number of RTs finished when the research was finished.         |
-| finishedMinute | Game minute when the research was finished.                    |
-| teamRes        | Amount of team res when the research was finished.             |
-| destroyed      | **true** = Building loss. **false** = Building/Tech completed. |
+| Field          | Description                                                                |
+|----------------|----------------------------------------------------------------------------|
+| teamNumber     | Team that owns this research (1 = Marines, 2 = Aliens).                    |
+| techId         | Name of the research in the TechId table.                                  |
+| activeRTs      | Number of RTs finished when the research was finished.                     |
+| finishedMinute | Game minute when the research was finished.                                |
+| teamRes        | Amount of team res when the research was finished.                         |
+| built          | **true** = Building was fully built. **false** = Building wasn't finished. |
+| destroyed      | **true** = Building loss. **false** = Building/Tech completed.             |
+| recycled       | **true** = Building was recycled. **false** = Building wasn't recycled.    |
 
 **TeamStats**
 
@@ -257,13 +263,17 @@ Even though it is called ResearchTree it also logs the completion and loss of ce
 
 **RTGraph**
 
+When "destroyed" is **false** it means that a new RT was completed. When destroyed is true, we have to take a look at the "built" and "recycled" fields to see if it was recycled or not and if it was finished or not. We can rebuild the RT graph by ignoring the entries of unbuilt RTs.
+
 | Field        | Description                                                                             |
 |--------------|-----------------------------------------------------------------------------------------|
 | teamNumber   | Team that owns this RT (1 = Marines, 2 = Aliens).                                       |
 | position     | Map coordinates for this RT.                                                            |
 | gameMinute   | Minute of the game where this happened.                                                 |
 | locationName | Name of the location for this RT.                                                       |
+| built        | **true** = The RT was fully built. **false** = The RT was unbuilt.                      |
 | destroyed    | **true** = The RT was recycled/destroyed (-1 RT). **false** = The RT was built (+1 RT). |
+| recycled     | **true** = The RT was recycled. **false** = The RT wasn't recycled.                     |
 
 **KillGraph**
 
