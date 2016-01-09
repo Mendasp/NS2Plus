@@ -160,4 +160,54 @@ image.tab_background_chudmenu
     border-width: 0px; 
     background-image: path(ui/menu/tabbackground.dds); 
 } 
+
+button.apply_color_chud
+{ 
+    font-name: fonts/AgencyFB_small.fnt; 
+    text-color: #8bb4c1; 
+    text-padding: 10px; 
+    border-width: 0px;     
+  
+    height: 58px; 
+    top: 240px;
+    horizontal-align: center; 
+    width: 200px; 
+    left: -100px; 
+} 
+
+font.colorlabel_r_chud 
+{ 
+    text-color: #CCCCCC; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    opacity: 0; 
+    left: 42px; 
+    top: 190px;
+} 
+
+font.colorlabel_g_chud 
+{ 
+    text-color: #CCCCCC; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    opacity: 0; 
+    left: 132px; 
+    top: 190px;
+} 
+
+font.colorlabel_b_chud 
+{ 
+    text-color: #CCCCCC; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    opacity: 0; 
+    left: 222px; 
+    top: 190px;
+} 
+
+font.colorpicker_chud 
+{ 
+    text-color: #CCCCCC; 
+    font-name: fonts/AgencyFB_small.fnt; 
+    opacity: 0; 
+    top: 1px;
+    left: 10px;
+} 
 ]] 
