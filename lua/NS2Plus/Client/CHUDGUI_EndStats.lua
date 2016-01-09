@@ -349,6 +349,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	local kItemPaddingLarge = GUILinearScale(60)
 	local kItemPaddingMediumLarge = GUILinearScale(50)
 	local kItemPaddingMedium = GUILinearScale(40)
+	local kItemPaddingSmallMedium = GUILinearScale(30)
 	local kItemPaddingSmall = GUILinearScale(20)
 	local kItemPaddingExtraSmall = GUILinearScale(10)
 	
@@ -384,7 +385,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.timeBuilding:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.timeBuilding)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingSmall
+	xOffset = xOffset - kItemSize - kItemPaddingSmallMedium
 	
 	item.sdmg = GUIManager:CreateTextItem()
 	item.sdmg:SetStencilFunc(GUIItem.NotEqual)
@@ -400,7 +401,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.sdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.sdmg)
 	
-	xOffset = xOffset - kItemSize - kItemPaddingSmall
+	xOffset = xOffset - kItemSize - kItemPaddingSmallMedium
 	
 	item.pdmg = GUIManager:CreateTextItem()
 	item.pdmg:SetStencilFunc(GUIItem.NotEqual)
@@ -416,7 +417,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	item.pdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.pdmg)
 	
-	xOffset = xOffset - kItemSize - ConditionalValue(avgAccTable.marineOnosAcc == -1, kItemPaddingSmall, kItemPaddingMediumLarge)
+	xOffset = xOffset - kItemSize - ConditionalValue(avgAccTable.marineOnosAcc == -1, kItemPaddingSmallMedium, kItemPaddingMediumLarge)
 	
 	item.acc = GUIManager:CreateTextItem()
 	item.acc:SetStencilFunc(GUIItem.NotEqual)
