@@ -9,12 +9,20 @@ local CHUDStartingTechPoints = {}
 
 local serverStatsPath = "NS2Plus\\Stats\\"
 local lastRoundStats = {}
-
+local locationsTable = {}
+local locationsLookup = {}
+local locNum = 0
 local minimapExtents = {}
 local function OnMapLoadEntity(className, groupName, values)
 	if className == "minimap_extents" then
 		minimapExtents.scale = tostring(values.scale)
 		minimapExtents.origin = tostring(values.origin)
+	elseif className == "location" and values.name and values.name ~= "" then
+		if not locationsLookup[values.name] then
+			locNum = locNum + 1
+			locationsLookup[values.name] = locNum
+			locationsTable[tostring(locNum)] = values.name
+		end
 	end
 end
 Event.Hook("MapLoadEntity", OnMapLoadEntity)
@@ -326,7 +334,7 @@ end
 
 local function AddTeamGraphKill(teamNumber, killer, victim)
 	if teamNumber == 1 or teamNumber == 2 then
-		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = tostring(killer:GetOrigin()), killerLocationName = killer:GetLocationName(), killerClass = killer:GetPlayerStatusDesc(), victimPosition = tostring(victim:GetOrigin()), victimLocationName = victim:GetLocationName(), victimClass = victim:GetPlayerStatusDesc()})
+		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = tostring(killer:GetOrigin()), killerLocation = killer:GetLocationName(), killerClass = killer:GetPlayerStatusDesc(), victimPosition = tostring(victim:GetOrigin()), victimLocation = victim:GetLocationName(), victimClass = victim:GetPlayerStatusDesc()})
 	end
 end
 
@@ -932,7 +940,9 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			for _, entry in ipairs(CHUDKillGraph) do
 				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
 				-- Translate for easy parsing in the exported data
+				entry.killerLocation = locationsLookup[entry.killerLocation]
 				entry.killerClass = EnumToString(kPlayerStatus, entry.killerClass)
+				entry.victimLocation = locationsLookup[entry.victimLocation]
 				entry.victimClass = EnumToString(kPlayerStatus, entry.victimClass)
 			end
 			
@@ -1045,6 +1055,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 		lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
 		lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
+		lastRoundStats.Locations = locationsTable
 
 		if CHUDServerOptions["savestats"].currentValue == true then
 			local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
