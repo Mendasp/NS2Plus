@@ -770,11 +770,6 @@ originalDrifterEggHatch = Class_ReplaceMethod("DrifterEgg", "Hatch",
 local originalNS2GamerulesEndGame
 originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 	function(self, winningTeam)
-		local gameMinutes = CHUDGetGameTime(true)
-		local gameSeconds = CHUDGetGameTime()
-		
-		originalNS2GamerulesEndGame(self, winningTeam)
-		
 		local newCommStatsTable = {}
 		for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 			local client = Server.GetClientById(playerInfo.clientId)
@@ -912,7 +907,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		msg.alienAcc = team2Accuracy
 		msg.alienRTsBuilt = CHUDTeamStats[2]["rts"].built
 		msg.alienRTsLost = CHUDTeamStats[2]["rts"].lost
-		msg.gameLengthMinutes = gameMinutes
+		msg.gameLengthMinutes = CHUDGetGameTime(true)
 		
 		-- Don't send the round data if there's no player data
 		if #finalStats[1] > 0 or #finalStats[2] > 0 then
@@ -1046,7 +1041,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		lastRoundStats.RoundInfo = {}
 		lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
 		lastRoundStats.RoundInfo["minimapExtents"] = minimapExtents
-		lastRoundStats.RoundInfo["roundTime"] = gameSeconds
+		lastRoundStats.RoundInfo["roundTime"] = CHUDGetGameTime()
 		lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 		lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
 		lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
@@ -1058,6 +1053,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				io.close(savedServerFile)
 			end
 		end
+		
+		originalNS2GamerulesEndGame(self, winningTeam)
 	end)
 
 Class_AddMethod("Player", "PreOnKill",
