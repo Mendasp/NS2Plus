@@ -1,4 +1,3 @@
-
 local CHUDClientStats = {}
 local CHUDTeamStats = {}
 local CHUDRTGraph = {}
@@ -11,7 +10,6 @@ local serverStatsPath = "NS2Plus\\Stats\\"
 local lastRoundStats = {}
 local locationsTable = {}
 local locationsLookup = {}
-local locNum = 0
 local minimapExtents = {}
 local function OnMapLoadEntity(className, groupName, values)
 	if className == "minimap_extents" then
@@ -19,9 +17,8 @@ local function OnMapLoadEntity(className, groupName, values)
 		minimapExtents.origin = tostring(values.origin)
 	elseif className == "location" and values.name and values.name ~= "" then
 		if not locationsLookup[values.name] then
-			locNum = locNum + 1
-			locationsLookup[values.name] = locNum
-			locationsTable[tostring(locNum)] = values.name
+			locationsLookup[values.name] = #locationsTable+1
+			table.insert(locationsTable, values.name)
 		end
 	end
 end
@@ -56,7 +53,7 @@ local function AddRTStat(teamNumber, built, destroyed, recycled, position, locat
 		local rtsTable = CHUDTeamStats[teamNumber].rts
 		local finishedBuilding = built and not destroyed
 		
-		table.insert(CHUDRTGraph, {teamNumber = teamNumber, built = built, destroyed = destroyed, recycled = recycled, gameMinute = CHUDGetGameTime(true), position = position, locationName = locationName})
+		table.insert(CHUDRTGraph, {teamNumber = teamNumber, built = built, destroyed = destroyed, recycled = recycled, gameMinute = CHUDGetGameTime(true), position = position, location = locationsLookup[locationName]})
 		
 		-- The unfinished nodes will be computed on the overall built/lost data
 		rtsTable.lost = rtsTable.lost + ConditionalValue(destroyed, 1, 0)
@@ -334,7 +331,7 @@ end
 
 local function AddTeamGraphKill(teamNumber, killer, victim)
 	if teamNumber == 1 or teamNumber == 2 then
-		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = tostring(killer:GetOrigin()), killerLocation = killer:GetLocationName(), killerClass = killer:GetPlayerStatusDesc(), victimPosition = tostring(victim:GetOrigin()), victimLocation = victim:GetLocationName(), victimClass = victim:GetPlayerStatusDesc()})
+		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = tostring(killer:GetOrigin()), killerLocation = locationsLookup[killer:GetLocationName()], killerClass = killer:GetPlayerStatusDesc(), victimPosition = tostring(victim:GetOrigin()), victimLocation = locationsLookup[victim:GetLocationName()], victimClass = victim:GetPlayerStatusDesc()})
 	end
 end
 
@@ -671,8 +668,8 @@ oldResetGame = Class_ReplaceMethod("NS2Gamerules", "ResetGame",
 		CHUDTeamStats[2].maxPlayers = math.max(0, self.team2:GetNumPlayers())
 		
 		-- Starting tech points
-		CHUDStartingTechPoints["1"] = self.startingLocationNameTeam1
-		CHUDStartingTechPoints["2"] = self.startingLocationNameTeam2
+		CHUDStartingTechPoints["1"] = locationsLookup[self.startingLocationNameTeam1]
+		CHUDStartingTechPoints["2"] = locationsLookup[self.startingLocationNameTeam2]
 	end)
 
 local function CHUDGetAccuracy(hits, misses, onosHits)
@@ -940,9 +937,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			for _, entry in ipairs(CHUDKillGraph) do
 				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
 				-- Translate for easy parsing in the exported data
-				entry.killerLocation = locationsLookup[entry.killerLocation]
 				entry.killerClass = EnumToString(kPlayerStatus, entry.killerClass)
-				entry.victimLocation = locationsLookup[entry.victimLocation]
 				entry.victimClass = EnumToString(kPlayerStatus, entry.victimClass)
 			end
 			
@@ -1019,49 +1014,52 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			Server.SendNetworkMessage("CHUDGlobalCommStats", msg, true)
 		end
 		
-		lastRoundStats = {}
-		lastRoundStats.CommStats = newCommStatsTable
-		lastRoundStats.ClientStats = CHUDClientStats
-		lastRoundStats.TeamStats = CHUDTeamStats
-		lastRoundStats.RTGraph = CHUDRTGraph
-		lastRoundStats.KillGraph = CHUDKillGraph
-		lastRoundStats.ResearchTree = CHUDResearchTree
-		lastRoundStats.BuildingSummary = CHUDBuildingSummary
-		lastRoundStats.ServerInfo = {}
-		lastRoundStats.ServerInfo["ip"] = Server.GetIpAddress()
-		lastRoundStats.ServerInfo["port"] = Server.GetPort()
-		lastRoundStats.ServerInfo["name"] = Server.GetName()
-		lastRoundStats.ServerInfo["slots"] = Server.GetMaxPlayers()
-		lastRoundStats.ServerInfo["buildNumber"] = Shared.GetBuildNumber()
-		lastRoundStats.ServerInfo["roundDate"] = Shared.GetSystemTime()
-		lastRoundStats.ServerInfo["mods"] = {}
-		local modNum
-		local activeModIds = {}
-		
-		-- Can't get the mod title correctly unless we do this
-		-- GetModTitle can't get it from the active mod list index, it uses the normal one
-		for modNum = 1, Server.GetNumActiveMods() do
-			activeModIds[Server.GetActiveModId(modNum)] = true
-		end
-		for modNum = 1, Server.GetNumMods() do
-			if activeModIds[Server.GetModId(modNum)] then
-				table.insert(lastRoundStats.ServerInfo["mods"], {modId = Server.GetModId(modNum), name = Server.GetModTitle(modNum)})
+		-- Don't save the round data if there's no player data
+		if #finalStats[1] > 0 or #finalStats[2] > 0 then
+			lastRoundStats = {}
+			lastRoundStats.CommStats = newCommStatsTable
+			lastRoundStats.ClientStats = CHUDClientStats
+			lastRoundStats.TeamStats = CHUDTeamStats
+			lastRoundStats.RTGraph = CHUDRTGraph
+			lastRoundStats.KillGraph = CHUDKillGraph
+			lastRoundStats.ResearchTree = CHUDResearchTree
+			lastRoundStats.BuildingSummary = CHUDBuildingSummary
+			lastRoundStats.ServerInfo = {}
+			lastRoundStats.ServerInfo["ip"] = Server.GetIpAddress()
+			lastRoundStats.ServerInfo["port"] = Server.GetPort()
+			lastRoundStats.ServerInfo["name"] = Server.GetName()
+			lastRoundStats.ServerInfo["slots"] = Server.GetMaxPlayers()
+			lastRoundStats.ServerInfo["buildNumber"] = Shared.GetBuildNumber()
+			lastRoundStats.ServerInfo["roundDate"] = Shared.GetSystemTime()
+			lastRoundStats.ServerInfo["mods"] = {}
+			local modNum
+			local activeModIds = {}
+			
+			-- Can't get the mod title correctly unless we do this
+			-- GetModTitle can't get it from the active mod list index, it uses the normal one
+			for modNum = 1, Server.GetNumActiveMods() do
+				activeModIds[Server.GetActiveModId(modNum)] = true
 			end
-		end
-		lastRoundStats.RoundInfo = {}
-		lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
-		lastRoundStats.RoundInfo["minimapExtents"] = minimapExtents
-		lastRoundStats.RoundInfo["roundTime"] = CHUDGetGameTime()
-		lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
-		lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
-		lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
-		lastRoundStats.Locations = locationsTable
+			for modNum = 1, Server.GetNumMods() do
+				if activeModIds[Server.GetModId(modNum)] then
+					table.insert(lastRoundStats.ServerInfo["mods"], {modId = Server.GetModId(modNum), name = Server.GetModTitle(modNum)})
+				end
+			end
+			lastRoundStats.RoundInfo = {}
+			lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
+			lastRoundStats.RoundInfo["minimapExtents"] = minimapExtents
+			lastRoundStats.RoundInfo["roundTime"] = CHUDGetGameTime()
+			lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
+			lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
+			lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
+			lastRoundStats.Locations = locationsTable
 
-		if CHUDServerOptions["savestats"].currentValue == true then
-			local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
-			if savedServerFile then
-				savedServerFile:write(json.encode(lastRoundStats, { indent = true }))
-				io.close(savedServerFile)
+			if CHUDServerOptions["savestats"].currentValue == true then
+				local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
+				if savedServerFile then
+					savedServerFile:write(json.encode(lastRoundStats, { indent = true }))
+					io.close(savedServerFile)
+				end
 			end
 		end
 		

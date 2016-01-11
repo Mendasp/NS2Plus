@@ -117,6 +117,12 @@ Stats format
 ============
 For the modders or people interested in making use of the stats gathered by NS2+, they can either call CHUDGetLastRoundStats() after the round has ended (it updates the data on NS2Gamerules:EndGame()), or use the "savestats" server option, which will give them access to the tables that NS2+ uses to store the info during the round that gets sent to the players at the end of the game.
 
+**Locations**
+
+This table will store an array with the location names, the index of each entry will be used in the other tables to refer to each location in order to save some space.
+
+For example in "Locations":["North Tech","South Tech"], North Tech would be referred as 1, and South Tech as 2.
+
 **ServerInfo**
 
 | Field       | Description                                                                        |
@@ -137,7 +143,7 @@ For the modders or people interested in making use of the stats gathered by NS2+
 | roundTime         | Round length, in seconds.                                                   |
 | tournamentMode    | Will show if the game had tournament mode enabled (true/false).             |
 | mapName           | Name of the map played.                                                     |
-| startingLocations | Table with the starting locations for each team, (1 = Marines, 2 = Aliens). |
+| startingLocations | Table with the starting locations for each team, (1 = Marines, 2 = Aliens). It uses the location name index from the Locations table. |
 | minimapExtents    | Table with the minimap extents to map coordinates to the overview. Contains "origin" and "scale". |
 
 **BuildingSummary**
@@ -252,6 +258,8 @@ Even though it is called ResearchTree it also logs the completion and loss of ce
 
 **TeamStats**
 
+This is a summary for the stats of each team for the round.
+
 | Field      | Description                                                           |
 |------------|-----------------------------------------------------------------------|
 | teamNumber | Team for the stats stored in this table (1 = Marines, 2 = Aliens).    |
@@ -270,23 +278,23 @@ When "destroyed" is **false** it means that a new RT was completed. When "destro
 | teamNumber   | Team that owns this RT (1 = Marines, 2 = Aliens).                                       |
 | position     | Map coordinates for this RT.                                                            |
 | gameMinute   | Minute of the game where this happened.                                                 |
-| locationName | Name of the location for this RT.                                                       |
+| location     | Location name index for the position of this RT.                                        |
 | built        | **true** = The RT was fully built. **false** = The RT was unbuilt.                      |
 | destroyed    | **true** = The RT was recycled/destroyed (-1 RT). **false** = The RT was built (+1 RT). |
 | recycled     | **true** = The RT was recycled. **false** = The RT wasn't recycled.                     |
 
 **KillGraph**
 
-| Field              | Description                                                |
-|--------------------|------------------------------------------------------------|
-| teamNumber         | Team that got awarded this kill (1 = Marines, 2 = Aliens). |
-| gameMinute         | Minute of the game where this happened.                    |
-| killerClass        | The killer's class.                                        |
-| killerPosition     | Map coordinates for the killer's position.                 |
-| killerLocationName | Location name for the killer's position.                   |
-| victimClass        | The victim's class.                                        |
-| victimPosition     | Map coordinates for the victim's position.                 |
-| victimLocationName | Location name for the victim's position.                   |
+| Field          | Description                                                |
+|----------------|------------------------------------------------------------|
+| teamNumber     | Team that got awarded this kill (1 = Marines, 2 = Aliens). |
+| gameMinute     | Minute of the game where this happened.                    |
+| killerClass    | The killer's class.                                        |
+| killerPosition | Map coordinates for the killer's position.                 |
+| killerLocation | Location name index for the killer's position.             |
+| victimClass    | The victim's class.                                        |
+| victimPosition | Map coordinates for the victim's position.                 |
+| victimLocation | Location name index for the victim's position.             |
 
 Credits/Thanks to
 =================
