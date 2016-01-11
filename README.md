@@ -115,7 +115,7 @@ Server operators can adjust some features for NS2+ through the console (typing "
 
 Stats format
 ============
-For the modders or people interested in making use of the stats gathered by NS2+, they can either call CHUDGetLastRoundStats() after the round has ended, or use the "savestats" server option, which will give them access to the tables that NS2+ uses to store the info during the round that gets sent to the players at the end of the game.
+For the modders or people interested in making use of the stats gathered by NS2+, they can either call CHUDGetLastRoundStats() after the round has ended (it updates the data on NS2Gamerules:EndGame()), or use the "savestats" server option, which will give them access to the tables that NS2+ uses to store the info during the round that gets sent to the players at the end of the game.
 
 **ServerInfo**
 
