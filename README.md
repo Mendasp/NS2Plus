@@ -4,6 +4,10 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 12/01/2015
+	- Updated exported stats data format.
+	- Fixed bug with Marine Commander Medpack accuracy being calculated wrong.
+
 - 10/01/2015
 	- RT graph table now contains if the node was recycled.
 	- Tech table now contains if (in case of buildings) it was finished and if it was recycled.
@@ -76,22 +80,6 @@ Latest changes
 	- Fixed "Reset All" button in NS2+ Options overlapping the back button on resolution change.
 	- Fixed Insight HP/AP values being toggled while using chat or console.
 	- Fixed tech tooltips being stuck on screen when NSL pause is active.
-
-- 06/04/2015
-	- Adjusted options menu elements so they all use the same space.
-	- Adjusted accuracy text and column width when there's no accuracies without Onos hits.
-	- Added kills to last life stats.
-	- Added building highlight color option for Commanders that highlights the buildings of the same type that you're about to drop in the minimap in a different color. Available in Visual tab.
-	- Added Caster mode to use default NS2+ values without overwriting your config. Available in Misc tab.
-	- Free look spectators can now toggle the healthbars on and off by pressing the use key.
-	- Increased nameplate range for free look spectators.
-	- Added hint text to show the keys you can use in Insight spectator.
-	- The state of the Insight HP/AP values now gets saved across map changes.
-	- Made custom minimap colors appear correctly for the marine minimap on the top left.
-	- Changed the options menu to only display the reset to default button if the value is different than default.
-	- The options menu will now hide sub-options that depend on a main setting if it's disabled (Per-team sensitivies/FOV, Vanilla Hitsounds Pitch).
-	- Added name change limiter, it will limit the amount of name changes allowed under a certain time.
-	- Added "unbind" console command as an alias of "clear_binding", as it's easier to remember.
 
 Server settings
 ===============
