@@ -146,15 +146,6 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 | startingLocations | Table with the starting locations for each team, (1 = Marines, 2 = Aliens). It uses the location name index from the Locations table. |
 | minimapExtents    | Table with the minimap extents to map coordinates to the overview. Contains "origin" and "scale". |
 
-**BuildingSummary**
-
-| Field      | Description                                             |
-|------------|---------------------------------------------------------|
-| teamNumber | Team that owns this building (1 = Marines, 2 = Aliens). |
-| techId     | Name of the building in the TechId table.               |
-| built      | Number of buildings of this type completed.             |
-| lost       | Number of buildings of this type lost.                  |
-
 **ClientStats**
 
 The first field in this table is the SteamID for each recorded player in the game. Inside each table, you will find tables for each team that the player played in (1 = Marines, 2 = Aliens), each of these team tables has these fields:
@@ -213,7 +204,7 @@ These are the rest of the fields inside each SteamID entry:
 | lastTeam   | Last team the player belonged to.         |
 | hiveSkill  | Hive Skill for the player for this round. |
 
-**CommStats**
+**MarineCommStats**
 
 The first field in this table is the SteamID for each recorded marine Commander in the game. Inside each table, you will find a table for each type of drop, as follows:
 
@@ -221,7 +212,7 @@ medpack
 
 | Field      | Description                                                                    |
 |------------|--------------------------------------------------------------------------------|
-| hits       | Number of medpacks dropped directly on players. Used for the medpack accuracy. |
+| hitsAcc    | Number of medpacks dropped directly on players. Used for the medpack accuracy. |
 | picks      | Number of medpacks picked up by players at any point.                          |
 | misses     | Number of medpacks that are never picked up.                                   |
 | refilled   | Amount of health given to players through medpacks.                            |
@@ -230,7 +221,7 @@ ammopack
 
 | Field      | Description                                           |
 |------------|-------------------------------------------------------|
-| hits       | Number of ammopacks picked up by players.             |
+| picks      | Number of ammopacks picked up by players.             |
 | misses     | Number of ammopacks that are never picked up.         |
 | refilled   | Amount of bullets given to players through ammopacks. |
 
@@ -238,63 +229,22 @@ catpack
 
 | Field  | Description                                  |
 |--------|----------------------------------------------|
-| hits   | Number of catpacks picked up by players.     |
+| picks  | Number of catpacks picked up by players.     |
 | misses | Number of catpacks that are never picked up. |
-
-**ResearchTree**
-
-Even though it is called ResearchTree it also logs the completion and loss of certain important buildings. When a Hive dies, it will show also the level of Biomass for the aliens, if Biomass Level is 0 (all Hives dead), it will show as Biomass Level 1 being "destroyed".
-
-| Field          | Description                                                                |
-|----------------|----------------------------------------------------------------------------|
-| teamNumber     | Team that owns this research (1 = Marines, 2 = Aliens).                    |
-| techId         | Name of the research in the TechId table.                                  |
-| activeRTs      | Number of RTs finished when the research was finished.                     |
-| finishedMinute | Game minute when the research was finished.                                |
-| teamRes        | Amount of team res when the research was finished.                         |
-| built          | **true** = Building was fully built. **false** = Building wasn't finished. |
-| destroyed      | **true** = Building loss. **false** = Building/Tech completed.             |
-| recycled       | **true** = Building was recycled. **false** = Building wasn't recycled.    |
-
-**TeamStats**
-
-This is a summary for the stats of each team for the round.
-
-| Field      | Description                                                           |
-|------------|-----------------------------------------------------------------------|
-| teamNumber | Team for the stats stored in this table (1 = Marines, 2 = Aliens).    |
-| hits       | Number of attacks that hit (this includes Onos hits).                 |
-| onosHits   | Number of attacks that hit an Onos.                                   |
-| misses     | Number of attacks that missed.                                        |
-| rts        | Table that includes the number of built and lost RTs during the game. |
-| maxPlayers | Maximum amount of players that this team had for the round.           |
-
-**RTGraph**
-
-When "destroyed" is **false** it means that a new RT was completed. When "destroyed" is **true**, we have to take a look at the "built" and "recycled" fields to see if it was recycled or not and if it was fully built or not. We can rebuild the RT graph by ignoring the entries of unbuilt RTs.
-
-| Field        | Description                                                                             |
-|--------------|-----------------------------------------------------------------------------------------|
-| teamNumber   | Team that owns this RT (1 = Marines, 2 = Aliens).                                       |
-| position     | Map coordinates for this RT.                                                            |
-| gameMinute   | Minute of the game where this happened.                                                 |
-| location     | Location name index for the position of this RT.                                        |
-| built        | **true** = The RT was fully built. **false** = The RT was unbuilt.                      |
-| destroyed    | **true** = The RT was recycled/destroyed (-1 RT). **false** = The RT was built (+1 RT). |
-| recycled     | **true** = The RT was recycled. **false** = The RT wasn't recycled.                     |
 
 **KillGraph**
 
-| Field          | Description                                                |
-|----------------|------------------------------------------------------------|
-| teamNumber     | Team that got awarded this kill (1 = Marines, 2 = Aliens). |
-| gameMinute     | Minute of the game where this happened.                    |
-| killerClass    | The killer's class.                                        |
-| killerPosition | Map coordinates for the killer's position.                 |
-| killerLocation | Location name index for the killer's position.             |
-| victimClass    | The victim's class.                                        |
-| victimPosition | Map coordinates for the victim's position.                 |
-| victimLocation | Location name index for the victim's position.             |
+| Field          | Description                                                          |
+|----------------|----------------------------------------------------------------------|
+| teamNumber     | Team that got awarded this kill (1 = Marines, 2 = Aliens).           |
+| gameMinute     | Minute of the game where this happened.                              |
+| killerClass    | The killer's class.                                                  |
+| killerPosition | Map coordinates for the killer's position.                           |
+| killerLocation | Location name index for the killer's position.                       |
+| victimClass    | The victim's class.                                                  |
+| victimPosition | Map coordinates for the victim's position.                           |
+| victimLocation | Location name index for the victim's position.                       |
+| weapon         | Weapon used for the kill. Will be "None" for Natural Causes/Suicide. |
 
 Credits/Thanks to
 =================

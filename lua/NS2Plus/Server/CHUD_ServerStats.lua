@@ -48,12 +48,12 @@ local function CHUDGetGameTime(inMinutes)
 	return gameTime
 end
 
-local function AddRTStat(teamNumber, built, destroyed, recycled, position, locationName)
+local function AddRTStat(teamNumber, built, destroyed)
 	if teamNumber == 1 or teamNumber == 2 then
 		local rtsTable = CHUDTeamStats[teamNumber].rts
 		local finishedBuilding = built and not destroyed
 		
-		table.insert(CHUDRTGraph, {teamNumber = teamNumber, built = built, destroyed = destroyed, recycled = recycled, gameMinute = CHUDGetGameTime(true), position = position, location = locationsLookup[locationName]})
+		table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = destroyed, gameMinute = CHUDGetGameTime(true)})
 		
 		-- The unfinished nodes will be computed on the overall built/lost data
 		rtsTable.lost = rtsTable.lost + ConditionalValue(destroyed, 1, 0)
@@ -329,9 +329,19 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 	end
 end
 
-local function AddTeamGraphKill(teamNumber, killer, victim)
+local function AddTeamGraphKill(teamNumber, killer, victim, weapon)
 	if teamNumber == 1 or teamNumber == 2 then
-		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = tostring(killer:GetOrigin()), killerLocation = locationsLookup[killer:GetLocationName()], killerClass = killer:GetPlayerStatusDesc(), victimPosition = tostring(victim:GetOrigin()), victimLocation = locationsLookup[victim:GetLocationName()], victimClass = victim:GetPlayerStatusDesc()})
+		local killerLocation = killer and killer:isa("Player") and locationsLookup[killer:GetLocationName()] or nil
+		local killerPosition = killer and killer:isa("Player") and tostring(killer:GetOrigin()) or nil
+		local killerClass = killer and killer:isa("Player") and EnumToString(kPlayerStatus, killer:GetPlayerStatusDesc()) or nil
+		local killerSteamID = killer and killer:isa("Player") and GetSteamIdForClientIndex(killer:GetClientIndex()) or nil
+		local victimLocation = victim and victim:isa("Player") and locationsLookup[victim:GetLocationName()] or nil
+		local victimPosition = victim and victim:isa("Player") and tostring(victim:GetOrigin()) or nil
+		local victimClass = victim and victim:isa("Player") and EnumToString(kPlayerStatus, victim:GetPlayerStatusDesc()) or nil
+		local victimSteamID = victim and victim:isa("Player") and GetSteamIdForClientIndex(victim:GetClientIndex()) or nil
+		local weapon = EnumToString(kTechId, weapon) or nil
+		
+		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = killerPosition, killerLocation = killerLocation, killerClass = killerClass, killerSteamID = killerSteamID, victimPosition = victimPosition, victimLocation = victimLocation, victimClass = victimClass, victimSteamID = victimSteamID, weapon = weapon})
 	end
 end
 
@@ -597,13 +607,13 @@ local function CHUDResetCommStats(commSteamId)
 		CHUDCommStats[commSteamId]["catpack"] = { }
 		
 		for index, _ in pairs(CHUDCommStats[commSteamId]) do
-			CHUDCommStats[commSteamId][index].hits = 0
+			CHUDCommStats[commSteamId][index].picks = 0
 			CHUDCommStats[commSteamId][index].misses = 0
 			if index ~= "catpack" then
 				CHUDCommStats[commSteamId][index].refilled = 0
 			end
 			if index == "medpack" then
-				CHUDCommStats[commSteamId][index].picks = 0
+				CHUDCommStats[commSteamId][index].hitsAcc = 0
 			end
 		end
 	end
@@ -717,7 +727,7 @@ originalMedPackOnTouch = Class_ReplaceMethod("MedPack", "OnTouch",
 		if oldHealth < recipient:GetHealth() then
 			-- If the medpack hits immediatly expireTime is 0
 			if ConditionalValue(self.expireTime == 0, Shared.GetTime(), self.expireTime - kItemStayTime) + 0.025 > Shared.GetTime() then
-				CHUDCommStats[CHUDMarineComm]["medpack"].hits = CHUDCommStats[CHUDMarineComm]["medpack"].hits + 1
+				CHUDCommStats[CHUDMarineComm]["medpack"].hitsAcc = CHUDCommStats[CHUDMarineComm]["medpack"].hitsAcc + 1
 			end
 			CHUDCommStats[CHUDMarineComm]["medpack"].misses = CHUDCommStats[CHUDMarineComm]["medpack"].misses - 1
 			CHUDCommStats[CHUDMarineComm]["medpack"].picks = CHUDCommStats[CHUDMarineComm]["medpack"].picks + 1
@@ -748,7 +758,7 @@ originalAmmoPackOnTouch = Class_ReplaceMethod("AmmoPack", "OnTouch",
 		local newAmmo = GetAmmoCount(recipient)
 		if oldAmmo < newAmmo then
 			CHUDCommStats[CHUDMarineComm]["ammopack"].misses = CHUDCommStats[CHUDMarineComm]["ammopack"].misses - 1
-			CHUDCommStats[CHUDMarineComm]["ammopack"].hits = CHUDCommStats[CHUDMarineComm]["ammopack"].hits + 1
+			CHUDCommStats[CHUDMarineComm]["ammopack"].picks = CHUDCommStats[CHUDMarineComm]["ammopack"].picks + 1
 			CHUDCommStats[CHUDMarineComm]["ammopack"].refilled = CHUDCommStats[CHUDMarineComm]["ammopack"].refilled + newAmmo - oldAmmo
 		end
 	
@@ -760,7 +770,7 @@ originalCatPackOnTouch = Class_ReplaceMethod("CatPack", "OnTouch",
 	
 		originalCatPackOnTouch(self, recipient)
 		CHUDCommStats[CHUDMarineComm]["catpack"].misses = CHUDCommStats[CHUDMarineComm]["catpack"].misses - 1
-		CHUDCommStats[CHUDMarineComm]["catpack"].hits = CHUDCommStats[CHUDMarineComm]["catpack"].hits + 1
+		CHUDCommStats[CHUDMarineComm]["catpack"].picks = CHUDCommStats[CHUDMarineComm]["catpack"].picks + 1
 	
 	end)
 	
@@ -799,22 +809,22 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				msg.catpackEfficiency = 0
 				
 				for index, stats in pairs(CHUDCommStats[playerInfo.steamId]) do
-					if stats.picks and stats.picks > 0 or stats.hits > 0 or stats.misses > 0 then
+					if stats.picks and stats.picks > 0 or stats.misses and stats.misses > 0 then
 						if index == "medpack" then
-							msg.medpackAccuracy = CHUDGetAccuracy(stats.hits, stats.misses)
+							msg.medpackAccuracy = CHUDGetAccuracy(stats.hitsAcc, stats.misses)
 							msg.medpackResUsed = stats.picks*kMedPackCost
 							msg.medpackResExpired = stats.misses*kMedPackCost
 							msg.medpackEfficiency = CHUDGetAccuracy(stats.picks, stats.misses)
 							msg.medpackRefill = stats.refilled
 						elseif index == "ammopack" then
-							msg.ammopackResUsed = stats.hits*kAmmoPackCost
+							msg.ammopackResUsed = stats.picks*kAmmoPackCost
 							msg.ammopackResExpired = stats.misses*kAmmoPackCost
-							msg.ammopackEfficiency = CHUDGetAccuracy(stats.hits, stats.misses)
+							msg.ammopackEfficiency = CHUDGetAccuracy(stats.picks, stats.misses)
 							msg.ammopackRefill = stats.refilled
 						elseif index == "catpack" then
-							msg.catpackResUsed = stats.hits*kCatPackCost
+							msg.catpackResUsed = stats.picks*kCatPackCost
 							msg.catpackResExpired = stats.misses*kCatPackCost
-							msg.catpackEfficiency = CHUDGetAccuracy(stats.hits, stats.misses)
+							msg.catpackEfficiency = CHUDGetAccuracy(stats.picks, stats.misses)
 						end
 					end
 				end
@@ -923,22 +933,15 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				if entry.finishedMinute > 0 or entry.teamRes > 0 then
 					Server.SendNetworkMessage("CHUDTechLog", entry, true)
 				end
-				-- Translate for easy parsing in the exported data
-				entry.techId = EnumToString(kTechId, entry.techId)
 			end
 			
 			-- Don't send unbuilt nodes, the RT graph will only show changes in finished nodes
 			for _, entry in ipairs(CHUDRTGraph) do
-				if entry.built == true then
-					Server.SendNetworkMessage("CHUDRTGraph", entry, true)
-				end
+				Server.SendNetworkMessage("CHUDRTGraph", entry, true)
 			end
 			
 			for _, entry in ipairs(CHUDKillGraph) do
 				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
-				-- Translate for easy parsing in the exported data
-				entry.killerClass = EnumToString(kPlayerStatus, entry.killerClass)
-				entry.victimClass = EnumToString(kPlayerStatus, entry.victimClass)
 			end
 			
 			local newBuildingSummaryTable = {}
@@ -964,32 +967,32 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			end
 		end
 		
-		local medpackHits = 0
+		local medpackHitsAcc = 0
 		local medpackMisses = 0
 		local medpackPicks = 0
 		local medpackRefill = 0
-		local ammopackHits = 0
+		local ammopackPicks = 0
 		local ammopackMisses = 0
 		local ammopackRefill = 0
-		local catpackHits = 0
+		local catpackPicks = 0
 		local catpackMisses = 0
 		local sendCommStats = false
 		
 		for _, playerStats in pairs(CHUDCommStats) do
 			for index, stats in pairs(playerStats) do
-				if stats.picks and stats.picks > 0 or stats.hits > 0 or stats.misses > 0 then
+				if stats.picks and stats.picks > 0 or stats.misses and stats.misses > 0 then
 					sendCommStats = true
 					if index == "medpack" then
-						medpackHits = medpackHits + stats.hits
+						medpackHitsAcc = medpackHitsAcc + stats.hitsAcc
 						medpackPicks = medpackPicks + stats.picks
 						medpackMisses = medpackMisses + stats.misses
 						medpackRefill = medpackRefill + stats.refilled
 					elseif index == "ammopack" then
-						ammopackHits = ammopackHits + stats.hits
+						ammopackPicks = ammopackPicks + stats.picks
 						ammopackMisses = ammopackMisses + stats.misses
 						ammopackRefill = ammopackRefill + stats.refilled
 					elseif index == "catpack" then
-						catpackHits = catpackHits + stats.hits
+						catpackPicks = catpackPicks + stats.picks
 						catpackMisses = catpackMisses + stats.misses
 					end
 				end
@@ -998,18 +1001,18 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		
 		if sendCommStats then
 			local msg = {}
-			msg.medpackAccuracy = CHUDGetAccuracy(medpackHits, medpackMisses)
+			msg.medpackAccuracy = CHUDGetAccuracy(medpackHitsAcc, medpackMisses)
 			msg.medpackResUsed = medpackPicks
 			msg.medpackResExpired = medpackMisses
 			msg.medpackEfficiency = CHUDGetAccuracy(medpackPicks, medpackMisses)
 			msg.medpackRefill = medpackRefill
-			msg.ammopackResUsed = ammopackHits
+			msg.ammopackResUsed = ammopackPicks
 			msg.ammopackResExpired = ammopackMisses
-			msg.ammopackEfficiency = CHUDGetAccuracy(ammopackHits, ammopackMisses)
+			msg.ammopackEfficiency = CHUDGetAccuracy(ammopackPicks, ammopackMisses)
 			msg.ammopackRefill = ammopackRefill
-			msg.catpackResUsed = catpackHits
+			msg.catpackResUsed = catpackPicks
 			msg.catpackResExpired = catpackMisses
-			msg.catpackEfficiency = CHUDGetAccuracy(catpackHits, catpackMisses)
+			msg.catpackEfficiency = CHUDGetAccuracy(catpackPicks, catpackMisses)
 			
 			Server.SendNetworkMessage("CHUDGlobalCommStats", msg, true)
 		end
@@ -1017,13 +1020,9 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		-- Don't save the round data if there's no player data
 		if #finalStats[1] > 0 or #finalStats[2] > 0 then
 			lastRoundStats = {}
-			lastRoundStats.CommStats = newCommStatsTable
+			lastRoundStats.MarineCommStats = newCommStatsTable
 			lastRoundStats.ClientStats = CHUDClientStats
-			lastRoundStats.TeamStats = CHUDTeamStats
-			lastRoundStats.RTGraph = CHUDRTGraph
 			lastRoundStats.KillGraph = CHUDKillGraph
-			lastRoundStats.ResearchTree = CHUDResearchTree
-			lastRoundStats.BuildingSummary = CHUDBuildingSummary
 			lastRoundStats.ServerInfo = {}
 			lastRoundStats.ServerInfo["ip"] = Server.GetIpAddress()
 			lastRoundStats.ServerInfo["port"] = Server.GetPort()
@@ -1122,9 +1121,19 @@ Class_AddMethod("Player", "PreOnKill",
 		-- Now save the attacker weapon
 		local killerSteamId, killerWeapon, killerTeam = GetAttackerWeapon(killer, doer)
 		
-		if killerSteamId and killerTeam ~= targetTeam and not self.isHallucination then
-			AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
-			AddTeamGraphKill(killerTeam, killer, self)
+		if not self.isHallucination then
+			if killerSteamId and killerTeam ~= targetTeam then
+				AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
+			end
+			-- If there's a teamkill or a death by natural causes, award the kill to the other team
+			if killerTeam == targetTeam or killerTeam == nil then
+				if targetTeam == 1 then
+					killerTeam = 2
+				else
+					killerTeam = 1
+				end
+			end
+			AddTeamGraphKill(killerTeam, killer, self, killerWeapon)
 		end
 		
 	end)
