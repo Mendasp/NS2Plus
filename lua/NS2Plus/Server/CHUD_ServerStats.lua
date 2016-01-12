@@ -811,7 +811,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				for index, stats in pairs(CHUDCommStats[playerInfo.steamId]) do
 					if stats.picks and stats.picks > 0 or stats.misses and stats.misses > 0 then
 						if index == "medpack" then
-							msg.medpackAccuracy = CHUDGetAccuracy(stats.hitsAcc, stats.misses)
+							-- Add medpacks that were picked up later to the misses count for accuracy
+							msg.medpackAccuracy = CHUDGetAccuracy(stats.hitsAcc, (stats.picks-stats.hitsAcc)+stats.misses)
 							msg.medpackResUsed = stats.picks*kMedPackCost
 							msg.medpackResExpired = stats.misses*kMedPackCost
 							msg.medpackEfficiency = CHUDGetAccuracy(stats.picks, stats.misses)
