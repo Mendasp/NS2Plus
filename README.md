@@ -125,15 +125,16 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 
 **ServerInfo**
 
-| Field       | Description                                                                        |
-|-------------|------------------------------------------------------------------------------------|
-| roundDate   | Epoch time for the round.                                                          |
-| slots       | Number of slots for this server.                                                   |
-| mods        | Table that contains the modId and name for each of the mods active in this server. |
-| buildNumber | NS2 build number for this round.                                                   |
-| ip          | Server IP.                                                                         |
-| port        | Server port.                                                                       |
-| name        | Server name.                                                                       |
+| Field          | Description                                                                        |
+|----------------|------------------------------------------------------------------------------------|
+| roundDate      | Epoch time for the round.                                                          |
+| slots          | Number of slots for this server.                                                   |
+| mods           | Table that contains the modId and name for each of the mods active in this server. |
+| buildNumber    | NS2 build number for this round.                                                   |
+| rookieFriendly | Shows if the server has the rookie friendly tag or not.                            |
+| ip             | Server IP.                                                                         |
+| port           | Server port.                                                                       |
+| name           | Server name.                                                                       |
 
 **RoundInfo**
 
@@ -144,6 +145,8 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 | tournamentMode    | Will show if the game had tournament mode enabled (true/false).             |
 | mapName           | Name of the map played.                                                     |
 | startingLocations | Table with the starting locations for each team, (1 = Marines, 2 = Aliens). It uses the location name index from the Locations table. |
+| maxPlayers1       | The maximum amount of players the marine team had during the round.         |
+| maxPlayers2       | The maximum amount of players the alien team had during the round.          |
 | minimapExtents    | Table with the minimap extents to map coordinates to the overview. Contains "origin" and "scale". |
 
 **ClientStats**
@@ -161,6 +164,7 @@ The first field in this table is the SteamID for each recorded player in the gam
 | onosHits      | Number of attacks that hit an Onos.                                   |
 | misses        | Number of attacks that missed.                                        |
 | killstreak    | Best killstreak during the round.                                     |
+| isRookie      | Shows if this player is a rookie (true/false).                        |
 | timePlayed    | Time that the player was on this team for the round, in seconds.      |
 | commanderTime | Time that the player spent as commander for this team, in seconds.    |
 | pdmg          | Player damage.                                                        |

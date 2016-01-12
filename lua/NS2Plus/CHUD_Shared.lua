@@ -109,6 +109,7 @@ if not CHUDMainMenu then
 		killstreak = "integer (0 to 254)",
 		steamId = "integer",
 		hiveSkill = "integer",
+		isRookie = "boolean",
 	}
 
 	local kCHUDEndStatsStatusMessage =

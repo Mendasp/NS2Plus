@@ -5,6 +5,8 @@ local CHUDKillGraph = {}
 local CHUDResearchTree = {}
 local CHUDBuildingSummary = {}
 local CHUDStartingTechPoints = {}
+local CHUDExportResearch = {}
+local CHUDExportBuilding = {}
 
 local serverStatsPath = "NS2Plus\\Stats\\"
 local lastRoundStats = {}
@@ -146,7 +148,7 @@ oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
 			CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
 		end
 		
-		return unpack(retVals)
+		return CHUDUnpackRetVals(retVals)
 	end)
 
 local oldTechResearched = ResearchMixin.TechResearched
@@ -221,6 +223,7 @@ local function MaybeInitCHUDClientStats(steamId, wTechId, teamNumber)
 			-- These are team independent
 			CHUDClientStats[steamId].playerName = "NSPlayer"
 			CHUDClientStats[steamId].hiveSkill = -1
+			CHUDClientStats[steamId].isRookie = false
 			CHUDClientStats[steamId].lastTeam = teamNumber
 			
 			-- Initialize the last life stats
@@ -415,6 +418,7 @@ originalUpdateScore = Class_ReplaceMethod("PlayerInfoEntity", "UpdateScore",
 		if stat then
 			stat.playerName = self.playerName
 			stat.hiveSkill = self.playerSkill
+			stat.isRookie = self.isRookie
 		end
 		
 		return true
@@ -901,6 +905,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					statEntry.minutesBuilding = entry.timeBuilding/60
 					statEntry.minutesPlaying = entry.timePlayed/60
 					statEntry.minutesComm = entry.commanderTime/60
+					statEntry.isRookie = entry.isRookie
 					statEntry.steamId = steamId
 					
 					if teamNumber == 1 then
@@ -1031,6 +1036,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.ServerInfo["slots"] = Server.GetMaxPlayers()
 			lastRoundStats.ServerInfo["buildNumber"] = Shared.GetBuildNumber()
 			lastRoundStats.ServerInfo["roundDate"] = Shared.GetSystemTime()
+			lastRoundStats.ServerInfo["rookieFriendly"] = Server.GetIsRookieFriendly()
 			lastRoundStats.ServerInfo["mods"] = {}
 			local modNum
 			local activeModIds = {}
@@ -1052,6 +1058,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 			lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
 			lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
+			lastRoundStats.RoundInfo["maxPlayers1"] = CHUDTeamStats[1].maxPlayers
+			lastRoundStats.RoundInfo["maxPlayers2"] = CHUDTeamStats[2].maxPlayers
 			lastRoundStats.Locations = locationsTable
 
 			if CHUDServerOptions["savestats"].currentValue == true then
@@ -1170,7 +1178,7 @@ function AttackMeleeCapsule(weapon, player, damage, range, optionalCoords, altMo
 		end
 	end
 
-	return unpack(retVals)
+	return CHUDUnpackRetVals(retVals)
 end
 
 local originalBulletsMixinApplyBulletGameplayEffects = BulletsMixin.ApplyBulletGameplayEffects

@@ -1,3 +1,12 @@
+-- The original unpack won't return anything if any element in the table is nil
+-- Since some functions DO return nil elements sometimes, we make our own to work around this
+function CHUDUnpackRetVals(t)
+	local ret = {}
+	for index, entry in pairs(t) do
+		table.insert(ret, index, entry)
+	end
+end
+
 function CHUDWrapTextIntoTable( str, limit, indent, indent1 )
 
 	limit = limit or 72
