@@ -231,6 +231,7 @@ These are the rest of the fields inside each SteamID entry:
 | playerName | The player nickname ingame.               |
 | lastTeam   | Last team the player belonged to.         |
 | hiveSkill  | Hive Skill for the player for this round. |
+| isRookie   | Shows if the player is a rookie.          |
 
 **MarineCommStats**
 
