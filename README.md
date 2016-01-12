@@ -149,6 +149,30 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 | maxPlayers2       | The maximum amount of players the alien team had during the round.          |
 | minimapExtents    | Table with the minimap extents to map coordinates to the overview. Contains "origin" and "scale". |
 
+**Research**
+
+This table contains all the researches done during the game.
+
+| Field      | Description                                     |
+|------------|-------------------------------------------------|
+| teamNumber | Team that owns the research.                    |
+| gameTime   | Time when this research completed (in seconds). |
+| researchId | Name of the tech researched.                    |
+
+**Buildings**
+
+Here we can find building completions, deaths and recycles during the games. If built = true and destroyed = false, it means the building finished construction. When a building is recycled, the destroyed field will also be true.
+
+| Field      | Description                                              |
+|------------|----------------------------------------------------------|
+| teamNumber | Team that owns the building.                             |
+| gameTime   | Time when this building action completed (in seconds).   |
+| built      | If the building was completely built when this happened. |
+| recycled   | The building was recycled.                               |
+| destroyed  | The building was destroyed.                              |
+| techId     | Name of the building.                                    |
+| biomass    | **(Optional)** This will only show up when a Hive dies to be able to track how much biomass was lost. |
+
 **ClientStats**
 
 The first field in this table is the SteamID for each recorded player in the game. Inside each table, you will find tables for each team that the player played in (1 = Marines, 2 = Aliens), each of these team tables has these fields:
@@ -237,6 +261,8 @@ catpack
 | misses | Number of catpacks that are never picked up. |
 
 **KillGraph**
+
+Some fields will be null sometimes like in Suicides or death by Natural Causes or killing bots (they don't have SteamIDs).
 
 | Field          | Description                                                          |
 |----------------|----------------------------------------------------------------------|
