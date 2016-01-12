@@ -50,6 +50,13 @@ local function CHUDGetGameTime(inMinutes)
 	return gameTime
 end
 
+local function AddExportBuilding(teamNumber, techId, built, destroyed, recycled, extraInfo)
+	table.insert(CHUDExportBuilding, { teamNumber = teamNumber, techId = EnumToString(kTechId, techId), gameTime = CHUDGetGameTime(), built = built, destroyed = destroyed, recycled = recycled })
+	if extraInfo then
+		CHUDExportBuilding[#CHUDExportBuilding][extraInfo.name] = extraInfo.value
+	end
+end
+
 local function AddRTStat(teamNumber, built, destroyed)
 	if teamNumber == 1 or teamNumber == 2 then
 		local rtsTable = CHUDTeamStats[teamNumber].rts
@@ -154,8 +161,11 @@ oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
 local oldTechResearched = ResearchMixin.TechResearched
 function ResearchMixin:TechResearched(structure, researchId)
 	oldTechResearched(self, structure, researchId)
+	
 	if structure and structure:GetId() == self:GetId() then
 		if researchId == kTechId.Recycle then
+			AddExportBuilding(structure:GetTeamNumber(), structure.GetTechId and structure:GetTechId(), structure:GetIsBuilt(), true, true)
+			
 			if structure:isa("ResourceTower") then
 				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true, true, tostring(structure:GetOrigin()), structure:GetLocationName())
 			elseif structure.GetClassName and techLogBuildings[structure:GetClassName()] then
@@ -164,9 +174,13 @@ function ResearchMixin:TechResearched(structure, researchId)
 			end
 		elseif techLoggedAsBuilding[researchId] then
 			AddBuildingStat(structure:GetTeamNumber(), researchId, false)
+			
+			AddExportBuilding(structure:GetTeamNumber(), researchId, true, false, false)
 		else
 			-- Don't add recycles to the tech log
 			AddTechStat(structure:GetTeamNumber(), researchId, true, false, false)
+			
+			table.insert(CHUDExportResearch, {teamNumber = structure:GetTeamNumber(), researchId = EnumToString(kTechId, researchId), gameTime = CHUDGetGameTime()})
 		end
 	end
 end
@@ -174,6 +188,8 @@ end
 local oldConstructionComplete = ConstructMixin.OnConstructionComplete
 function ConstructMixin:OnConstructionComplete(builder)
 	oldConstructionComplete(self, builder)
+	
+	AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true, false, false)
 	
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false, false, tostring(self:GetOrigin()), self:GetLocationName())
@@ -573,6 +589,9 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 			if self:isa("ResourceTower") then
 				AddRTStat(targetTeam, self:GetIsBuilt(), true, false, tostring(self:GetOrigin()), self:GetLocationName())
 			elseif not self:isa("Player") and not self:isa("Weapon") then
+				if techLoggedAsBuilding[self.GetTechId and self:GetTechId()] or className == "Drifter" then
+					AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true, true, false)
+				end
 				if className then
 					if not notLoggedBuildings[className] then
 						AddBuildingStat(targetTeam, self.GetTechId and self:GetTechId(), true)
@@ -650,6 +669,9 @@ local function CHUDResetStats()
 	CHUDBuildingSummary = {}
 	CHUDBuildingSummary[1] = {}
 	CHUDBuildingSummary[2] = {}
+	
+	CHUDExportResearch = {}
+	CHUDExportBuilding = {}
 	
 	-- Do this so we can spawn items without a commander with cheats on
 	CHUDMarineComm = 0
@@ -784,6 +806,7 @@ originalDrifterEggHatch = Class_ReplaceMethod("DrifterEgg", "Hatch",
 		originalDrifterEggHatch(self)
 		
 		AddBuildingStat(self:GetTeamNumber(), kTechId.Drifter, false)
+		AddExportBuilding(self:GetTeamNumber(), kTechId.Drifter, true, false, false)
 	end)
 	
 local originalNS2GamerulesEndGame
@@ -1061,6 +1084,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.RoundInfo["maxPlayers1"] = CHUDTeamStats[1].maxPlayers
 			lastRoundStats.RoundInfo["maxPlayers2"] = CHUDTeamStats[2].maxPlayers
 			lastRoundStats.Locations = locationsTable
+			lastRoundStats.Buildings = CHUDExportBuilding
+			lastRoundStats.Research = CHUDExportResearch
 
 			if CHUDServerOptions["savestats"].currentValue == true then
 				local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
@@ -1148,7 +1173,6 @@ Class_AddMethod("Player", "PreOnKill",
 	end)
 
 local originalConstructMixinConstruct = ConstructMixin.Construct
-
 function ConstructMixin:Construct(elapsedTime, builder)
 
 	local success, playAV = originalConstructMixinConstruct(self, elapsedTime, builder)
@@ -1162,6 +1186,16 @@ function ConstructMixin:Construct(elapsedTime, builder)
 		AddBuildTime(steamId, elapsedTime, builder:GetTeamNumber())
 	end
 
+end
+
+local originalConstructMixinOnKill = ConstructMixin.OnKill
+function ConstructMixin:OnKill()
+	local extraInfo
+	if self:isa("Hive") and self:GetIsBuilt() then
+		extraInfo = {name = "biomass", value = self:GetTeam():GetBioMassLevel()-self:GetBioMassLevel()}
+	end
+	AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), self:GetIsBuilt(),  true, false, extraInfo)
+	originalConstructMixinOnKill(self)
 end
 
 local originalAttackMeleeCapsule = AttackMeleeCapsule

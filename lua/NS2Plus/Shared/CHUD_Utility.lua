@@ -1,4 +1,4 @@
--- The original unpack won't return anything if any element in the table is nil
+-- The original unpack won't return everything if any element in the "middle" of the table is nil
 -- Since some functions DO return nil elements sometimes, we make our own to work around this
 function CHUDUnpackRetVals(t)
 	local ret = {}
