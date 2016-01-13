@@ -4,6 +4,17 @@ function CHUDUnpackRetVals(t)
 	return unpack(t, 1, table.maxn(t))
 end
 
+-- As seen here: http://stackoverflow.com/questions/640642/how-do-you-copy-a-lua-table-by-value
+function CHUDCopyTable(obj, seen)
+	if type(obj) ~= 'table' then return obj end
+	if seen and seen[obj] then return seen[obj] end
+	local s = seen or {}
+	local res = setmetatable({}, getmetatable(obj))
+	s[obj] = res
+	for k, v in pairs(obj) do res[CHUDCopyTable(k, s)] = CHUDCopyTable(v, s) end
+	return res
+end
+
 function CHUDWrapTextIntoTable( str, limit, indent, indent1 )
 
 	limit = limit or 72

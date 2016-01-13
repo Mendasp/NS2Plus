@@ -1065,8 +1065,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		if #finalStats[1] > 0 or #finalStats[2] > 0 then
 			lastRoundStats = {}
 			lastRoundStats.MarineCommStats = newCommStatsTable
-			lastRoundStats.PlayerStats = CHUDClientStats
-			lastRoundStats.KillFeed = CHUDKillGraph
+			lastRoundStats.PlayerStats = CHUDCopyTable(CHUDClientStats)
+			lastRoundStats.KillFeed = CHUDCopyTable(CHUDKillGraph)
 			lastRoundStats.ServerInfo = {}
 			lastRoundStats.ServerInfo["ip"] = Server.GetIpAddress()
 			lastRoundStats.ServerInfo["port"] = Server.GetPort()
@@ -1093,14 +1093,14 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.RoundInfo["minimapExtents"] = minimapExtents
 			lastRoundStats.RoundInfo["roundDate"] = Shared.GetSystemTime()
 			lastRoundStats.RoundInfo["roundLength"] = CHUDGetGameTime()
-			lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
+			lastRoundStats.RoundInfo["startingLocations"] = CHUDCopyTable(CHUDStartingTechPoints)
 			lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
 			lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
 			lastRoundStats.RoundInfo["maxPlayers1"] = CHUDTeamStats[1].maxPlayers
 			lastRoundStats.RoundInfo["maxPlayers2"] = CHUDTeamStats[2].maxPlayers
 			lastRoundStats.Locations = locationsTable
-			lastRoundStats.Buildings = CHUDExportBuilding
-			lastRoundStats.Research = CHUDExportResearch
+			lastRoundStats.Buildings = CHUDCopyTable(CHUDExportBuilding)
+			lastRoundStats.Research = CHUDCopyTable(CHUDExportResearch)
 
 			if CHUDServerOptions["savestats"].currentValue == true then
 				local savedServerFile = io.open("config://" .. serverStatsPath .. Shared.GetSystemTime() .. ".json", "w+")
