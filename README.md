@@ -6,6 +6,15 @@ Latest changes
 ==============
 - 13/01/2015
 	- Fixed unbuilt RT deaths showing up in the RT graph (allowed for negative RT counts).
+	- Stats format changes:
+		- Renamed pdmg and sdmg fields to playerDamage and structureDamage.
+		- Removed "last" table from player stats which was only meant for internal use.
+		- Renamed KillGraph to KillFeed.
+		- Renamed ClientStats to PlayerStats.
+		- Renamed "weapon" field to "killerWeapon" and "teamNumber" to "killerTeamNumber" in the KillFeed table.
+		- Changed "gameMinute" field in KillFeed table to "gameTime", which now returns the time in seconds.
+		- Renamed "roundTime" field in RoundInfo table to "roundLength".
+		- Fixed kills not showing the killer weapon in the KillFeed table if the player had left the server.
 
 - 12/01/2015
 	- Updated exported stats data format.
