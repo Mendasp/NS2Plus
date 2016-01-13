@@ -62,7 +62,9 @@ local function AddRTStat(teamNumber, built, destroyed)
 		local rtsTable = CHUDTeamStats[teamNumber].rts
 		local finishedBuilding = built and not destroyed
 		
-		table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = destroyed, gameMinute = CHUDGetGameTime(true)})
+		if built then
+			table.insert(CHUDRTGraph, {teamNumber = teamNumber, destroyed = destroyed, gameMinute = CHUDGetGameTime(true)})
+		end
 		
 		-- The unfinished nodes will be computed on the overall built/lost data
 		rtsTable.lost = rtsTable.lost + ConditionalValue(destroyed, 1, 0)
@@ -964,7 +966,6 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				end
 			end
 			
-			-- Don't send unbuilt nodes, the RT graph will only show changes in finished nodes
 			for _, entry in ipairs(CHUDRTGraph) do
 				Server.SendNetworkMessage("CHUDRTGraph", entry, true)
 			end
