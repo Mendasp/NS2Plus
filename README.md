@@ -118,7 +118,6 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 
 | Field          | Description                                                                        |
 |----------------|------------------------------------------------------------------------------------|
-| roundDate      | Epoch time for the round.                                                          |
 | slots          | Number of slots for this server.                                                   |
 | mods           | Table that contains the modId and name for each of the mods active in this server. |
 | buildNumber    | NS2 build number for this round.                                                   |
@@ -131,6 +130,7 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 
 | Field             | Description                                                                 |
 |-------------------|-----------------------------------------------------------------------------|
+| roundDate         | Epoch time for the round.                                                   |
 | winningTeam       | Team that won the game (0 = Draw, 1 = Marines, 2 = Aliens).                 |
 | roundTime         | Round length, in seconds.                                                   |
 | tournamentMode    | Will show if the game had tournament mode enabled (true/false).             |
