@@ -67,7 +67,7 @@ if not CHUDMainMenu then
 	
 	local kCHUDKillGraphMessage =
 	{
-		teamNumber = "integer (1 to 2)",
+		killerTeamNumber = "integer (1 to 2)",
 		gameMinute = "float (0 to 1023 by 0.01)",
 	}
 	

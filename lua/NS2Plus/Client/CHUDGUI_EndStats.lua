@@ -2609,7 +2609,10 @@ end
 
 local function CHUDSetKillGraph(message)
 	if message and message.gameMinute then
-		table.insert(killGraphTable, message)
+		local entry = {}
+		entry.teamNumber = message.killerTeamNumber
+		entry.gameMinute = message.gameMinute
+		table.insert(killGraphTable, entry)
 	end
 	
 	lastStatsMsg = Shared.GetTime()

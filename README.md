@@ -132,7 +132,7 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 |-------------------|-----------------------------------------------------------------------------|
 | roundDate         | Epoch time for the round.                                                   |
 | winningTeam       | Team that won the game (0 = Draw, 1 = Marines, 2 = Aliens).                 |
-| roundTime         | Round length, in seconds.                                                   |
+| roundLength       | Round length, in seconds.                                                   |
 | tournamentMode    | Will show if the game had tournament mode enabled (true/false).             |
 | mapName           | Name of the map played.                                                     |
 | startingLocations | Table with the starting locations for each team, (1 = Marines, 2 = Aliens). It uses the location name index from the Locations table. |
@@ -164,38 +164,38 @@ Here we can find building completions, deaths and recycles during the games. If 
 | techId     | Name of the building.                                    |
 | biomass    | **(Optional)** This will only show up when a Hive dies to be able to track how much biomass was lost. |
 
-**ClientStats**
+**PlayerStats**
 
 The first field in this table is the SteamID for each recorded player in the game. Inside each table, you will find tables for each team that the player played in (1 = Marines, 2 = Aliens), each of these team tables has these fields:
 
-| Field         | Description                                                           |
-|---------------|-----------------------------------------------------------------------|
-| kills         | Number of kills.                                                      |
-| deaths        | Number of deaths.                                                     |
-| assists       | Number of assists.                                                    |
-| score         | Player score for the round.                                           |
-| timeBuilding  | Time that the player has spent building during the round, in seconds. |
-| hits          | Number of attacks that hit (this includes Onos hits).                 |
-| onosHits      | Number of attacks that hit an Onos.                                   |
-| misses        | Number of attacks that missed.                                        |
-| killstreak    | Best killstreak during the round.                                     |
-| isRookie      | Shows if this player is a rookie (true/false).                        |
-| timePlayed    | Time that the player was on this team for the round, in seconds.      |
-| commanderTime | Time that the player spent as commander for this team, in seconds.    |
-| pdmg          | Player damage.                                                        |
-| sdmg          | Structure damage.                                                     |
+| Field           | Description                                                           |
+|-----------------|-----------------------------------------------------------------------|
+| kills           | Number of kills.                                                      |
+| deaths          | Number of deaths.                                                     |
+| assists         | Number of assists.                                                    |
+| score           | Player score for the round.                                           |
+| timeBuilding    | Time that the player has spent building during the round, in seconds. |
+| hits            | Number of attacks that hit (this includes Onos hits).                 |
+| onosHits        | Number of attacks that hit an Onos.                                   |
+| misses          | Number of attacks that missed.                                        |
+| killstreak      | Best killstreak during the round.                                     |
+| isRookie        | Shows if this player is a rookie (true/false).                        |
+| timePlayed      | Time that the player was on this team for the round, in seconds.      |
+| commanderTime   | Time that the player spent as commander for this team, in seconds.    |
+| playerDamage    | Player damage.                                                        |
+| structureDamage | Structure damage.                                                     |
 
 It also has a table ("weapons") for the weapons used by the player, which contains the following:
 
-| Field      | Description                                           |
-|------------|-------------------------------------------------------|
-| teamNumber | The player's team (1 = Marines, 2 = Aliens).          |
-| hits       | Number of attacks that hit (this includes Onos hits). |
-| onosHits   | Number of attacks that hit an Onos.                   |
-| misses     | Number of attacks that missed.                        |
-| kills      | Number of kills with this weapon.                     |
-| pdmg       | Player damage with this weapon.                       |
-| sdmg       | Structure damage with this weapon.                    |
+| Field           | Description                                           |
+|-----------------|-------------------------------------------------------|
+| teamNumber      | The player's team (1 = Marines, 2 = Aliens).          |
+| hits            | Number of attacks that hit (this includes Onos hits). |
+| onosHits        | Number of attacks that hit an Onos.                   |
+| misses          | Number of attacks that missed.                        |
+| kills           | Number of kills with this weapon.                     |
+| playerDamage    | Player damage with this weapon.                       |
+| structureDamage | Structure damage with this weapon.                    |
 
 Also contains a status table ("status"), which shows the breakdown of classes for the player during the round:
 
@@ -203,17 +203,6 @@ Also contains a status table ("status"), which shows the breakdown of classes fo
 |-----------|---------------------------------|
 | statusId  | Name of the class.              |
 | classTime | Time as this class, in seconds. |
-
-There is another table for the last life ("last"), which is used internally for sending the stats when the player dies, this shouldn't be of much use, but in case someone wants to use it, the fields are as follows:
-
-| Field    | Description                                                            |
-|----------|------------------------------------------------------------------------|
-| hits     | Number of attacks that hit in the last life (this includes Onos hits). |
-| onosHits | Number of attacks that hit an Onos in the last life.                   |
-| misses   | Number of attacks that missed in the last life.                        |
-| kills    | Number of kills in the last life.                                      |
-| pdmg     | Player damage in the last life.                                        |
-| sdmg     | Structure damage in the last life.                                     |
 
 These are the rest of the fields inside each SteamID entry:
 
@@ -252,21 +241,21 @@ catpack
 | picks  | Number of catpacks picked up by players.     |
 | misses | Number of catpacks that are never picked up. |
 
-**KillGraph**
+**KillFeed**
 
 Some fields will be null sometimes like in Suicides or death by Natural Causes or killing bots (they don't have SteamIDs).
 
-| Field          | Description                                                          |
-|----------------|----------------------------------------------------------------------|
-| teamNumber     | Team that got awarded this kill (1 = Marines, 2 = Aliens).           |
-| gameMinute     | Minute of the game where this happened.                              |
-| killerClass    | The killer's class.                                                  |
-| killerPosition | Map coordinates for the killer's position.                           |
-| killerLocation | Location name index for the killer's position.                       |
-| victimClass    | The victim's class.                                                  |
-| victimPosition | Map coordinates for the victim's position.                           |
-| victimLocation | Location name index for the victim's position.                       |
-| weapon         | Weapon used for the kill. Will be "None" for Natural Causes/Suicide. |
+| Field            | Description                                                          |
+|------------------|----------------------------------------------------------------------|
+| killerTeamNumber | Team that got awarded this kill (1 = Marines, 2 = Aliens).           |
+| killerWeapon     | Weapon used for the kill. Will be "None" for Natural Causes/Suicide. |
+| killerClass      | The killer's class.                                                  |
+| killerPosition   | Map coordinates for the killer's position.                           |
+| killerLocation   | Location name index for the killer's position.                       |
+| victimClass      | The victim's class.                                                  |
+| victimPosition   | Map coordinates for the victim's position.                           |
+| victimLocation   | Location name index for the victim's position.                       |
+| gameTime         | Game time when this happened (in seconds).                           |
 
 Credits/Thanks to
 =================

@@ -362,7 +362,7 @@ local function AddTeamGraphKill(teamNumber, killer, victim, weapon)
 		local victimSteamID = victim and victim:isa("Player") and GetSteamIdForClientIndex(victim:GetClientIndex()) or nil
 		local weapon = EnumToString(kTechId, weapon) or nil
 		
-		table.insert(CHUDKillGraph, {teamNumber = teamNumber, gameMinute = CHUDGetGameTime(true), killerPosition = killerPosition, killerLocation = killerLocation, killerClass = killerClass, killerSteamID = killerSteamID, victimPosition = victimPosition, victimLocation = victimLocation, victimClass = victimClass, victimSteamID = victimSteamID, weapon = weapon})
+		table.insert(CHUDKillGraph, {gameTime = CHUDGetGameTime(), gameMinute = CHUDGetGameTime(true), killerTeamNumber = teamNumber, killerWeapon = weapon, killerPosition = killerPosition, killerLocation = killerLocation, killerClass = killerClass, killerSteamID = killerSteamID, victimPosition = victimPosition, victimLocation = victimLocation, victimClass = victimClass, victimSteamID = victimSteamID})
 	end
 end
 
@@ -399,7 +399,7 @@ local function GetAttackerWeapon(attacker, doer)
 				else
 					attackerWeapon = doer:GetTechId()
 				end
-			elseif HasMixin(doer, "Owner") and doer:GetOwner() and doer:GetOwner():isa("Player") then
+			elseif HasMixin(doer, "Owner") then
 				if doer.GetWeaponTechId then
 					attackerWeapon = doer:GetWeaponTechId()
 				elseif doer.techId then
@@ -882,6 +882,11 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
 					
+					-- Use more consistent naming for exported stats
+					wStats.playerDamage = wStats.pdmg
+					wStats.structureDamage = wStats.sdmg
+					wStats.pdmg = nil
+					wStats.sdmg = nil
 					newWeaponsTable[EnumToString(kTechId, wTechId)] = wStats
 				end
 				stats["weapons"] = newWeaponsTable
@@ -939,7 +944,14 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 						table.insert(finalStats[2], statEntry)
 					end
 				end
+				-- Use more consistent naming for exported stats
+				entry.playerDamage = entry.pdmg
+				entry.structureDamage = entry.sdmg
+				entry.pdmg = nil
+				entry.sdmg = nil
 			end
+			-- Remove last life stats from exported data
+			stats.last = nil
 		end
 		
 		local team1Accuracy, team1OnosAccuracy = CHUDGetAccuracy(CHUDTeamStats[1].hits, CHUDTeamStats[1].misses, CHUDTeamStats[1].onosHits)
@@ -972,6 +984,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			
 			for _, entry in ipairs(CHUDKillGraph) do
 				Server.SendNetworkMessage("CHUDKillGraph", entry, true)
+				-- Remove the game minute so it doesn't get exported
+				entry.gameMinute = nil
 			end
 			
 			local newBuildingSummaryTable = {}
@@ -1051,8 +1065,8 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		if #finalStats[1] > 0 or #finalStats[2] > 0 then
 			lastRoundStats = {}
 			lastRoundStats.MarineCommStats = newCommStatsTable
-			lastRoundStats.ClientStats = CHUDClientStats
-			lastRoundStats.KillGraph = CHUDKillGraph
+			lastRoundStats.PlayerStats = CHUDClientStats
+			lastRoundStats.KillFeed = CHUDKillGraph
 			lastRoundStats.ServerInfo = {}
 			lastRoundStats.ServerInfo["ip"] = Server.GetIpAddress()
 			lastRoundStats.ServerInfo["port"] = Server.GetPort()
@@ -1078,7 +1092,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
 			lastRoundStats.RoundInfo["minimapExtents"] = minimapExtents
 			lastRoundStats.RoundInfo["roundDate"] = Shared.GetSystemTime()
-			lastRoundStats.RoundInfo["roundTime"] = CHUDGetGameTime()
+			lastRoundStats.RoundInfo["roundLength"] = CHUDGetGameTime()
 			lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 			lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
 			lastRoundStats.RoundInfo["tournamentMode"] = GetTournamentModeEnabled()
