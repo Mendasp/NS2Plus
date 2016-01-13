@@ -1059,12 +1059,11 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.ServerInfo["name"] = Server.GetName()
 			lastRoundStats.ServerInfo["slots"] = Server.GetMaxPlayers()
 			lastRoundStats.ServerInfo["buildNumber"] = Shared.GetBuildNumber()
-			lastRoundStats.ServerInfo["roundDate"] = Shared.GetSystemTime()
 			lastRoundStats.ServerInfo["rookieFriendly"] = Server.GetIsRookieFriendly()
 			lastRoundStats.ServerInfo["mods"] = {}
 			local modNum
 			local activeModIds = {}
-			
+
 			-- Can't get the mod title correctly unless we do this
 			-- GetModTitle can't get it from the active mod list index, it uses the normal one
 			for modNum = 1, Server.GetNumActiveMods() do
@@ -1078,6 +1077,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.RoundInfo = {}
 			lastRoundStats.RoundInfo["mapName"] = Shared.GetMapName()
 			lastRoundStats.RoundInfo["minimapExtents"] = minimapExtents
+                        lastRoundStats.RoundInfo["roundDate"] = Shared.GetSystemTime()
 			lastRoundStats.RoundInfo["roundTime"] = CHUDGetGameTime()
 			lastRoundStats.RoundInfo["startingLocations"] = CHUDStartingTechPoints
 			lastRoundStats.RoundInfo["winningTeam"] = winningTeam and winningTeam.GetTeamType and winningTeam:GetTeamType() or kNeutralTeamType
