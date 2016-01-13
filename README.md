@@ -5,7 +5,7 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 Latest changes
 ==============
 - 13/01/2015
-	- Fixed unbuilt RTs deaths showing up in the RT graph (allowed for negative RT counts).
+	- Fixed unbuilt RT deaths showing up in the RT graph (allowed for negative RT counts).
 
 - 12/01/2015
 	- Updated exported stats data format.
