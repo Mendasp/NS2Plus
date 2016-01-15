@@ -2846,6 +2846,9 @@ gTechIdPosition[kTechId.ARC] = kDeathMessageIcon.ARC
 gTechIdPosition[kTechId.Whip] = kDeathMessageIcon.Whip
 gTechIdPosition[kTechId.Babbler] = kDeathMessageIcon.Babbler
 gTechIdPosition[kTechId.Hydra] = kDeathMessageIcon.HydraSpike
+gTechIdPosition[kTechId.Minigun] = kDeathMessageIcon.Minigun
+gTechIdPosition[kTechId.Claw] = kDeathMessageIcon.Claw
+gTechIdPosition[kTechId.Railgun] = kDeathMessageIcon.Railgun
 
 Client.HookNetworkMessage("CHUDPlayerStats", CHUDSetPlayerStats)
 Client.HookNetworkMessage("CHUDGameData", CHUDSetGameData)
