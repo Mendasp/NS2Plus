@@ -1045,7 +1045,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		
 		if sendCommStats then
 			local msg = {}
-			msg.medpackAccuracy = CHUDGetAccuracy(medpackHitsAcc, medpackMisses)
+			msg.medpackAccuracy = CHUDGetAccuracy(medpackHitsAcc, (medpackPicks-medpackHitsAcc)+medpackMisses)
 			msg.medpackResUsed = medpackPicks
 			msg.medpackResExpired = medpackMisses
 			msg.medpackEfficiency = CHUDGetAccuracy(medpackPicks, medpackMisses)
