@@ -128,7 +128,7 @@ function HiveVisionMixin:OnUpdate(deltaTime)
 		
 	end
 
-	oldHVUpdate(self)
+	oldHVUpdate(self, deltaTime)
 end
 
 Event.Hook("LoadComplete", InitCHUDOutlines)
