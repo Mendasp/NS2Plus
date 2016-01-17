@@ -5,7 +5,6 @@ local _maxDistance_Commander = 60
 local _enabled          = true
 
 function HiveVisionExtra_Initialize()
-
 	HiveVisionExtra_camera = Client.CreateRenderCamera()
 	HiveVisionExtra_camera:SetTargetTexture("*hive_vision_extra", true)
 	HiveVisionExtra_camera:SetRenderMask( _renderMask )
@@ -15,31 +14,25 @@ function HiveVisionExtra_Initialize()
 
 	HiveVisionExtra_screenEffect = Client.CreateScreenEffect("shaders/HiveVisionExtra.screenfx")
 	HiveVisionExtra_screenEffect:SetActive(false)    
-
 end
 
 function HiveVisionExtra_Shutdown()
-
 	Client.DestroyRenderCamera(HiveVisionExtra_camera)
 	HiveVisionExtra_camera = nil
 
 	Client.DestroyScreenEffect(HiveVisionExtra_screenEffect)
 	HiveVisionExtra_screenEffect = nil
-
 end
 
 /** Enables or disabls the hive vision effect. When the effect is not needed it should 
  * be disabled to boost performance. */
 function HiveVisionExtra_SetEnabled(enabled)
-
 	HiveVisionExtra_camera:SetIsVisible(enabled and _enabled)
 	HiveVisionExtra_screenEffect:SetActive(enabled and _enabled) 
-
 end
 
 /** Must be called prior to rendering */
 function HiveVisionExtra_SyncCamera(camera, forCommander)
-
 	local distance = ConditionalValue(forCommander, _maxDistance_Commander, _maxDistance)
 
 	HiveVisionExtra_camera:SetCoords( camera:GetCoords() )
@@ -47,7 +40,6 @@ function HiveVisionExtra_SyncCamera(camera, forCommander)
 	HiveVisionExtra_camera:SetFarPlane( distance + 1 )
 	HiveVisionExtra_screenEffect:SetParameter("time", Shared.GetTime())
 	HiveVisionExtra_screenEffect:SetParameter("maxDistance", distance)
-
 end
 
 /** Adds a model to the hive vision */
@@ -84,51 +76,50 @@ function UpdateCHUDOutlines()
 end
 
 local function GetMaxDistanceFor(player)
-
 	if player:isa("AlienCommander") then
 		return 63
 	end
-
 	return 33
-
 end
 
 local oldHVUpdate = HiveVisionMixin.OnUpdate
 function HiveVisionMixin:OnUpdate(deltaTime)
-	local visible = HasMixin(self, "ParasiteAble") and self:GetIsParasited()
+	oldHVUpdate(self, deltaTime)
+	
 	local player = Client.GetLocalPlayer()
-	
-	// check the distance here as well. seems that the render mask is not correct for newly created models or models which get destroyed in the same frame
-	local playerCanSeeHiveVision = player ~= nil and (player:GetOrigin() - self:GetOrigin()):GetLength() <= GetMaxDistanceFor(player) and (player:isa("Alien") or player:isa("AlienCommander") or player:isa("AlienSpectator"))
-	
-	if visible and not playerCanSeeHiveVision then
-		visible = false
-	end
-
-	if visible ~= self.hiveSightVisible and (not self.timeHiveVisionChanged or self.timeHiveVisionChanged + 1 < Shared.GetTime()) then
-	
+	if player:isa("Alien") or player:isa("AlienSpectator") then
 		local model = self:GetRenderModel()
-		if model ~= nil then
-		
-			// This basically duplicates the outlines for players
-			// Achieves seeing marines through buildings but not the other way around
-			// Which is what we actually want to do
-			if visible then
-				// "male" is found both in male and female! Woo!
-				if string.find(self:GetModelName(), "male") or string.find(self:GetModelName(), "exo") then
-					HiveVisionExtra_AddModel( model )
-				end
-			else
-				if string.find(self:GetModelName(), "male") or string.find(self:GetModelName(), "exo") then
-					HiveVisionExtra_RemoveModel( model )
+		if self.timeHiveVisionChanged == Shared.GetTime() then
+			if model ~= nil then
+				-- This basically duplicates the outlines for players
+				-- Achieves seeing marines through buildings but not the other way around
+				-- Which is what we actually want to do
+				if self.hiveSightVisible then
+					-- "male" is found both in male and female! Woo!
+					if string.find(self:GetModelName(), "male") or string.find(self:GetModelName(), "exo") then
+						HiveVisionExtra_AddModel(model)
+					end
+				else
+					if string.find(self:GetModelName(), "male") or string.find(self:GetModelName(), "exo") then
+						HiveVisionExtra_RemoveModel(model)
+					end
 				end
 			end
-			
 		end
-		
 	end
+end
 
-	oldHVUpdate(self, deltaTime)
+local oldHVDestroy = HiveVisionMixin.OnDestroy
+function HiveVisionMixin:OnDestroy()
+
+	oldHVDestroy(self)
+	if self.hiveSightVisible then
+		local model = self:GetRenderModel()
+		if model ~= nil then
+			HiveVisionExtra_RemoveModel(model)
+		end
+	end
+	
 end
 
 Event.Hook("LoadComplete", InitCHUDOutlines)
