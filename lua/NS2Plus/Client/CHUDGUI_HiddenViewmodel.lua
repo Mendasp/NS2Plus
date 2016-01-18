@@ -1,39 +1,34 @@
-Script.Load("lua/GUIAnimatedScript.lua")
-
-class 'CHUDGUI_HiddenViewmodel' (GUIAnimatedScript)
+class 'CHUDGUI_HiddenViewmodel' (GUIScript)
 
 local obsIndicatorTexture = PrecacheAsset("ui/chud_scanindicator.dds")
 local obsTextureCoords = {0, 0, 64, 64}
 local buildTexture = PrecacheAsset("ui/buildmenu.dds")
-local iconSize = GUIScale(Vector(64, 64, 0))
+local iconSize
 
 function CHUDGUI_HiddenViewmodel:Initialize()
 
-	GUIAnimatedScript.Initialize(self)
+	iconSize = GUIScale(Vector(64, 64, 0))
 	
-	self.leftIndicator = self:CreateAnimatedGraphicItem()
+	self.leftIndicator = GUIManager:CreateGraphicItem()
 	self.leftIndicator:SetAnchor(GUIItem.Left, GUIItem.Bottom)
 	self.leftIndicator:SetLayer(kGUILayerPlayerHUD)
 	self.leftIndicator:SetIsVisible(true)
-	self.leftIndicator:SetIsScaling(false)
 	self.leftIndicator:SetColor(kAlienFontColor)
 	self.leftIndicator:SetSize(iconSize)
 
-	self.umbraIndicator = self:CreateAnimatedGraphicItem()
+	self.umbraIndicator = GUIManager:CreateGraphicItem()
 	self.umbraIndicator:SetAnchor(GUIItem.Right, GUIItem.Bottom)
 	self.umbraIndicator:SetLayer(kGUILayerPlayerHUD)
 	self.umbraIndicator:SetIsVisible(true)
-	self.umbraIndicator:SetIsScaling(false)
 	self.umbraIndicator:SetTexture(buildTexture)
 	self.umbraIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Umbra)))
 	self.umbraIndicator:SetSize(iconSize)
 	self.umbraIndicator:SetColor(kAlienFontColor)
 	
-	self.enzymeIndicator = self:CreateAnimatedGraphicItem()
+	self.enzymeIndicator = GUIManager:CreateGraphicItem()
 	self.enzymeIndicator:SetAnchor(GUIItem.Right, GUIItem.Bottom)
 	self.enzymeIndicator:SetLayer(kGUILayerPlayerHUD)
 	self.enzymeIndicator:SetIsVisible(true)
-	self.enzymeIndicator:SetIsScaling(false)
 	self.enzymeIndicator:SetTexture(buildTexture)
 	self.enzymeIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.EnzymeCloud)))
 	self.enzymeIndicator:SetSize(iconSize)
@@ -48,8 +43,8 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 		local healthBall = alienHUDScript.healthBall:GetBackground()
 		local energyBall = alienHUDScript.energyBall:GetBackground()
 		local size = healthBall:GetSize()
-		local leftPos = healthBall:GetPosition() + Vector(size.x-16, 0, 0)
-		local rightPos = energyBall:GetPosition() - Vector(size.x-48, 0, 0)
+		local leftPos = healthBall:GetPosition() + Vector(size.x-GUIScale(16), 0, 0)
+		local rightPos = energyBall:GetPosition() - Vector(size.x-GUIScale(48), 0, 0)
 		
 		local player = Client.GetLocalPlayer()
 		
@@ -72,10 +67,12 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 		elseif cloak then
 			self.leftIndicator:SetTexture(buildTexture)
 			self.leftIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Phantom)))
+			self.leftIndicator:SetColor(kAlienFontColor)
 			
+			-- Do this to not override the original kAlienFontColor
 			local color = self.leftIndicator:GetColor()
 			color.a = player:GetCloakFraction()
-			self.leftIndicator:SetColor(kAlienFontColor)
+			self.leftIndicator:SetColor(color)
 		end
 		
 		if umbra then
@@ -89,17 +86,20 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 	end
 end
 
+function CHUDGUI_HiddenViewmodel:OnResolutionChanged(oldX, oldY, newX, newY)
+	self:Uninitialize()
+	self:Initialize()
+end
+
 function CHUDGUI_HiddenViewmodel:Uninitialize()
 	
-	GUIAnimatedScript.Uninitialize(self)
-	
-	self.leftIndicator:Destroy()
+	GUI.DestroyItem(self.leftIndicator)
 	self.leftIndicator = nil
 	
-	self.umbraIndicator:Destroy()
+	GUI.DestroyItem(self.umbraIndicator)
 	self.umbraIndicator = nil
 	
-	self.enzymeIndicator:Destroy()
+	GUI.DestroyItem(self.enzymeIndicator)
 	self.enzymeIndicator = nil
 	
 end
