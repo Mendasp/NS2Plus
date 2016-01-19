@@ -3,10 +3,14 @@ local parent, OldUpdateUnitStatusBlip = LocateUpValue( GUIUnitStatus.Update, "Up
 
 function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
+	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates") or 0
 	local CHUDBlipData
 	if type(blipData.Hint) == "table" then
 		CHUDBlipData = blipData.Hint
 		blipData.Hint = CHUDBlipData.Hint
+		if nameplates == 1 or nameplates == 3 then
+			blipData.Hint = CHUDBlipData.Status
+		end
 		if CHUDBlipData.IsVisible == false then
 			blipData.IsCrossHairTarget = false
 			blipData.HealthFraction = 0
@@ -20,13 +24,13 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()
 	
-	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates") or 0
-	
 	local showHints = showHints
 	
 	local hideBg = false
 	if nameplates == 1 then
 		showHints = false
+	elseif nameplates == 3 then
+		showHints = true
 	elseif PlayerUI_GetIsSpecating() and isEnabled and blipData.IsPlayer then
 		blipData.IsCrossHairTarget = true
 		hideBg = true
@@ -77,7 +81,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	end
 	
 	-- Percentages Nameplates
-	if nameplates == 1 then
+	if nameplates == 1 or nameplates == 3 then
 		if CHUDBlipData and updateBlip.NameText:GetIsVisible() then
 			
 			if CHUDBlipData.Percentage then
@@ -91,10 +95,11 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			updateBlip.HintText:SetIsVisible(true)
 			updateBlip.HintText:SetColor(updateBlip.NameText:GetColor())
 			
-			updateBlip.HealthBarBg:SetIsVisible(false)
-			updateBlip.ArmorBarBg:SetIsVisible(false)
+			local barsVisible = nameplates == 3
+			updateBlip.HealthBarBg:SetIsVisible(updateBlip.HealthBarBg:GetIsVisible() and barsVisible)
+			updateBlip.ArmorBarBg:SetIsVisible(updateBlip.ArmorBarBg:GetIsVisible() and barsVisible)
 			if updateBlip.AbilityBarBg then
-				updateBlip.AbilityBarBg:SetIsVisible(false)
+				updateBlip.AbilityBarBg:SetIsVisible(updateBlip.AbilityBarBg:GetIsVisible() and barsVisible)
 			end
 			
 			if blipData.SpawnFraction ~= nil and not isEnemy and not blipData.IsCrossHairTarget then
