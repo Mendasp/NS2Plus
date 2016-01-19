@@ -114,18 +114,20 @@ function CheckCHUDTagOption(bitmask, option)
 	return(bit.band(bitmask, option) > 0)
 end
 
-function CHUDGetGameTime()
+if Client then
+	function CHUDGetGameTimeString()
 
-	local gameTime, state = PlayerUI_GetGameLengthTime()
-	if state == kGameState.NotStarted then
-		gameTime = 0
+		local gameTime, state = PlayerUI_GetGameLengthTime()
+		if state == kGameState.NotStarted then
+			gameTime = 0
+		end
+
+		local minutes = math.floor(gameTime / 60)
+		local seconds = math.floor(gameTime % 60)
+
+		return(string.format("%d:%.2d", minutes, seconds))
+
 	end
-
-	local minutes = math.floor(gameTime / 60)
-	local seconds = math.floor(gameTime % 60)
-
-	return(string.format("%d:%.2d", minutes, seconds))
-
 end
 
 function CHUDFormatDateTimeString(dateTime)

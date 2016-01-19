@@ -185,7 +185,7 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 		end
 		
 		if self.gameTime then
-			self.gameTime:SetText(CHUDGetGameTime())
+			self.gameTime:SetText(CHUDGetGameTimeString())
 			self.gameTime:SetIsVisible(gametime)
 		end
 		

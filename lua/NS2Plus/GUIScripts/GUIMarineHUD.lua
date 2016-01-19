@@ -237,7 +237,7 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 		local player = Client.GetLocalPlayer()
 		
 		if self.gameTime then
-			self.gameTime:SetText(CHUDGetGameTime())
+			self.gameTime:SetText(CHUDGetGameTimeString())
 			self.gameTime:SetIsVisible(gametime)
 		end
 		

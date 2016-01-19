@@ -118,7 +118,7 @@ function(self, input)
 	originalCommanderUpdate(self, input)
 	
 	if self.gameTime then
-		self.gameTime:SetText(CHUDGetGameTime())
+		self.gameTime:SetText(CHUDGetGameTimeString())
 		self.gameTime:SetIsVisible(CHUDGetOption("gametime"))
 	end
 end)
