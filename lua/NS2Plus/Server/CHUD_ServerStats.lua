@@ -656,6 +656,7 @@ local function CHUDResetStats()
 	CHUDTeamStats[1].onosHits = 0
 	CHUDTeamStats[1].misses = 0
 	CHUDTeamStats[1].rts = {lost = 0, built = 0}
+	CHUDTeamStats[1].maxPlayers = 0
 	-- Easier to read for servers parsing the jsons
 	CHUDTeamStats[1].teamNumber = 1
 	
@@ -663,6 +664,7 @@ local function CHUDResetStats()
 	CHUDTeamStats[2].hits = 0
 	CHUDTeamStats[2].misses = 0
 	CHUDTeamStats[2].rts = {lost = 0, built = 0}
+	CHUDTeamStats[2].maxPlayers = 0
 	-- Easier to read for servers parsing the jsons
 	CHUDTeamStats[2].teamNumber = 2
 
