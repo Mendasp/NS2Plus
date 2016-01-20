@@ -1,6 +1,7 @@
 -- Allow customizations for our HUD textures
-Server.RemoveFileHashes("ui/centerhud.dds")
+Server.RemoveFileHashes("ui/centerhudbar.dds")
 Server.RemoveFileHashes("ui/bottomhudbar*.dds")
+Server.AddFileHashes("NS2Plus/lights/*")
 
 -- Clear tags on map restart
 SetCHUDTagBitmask(0)

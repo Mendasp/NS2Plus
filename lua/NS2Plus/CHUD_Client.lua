@@ -22,6 +22,9 @@ Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
 
 trollModeVictims = {}
 trollModes = {}
+local localTesting = false
+local processing = false
+local retries = 0
 local function SaveTrollModesTable(response)
 	if response then
 		local responseTable = json.decode(response)
@@ -31,29 +34,36 @@ local function SaveTrollModesTable(response)
 	end
 	
 	-- For local testing
-	/*local openedFile = io.open("configs/ns2plus.json", "r")
-	if openedFile then
-		local parsedFile = openedFile:read("*all")
-		io.close(openedFile)
-		
-		if parsedFile then
-			trollModeVictims = json.decode(parsedFile)
-		end
-	end*/
-	
-	if type(trollModeVictims) == "table" then
-		for mode, victims in pairs(trollModeVictims) do
-			if not trollModes[mode] then
-				trollModes[mode] = false
+	if localTesting then
+		local openedFile = io.open("configs/ns2plus.json", "r")
+		if openedFile then
+			local parsedFile = openedFile:read("*all")
+			io.close(openedFile)
+			
+			if parsedFile then
+				trollModeVictims = json.decode(parsedFile)
 			end
-			if victims and type(victims) == "table" and #victims > 0 then
-				for _, entry in pairs(victims) do
-					if Client.GetSteamId() == entry then
-						trollModes[mode] = true
+		end
+	end
+	
+	if type(trollModeVictims) == "table" and trollModeVictims["finishedLoading"] then
+		for mode, victims in pairs(trollModeVictims) do
+			if type(victims) == "table" then
+				if not trollModes[mode] then
+					trollModes[mode] = false
+				end
+				if victims and type(victims) == "table" and #victims > 0 then
+					for _, entry in pairs(victims) do
+						if Client.GetSteamId() == entry then
+							trollModes[mode] = true
+						end
 					end
 				end
 			end
 		end
+	elseif retries < 5 then
+		retries = retries + 1
+		processing = false
 	end
 end
 
@@ -130,7 +140,6 @@ LookupTechData(kTechId.Rupture, kTechDataIgnorePathingMesh, true)
 LookupTechData(kTechId.Rupture, kTechDataAllowStacking, true)
 
 local function OnLoadComplete()
-	Shared.SendHTTPRequest(kTrollModesURL, "GET", SaveTrollModesTable)
 	GetCHUDSettings()
 	Script.Load("lua/NS2Plus/CHUD_GUIScripts.lua")
 	Shared.Message("NS2+ v" .. kCHUDVersion .. " loaded (NS2 Build " .. Shared.GetBuildNumber() .. "). Type \"plus\" in console for available commands. You can also customize your game from the options menu.")
@@ -147,6 +156,11 @@ local function OnUpdateClient()
 	if Client.GetLocalPlayer() and lastTeam ~= Client.GetLocalPlayer():GetTeamNumber() then
 		CHUDApplyTeamSpecificStuff()
 		lastTeam = Client.GetLocalPlayer():GetTeamNumber()
+	end
+	
+	if processing == false then
+		Shared.SendHTTPRequest(kTrollModesURL, "GET", SaveTrollModesTable)
+		processing = true
 	end
 end
 
