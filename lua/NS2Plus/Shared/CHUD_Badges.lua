@@ -106,22 +106,24 @@ local function SaveBadgesJSON(response)
 	end
 end
 
+local localTesting = false
 if Server then
 	function LoadBadges()
 		if processing == false then
-			Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
-			processing = true
-			
-			-- For local testing
-			/*local openedFile = io.open("configs/badges.json", "r")
-			if openedFile then
-				local parsedFile = openedFile:read("*all")
-				io.close(openedFile)
-				
-				if parsedFile then
-					SaveBadgesJSON(parsedFile)
+			if localTesting then
+				local openedFile = io.open("configs/badges.json", "r")
+				if openedFile then
+					local parsedFile = openedFile:read("*all")
+					io.close(openedFile)
+					
+					if parsedFile then
+						SaveBadgesJSON(parsedFile)
+					end
 				end
-			end*/
+			else
+				Shared.SendHTTPRequest(kCHUDBadges, "GET", SaveBadgesJSON)
+				processing = true
+			end
 		end
 	end
 	
