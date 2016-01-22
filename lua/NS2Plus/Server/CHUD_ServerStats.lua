@@ -1066,7 +1066,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		-- Don't save the round data if there's no player data
 		if #finalStats[1] > 0 or #finalStats[2] > 0 then
 			lastRoundStats = {}
-			lastRoundStats.MarineCommStats = newCommStatsTable
+			lastRoundStats.MarineCommStats = CHUDCopyTable(newCommStatsTable)
 			lastRoundStats.PlayerStats = CHUDCopyTable(CHUDClientStats)
 			lastRoundStats.KillFeed = CHUDCopyTable(CHUDKillGraph)
 			lastRoundStats.ServerInfo = {}
