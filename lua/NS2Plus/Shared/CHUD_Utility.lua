@@ -176,7 +176,7 @@ function CHUDGetWeaponAmmoString(weapon)
 			if leftAmmo > -1 and rightAmmo > -1 then
 				ammo = string.format("%d%% / %d%%", leftAmmo, rightAmmo)
 			elseif rightAmmo > -1 then
-				ammo = string.format("%d", rightAmmo)
+				ammo = string.format("%d%%", rightAmmo)
 			end
 		elseif weapon:isa("Builder") or weapon:isa("Welder") and PlayerUI_GetUnitStatusPercentage() > 0 then
 			ammo = string.format("%d%%", PlayerUI_GetUnitStatusPercentage())
