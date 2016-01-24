@@ -716,11 +716,11 @@ CHUDOptions =
 			dmgscale = {
 				name = "CHUD_DMGScale",
 				label = "Damage numbers scale",
-				tooltip = "Lets you scale down the damage numbers.",
+				tooltip = "Lets you scale the damage numbers.",
 				type = "slider",
 				defaultValue = 1,
 				minValue = 0.5,
-				maxValue = 1,
+				maxValue = 2,
 				multiplier = 100,
 				category = "damage",
 				valueType = "float",
@@ -1198,6 +1198,7 @@ CHUDOptions =
 				children = { "sensitivity_m", "sensitivity_a" },
 				hideValues = { false },
 				sort = "A04",
+				ignoreCasterMode = true,
 			},
 			sensitivity_m = { 
 				name = "CHUD_Sensitivity_M",
@@ -1214,6 +1215,7 @@ CHUDOptions =
 					CHUDApplyTeamSpecificStuff()
 				end,
 				sort = "A05",
+				ignoreCasterMode = true,
 			},
 			sensitivity_a = { 
 				name = "CHUD_Sensitivity_A",
@@ -1230,6 +1232,7 @@ CHUDOptions =
 					CHUDApplyTeamSpecificStuff()
 				end,
 				sort = "A06",
+				ignoreCasterMode = true,
 			},
 			fov_perteam = { 
 				name = "CHUD_FOVPerTeam",
@@ -1246,6 +1249,7 @@ CHUDOptions =
 				children = { "fov_m", "fov_a" },
 				hideValues = { false },
 				sort = "A07",
+				ignoreCasterMode = true,
 			},
 			fov_m = { 
 				name = "CHUD_FOV_M",
@@ -1262,6 +1266,7 @@ CHUDOptions =
 					CHUDApplyTeamSpecificStuff()
 				end,
 				sort = "A08",
+				ignoreCasterMode = true,
 			},
 			fov_a = { 
 				name = "CHUD_FOV_A",
@@ -1278,6 +1283,7 @@ CHUDOptions =
 					CHUDApplyTeamSpecificStuff()
 				end,
 				sort = "A09",
+				ignoreCasterMode = true,
 			},
 			drawviewmodel = { 
 				name = "CHUD_DrawViewModel",
