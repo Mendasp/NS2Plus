@@ -16,11 +16,17 @@ function BuildServerEntry(serverIndex)
 				serverEntry.CHUDBitmask = tonumber(string.sub(serverTags[t], pos+1))
 				break
 			end
+			if string.lower(serverTags[t]) == "comp" or string.lower(serverTags[t]) == "nsl" then
+				serverEntry.isNSL = true
+			end
 		end
 		
 		if serverEntry.CHUDBitmask ~= nil then
 			serverEntry.originalMode = serverEntry.mode
 			serverEntry.mode = serverEntry.mode:gsub("ns2", "ns2+", 1)
+		end
+		if serverEntry.isNSL then
+			serverEntry.mode = serverEntry.mode .. " NSL"
 		end
 	end
 	
@@ -33,6 +39,7 @@ function BuildServerEntry(serverIndex)
 	
 end
 
+local kNSLColor = ColorIntToColor(0x1aa7e2)
 local originalSetServerData
 originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
@@ -65,6 +72,10 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 			
 			self.modName.tooltip = blockedString
 			
+		end
+		if serverData.isNSL then
+			self.modName:SetColor(kNSLColor)
+			self.serverName:SetColor(kNSLColor)
 		end
 		
 	end
