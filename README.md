@@ -4,6 +4,16 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 26/01/2015
+	- Changed rookieFriendly to rookieOnly for the exported stats as the rookieFriendly tag is now deprecated in Build 282.
+
+- 25/01/2015
+	- Added NSL server highlighting, they will show up in blue and will append "NSL" to the gamemode for easy filtering.
+	- Excluded team specific FOV and sensitivities from caster mode.
+	- Fixed missing percentage sign for exo weapons on classic ammo.
+	- Added NSL lights json files to consistency check.
+	- Fixed exos not showing proper outline color in overhead spectator.
+	
 - 13/01/2015
 	- Fixed unbuilt RT deaths showing up in the RT graph (allowed for negative RT counts).
 	- Stats format changes:
@@ -35,63 +45,6 @@ Latest changes
 
 - 06/01/2015
 	- Added "savestats" option to the server settings (default off). This option allows servers to save the round stats info in a json file located at (CONFIGFOLDER)\NS2Plus\Stats\. Each round will generate a separate file. Mods can also access this info directly by calling CHUDGetLastRoundStats().
-
-- 10/12/2015
-	- Reorganized the NS2+ Options settings so settings are a bit easier to find.
-
-- 02/12/2015
-	- Hidden viewmodels option now only has the following entries: "Display all", "Hide all" and "Custom". Added individual customizable options for Marine, Alien, and Exo viewmodels for the Custom option.
-
-- 06/11/2015
-	- Made empty Tech Points and Resource Nodes colored so they're easier to distinguish. Color is customizable. Available in HUD tab.
-
-- 18/10/2015
-	- Added UI Scale slider.
-
-- 17/10/2015
-	- Fixed average team skill not showing under some circumstances.
-	- Fixed gametime not adapting to resolution changes correctly.
-	- Fixed script error when switching Caster Mode in certain conditions.
-	- End game stats now displays class time distribution (time spent as Skulk, Fade, Rifle, Dead, etc).
-
-- 15/10/2015
-	- Updated for Build 276.
-	- Removed NS2+ option to adjust map atmospherics intensity as it now available in vanilla.
-
-- 01/08/2015
-	- Fixed edge case where alien colored text would be faded when using disabled viewmodels and cloaking.
-	- Fixed minimap/commander highlight colors not being applied.
-	- Fixed nameplates distance setting not taking effect.
-	- Fixed vanilla bug where dropped weapon expire timers and respawn timers didn't work for Commanders.
-	- Fixed vanilla bug where nameplates would still show in addition to the Insight frames in Overhead Spectator if the camera was close enough.
-	- Updated spectator help text with updated drawing/clearing binds.
-
-- 29/07/2015
-	- Removed NS2Stats button from End Game Stats and Scoreboard as the service is unavailable.
-	- Removed changelog from ingame menu as noone seemed to even notice that it was different from the main menu one and proceeded to ignore it.
-	- Added a toggle for the custom killfeed highlight color and the minimap arrow color to avoid certain instances of the setting getting reset to black.
-	- Added toggle for the new overhead camera smoothing. Available in Misc. tab.
-	- Added missing Derelict loading screens.
-	- Fixed armor value not showing up for Exos with hidden viewmodels.
-
-- 04/05/2015
-	- Grouped personal stats in End Stats UI in differentiated blocks per team (Commander, Alien, Marine).
-	- Added NS2+ version number to the top left with the NS2 build.
-	- Removed Mine "deaths" from the Tech Log.
-	- Removed redundant "Advanced Weaponry" entry in the Tech Log (shows with Advanced Armory research).
-	- Fixed script error in Insight spectator player frames.
-
-- 13/04/2015
-	- Added nameplate distance slider to allow players to choose how far nameplates render. Higher values will decrease performance. Available in Visual tab.
-	- Added Marine Commander stats to the Tech Log.
-	- Fixed bug where picked up medpacks outside the accuracy timing would count as picked and expired at the same time.
-	- Insight spectator now shows Alien upgrades in red if they have the upgrade, but have lost all the  chambers.
-	- Improved end stats scrolling to be a constant amount instead of percentage based with the scrollwheel.
-	- When toggling healthbars on for spectators, the nameplate backgrounds are now hidden so they don't get in the way.
-	- Added weapon expiration bars to Insight and Phase Gate/Gorge Tunnel destinations.
-	- Fixed "Reset All" button in NS2+ Options overlapping the back button on resolution change.
-	- Fixed Insight HP/AP values being toggled while using chat or console.
-	- Fixed tech tooltips being stuck on screen when NSL pause is active.
 
 Server settings
 ===============
@@ -130,7 +83,7 @@ For example in "Locations":["North Tech","South Tech"], North Tech would be refe
 | slots          | Number of slots for this server.                                                   |
 | mods           | Table that contains the modId and name for each of the mods active in this server. |
 | buildNumber    | NS2 build number for this round.                                                   |
-| rookieFriendly | Shows if the server has the rookie friendly tag or not.                            |
+| rookieOnly     | Shows if the server is rookie only or not.                                         |
 | ip             | Server IP.                                                                         |
 | port           | Server port.                                                                       |
 | name           | Server name.                                                                       |
