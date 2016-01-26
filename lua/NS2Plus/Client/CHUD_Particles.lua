@@ -17,11 +17,11 @@ local blockedProps = set {
 						"models/props/descent/descent_hologram_planet_01.model",
 						"models/props/descent/descent_hologram_planet_02.model",
 						"models/props/descent/descent_hologram_planet_03.model",
-						"models/props/descent/descent_hologram_spacestation_01.model"
+						"models/props/descent/descent_hologram_spacestation_01.model",
 						"models/props/refinery/refinery_shipping_hologram_animated.model",
-						"models/props/veil/veil_hologram_01.model", 
+						"models/props/veil/veil_hologram_01.model",
 						"models/props/veil/veil_hologram_01_scanlines.model",
-						"models/props/veil/veil_holosign_01_nanogrid.model", 
+						"models/props/veil/veil_holosign_01_nanogrid.model",
 					}
 
 blockedProps["ns2_biodome"] = set {
