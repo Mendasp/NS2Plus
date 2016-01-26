@@ -45,9 +45,15 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
 		originalSetServerData(self, serverData)
 		
+		if serverData.isNSL then
+			self.modName:SetColor(kNSLColor)
+			self.serverName:SetColor(kNSLColor)
+		end
 		if serverData.CHUDBitmask ~= nil then
-		
-			self.modName:SetColor(kYellow)
+			
+			if not serverData.isNSL then
+				self.modName:SetColor(kYellow)
+			end
 			
 			local blockedString
 			for index, mask in pairs(CHUDTagBitmask) do
@@ -72,10 +78,6 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 			
 			self.modName.tooltip = blockedString
 			
-		end
-		if serverData.isNSL then
-			self.modName:SetColor(kNSLColor)
-			self.serverName:SetColor(kNSLColor)
 		end
 		
 	end
