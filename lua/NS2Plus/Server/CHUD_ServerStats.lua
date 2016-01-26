@@ -1075,7 +1075,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 			lastRoundStats.ServerInfo["name"] = Server.GetName()
 			lastRoundStats.ServerInfo["slots"] = Server.GetMaxPlayers()
 			lastRoundStats.ServerInfo["buildNumber"] = Shared.GetBuildNumber()
-			lastRoundStats.ServerInfo["rookieFriendly"] = Server.GetIsRookieFriendly()
+			lastRoundStats.ServerInfo["rookieOnly"] = Server.GetHasTag("rookie_only")
 			lastRoundStats.ServerInfo["mods"] = {}
 			local modNum
 			local activeModIds = {}
