@@ -103,12 +103,15 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 				local av_distant = ColorIntToColor(CHUDGetOption("av_distant"))
 				local av_fog = ColorIntToColor(CHUDGetOption("av_fog"))
 				local av_style = CHUDGetOption("av_style")
+				local av_offstyle = CHUDGetOption("av_offstyle")
 				local av_edges = CHUDGetOption("av_edges")
 				local av_edgesize = CHUDGetOption("av_edgesize")
 				local edgeThickness = av_edgesize / 1000
 				local av_closeIntensity = CHUDGetOption("av_closeIntensity")
 				local av_distantIntensity = CHUDGetOption("av_distantIntensity")
 				local av_fogIntensity = CHUDGetOption("av_fogIntensity")
+				local av_desat = CHUDGetOption("av_desat")
+				local av_desatIntensity = CHUDGetOption("av_desatIntensity")
 				
 
 					--close colours
@@ -130,14 +133,19 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 					useShader:SetParameter("fogB", av_fog.b)
 					useShader:SetParameter("fogIntensity", av_fogIntensity)
 					
-					--minimal mode
+					--style selectors
 					useShader:SetParameter("modeAV", av_style)
+					useShader:SetParameter("modeAVoff", av_offstyle)
 					
 					--type of edges
 					useShader:SetParameter("avEdge", av_edges)
 					
 					--edge size
 					useShader:SetParameter("edgeSize", edgeThickness)
+					
+					--desaturation
+					useShader:SetParameter("avDesat", av_desat)
+					useShader:SetParameter("desatIntensity", av_desatIntensity)
 
 		end
 		

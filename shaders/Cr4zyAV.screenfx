@@ -13,11 +13,14 @@ settings =
 		{ name="fogG"				default=0.0 }
 		{ name="fogB"				default=0.2 }
 		{ name="modeAV"				default=0.0 }
+		{ name="modeAVoff"			default=0.0 }
 		{ name="avEdge"				default=0.0 }
 		{ name="edgeSize"			default=0.4 }
 		{ name="closeIntensity"		default=1.0 }
 		{ name="distantIntensity"	default=1.0 }
 		{ name="fogIntensity" 		default=1.0 }
+		{ name="avDesat" 			default=1.0 }
+		{ name="desatIntensity" 	default=1.0 }
         { name="depthTexture"  }
         { name="normalTexture" }
     ]
@@ -43,11 +46,14 @@ layers =
 					fogG					= "fogG"
 					fogB					= "fogB"
 					modeAV					= "modeAV"
+					modeAVoff				= "modeAVoff"
 					avEdge					= "avEdge"
 					edgeSize				= "edgeSize"
 					closeIntensity			= "closeIntensity"
 					distantIntensity		= "distantIntensity"
 					fogIntensity			= "fogIntensity"
+					avDesat					= "avDesat"
+					desatIntensity			= "desatIntensity"
                     baseTexture             = { resource="source_buffer" linear=true }
                     depthTexture            = { resource="depthTexture" linear=true }
                     normalTexture           = { resource="normalTexture" linear=true }

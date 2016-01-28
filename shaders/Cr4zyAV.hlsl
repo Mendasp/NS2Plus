@@ -38,11 +38,14 @@ cbuffer LayerConstants
 	float        fogG;
 	float        fogB;
 	float		 modeAV;
+	float		 modeAVoff;
 	float		 avEdge;
 	float		 edgeSize;
 	float		 closeIntensity;
 	float		 distantIntensity;
 	float		 fogIntensity;
+	float		 avDesat;
+	float		 desatIntensity;
 };
 
 /**
@@ -169,10 +172,31 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
 
 
 //desaturate
-	//float4 desaturate = float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0);
+	float4 desaturate = 0;
+
+	if (avDesat >= 1){
+				if (avDesat > 1){
+				//distance desat
+				desaturate = float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * 0.03 * clamp(fadedist*2.25,0,1) + 
+				float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * .09 *clamp(1-fadedist*2.5,0,1) * clamp(fadedist*9,0.02,1) + 
+				float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * .15 * (1-clamp(fadedist*9,0.02,1)) * clamp(fadedist*30,0.02,1) + 
+				float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * .2 * (1-clamp(fadedist*30,0.02,1)) * (desatIntensity * 5);
+				}
+				else {
+					//scene desat	
+					desaturate = float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) ;
+				}
+			}
+			else {
+				//no desat
+				float4 desaturate = 1;
+			}
 	
-//desaturate more at range
-	float4 desaturate = float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * 0.03 * clamp(fadedist*2.25,0,1) + float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * .09 *clamp(1-fadedist*2.5,0,1) * clamp(fadedist*9,0.02,1) + float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * .15 * (1-clamp(fadedist*9,0.02,1)) * clamp(fadedist*30,0.02,1) + float4(max(0, max(green, blue) - red), max(0, max(red, blue) - green), max(0, max(green, red) - blue), 0) * .2 * (1-clamp(fadedist*30,0.02,1));
+	
+	
+	
+	
+	
 	
 //FOG setup
 	float4 fog = clamp(pow(depth * 0.012, 1), 0, 1.2) * colourFog * (0.6 + edge);
@@ -209,19 +233,19 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
 		
 //av off effects   
 	if (amount < 1){
-			if (modeAV >= 1){
-				if (modeAV > 1){
-				//foggy world
-				return inputPixel + desaturate * .25 * (1 + edge) + offOutline * .4 + world;
+			if (modeAVoff >= 1){
+				if (modeAVoff > 1){
+				//coloured outlines
+				return inputPixel * (1 + edge) + offOutline * .4 + world;
 				}
 				else {
-					//old style coloured	
-					return inputPixel + world * .1;
+					//minimal world	
+					return inputPixel + world * .2;
 				}
 			}
 			else {
-				//minimal av off
-				return inputPixel + world * .1;
+				//nothing av off
+				return inputPixel;
 			}
 			
 	}
@@ -247,16 +271,16 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
 		if (modeAV >= 1){
 			if (modeAV > 1){
 				//foggy world
-				return pow(inputPixel * .9 * darkened, 1.3) + desaturate * 2 + fog * (2 + edge * .2) + (outline  * (model * 1.5)) * 2 + model * intensity * colourAngle * (0.5 + 0.2 * pow(0.1 + sin(time * 5 + intensity * 3), 2)) * fadeoff;
+				return pow(inputPixel * .9 * darkened, 1.3) + desaturate * desatIntensity + fog * (2 + edge * .2) + (outline  * (model * 1.5)) * 2 + model * intensity * colourAngle * (0.5 + 0.2 * pow(0.1 + sin(time * 5 + intensity * 3), 2)) * fadeoff;
 			}
 			else {
 				//old style coloured
-				return max(inputPixel,edge)  * clamp(((colourOne * (fadedist * 10)) + (colourTwo * (.75-fadedist))),0,1) +	( ((model *  2 * (0.2 + 0.2 * pow(0.1 + sin(time * 5 + intensity * 2), 2)) * fadedist*.5 ) * colourModel) + ((model * edge * edge) * (colourFog * (fadedist *60))) + ((model * edge * edge * 80) * (colourModel * (fadedist * 20))) );
+				return (max(inputPixel,edge) + desaturate * desatIntensity) * clamp(((colourOne * (fadedist * 10)) + (colourTwo * (.75-fadedist))),0,1) +	( ((model *  2 * (0.2 + 0.2 * pow(0.1 + sin(time * 5 + intensity * 2), 2)) * fadedist*.5 ) * colourModel) + ((model * edge * edge) * (colourFog * (fadedist *60))) + ((model * edge * edge * 80) * (colourModel * (fadedist * 20))) );
 			}
 		}
 		else {
 			//minimal
-			return pow(inputPixel * .9 * darkened, 1.4) + desaturate * .5 + (outline * (model * 1.5)) * 2 + model * intensity * colourAngle * (0.5 + 0.2 * pow(0.1 + sin(time * 5 + intensity * 3), 2)) * fadeoff + (inputPixel + world * .75);
+			return pow(inputPixel * .9 * darkened, 1.4) + desaturate * desatIntensity + (outline * (model * 1.5)) * 2 + model * intensity * colourAngle * (0.5 + 0.2 * pow(0.1 + sin(time * 5 + intensity * 3), 2)) * fadeoff + (inputPixel + world * .75);
 
 		}
     }
