@@ -308,6 +308,7 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "C03"
 			},
+			
 			avstate = { 
 				name = "CHUD_AVState",
 				label = "Default AV state",
@@ -727,8 +728,29 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "A15",
 			},
-			
-			
+			pickupexpire = { 
+				name = "CHUD_PickupExpire",
+				label = "Pickup expiration bar",
+				tooltip = "Adds a bar indicating the time left for the pickupable to disappear.",
+				type = "select",
+				values  = { "Disabled", "Equipment Only", "All pickupables" },
+				defaultValue = 2,
+				category = "hud",
+				valueType = "int",
+				sort = "A16",
+				resetSettingInBuild = 191,
+			},
+			pickupexpirecolor = { 
+				name = "CHUD_PickupExpireBarColor",
+				label = "Dynamically colored expiration bar",
+				tooltip = "Makes the expire bar colored depending on time left.",
+				type = "select",
+				values  = { "Disabled", "Enabled" },
+				defaultValue = 0,
+				category = "hud",
+				valueType = "int",
+				sort = "A17",
+			},		
 			motiontracking = {
 				name = "CHUD_MotionTracking",
 				label = "Motion tracking circle",
@@ -1535,27 +1557,5 @@ CHUDOptions =
 					Client.SendNetworkMessage("SetCHUDAutopickup", message)
 				end,
 			},
-			pickupexpire = { 
-				name = "CHUD_PickupExpire",
-				label = "Pickup expiration bar",
-				tooltip = "Adds a bar indicating the time left for the pickupable to disappear.",
-				type = "select",
-				values  = { "Disabled", "Equipment Only", "All pickupables" },
-				defaultValue = 2,
-				category = "misc",
-				valueType = "int",
-				sort = "A18",
-				resetSettingInBuild = 191,
-			},
-			pickupexpirecolor = { 
-				name = "CHUD_PickupExpireBarColor",
-				label = "Dynamically colored expiration bar",
-				tooltip = "Makes the expire bar colored depending on time left.",
-				type = "select",
-				values  = { "Disabled", "Enabled" },
-				defaultValue = 0,
-				category = "misc",
-				valueType = "int",
-				sort = "A19",
-			},
+
 }
