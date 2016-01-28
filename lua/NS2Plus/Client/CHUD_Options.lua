@@ -1410,6 +1410,40 @@ CHUDOptions =
 				sort = "A09",
 				ignoreCasterMode = true,
 			},
+			autopickup = { 
+				name = "CHUD_AutoPickup",
+				label = "Weapon autopickup",
+				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = false,
+				category = "misc",
+				valueType = "bool",
+				sort = "A10",
+				applyFunction = function()
+					local message = { }
+					message.autoPickup = CHUDGetOption("autopickup")
+					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
+					Client.SendNetworkMessage("SetCHUDAutopickup", message)
+				end,
+			},
+			autopickupbetter = { 
+				name = "CHUD_AutoPickupBetter",
+				label = "Autopickup better weapon",
+				tooltip = "Picks up better weapons in the primary slot automatically.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = false,
+				category = "misc",
+				valueType = "bool",
+				sort = "A11",
+				applyFunction = function()
+					local message = { }
+					message.autoPickup = CHUDGetOption("autopickup")
+					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
+					Client.SendNetworkMessage("SetCHUDAutopickup", message)
+				end,
+			},
 			drawviewmodel = { 
 				name = "CHUD_DrawViewModel",
 				label = "Draw viewmodel",
@@ -1419,7 +1453,7 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "misc",
 				valueType = "int",
-				sort = "A10",
+				sort = "A12",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
@@ -1437,7 +1471,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A11",
+				sort = "A13",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
@@ -1452,7 +1486,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A12",
+				sort = "A14",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 				end,
@@ -1466,7 +1500,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A13",
+				sort = "A15",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
@@ -1482,7 +1516,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A14",
+				sort = "B01",
 			},
 			commqueue_playeronly = { 
 				name = "CHUD_CommQueuePlayerOnly",
@@ -1493,41 +1527,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "misc",
 				valueType = "bool",
-				sort = "A15",
-			},
-			autopickup = { 
-				name = "CHUD_AutoPickup",
-				label = "Weapon autopickup",
-				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
-				type = "select",
-				values  = { "Off", "On" },
-				defaultValue = false,
-				category = "misc",
-				valueType = "bool",
-				sort = "A16",
-				applyFunction = function()
-					local message = { }
-					message.autoPickup = CHUDGetOption("autopickup")
-					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
-					Client.SendNetworkMessage("SetCHUDAutopickup", message)
-				end,
-			},
-			autopickupbetter = { 
-				name = "CHUD_AutoPickupBetter",
-				label = "Autopickup better weapon",
-				tooltip = "Picks up better weapons in the primary slot automatically.",
-				type = "select",
-				values  = { "Off", "On" },
-				defaultValue = false,
-				category = "misc",
-				valueType = "bool",
-				sort = "A17",
-				applyFunction = function()
-					local message = { }
-					message.autoPickup = CHUDGetOption("autopickup")
-					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
-					Client.SendNetworkMessage("SetCHUDAutopickup", message)
-				end,
+				sort = "B02",
 			},
 
 }
