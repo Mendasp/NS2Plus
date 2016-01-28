@@ -282,37 +282,6 @@ CHUDOptions =
 				end,
 				sort = "C01",
 			},
-			av = {
-				name = "CHUD_AV",
-				label = "Alien vision",
-				tooltip = "Lets you choose between different Alien Vision types.",
-				type = "select",
-				values  = { "Default", "Huze's Old AV", "Huze's Minimal AV", "Uke's AV", "Old AV (Fanta)" },
-				valueTable = {
-					"shaders/DarkVision.screenfx",
-					"shaders/HuzeOldAV.screenfx",
-					"shaders/HuzeMinAV.screenfx",
-					"shaders/UkeAV.screenfx",
-					"shaders/FantaVision.screenfx",
-				},
-				defaultValue = 0,
-				category = "ui",
-				valueType = "int",
-				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
-				sort = "C02",
-				resetSettingInBuild = 237,
-			},
-			avstate = { 
-				name = "CHUD_AVState",
-				label = "Default AV state",
-				tooltip = "Sets the state the alien vision will be in when you respawn.",
-				type = "select",
-				values  = { "Off", "On" },
-				defaultValue = false,
-				category = "ui",
-				valueType = "bool",
-				sort = "C03",
-			},
 			aliencircles = {
 				name = "CHUD_AlienBars",
 				label = "Alien circles",
@@ -326,7 +295,7 @@ CHUDOptions =
 				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
 				helpImage = "ui/helpImages/aliencircles.dds",
 				helpImageSize = Vector(192, 120, 0),
-				sort = "C04",
+				sort = "C02",
 			},
 			instantalienhealth = {
 				name = "CHUD_InstantAlienHealth",
@@ -337,8 +306,172 @@ CHUDOptions =
 				defaultValue = false,
 				category = "ui",
 				valueType = "bool",
-				sort = "C05"
+				sort = "C03"
 			},
+			avstate = { 
+				name = "CHUD_AVState",
+				label = "Default AV state",
+				tooltip = "Sets the state the alien vision will be in when you respawn.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = false,
+				category = "ui",
+				valueType = "bool",
+				sort = "C04",
+			},
+			av = {
+				name = "CHUD_AV",
+				label = "Alien vision",
+				tooltip = "Lets you choose between different Alien Vision types.",
+				type = "select",
+				values  = { "Default", "Huze's Old AV", "Huze's Minimal AV", "Uke's AV", "Old AV (Fanta)", "Cr4zyAV Configurable" },
+				valueTable = {
+					"shaders/DarkVision.screenfx",
+					"shaders/HuzeOldAV.screenfx",
+					"shaders/HuzeMinAV.screenfx",
+					"shaders/UkeAV.screenfx",
+					"shaders/FantaVision.screenfx",
+					"shaders/Cr4zyAV.screenfx",
+				},
+				defaultValue = 0,
+				category = "ui",
+				valueType = "int",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				children = { "av_style", "av_close", "av_closeIntensity", "av_distant", "av_distantIntensity", "av_fog", "av_fogIntensity", "av_edges", "av_edgesize" },
+				hideValues = { 0,1,2,3,4 },
+				sort = "C05",
+				resetSettingInBuild = 237,
+			},
+			av_style = { 
+				name = "CHUD_AVStyle",
+				label = "Alien Vision Style",
+				tooltip = "Switches between different configurable styles of Alien Vision",
+				type = "select",
+				values  = { "Minimal", "Original", "Depth Fog" },
+				valueTable = {
+					"0",
+					"1",
+					"2",
+				},
+				defaultValue = 2,
+				category = "ui",
+				valueType = "int",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				helpImage = "ui/helpImages/crazyav.dds",
+				helpImageSize = Vector(400, 256, 0),
+				sort = "C06",
+				resetSettingInBuild = 237,
+			},
+			av_close = {
+				name = "CHUD_AVCloseColor",
+				label = "Alien Vision close color",
+				tooltip = "Sets the close color in Alien Vision.",
+				defaultValue = 0x0030FE,
+				category = "ui",
+				valueType = "color",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C07",
+				resetSettingInBuild = 237,
+			},
+			av_closeIntensity = { 
+				name = "CHUD_closeInensity",
+				label = "Close Color Intensity",
+				tooltip = "Sets the 'brightness' value of the Close Color.",
+				type = "slider",
+				defaultValue = 1.0,
+				minValue = -0.1,
+				maxValue = 2.0,
+				multiplier = 1,
+				category = "ui",
+				valueType = "float",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C08",
+			},	
+			av_distant = {
+				name = "CHUD_AVDistantColor",
+				label = "Alien Vision distant color",
+				tooltip = "Sets the distant color in Alien Vision.",
+				defaultValue = 0x00FF00,
+				category = "ui",
+				valueType = "color",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C09",
+				resetSettingInBuild = 237,
+			},
+			av_distantIntensity = { 
+				name = "CHUD_distantInensity",
+				label = "Distant Color Intensity",
+				tooltip = "Sets the 'brightness' value of the Distant Color.",
+				type = "slider",
+				defaultValue = 1.0,
+				minValue = -0.1,
+				maxValue = 2.0,
+				multiplier = 1,
+				category = "ui",
+				valueType = "float",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C10",
+			},
+			av_fog = {
+				name = "CHUD_AVFogColor",
+				label = "Alien Vision tint color",
+				tooltip = "Depending on mode sets either fog colour or model colour in old mode.",
+				defaultValue = 0x140228,
+				category = "ui",
+				valueType = "color",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C11",
+				resetSettingInBuild = 237,
+			},
+			av_fogIntensity = { 
+				name = "CHUD_fogInensity",
+				label = "Tint Color Intensity",
+				tooltip = "Sets the 'brightness' value of the Tint Color.",
+				type = "slider",
+				defaultValue = 1.0,
+				minValue = -0.1,
+				maxValue = 2.0,
+				multiplier = 1,
+				category = "ui",
+				valueType = "float",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C12",
+			},
+			
+			av_edges = { 
+				name = "CHUD_AVedges",
+				label = "Alien Vision Edges",
+				tooltip = "Switches between edge outlines that are uniform in size or ones that thicken in peripheral vision.",
+				type = "select",
+				values  = { "Normal", "Thicker Peripheral Edges" },
+				valueTable = {
+					"0",
+					"1",
+				},
+				defaultValue = 0,
+				category = "ui",
+				valueType = "int",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C13",
+				resetSettingInBuild = 237,
+			},
+			av_edgesize = { 
+				name = "CHUD_AVedgesize",
+				label = "Alien Vision Edge thickness",
+				tooltip = "Sets the thickness of edges in alien vision.",
+				type = "slider",
+				defaultValue = 0.4,
+				minValue = 0.0,
+				maxValue = 2.0,
+				multiplier = 1,
+				category = "ui",
+				valueType = "float",
+				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
+				sort = "C14",
+			},	
+
+			
+			
 			
 			
 			
@@ -542,17 +675,7 @@ CHUDOptions =
 				sort = "A15",
 			},
 			
-			tracers = {
-				name = "CHUD_Tracers",
-				label = "Weapon tracers",
-				tooltip = "Enables or disables weapon tracers.",
-				type = "select",
-				values  = { "Off", "On" },
-				defaultValue = true,
-				category = "hud",
-				valueType = "bool",
-				sort = "B01",
-			},
+			
 			motiontracking = {
 				name = "CHUD_MotionTracking",
 				label = "Motion tracking circle",
@@ -564,7 +687,7 @@ CHUDOptions =
 				valueType = "int",
 				helpImage = "ui/helpImages/motiontracking.dds",
 				helpImageSize = Vector(160, 80, 0),
-				sort = "B02"
+				sort = "B01"
 			},
 			wrenchicon = { 
 				name = "CHUD_DynamicWrenchColor",
@@ -575,65 +698,9 @@ CHUDOptions =
 				defaultValue = 1,
 				category = "hud",
 				valueType = "int",
-				sort = "B03",
+				sort = "B02",
 			},
-			autopickup = { 
-				name = "CHUD_AutoPickup",
-				label = "Weapon autopickup",
-				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
-				type = "select",
-				values  = { "Off", "On" },
-				defaultValue = false,
-				category = "hud",
-				valueType = "bool",
-				sort = "B04",
-				applyFunction = function()
-					local message = { }
-					message.autoPickup = CHUDGetOption("autopickup")
-					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
-					Client.SendNetworkMessage("SetCHUDAutopickup", message)
-				end,
-			},
-			autopickupbetter = { 
-				name = "CHUD_AutoPickupBetter",
-				label = "Autopickup better weapon",
-				tooltip = "Picks up better weapons in the primary slot automatically.",
-				type = "select",
-				values  = { "Off", "On" },
-				defaultValue = false,
-				category = "hud",
-				valueType = "bool",
-				sort = "B05",
-				applyFunction = function()
-					local message = { }
-					message.autoPickup = CHUDGetOption("autopickup")
-					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
-					Client.SendNetworkMessage("SetCHUDAutopickup", message)
-				end,
-			},
-			pickupexpire = { 
-				name = "CHUD_PickupExpire",
-				label = "Pickup expiration bar",
-				tooltip = "Adds a bar indicating the time left for the pickupable to disappear.",
-				type = "select",
-				values  = { "Disabled", "Equipment Only", "All pickupables" },
-				defaultValue = 2,
-				category = "hud",
-				valueType = "int",
-				sort = "B06",
-				resetSettingInBuild = 191,
-			},
-			pickupexpirecolor = { 
-				name = "CHUD_PickupExpireBarColor",
-				label = "Dynamically colored expiration bar",
-				tooltip = "Makes the expire bar colored depending on time left.",
-				type = "select",
-				values  = { "Disabled", "Enabled" },
-				defaultValue = 0,
-				category = "hud",
-				valueType = "int",
-				sort = "B07",
-			},
+			
 			
 			
 			
@@ -1079,6 +1146,17 @@ CHUDOptions =
 				valueType = "float",
 				sort = "A07",
 			},
+			tracers = {
+				name = "CHUD_Tracers",
+				label = "Weapon tracers",
+				tooltip = "Enables or disables weapon tracers.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = true,
+				category = "graphics",
+				valueType = "bool",
+				sort = "A08",
+			},
 			
 			
 			
@@ -1369,5 +1447,62 @@ CHUDOptions =
 				category = "misc",
 				valueType = "bool",
 				sort = "A15",
+			},
+			autopickup = { 
+				name = "CHUD_AutoPickup",
+				label = "Weapon autopickup",
+				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = false,
+				category = "misc",
+				valueType = "bool",
+				sort = "A16",
+				applyFunction = function()
+					local message = { }
+					message.autoPickup = CHUDGetOption("autopickup")
+					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
+					Client.SendNetworkMessage("SetCHUDAutopickup", message)
+				end,
+			},
+			autopickupbetter = { 
+				name = "CHUD_AutoPickupBetter",
+				label = "Autopickup better weapon",
+				tooltip = "Picks up better weapons in the primary slot automatically.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = false,
+				category = "misc",
+				valueType = "bool",
+				sort = "A17",
+				applyFunction = function()
+					local message = { }
+					message.autoPickup = CHUDGetOption("autopickup")
+					message.autoPickupBetter = CHUDGetOption("autopickupbetter")
+					Client.SendNetworkMessage("SetCHUDAutopickup", message)
+				end,
+			},
+			pickupexpire = { 
+				name = "CHUD_PickupExpire",
+				label = "Pickup expiration bar",
+				tooltip = "Adds a bar indicating the time left for the pickupable to disappear.",
+				type = "select",
+				values  = { "Disabled", "Equipment Only", "All pickupables" },
+				defaultValue = 2,
+				category = "misc",
+				valueType = "int",
+				sort = "A18",
+				resetSettingInBuild = 191,
+			},
+			pickupexpirecolor = { 
+				name = "CHUD_PickupExpireBarColor",
+				label = "Dynamically colored expiration bar",
+				tooltip = "Makes the expire bar colored depending on time left.",
+				type = "select",
+				values  = { "Disabled", "Enabled" },
+				defaultValue = 0,
+				category = "misc",
+				valueType = "int",
+				sort = "A19",
 			},
 }

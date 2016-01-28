@@ -96,6 +96,51 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		HiveVisionExtra_screenEffect = Client.CreateScreenEffect("shaders/HiveVisionExtra.screenfx")
 		Player.screenEffects.darkVision = Client.CreateScreenEffect(CHUDGetOptionAssocVal("av"))
 		
+		-- Cr4zyAV config options
+		if CHUDGetOption("av") == 5 then
+				local useShader = Player.screenEffects.darkVision
+				local av_close = ColorIntToColor(CHUDGetOption("av_close"))
+				local av_distant = ColorIntToColor(CHUDGetOption("av_distant"))
+				local av_fog = ColorIntToColor(CHUDGetOption("av_fog"))
+				local av_style = CHUDGetOption("av_style")
+				local av_edges = CHUDGetOption("av_edges")
+				local av_edgesize = CHUDGetOption("av_edgesize")
+				local edgeThickness = av_edgesize / 1000
+				local av_closeIntensity = CHUDGetOption("av_closeIntensity")
+				local av_distantIntensity = CHUDGetOption("av_distantIntensity")
+				local av_fogIntensity = CHUDGetOption("av_fogIntensity")
+				
+
+					--close colours
+					useShader:SetParameter("closeR", av_close.r)
+					useShader:SetParameter("closeG", av_close.g)
+					useShader:SetParameter("closeB", av_close.b)
+					useShader:SetParameter("closeIntensity", av_closeIntensity)
+					
+
+					--distant colours
+					useShader:SetParameter("distantR", av_distant.r)
+					useShader:SetParameter("distantG", av_distant.g)
+					useShader:SetParameter("distantB", av_distant.b)
+					useShader:SetParameter("distantIntensity", av_distantIntensity)
+
+					--fog colours
+					useShader:SetParameter("fogR", av_fog.r)
+					useShader:SetParameter("fogG", av_fog.g)
+					useShader:SetParameter("fogB", av_fog.b)
+					useShader:SetParameter("fogIntensity", av_fogIntensity)
+					
+					--minimal mode
+					useShader:SetParameter("modeAV", av_style)
+					
+					--type of edges
+					useShader:SetParameter("avEdge", av_edges)
+					
+					--edge size
+					useShader:SetParameter("edgeSize", edgeThickness)
+
+		end
+		
 		if CHUDGetOption("hudbars_a") > 0 then
 			if CHUDGetOption("hudbars_a") == 2 then
 				self.resourceDisplay.background:SetPosition(Vector(-440, -100, 0))

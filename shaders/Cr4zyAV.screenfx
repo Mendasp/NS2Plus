@@ -1,0 +1,57 @@
+settings =
+    [
+        { name="amount"				default=0.0 }
+        { name="startTime"			default=0.0 }
+		{ name="opacityValue"		default=0.0 }
+		{ name="closeR"				default=0.0 }
+		{ name="closeG"				default=1.0 }
+		{ name="closeB"				default=0.0 }
+		{ name="distantR"			default=0.0 }
+		{ name="distantG"			default=0.0 }
+		{ name="distantB"			default=1.0 }
+		{ name="fogR"				default=0.1 }
+		{ name="fogG"				default=0.0 }
+		{ name="fogB"				default=0.2 }
+		{ name="modeAV"				default=0.0 }
+		{ name="avEdge"				default=0.0 }
+		{ name="edgeSize"			default=0.4 }
+		{ name="closeIntensity"		default=1.0 }
+		{ name="distantIntensity"	default=1.0 }
+		{ name="fogIntensity" 		default=1.0 }
+        { name="depthTexture"  }
+        { name="normalTexture" }
+    ]
+    
+layers =
+    [
+        {
+            color_targets                   = "back_buffer"
+            shader                          = "shaders/Cr4zyAV.shader"
+            technique                       = "SFXDarkVision"
+            generator                       = "fullscreen"
+            parameters                      = {
+                    amount                  = "amount"
+                    startTime               = "startTime"
+					opacityValue			= "opacityValue"
+					closeR					= "closeR"
+					closeG					= "closeG"
+					closeB					= "closeB"
+					distantR				= "distantR"
+					distantG				= "distantG"
+					distantB				= "distantB"
+					fogR					= "fogR"
+					fogG					= "fogG"
+					fogB					= "fogB"
+					modeAV					= "modeAV"
+					avEdge					= "avEdge"
+					edgeSize				= "edgeSize"
+					closeIntensity			= "closeIntensity"
+					distantIntensity		= "distantIntensity"
+					fogIntensity			= "fogIntensity"
+                    baseTexture             = { resource="source_buffer" linear=true }
+                    depthTexture            = { resource="depthTexture" linear=true }
+                    normalTexture           = { resource="normalTexture" linear=true }
+                }
+        }
+    ]
+        
