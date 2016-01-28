@@ -355,6 +355,8 @@ CHUDOptions =
 				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
 				helpImage = "ui/helpImages/av_style.dds",
 				helpImageSize = Vector(400, 256, 0),
+				children = { "av_fogcolor", "av_fogintensity" },
+				hideValues = { 0 },
 				sort = "C06",
 			},
 			av_offstyle = { 

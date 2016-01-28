@@ -112,6 +112,11 @@ local function CHUDSaveMenuSetting(name)
 					end
 				end
 				
+				-- Hide children options if the parent is also hidden
+				if CHUDMenuOption:GetIsVisible() == false then
+					show = false
+				end
+				
 				for _, option in pairs(CHUDOption.children) do
 					local optionName = CHUDGetOptionParam(option, "name")
 					if optionName then
