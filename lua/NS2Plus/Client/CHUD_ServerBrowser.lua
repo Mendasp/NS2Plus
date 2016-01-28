@@ -1,3 +1,54 @@
+function FilterRookieOnly(active)
+	return function(entry) return active or entry.rookieOnly == false end
+end
+
+function FilterHiveWhiteList(active)
+	return function(entry) return not active or entry.isHiveWhitelisted == true end
+end
+
+local oldServerTabsReset
+oldServerTabsReset = Class_ReplaceMethod("ServerTabs", "Reset",
+	function (self)
+		oldServerTabsReset(self)
+		-- Try reloading the whitelist
+		if not CHUDHiveWhiteList then
+			CHUDSaveHiveWhiteList()
+		end
+	end)
+
+-- Disable hive filter for the other buttons
+local oldEnableFilter
+oldEnableFilter = Class_ReplaceMethod("ServerTabs", "EnableFilter",
+	function(self, filters)
+		oldEnableFilter(self, filters)
+		if not filters[101] then
+			self.serverList:SetFilter(101, FilterHiveWhiteList(false))
+		end
+	end)
+
+local oldMainMenuCreateServerListWindow
+oldMainMenuCreateServerListWindow = Class_ReplaceMethod("GUIMainMenu", "CreateServerListWindow",
+	function(self)
+		oldMainMenuCreateServerListWindow(self)
+		
+		local filterRookie = Client.GetOptionBoolean("CHUD_BrowserFilterHive", true)
+		self.CHUDFilterRookie = self.filterForm:CreateFormElement(Form.kElementType.Checkbox, "ROOKIE ONLY")
+		self.CHUDFilterRookie:SetCSSClass("filter_rookie")
+		self.CHUDFilterRookie:SetValue(filterRookie)
+		self.CHUDFilterRookie:AddSetValueCallback(function(self)
+		
+			self.scriptHandle.serverList:SetFilter(100, FilterRookieOnly(self:GetValue()))
+			Client.SetOptionBoolean("CHUD_BrowserFilterHive", self.scriptHandle.CHUDFilterRookie:GetValue())
+			
+		end)
+		
+		local description = CreateMenuElement(self.CHUDFilterRookie, "Font")
+		description:SetText("ROOKIE ONLY")
+		description:SetCSSClass("filter_description")
+		
+		self.serverList:SetFilter(100, FilterRookieOnly(filterRookie))
+	end)
+
 local oldBuildServerEntry = BuildServerEntry
 function BuildServerEntry(serverIndex)
 
@@ -27,6 +78,9 @@ function BuildServerEntry(serverIndex)
 		end
 		if serverEntry.isNSL then
 			serverEntry.mode = serverEntry.mode .. " NSL"
+		end
+		if CHUDHiveWhiteList then
+			serverEntry.isHiveWhitelisted = CHUDHiveWhiteList[serverEntry.address] or false
 		end
 	end
 	

@@ -337,4 +337,34 @@ if Client then
 	function ColorToColorInt(color)
 		return math.floor(bit.lshift(color.r*255, 16) + bit.lshift(color.g*255, 8) + color.b*255)
 	end
+	
+	local kHiveWhiteListURL = "http://hive.naturalselection2.com/api/get/whitelistedServers/"
+	local processing = false
+	local retries = 0
+	function CHUDSaveHiveWhiteList(response)
+		if response then
+			local responseTable = json.decode(response)
+			if responseTable and type(responseTable) == "table" then
+				if not CHUDHiveWhiteList then
+					CHUDHiveWhiteList = {}
+				end
+				for _, server in pairs(responseTable) do
+					local address = server.ip .. ":" .. server.port
+					CHUDHiveWhiteList[address] = true
+				end
+			end
+		end
+		
+		if type(CHUDHiveWhiteList) == "table" then
+			local kSuffixButtons = GetUpValue(ServerTabs.Initialize, "kSuffixButtons", { LocateRecurse = true })
+			kSuffixButtons[#kSuffixButtons+1] = {
+					name = "HIVE WHITELISTED",
+					suffix = true,
+					filters = { [1] = FilterServerMode(""), [8] = FilterFavoriteOnly(false), [11] = FilterHistoryOnly(false), [101] = FilterHiveWhiteList(true) }
+				}
+		elseif retries < 5 then
+			retries = retries + 1
+			Shared.SendHTTPRequest(kHiveWhiteListURL, "GET", CHUDSaveHiveWhiteList)
+		end
+	end
 end

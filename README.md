@@ -4,6 +4,13 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 29/01/2015
+	- Added Cr4zy's configurable Alien Vision (Thanks Cr4zy!).
+	- Added checkbox in the Server Browser to hide Rookie Only servers.
+	- Added button to filter for Hive Whitelisted servers in the Server Browser. The button will only display if the client is able to successfully download the list of whitelisted servers.
+	- Moved all weapon pickup options out of "HUD" and into "MISC".
+	- Moved weapon tracers from "HUD" into "GRAPHICS".
+
 - 26/01/2015
 	- Changed rookieFriendly to rookieOnly for the exported stats as the rookieFriendly tag is now deprecated in Build 282.
 
