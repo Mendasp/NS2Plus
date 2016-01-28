@@ -98,55 +98,52 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		
 		-- Cr4zyAV config options
 		if CHUDGetOption("av") == 5 then
-				local useShader = Player.screenEffects.darkVision
-				local av_close = ColorIntToColor(CHUDGetOption("av_close"))
-				local av_distant = ColorIntToColor(CHUDGetOption("av_distant"))
-				local av_fog = ColorIntToColor(CHUDGetOption("av_fog"))
-				local av_style = CHUDGetOption("av_style")
-				local av_offstyle = CHUDGetOption("av_offstyle")
-				local av_edges = CHUDGetOption("av_edges")
-				local av_edgesize = CHUDGetOption("av_edgesize")
-				local edgeThickness = av_edgesize / 1000
-				local av_closeIntensity = CHUDGetOption("av_closeIntensity")
-				local av_distantIntensity = CHUDGetOption("av_distantIntensity")
-				local av_fogIntensity = CHUDGetOption("av_fogIntensity")
-				local av_desat = CHUDGetOption("av_desat")
-				local av_desatIntensity = CHUDGetOption("av_desatIntensity")
-				
+			local useShader = Player.screenEffects.darkVision
+			local av_close = ColorIntToColor(CHUDGetOption("av_closecolor"))
+			local av_distant = ColorIntToColor(CHUDGetOption("av_distantcolor"))
+			local av_fog = ColorIntToColor(CHUDGetOption("av_fogcolor"))
+			local av_style = CHUDGetOption("av_style")
+			local av_offstyle = CHUDGetOption("av_offstyle")
+			local av_edges = CHUDGetOption("av_edges")
+			local av_edgesize = CHUDGetOption("av_edgesize")
+			local edgeThickness = av_edgesize / 1000
+			local av_closeIntensity = CHUDGetOption("av_closeintensity")
+			local av_distantIntensity = CHUDGetOption("av_distantintensity")
+			local av_fogIntensity = CHUDGetOption("av_fogintensity")
+			local av_desat = CHUDGetOption("av_desaturation")
+			local av_desatIntensity = CHUDGetOption("av_desaturationintensity")
 
-					--close colours
-					useShader:SetParameter("closeR", av_close.r)
-					useShader:SetParameter("closeG", av_close.g)
-					useShader:SetParameter("closeB", av_close.b)
-					useShader:SetParameter("closeIntensity", av_closeIntensity)
-					
+			--close colours
+			useShader:SetParameter("closeR", av_close.r)
+			useShader:SetParameter("closeG", av_close.g)
+			useShader:SetParameter("closeB", av_close.b)
+			useShader:SetParameter("closeIntensity", av_closeIntensity)
 
-					--distant colours
-					useShader:SetParameter("distantR", av_distant.r)
-					useShader:SetParameter("distantG", av_distant.g)
-					useShader:SetParameter("distantB", av_distant.b)
-					useShader:SetParameter("distantIntensity", av_distantIntensity)
+			--distant colours
+			useShader:SetParameter("distantR", av_distant.r)
+			useShader:SetParameter("distantG", av_distant.g)
+			useShader:SetParameter("distantB", av_distant.b)
+			useShader:SetParameter("distantIntensity", av_distantIntensity)
 
-					--fog colours
-					useShader:SetParameter("fogR", av_fog.r)
-					useShader:SetParameter("fogG", av_fog.g)
-					useShader:SetParameter("fogB", av_fog.b)
-					useShader:SetParameter("fogIntensity", av_fogIntensity)
-					
-					--style selectors
-					useShader:SetParameter("modeAV", av_style)
-					useShader:SetParameter("modeAVoff", av_offstyle)
-					
-					--type of edges
-					useShader:SetParameter("avEdge", av_edges)
-					
-					--edge size
-					useShader:SetParameter("edgeSize", edgeThickness)
-					
-					--desaturation
-					useShader:SetParameter("avDesat", av_desat)
-					useShader:SetParameter("desatIntensity", av_desatIntensity)
+			--fog colours
+			useShader:SetParameter("fogR", av_fog.r)
+			useShader:SetParameter("fogG", av_fog.g)
+			useShader:SetParameter("fogB", av_fog.b)
+			useShader:SetParameter("fogIntensity", av_fogIntensity)
 
+			--style selectors
+			useShader:SetParameter("modeAV", av_style)
+			useShader:SetParameter("modeAVoff", av_offstyle)
+
+			--type of edges
+			useShader:SetParameter("avEdge", av_edges)
+
+			--edge size
+			useShader:SetParameter("edgeSize", edgeThickness)
+
+			--desaturation
+			useShader:SetParameter("avDesat", av_desat)
+			useShader:SetParameter("desatIntensity", av_desatIntensity)
 		end
 		
 		if CHUDGetOption("hudbars_a") > 0 then
