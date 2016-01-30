@@ -90,7 +90,6 @@ CHUDServerOptions =
 -- Compmod servers allow hidden viewmodels by default
 local hasCompmod = false
 local hasNSLMod = false
-local hasNSLName = string.find(Server.GetName(), "ENSL.org") == 1
 for modNum = 1, Server.GetNumActiveMods() do
 	if Server.GetActiveModId(modNum) == "e5ffa15" then
 		CHUDServerOptions["allow_drawviewmodel"] = nil
@@ -100,7 +99,7 @@ for modNum = 1, Server.GetNumActiveMods() do
 	end
 end
 
-if hasCompmod and hasNSLMod and hasNSLName then
+if hasCompmod and hasNSLMod then
 	AddCHUDTagBitmask(CHUDTagBitmask["nslserver"])
 end
 

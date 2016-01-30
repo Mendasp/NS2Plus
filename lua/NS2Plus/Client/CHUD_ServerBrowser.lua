@@ -28,6 +28,34 @@ if Shared.GetBuildNumber() < 283 then
 		end)
 end
 
+local function CheckShowTableEntry(self, entry)
+	for _, filterFunc in pairs(self.filter) do
+		if not filterFunc(entry) then
+			return false
+		end
+	end
+	return true
+end
+
+local oldMainMenuUpdate
+oldMainMenuUpdate = Class_ReplaceMethod("GUIMainMenu", "Update",
+	function(self, deltaTime)
+		oldMainMenuUpdate(self, deltaTime)
+		
+		if self:GetIsVisible() and self.playWindow and self.playWindow:GetIsVisible() then
+			local visibleEntries = 0
+			local currentEntries = #self.serverList.tableData
+			for i = 1, currentEntries do
+				if CheckShowTableEntry(self.serverList, self.serverList.tableData[i]) then
+					visibleEntries = visibleEntries + 1
+				end
+			end
+			if currentEntries ~= visibleEntries then
+				self.serverCountDisplay:SetText(tostring(visibleEntries) .. " / " .. tostring(currentEntries))
+			end
+		end
+	end)
+
 function FilterHiveWhiteList(active)
 	return function(entry) return not active or entry.isHiveWhitelisted == true end
 end
@@ -68,7 +96,7 @@ function BuildServerEntry(serverIndex)
 			local _, pos = string.find(serverTags[t], "CHUD_0x")
 			if pos then
 				serverEntry.CHUDBitmask = tonumber(string.sub(serverTags[t], pos+1))
-				if CheckCHUDTagOption(serverEntry.CHUDBitmask, CHUDTagBitmask["nslserver"]) and serverEntry.requiresPassword then
+				if CheckCHUDTagOption(serverEntry.CHUDBitmask, CHUDTagBitmask["nslserver"]) and serverEntry.requiresPassword and string.find(serverEntry.name, "ENSL.org") == 1 then
 					serverEntry.isNSL = true
 				end
 				break
