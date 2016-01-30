@@ -174,10 +174,11 @@ if not CHUDMainMenu then
 end
 
 CHUDTagBitmask = {
-	mcr = 0x1,
-	ambient = 0x2,
-	mapparticles = 0x4,
-	nsllights = 0x8,
-	drawviewmodel = 0x10,
-	deathstats = 0x0,
+	deathstats = bit.lshift(1, 0),
+	mcr = bit.lshift(1, 1),
+	ambient = bit.lshift(1, 2),
+	mapparticles = bit.lshift(1, 3),
+	nsllights = bit.lshift(1, 4),
+	drawviewmodel = bit.lshift(1, 5),
+	nslserver = bit.lshift(1, 6),
 }

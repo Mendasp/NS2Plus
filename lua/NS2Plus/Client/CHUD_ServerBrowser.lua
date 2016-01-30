@@ -1,5 +1,31 @@
-function FilterRookieOnly(active)
-	return function(entry) return active or entry.rookieOnly == false end
+-- 283 includes a no rookie filter, don't add this one
+if Shared.GetBuildNumber() < 283 then
+	function FilterRookieOnly(active)
+		return function(entry) return active or entry.rookieOnly == false end
+	end
+	
+	local oldMainMenuCreateServerListWindow
+	oldMainMenuCreateServerListWindow = Class_ReplaceMethod("GUIMainMenu", "CreateServerListWindow",
+		function(self)
+			oldMainMenuCreateServerListWindow(self)
+			
+			local filterRookie = Client.GetOptionBoolean("CHUD_BrowserFilterHive", true)
+			self.CHUDFilterRookie = self.filterForm:CreateFormElement(Form.kElementType.Checkbox, "ROOKIE ONLY")
+			self.CHUDFilterRookie:SetCSSClass("filter_rookie")
+			self.CHUDFilterRookie:SetValue(filterRookie)
+			self.CHUDFilterRookie:AddSetValueCallback(function(self)
+			
+				self.scriptHandle.serverList:SetFilter(100, FilterRookieOnly(self:GetValue()))
+				Client.SetOptionBoolean("CHUD_BrowserFilterHive", self.scriptHandle.CHUDFilterRookie:GetValue())
+				
+			end)
+			
+			local description = CreateMenuElement(self.CHUDFilterRookie, "Font")
+			description:SetText("ROOKIE ONLY")
+			description:SetCSSClass("filter_description")
+			
+			self.serverList:SetFilter(100, FilterRookieOnly(filterRookie))
+		end)
 end
 
 function FilterHiveWhiteList(active)
@@ -26,29 +52,6 @@ oldEnableFilter = Class_ReplaceMethod("ServerTabs", "EnableFilter",
 		end
 	end)
 
-local oldMainMenuCreateServerListWindow
-oldMainMenuCreateServerListWindow = Class_ReplaceMethod("GUIMainMenu", "CreateServerListWindow",
-	function(self)
-		oldMainMenuCreateServerListWindow(self)
-		
-		local filterRookie = Client.GetOptionBoolean("CHUD_BrowserFilterHive", true)
-		self.CHUDFilterRookie = self.filterForm:CreateFormElement(Form.kElementType.Checkbox, "ROOKIE ONLY")
-		self.CHUDFilterRookie:SetCSSClass("filter_rookie")
-		self.CHUDFilterRookie:SetValue(filterRookie)
-		self.CHUDFilterRookie:AddSetValueCallback(function(self)
-		
-			self.scriptHandle.serverList:SetFilter(100, FilterRookieOnly(self:GetValue()))
-			Client.SetOptionBoolean("CHUD_BrowserFilterHive", self.scriptHandle.CHUDFilterRookie:GetValue())
-			
-		end)
-		
-		local description = CreateMenuElement(self.CHUDFilterRookie, "Font")
-		description:SetText("ROOKIE ONLY")
-		description:SetCSSClass("filter_description")
-		
-		self.serverList:SetFilter(100, FilterRookieOnly(filterRookie))
-	end)
-
 local oldBuildServerEntry = BuildServerEntry
 function BuildServerEntry(serverIndex)
 
@@ -65,19 +68,19 @@ function BuildServerEntry(serverIndex)
 			local _, pos = string.find(serverTags[t], "CHUD_0x")
 			if pos then
 				serverEntry.CHUDBitmask = tonumber(string.sub(serverTags[t], pos+1))
+				if CheckCHUDTagOption(serverEntry.CHUDBitmask, CHUDTagBitmask["nslserver"]) and serverEntry.requiresPassword then
+					serverEntry.isNSL = true
+				end
 				break
-			end
-			if string.lower(serverTags[t]) == "comp" or string.lower(serverTags[t]) == "nsl" then
-				serverEntry.isNSL = true
 			end
 		end
 		
 		if serverEntry.CHUDBitmask ~= nil then
 			serverEntry.originalMode = serverEntry.mode
 			serverEntry.mode = serverEntry.mode:gsub("ns2", "ns2+", 1)
-		end
-		if serverEntry.isNSL then
-			serverEntry.mode = serverEntry.mode .. " NSL"
+			if serverEntry.isNSL then
+				serverEntry.mode = serverEntry.mode .. " NSL"
+			end
 		end
 		if CHUDHiveWhiteList then
 			serverEntry.isHiveWhitelisted = CHUDHiveWhiteList[serverEntry.address] or false
@@ -99,22 +102,18 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
 		originalSetServerData(self, serverData)
 		
-		if serverData.isNSL then
-			self.modName:SetColor(kNSLColor)
-			self.serverName:SetColor(kNSLColor)
-		end
 		if serverData.CHUDBitmask ~= nil then
-			
-			if not serverData.isNSL then
-				self.modName:SetColor(kYellow)
-			end
+			self.modName:SetColor(kYellow)
 			
 			local blockedString
 			for index, mask in pairs(CHUDTagBitmask) do
 				if CheckCHUDTagOption(serverData.CHUDBitmask, mask) then
 					if index == "mcr" then
 						self.playerCount:SetColor(kRed)
-					else
+					elseif serverData.isNSL then
+						self.modName:SetColor(kNSLColor)
+						self.serverName:SetColor(kNSLColor)
+					elseif index ~= "nslserver" then
 						local val = ConditionalValue(CHUDOptions[index].disabledValue == nil, CHUDOptions[index].defaultValue, CHUDOptions[index].disabledValue)
 						
 						if CHUDOptions[index].currentValue ~= val then
