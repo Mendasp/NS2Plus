@@ -4,6 +4,11 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 30/01/2015
+	- Added shown/total server count to server browser.
+	- Added NSL info to scoreboard hover menu for NSL servers.
+	- Adjusted server tagging for NSL servers.
+
 - 29/01/2015
 	- Added Cr4zy's configurable Alien Vision (Thanks Cr4zy!).
 	- Added checkbox in the Server Browser to hide Rookie Only servers.
