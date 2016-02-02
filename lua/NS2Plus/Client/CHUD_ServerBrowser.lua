@@ -1,33 +1,3 @@
--- 283 includes a no rookie filter, don't add this one
-if Shared.GetBuildNumber() < 283 then
-	function FilterRookieOnly(active)
-		return function(entry) return active or entry.rookieOnly == false end
-	end
-	
-	local oldMainMenuCreateServerListWindow
-	oldMainMenuCreateServerListWindow = Class_ReplaceMethod("GUIMainMenu", "CreateServerListWindow",
-		function(self)
-			oldMainMenuCreateServerListWindow(self)
-			
-			local filterRookie = Client.GetOptionBoolean("CHUD_BrowserFilterHive", true)
-			self.CHUDFilterRookie = self.filterForm:CreateFormElement(Form.kElementType.Checkbox, "ROOKIE ONLY")
-			self.CHUDFilterRookie:SetCSSClass("filter_rookie")
-			self.CHUDFilterRookie:SetValue(filterRookie)
-			self.CHUDFilterRookie:AddSetValueCallback(function(self)
-			
-				self.scriptHandle.serverList:SetFilter(100, FilterRookieOnly(self:GetValue()))
-				Client.SetOptionBoolean("CHUD_BrowserFilterHive", self.scriptHandle.CHUDFilterRookie:GetValue())
-				
-			end)
-			
-			local description = CreateMenuElement(self.CHUDFilterRookie, "Font")
-			description:SetText("ROOKIE ONLY")
-			description:SetCSSClass("filter_description")
-			
-			self.serverList:SetFilter(100, FilterRookieOnly(filterRookie))
-		end)
-end
-
 local function CheckShowTableEntry(self, entry)
 	for _, filterFunc in pairs(self.filter) do
 		if not filterFunc(entry) then
