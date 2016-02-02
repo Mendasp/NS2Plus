@@ -78,6 +78,8 @@ function(self)
 		ConditionalValue(friends, kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
 	
 	minimapScript = self
+	
+	self:InitializeLocationNames()
 end)
 
 local originalMinimapOnResChanged
