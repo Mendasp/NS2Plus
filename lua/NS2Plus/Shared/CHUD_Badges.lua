@@ -33,7 +33,9 @@ if Client then
 			if CHUDBadgesTable[steamid] then
 				if steamid == 49009641 and not table.contains(badgeNames, "community_dev") then
 					-- remi.D
-					-- Hive doesn't allow to choose only 1, so do it by hand
+					-- Hive doesn't allow to choose only 2, so do it by hand
+					badges[#badges+1] = "ui/badges/dev_20.dds"
+					badgeNames[#badgeNames+1] = "dev"
 					badges[#badges+1] = "ui/badges/community_dev_20.dds"
 					badgeNames[#badgeNames+1] = "community_dev"
 				end
