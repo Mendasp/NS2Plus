@@ -21,6 +21,8 @@ function(self, updateTeam)
 		self:ResizePlayerList(playerList, numPlayers, teamGUIItem)
 	end
 	
+	-- Recount the players so we can exclude bots
+	numPlayers = 0
 	local currentPlayerIndex = 1
 	for index, player in pairs(playerList) do
 		local playerRecord = teamScores[currentPlayerIndex]
@@ -38,12 +40,13 @@ function(self, updateTeam)
 			player["Name"]:SetText(string.format("[%s] %s", playerRecord.Skill, player["Name"]:GetText()))
 		end
 		
-		if playerRecord.Skill > 0 then
+		if playerRecord.Skill > 0 and playerRecord.SteamId > 0 then
+			numPlayers = numPlayers + 1
 			teamAvgSkill = teamAvgSkill + playerRecord.Skill
 		end
 	end
 
-	if (teamNumber == 1 or teamNumber == 2) and teamAvgSkill > 0 and self.showAvgSkill then
+	if (teamNumber == 1 or teamNumber == 2) and self.showAvgSkill then
 		local skill = teamAvgSkill/numPlayers
 		if teamNumber == 1 then
 			team1Skill = skill
