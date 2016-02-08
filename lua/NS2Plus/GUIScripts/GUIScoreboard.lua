@@ -40,9 +40,11 @@ function(self, updateTeam)
 			player["Name"]:SetText(string.format("[%s] %s", playerRecord.Skill, player["Name"]:GetText()))
 		end
 		
-		if playerRecord.Skill > 0 and playerRecord.SteamId > 0 then
+		if playerRecord.SteamId > 0 then
 			numPlayers = numPlayers + 1
-			teamAvgSkill = teamAvgSkill + playerRecord.Skill
+			if playerRecord.Skill > 0 then
+				teamAvgSkill = teamAvgSkill + playerRecord.Skill
+			end
 		end
 	end
 
