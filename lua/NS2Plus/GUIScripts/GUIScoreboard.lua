@@ -34,11 +34,13 @@ function(self, updateTeam)
 			player["Deaths"]:SetPosition(temp)
 		end
 		
-		if self.showPlayerSkill then
+		if self.showPlayerSkill and playerRecord.Skill > 0 then
 			player["Name"]:SetText(string.format("[%s] %s", playerRecord.Skill, player["Name"]:GetText()))
 		end
 		
-		teamAvgSkill = teamAvgSkill + playerRecord.Skill
+		if playerRecord.Skill > 0 then
+			teamAvgSkill = teamAvgSkill + playerRecord.Skill
+		end
 	end
 
 	if (teamNumber == 1 or teamNumber == 2) and teamAvgSkill > 0 and self.showAvgSkill then
