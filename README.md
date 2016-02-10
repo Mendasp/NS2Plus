@@ -4,29 +4,33 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
-- 30/01/2015
+- 10/02/2016
+	- Excluded bots from the average skill calculation.
+	- Fixed hallucinations not using their own color if the player was using a custom alien minimap color.
+	
+- 30/01/2011
 	- Added shown/total server count to server browser.
 	- Added NSL info to scoreboard hover menu for NSL servers.
 	- Adjusted server tagging for NSL servers.
 
-- 29/01/2015
+- 29/01/2016
 	- Added Cr4zy's configurable Alien Vision (Thanks Cr4zy!).
 	- Added checkbox in the Server Browser to hide Rookie Only servers.
 	- Added button to filter for Hive Whitelisted servers in the Server Browser. The button will only display if the client is able to successfully download the list of whitelisted servers.
 	- Moved all weapon pickup options out of "HUD" and into "MISC".
 	- Moved weapon tracers from "HUD" into "GRAPHICS".
 
-- 26/01/2015
+- 26/01/2016
 	- Changed rookieFriendly to rookieOnly for the exported stats as the rookieFriendly tag is now deprecated in Build 282.
 
-- 25/01/2015
+- 25/01/2016
 	- Added NSL server highlighting, they will show up in blue and will append "NSL" to the gamemode for easy filtering.
 	- Excluded team specific FOV and sensitivities from caster mode.
 	- Fixed missing percentage sign for exo weapons on classic ammo.
 	- Added NSL lights json files to consistency check.
 	- Fixed exos not showing proper outline color in overhead spectator.
 	
-- 13/01/2015
+- 13/01/2016
 	- Fixed unbuilt RT deaths showing up in the RT graph (allowed for negative RT counts).
 	- Stats format changes:
 		- Renamed pdmg and sdmg fields to playerDamage and structureDamage.
@@ -38,15 +42,15 @@ Latest changes
 		- Renamed "roundTime" field in RoundInfo table to "roundLength".
 		- Fixed kills not showing the killer weapon in the KillFeed table if the player had left the server.
 
-- 12/01/2015
+- 12/01/2016
 	- Updated exported stats data format.
 	- Fixed bug with Marine Commander Medpack accuracy being calculated wrong.
 
-- 10/01/2015
+- 10/01/2016
 	- RT graph table now contains if the node was recycled.
 	- Tech table now contains if (in case of buildings) it was finished and if it was recycled.
 
-- 09/01/2015
+- 09/01/2016
 	- Fixed bug that wouldn't ignore maxPlayers for each team while the game wasn't live.
 	- Removed server option for disabling Hive HTTP connections.
 	- New data points for the exported stats:
@@ -55,7 +59,7 @@ Latest changes
 		- Killer/victim class in the kills table.
 	- End game stats now shows the loss of important buildings in the Tech Log and Biomass level on Hive death.
 
-- 06/01/2015
+- 06/01/2016
 	- Added "savestats" option to the server settings (default off). This option allows servers to save the round stats info in a json file located at (CONFIGFOLDER)\NS2Plus\Stats\. Each round will generate a separate file. Mods can also access this info directly by calling CHUDGetLastRoundStats().
 
 Server settings
