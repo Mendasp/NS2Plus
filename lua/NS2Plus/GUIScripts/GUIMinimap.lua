@@ -155,11 +155,12 @@ function(self, minimap, item)
 	local highlight = CHUDGetOption("commhighlight")
 	local highlightColor = ColorIntToColor(CHUDGetOption("commhighlightcolor"))
 	local blipTeam = self:GetMapBlipTeam(minimap)
+	local teamVisible = self.OnSameMinimapBlipTeam(minimap.playerTeam, blipTeam) or minimap.spectating
 	local isHighlighted = false
 	
 	if marinePlayers[self.mapBlipType] then
 		returnColor = ColorIntToColor(CHUDGetOption("playercolor_m"))
-	elseif alienPlayers[self.mapBlipType] then
+	elseif alienPlayers[self.mapBlipType] and not (teamVisible and self.isHallucination) then
 		returnColor = ColorIntToColor(CHUDGetOption("playercolor_a"))
 	elseif mapElements[self.mapBlipType] then
 		returnColor = ColorIntToColor(CHUDGetOption("mapelementscolor"))
@@ -169,7 +170,7 @@ function(self, minimap, item)
 	end
 	
 	if not self.isHallucination then
-		if self.OnSameMinimapBlipTeam(minimap.playerTeam, blipTeam) or minimap.spectating then
+		if teamVisible then
 			if self.isInCombat then
 				if self.MinimapBlipTeamIsActive(blipTeam) then
 					if isHighlighted then
