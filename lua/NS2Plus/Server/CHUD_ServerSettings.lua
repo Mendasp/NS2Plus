@@ -88,19 +88,12 @@ CHUDServerOptions =
 }
 
 -- Compmod servers allow hidden viewmodels by default
-local hasCompmod = false
-local hasNSLMod = false
-for modNum = 1, Server.GetNumActiveMods() do
-	if Server.GetActiveModId(modNum) == "e5ffa15" then
-		CHUDServerOptions["allow_drawviewmodel"] = nil
-		hasCompmod = true
-	elseif Server.GetActiveModId(modNum) == "a2ddae8" then
-		hasNSLMod = true
+-- Mark servers with compmod and NSL mod as NSL servers
+if kCompModVersion then
+	CHUDServerOptions["allow_drawviewmodel"] = nil
+	if GetNSLMode then
+		AddCHUDTagBitmask(CHUDTagBitmask["nslserver"])
 	end
-end
-
-if hasCompmod and hasNSLMod then
-	AddCHUDTagBitmask(CHUDTagBitmask["nslserver"])
 end
 
 local configFileName = "NS2PlusServerConfig.json"
