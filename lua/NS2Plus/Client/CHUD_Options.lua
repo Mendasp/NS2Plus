@@ -1021,7 +1021,7 @@ CHUDOptions =
 				category = "minimap",
 				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 				valueType = "color",
-				sort = "C9d",
+				sort = "A10",
 				resetSettingInBuild = 264,
 			},
 			playercolor_a = { 
@@ -1031,7 +1031,7 @@ CHUDOptions =
 				defaultValue = 0xFF8A00,
 				category = "minimap",
 				valueType = "color",
-				sort = "A10",
+				sort = "A11",
 				resetSettingInBuild = 264,
 			},
 			commhighlight = {
@@ -1045,7 +1045,7 @@ CHUDOptions =
 				valueType = "bool",
 				children = { "commhighlightcolor" },
 				hideValues = { false },
-				sort = "A11",
+				sort = "A12",
 			},
 			commhighlightcolor = {
 				name = "CHUD_CommHighlightColor",
@@ -1054,7 +1054,7 @@ CHUDOptions =
 				valueType = "color",
 				defaultValue = 0xFFFF00,
 				category = "minimap",
-				sort = "A12",
+				sort = "A13",
 			},
 			
 			
