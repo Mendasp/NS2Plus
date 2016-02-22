@@ -4,6 +4,9 @@ This Natural Selection 2 mod aims to improve, fix and expand the game in order t
 
 Latest changes
 ==============
+- 22/02/2016
+	- Added doerLocation and doerPosition to certain kills in the KillFeed table for exported stats to support proper positions for turrets, whips, hydras, etc.
+
 - 10/02/2016
 	- Excluded bots from the average skill calculation.
 	- Fixed hallucinations not using their own color if the player was using a custom alien minimap color.
@@ -223,17 +226,19 @@ catpack
 
 Some fields will be null sometimes like in Suicides or death by Natural Causes or killing bots (they don't have SteamIDs).
 
-| Field            | Description                                                          |
-|------------------|----------------------------------------------------------------------|
-| killerTeamNumber | Team that got awarded this kill (1 = Marines, 2 = Aliens).           |
-| killerWeapon     | Weapon used for the kill. Will be "None" for Natural Causes/Suicide. |
-| killerClass      | The killer's class.                                                  |
-| killerPosition   | Map coordinates for the killer's position.                           |
-| killerLocation   | Location name index for the killer's position.                       |
-| victimClass      | The victim's class.                                                  |
-| victimPosition   | Map coordinates for the victim's position.                           |
-| victimLocation   | Location name index for the victim's position.                       |
-| gameTime         | Game time when this happened (in seconds).                           |
+| Field            | Description                                                                        |
+|------------------|------------------------------------------------------------------------------------|
+| killerTeamNumber | Team that got awarded this kill (1 = Marines, 2 = Aliens).                         |
+| killerWeapon     | Weapon used for the kill. Will be "None" for Natural Causes/Suicide.               |
+| killerClass      | The killer's class.                                                                |
+| killerPosition   | Map coordinates for the killer's position.                                         |
+| killerLocation   | Location name index for the killer's position.                                     |
+| doerPosition     | Map coordinates for the killer entity position (grenades/turrets/hydras, etc).     |
+| doerLocation     | Location name index for the killer entity position (grenades/turrets/hydras, etc). |
+| victimClass      | The victim's class.                                                                |
+| victimPosition   | Map coordinates for the victim's position.                                         |
+| victimLocation   | Location name index for the victim's position.                                     |
+| gameTime         | Game time when this happened (in seconds).                                         |
 
 Credits/Thanks to
 =================

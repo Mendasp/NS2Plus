@@ -350,11 +350,25 @@ local function AddWeaponKill(steamId, wTechId, teamNumber)
 	end
 end
 
-local function AddTeamGraphKill(teamNumber, killer, victim, weapon)
+local function AddTeamGraphKill(teamNumber, killer, victim, weapon, doer)
 	if teamNumber == 1 or teamNumber == 2 then
 		local killerLocation = killer and killer:isa("Player") and locationsLookup[killer:GetLocationName()] or nil
 		local killerPosition = killer and killer:isa("Player") and tostring(killer:GetOrigin()) or nil
 		local killerClass = killer and killer:isa("Player") and EnumToString(kPlayerStatus, killer:GetPlayerStatusDesc()) or nil
+		if not killerClass and doer and doer.GetClassName then
+			killerClass = doer:GetClassName()
+		end
+		local doerLocation, doerPosition
+		-- Don't log doerLocation/Position for weapons that have parents (rifle, bite, etc)
+		-- These are meant for things like mines, grenades, etc
+		if doer and doer.GetParent and doer:GetParent() == nil then
+			local origin = doer.GetOrigin and doer:GetOrigin()
+			if origin then
+				local location = GetLocationForPoint(origin)
+				doerLocation = locationsLookup[location and location:GetName()]
+				doerPosition = tostring(origin)
+			end
+		end
 		local killerSteamID = killer and killer:isa("Player") and GetSteamIdForClientIndex(killer:GetClientIndex()) or nil
 		local victimLocation = victim and victim:isa("Player") and locationsLookup[victim:GetLocationName()] or nil
 		local victimPosition = victim and victim:isa("Player") and tostring(victim:GetOrigin()) or nil
@@ -362,7 +376,7 @@ local function AddTeamGraphKill(teamNumber, killer, victim, weapon)
 		local victimSteamID = victim and victim:isa("Player") and GetSteamIdForClientIndex(victim:GetClientIndex()) or nil
 		local weapon = EnumToString(kTechId, weapon) or nil
 		
-		table.insert(CHUDKillGraph, {gameTime = CHUDGetGameTime(), gameMinute = CHUDGetGameTime(true), killerTeamNumber = teamNumber, killerWeapon = weapon, killerPosition = killerPosition, killerLocation = killerLocation, killerClass = killerClass, killerSteamID = killerSteamID, victimPosition = victimPosition, victimLocation = victimLocation, victimClass = victimClass, victimSteamID = victimSteamID})
+		table.insert(CHUDKillGraph, {gameTime = CHUDGetGameTime(), gameMinute = CHUDGetGameTime(true), killerTeamNumber = teamNumber, killerWeapon = weapon, killerPosition = killerPosition, killerLocation = killerLocation, killerClass = killerClass, killerSteamID = killerSteamID, victimPosition = victimPosition, victimLocation = victimLocation, victimClass = victimClass, victimSteamID = victimSteamID, doerLocation = doerLocation, doerPosition = doerPosition})
 	end
 end
 
@@ -1185,7 +1199,7 @@ Class_AddMethod("Player", "PreOnKill",
 						killerTeam = 1
 					end
 				end
-				AddTeamGraphKill(killerTeam, killer, self, killerWeapon)
+				AddTeamGraphKill(killerTeam, killer, self, killerWeapon, doer)
 			end
 		end
 		
