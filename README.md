@@ -257,6 +257,9 @@ Credits/Thanks to
 
 Past NS2+ features now included in vanilla NS2:
 =================
+- [286] The server browser highlights ranked servers.
+- [286] The server browser shows the total number of servers available as well as the total number that pass your filter settings.
+- [286] Resource nodes and Tech Points are highlighted on the minimap.
 - [276] Added extra bindings for voiceover options: "Weld me", "Follow me", etc.
 - [276] Dropped weapon expire times now are displayed for the commander.
 - [273] You can click on the scoreboard to check a player's Steam/NS2 profile.

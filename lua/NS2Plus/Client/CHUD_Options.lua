@@ -1012,6 +1012,7 @@ CHUDOptions =
 				category = "minimap",
 				valueType = "color",
 				sort = "A09",
+				resetSettingInBuild = 330,
 			},
 			playercolor_m = { 
 				name = "CHUD_PlayerColor_M",

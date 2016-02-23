@@ -7,25 +7,6 @@ local function CheckShowTableEntry(self, entry)
 	return true
 end
 
-local oldMainMenuUpdate
-oldMainMenuUpdate = Class_ReplaceMethod("GUIMainMenu", "Update",
-	function(self, deltaTime)
-		oldMainMenuUpdate(self, deltaTime)
-		
-		if self:GetIsVisible() and self.playWindow and self.playWindow:GetIsVisible() then
-			local visibleEntries = 0
-			local currentEntries = #self.serverList.tableData
-			for i = 1, currentEntries do
-				if CheckShowTableEntry(self.serverList, self.serverList.tableData[i]) then
-					visibleEntries = visibleEntries + 1
-				end
-			end
-			if currentEntries ~= visibleEntries then
-				self.serverCountDisplay:SetText(tostring(visibleEntries) .. " / " .. tostring(currentEntries))
-			end
-		end
-	end)
-
 function FilterHiveWhiteList(active)
 	return function(entry) return not active or entry.isHiveWhitelisted == true end
 end
@@ -94,16 +75,17 @@ function BuildServerEntry(serverIndex)
 	
 end
 
+local kGold = Color(212/255, 175/255, 55/255)
 local kNSLColor = ColorIntToColor(0x1aa7e2)
 local originalSetServerData
 originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 	function(self, serverData)
 		originalSetServerData(self, serverData)
 		
+		local blockedString
 		if serverData.CHUDBitmask ~= nil then
 			self.modName:SetColor(kYellow)
 			
-			local blockedString
 			for index, mask in pairs(CHUDTagBitmask) do
 				if CheckCHUDTagOption(serverData.CHUDBitmask, mask) then
 					if index == "mcr" then
@@ -117,7 +99,7 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 						if CHUDOptions[index].currentValue ~= val then
 							self.modName:SetColor(kRed)
 							if not blockedString then
-								blockedString = "This server has disabled these NS2+ settings that you're currently using: " .. CHUDOptions[index].label
+								blockedString = ConditionalValue(serverData.ranked, "Ranked server. ", "") .. "This server has disabled these NS2+ settings that you're currently using: " .. CHUDOptions[index].label
 							else
 								blockedString = blockedString .. ", " .. CHUDOptions[index].label
 							end
@@ -126,11 +108,15 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 					end
 				end
 			end
-			
-			self.modName.tooltip = blockedString
-			
 		end
 		
+		self.modName.tooltipText = blockedString or serverData.ranked and self.modName.tooltipText
+		self.mapName:SetColor(kWhite)
+		self.mapName.tooltipText = nil
+		if serverData.ranked then
+			self.mapName:SetColor(kGold)
+			self.mapName.tooltipText = Locale.ResolveString(string.format("SERVERBROWSER_RANKED_TOOLTIP"))
+		end
 	end
 )
 
@@ -159,11 +145,12 @@ originalServerEntryInit = Class_ReplaceMethod( "ServerEntry", "Initialize",
 			if GUIItemContainsPoint(self.playerSkill, Client.GetCursorPosScreen()) then
 				self.playerSkill.tooltip:SetText(self.playerSkill.tooltipText)
 				self.playerSkill.tooltip:Show()
-			elseif GUIItemContainsPoint(self.modName.guiItem, Client.GetCursorPosScreen()) then
-				if self.modName.tooltip then
-					self.playerSkill.tooltip:SetText(self.modName.tooltip)
+			elseif self.modName.tooltipText and GUIItemContainsPoint(self.modName, Client.GetCursorPosScreen()) then
+					self.playerSkill.tooltip:SetText(self.modName.tooltipText)
 					self.playerSkill.tooltip:Show()
-				end
+			elseif self.mapName.tooltipText and GUIItemContainsPoint(self.mapName, Client.GetCursorPosScreen()) then
+				self.playerSkill.tooltip:SetText(self.mapName.tooltipText)
+				self.playerSkill.tooltip:Show()
 			else
 				self.playerSkill.tooltip:Hide()
 			end
