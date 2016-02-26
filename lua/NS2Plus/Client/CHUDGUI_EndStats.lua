@@ -2391,7 +2391,7 @@ local function CHUDSetWeaponStats(message)
 		if kFriendlyWeaponNames[wTechId] then
 			weaponName = kFriendlyWeaponNames[wTechId]
 		else
-			local techdataName = LookupTechData(wTechId, kTechDataMapName) or Locale.ResolveString(LookupTechData(wTechId, kTechDataDisplayName))
+			local techdataName = LookupTechData(wTechId, kTechDataMapName) or Locale.ResolveString(LookupTechData(wTechId, kTechDataDisplayName, ""))
 			weaponName = techdataName:gsub("^%l", string.upper)
 		end
 	else
