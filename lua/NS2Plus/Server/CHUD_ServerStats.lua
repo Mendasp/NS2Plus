@@ -466,31 +466,38 @@ statusGrouping[kPlayerStatus.Evolving] = kPlayerStatus.Embryo
 
 -- Add commander playing teams separate per team
 -- Vanilla only tracks overall commanding time
-local originalScoringOnMove = ScoringMixin.OnProcessMove
-function ScoringMixin:OnProcessMove(input)
-	originalScoringOnMove(self, input)
+local ScoringSharedUpdate = GetUpValue(ScoringMixin.OnProcessMove, "SharedUpdate", { LocateRecurse = true })
+local function newScoringSharedUpdate(self, deltaTime)
+	ScoringSharedUpdate(self, deltaTime)
 	
 	if self.clientIndex and self.clientIndex > 0 then
 		local steamId = GetSteamIdForClientIndex(self.clientIndex)
 		local teamNumber = self:GetTeamNumber()
-		if steamId and steamId > 0 and (teamNumber == 1 or teamNumber == 2) and CHUDClientStats[steamId] then
+		local paused = GetIsGamePaused and GetIsGamePaused()
+		if not paused and steamId and steamId > 0 and (teamNumber == 1 or teamNumber == 2) and CHUDClientStats[steamId] then
+			local statusPlayer = CHUDClientStats[steamId]
 			local statusRoot = CHUDClientStats[steamId]["status"]
 			local stat = CHUDClientStats[steamId][teamNumber]
-			if self:GetIsPlaying() then
+			-- This function gets called sometimes twice for the same player in the same frame
+			-- So just check that we don't add the same delta twice
+			if self:GetIsPlaying() and (not statusPlayer.lastUpdate or statusPlayer.lastUpdate ~= Shared.GetTime()) then
+				statusPlayer.lastUpdate = Shared.GetTime()
 				if self:isa("Commander") then
-					stat.commanderTime = stat.commanderTime + input.time
+					stat.commanderTime = stat.commanderTime + deltaTime
 				end
-				stat.timePlayed = stat.timePlayed + input.time
+				stat.timePlayed = stat.timePlayed + deltaTime
 				local status = statusGrouping[self:GetPlayerStatusDesc()] ~= nil and statusGrouping[self:GetPlayerStatusDesc()] or self:GetPlayerStatusDesc()
 				
 				if statusRoot[status] == nil then
 					statusRoot[status] = 0
 				end
-				statusRoot[status] = statusRoot[status] + input.time
+				statusRoot[status] = statusRoot[status] + deltaTime
 			end
 		end
 	end
 end
+
+ReplaceUpValue(ScoringMixin.OnProcessMove, "SharedUpdate", newScoringSharedUpdate, { LocateRecurse = true, CopyUpValues = true })
 
 local originalScoringAddKill = ScoringMixin.AddKill
 function ScoringMixin:AddKill()
@@ -966,8 +973,9 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				entry.pdmg = nil
 				entry.sdmg = nil
 			end
-			-- Remove last life stats from exported data
+			-- Remove last life stats and last update time from exported data
 			stats.last = nil
+			stats.lastUpdate = nil
 		end
 		
 		local team1Accuracy, team1OnosAccuracy = CHUDGetAccuracy(CHUDTeamStats[1].hits, CHUDTeamStats[1].misses, CHUDTeamStats[1].onosHits)
