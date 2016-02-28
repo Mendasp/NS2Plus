@@ -295,7 +295,7 @@ function CHUDGUI_EndStats:CreateTeamBackground(teamNumber)
 
 end
 
-local function CreateScoreboardRow(container, bgColor, textColor, playerName, kills, assists, deaths, acc, pdmg, sdmg, timeBuilding, timePlayed, timeComm, steamId)
+local function CreateScoreboardRow(container, bgColor, textColor, playerName, kills, assists, deaths, acc, pdmg, sdmg, timeBuilding, timePlayed, timeComm, steamId, isRookie, hiveSkill)
 	
 	local containerSize = container:GetSize()
 	container:SetSize(Vector(containerSize.x, containerSize.y + kRowSize.y, 0))
@@ -314,12 +314,16 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 		item.steamId = steamId
 	end
 	
+	if hiveSkill then
+		item.hiveSkill = hiveSkill
+	end
+	
 	container:AddChild(item.background)
 	
 	item.playerName = GUIManager:CreateTextItem()
 	item.playerName:SetStencilFunc(GUIItem.NotEqual)
 	item.playerName:SetFontName(kRowFontName)
-	item.playerName:SetColor(textColor)
+	item.playerName:SetColor(isRookie and Color(0, 0.8, 0.25, 1) or textColor)
 	item.playerName:SetScale(scaledVector)
 	GUIMakeFontScale(item.playerName)
 	item.playerName:SetAnchor(GUIItem.Left, GUIItem.Center)
@@ -1864,6 +1868,8 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			message.minutesComm = message.minutesComm or 0
 			message.killstreak = message.killstreak or 0
 			message.steamId = message.steamId or 1
+			message.isRookie = message.isRookie or false
+			message.hiveSkill = message.hiveSkill or -1
 			
 			local minutes = math.floor(message.minutesBuilding)
 			local seconds = (message.minutesBuilding % 1)*60
@@ -1914,7 +1920,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				playerTextColor = kCurrentPlayerStatsTextColor
 			end
 			
-			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), string.format("%d:%02d", pMinutes, pSeconds), message.minutesComm > 0 and string.format("%d:%02d", cMinutes, cSeconds) or nil, message.steamId))
+			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), string.format("%d:%02d", pMinutes, pSeconds), message.minutesComm > 0 and string.format("%d:%02d", cMinutes, cSeconds) or nil, message.steamId, message.isRookie, message.hiveSkill))
 			-- Store some of the original info so we can sort afterwards
 			teamObj.playerRows[#teamObj.playerRows].originalOrder = playerCount
 			teamObj.playerRows[#teamObj.playerRows].message = message
@@ -2733,7 +2739,11 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				bgColor.a = 0.9
 				
 				self.hoverMenu:SetBackgroundColor(bgColor)
-				self.hoverMenu:AddButton(self.lastRow.playerName:GetText(), nameBgColor, nameBgColor, textColor)
+				local name = self.lastRow.playerName:GetText()
+				if self.lastRow.hiveSkill ~= nil and self.lastRow.hiveSkill > -1 then
+					name = "[" .. self.lastRow.hiveSkill .. "] " .. name
+				end
+				self.hoverMenu:AddButton(name, nameBgColor, nameBgColor, textColor)
 				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_STEAM_PROFILE"), teamColorBg, teamColorHighlight, textColor, openSteamProf)
 				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_HIVE_PROFILE"), teamColorBg, teamColorHighlight, textColor, openHiveProf)
 				--self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
