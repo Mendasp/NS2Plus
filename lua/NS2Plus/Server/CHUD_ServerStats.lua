@@ -479,8 +479,9 @@ local function newScoringSharedUpdate(self, deltaTime)
 			local statusRoot = CHUDClientStats[steamId]["status"]
 			local stat = CHUDClientStats[steamId][teamNumber]
 			-- This function gets called sometimes twice for the same player in the same frame
-			-- So just check that we don't add the same delta twice
-			if self:GetIsPlaying() and (not statusPlayer.lastUpdate or statusPlayer.lastUpdate ~= Shared.GetTime()) then
+			-- It also happens that sometimes the times are in the past
+			-- So just check that the time looks correct
+			if self:GetIsPlaying() and (not statusPlayer.lastUpdate or statusPlayer.lastUpdate < Shared.GetTime()) then
 				statusPlayer.lastUpdate = Shared.GetTime()
 				if self:isa("Commander") then
 					stat.commanderTime = stat.commanderTime + deltaTime
