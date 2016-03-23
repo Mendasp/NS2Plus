@@ -114,7 +114,11 @@ local lastSortedT1WasInv = false
 local lastSortedT2 = "kills"
 local lastSortedT2WasInv = false
 
-local function UpdateSizeOfUI(self, screenWidth, screenHeight)
+local function UpdateSizeOfUI(self)
+	screenWidth = Client.GetScreenWidth()
+	screenHeight = Client.GetScreenHeight()
+	aspectRatio = screenWidth/screenHeight
+
 	widthPercentage = ConditionalValue(aspectRatio < 1.5, 0.95, 0.75)
 	kTitleSize = Vector(screenWidth*widthPercentage, GUILinearScale(74), 0)
 	kCardSize = Vector(kTitleSize.x/3.5, GUILinearScale(74), 0)
@@ -991,7 +995,7 @@ end
 
 function CHUDGUI_EndStats:Initialize()
 
-	UpdateSizeOfUI(self, screenWidth, screenHeight)
+	UpdateSizeOfUI(self)
 
 	self.header = GUIManager:CreateGraphicItem()
 	self.header:SetColor(Color(0, 0, 0, 0.5))
@@ -2826,10 +2830,6 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 end
 
 function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
-	screenWidth = newX
-	screenHeight = newY
-	aspectRatio = screenWidth/screenHeight
-	
 	-- Mark the last round as not loaded so it loads it back when we destroy the current UI
 	loadedLastRound = false
 	
