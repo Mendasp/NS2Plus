@@ -14,7 +14,7 @@ local function CHUDSliderCallback(elemId)
 		local elem = mainMenu.CHUDOptionElements[elemId]
 		local value = (elem:GetValue() * (maxValue - minValue) + minValue) * multiplier
 		CHUDSetOption(key, Round(value, 2))
-		elem.resetOption:SetIsVisible(CHUDOptions[key].defaultValue ~= CHUDOptions[key].currentValue)
+		elem.resetOption:SetIsVisible(elem:GetIsVisible() and CHUDOptions[key].defaultValue ~= CHUDOptions[key].currentValue)
 	end
 end
 
@@ -102,7 +102,7 @@ local function CHUDSaveMenuSetting(name)
 				end
 			end
 			
-			CHUDMenuOption.resetOption:SetIsVisible(CHUDOption.defaultValue ~= CHUDOption.currentValue)
+			CHUDMenuOption.resetOption:SetIsVisible(CHUDMenuOption:GetIsVisible() and CHUDOption.defaultValue ~= CHUDOption.currentValue)
 			
 			if CHUDOption.children then
 				local show = true
