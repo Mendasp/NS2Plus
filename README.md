@@ -6,6 +6,10 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- 23/03/2016
+	- Fixed End Stats UI not resizing properly on resolution change sometimes.
+	- Fixed options menu displaying reset option button for hidden options in certain circumstances.
+
 - 22/02/2016
 	- Added doerLocation and doerPosition to certain kills in the KillFeed table for exported stats to support proper positions for turrets, whips, hydras, etc.
 
