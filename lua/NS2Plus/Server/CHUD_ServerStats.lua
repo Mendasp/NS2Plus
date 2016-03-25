@@ -419,7 +419,7 @@ local function GetAttackerWeapon(attacker, doer)
 				elseif doer.techId then
 					local deathIcon = nil
 					attackerWeapon = doer.techId
-					deathIcon = doer.GetDeathIconIndex and doer.GetDeathIconIndex() or nil
+					deathIcon = doer.GetDeathIconIndex and doer:GetDeathIconIndex() or nil
 					
 					-- Translate the deathicon into a techid we can use for the end-game stats
 					if deathIcon == kDeathMessageIcon.Mine then
