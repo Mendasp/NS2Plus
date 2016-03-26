@@ -1244,7 +1244,7 @@ local originalAttackMeleeCapsule = AttackMeleeCapsule
 function AttackMeleeCapsule(weapon, player, damage, range, optionalCoords, altMode, filter)
 	local retVals = { originalAttackMeleeCapsule(weapon, player, damage, range, optionalCoords, altMode, filter) }
 	local target = retVals[2]
-	if weapon and weapon.GetTechId and weapon.GetParent then
+	if weapon and weapon.GetTechId and weapon.GetParent and weapon:GetParent() then
 		-- Drifters, buildings and teammates don't count towards accuracy as hits or misses
 		if (target and target:isa("Player") and GetAreEnemies(weapon:GetParent(), target)) or target == nil then
 			local steamId = GetSteamIdForClientIndex(weapon:GetParent():GetClientIndex())
@@ -1259,7 +1259,7 @@ end
 
 local originalBulletsMixinApplyBulletGameplayEffects = BulletsMixin.ApplyBulletGameplayEffects
 function BulletsMixin:ApplyBulletGameplayEffects(player, target, endPoint, direction, damage, surface, showTracer)
-	if self and self.GetTechId and self.GetParent then
+	if self and self.GetTechId and self.GetParent and self:GetParent() then
 		-- Drifters, buildings and teammates don't count towards accuracy as hits or misses
 		if (target and target:isa("Player") and GetAreEnemies(self:GetParent(), target)) or target == nil then
 			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
@@ -1280,10 +1280,10 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 	local hitPointOffset = trace.normal * 0.3
 	local direction = (endPoint - startPoint):GetUnit()
 	local damage = kRailgunDamage + math.min(1, (Shared.GetTime() - self.timeChargeStarted) / kChargeTime) * kRailgunChargeDamage
-	
+	local parent = self.GetParent and self:GetParent()
 	local extents = GetDirectedExtentsForDiameter(direction, kBulletSize)
 	
-	if trace.fraction < 1 then
+	if parent and trace.fraction < 1 then
 	
 		// do a max of 10 capsule traces, should be sufficient
 		local hitEntities = {}
@@ -1298,7 +1298,7 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 			
 				if not table.find(hitEntities, capsuleTrace.entity) then
 				
-					if capsuleTrace.entity:isa("Player") and GetAreEnemies(self:GetParent(), capsuleTrace.entity) then
+					if capsuleTrace.entity:isa("Player") and GetAreEnemies(parent, capsuleTrace.entity) then
 						isPlayer = true
 						playerTargets = playerTargets + 1
 						if capsuleTrace.entity:isa("Onos") then
@@ -1324,9 +1324,9 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 
 		-- Drifters, buildings and teammates don't count towards accuracy as hits or misses
 		if #hitEntities == 0 or (#hitEntities > 0 and isPlayer) then
-			local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
+			local steamId = GetSteamIdForClientIndex(parent:GetClientIndex())
 			if steamId then
-				AddAccuracyStat(steamId, self:GetTechId(), #hitEntities > 0, playerTargets == 1 and foundOnos, self:GetParent():GetTeamNumber())
+				AddAccuracyStat(steamId, self:GetTechId(), #hitEntities > 0, playerTargets == 1 and foundOnos, parent:GetTeamNumber())
 			end
 		end
 		
@@ -1348,10 +1348,10 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack"
 	function(self, player)
 		self.activity = Parasite.kActivity.Primary
 		self.primaryAttacking = true
-		
+		local parent = self.GetParent and self:GetParent()
 		local success = false
 
-		if not self.blocked then
+		if parent and not self.blocked then
 		
 			self.blocked = true
 			
@@ -1377,10 +1377,10 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack"
 				local direction = GetNormalizedVector(trace.endPoint - startPoint)
 				local impactPoint = trace.endPoint - direction * kHitEffectOffset
 				
-				if (hitObject and hitObject:isa("Player") and GetAreEnemies(self:GetParent(), hitObject)) then
-					local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
+				if (hitObject and hitObject:isa("Player") and GetAreEnemies(parent, hitObject)) then
+					local steamId = GetSteamIdForClientIndex(parent:GetClientIndex())
 					if steamId then
-						AddAccuracyStat(steamId, self:GetTechId(), true, hitObject and hitObject:isa("Onos"), self:GetParent():GetTeamNumber())
+						AddAccuracyStat(steamId, self:GetTechId(), true, hitObject and hitObject:isa("Onos"), parent:GetTeamNumber())
 					end
 				end
 				
@@ -1389,9 +1389,9 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack"
 			end
 			
 			if not trace.entity then
-				local steamId = GetSteamIdForClientIndex(self:GetParent():GetClientIndex())
+				local steamId = GetSteamIdForClientIndex(parent:GetClientIndex())
 				if steamId then
-					AddAccuracyStat(steamId, self:GetTechId(), false, nil, self:GetParent():GetTeamNumber())
+					AddAccuracyStat(steamId, self:GetTechId(), false, nil, parent:GetTeamNumber())
 				end
 			end
 			
