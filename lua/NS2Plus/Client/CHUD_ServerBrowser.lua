@@ -1,14 +1,15 @@
-local function CheckShowTableEntry(self, entry)
-	for _, filterFunc in pairs(self.filter) do
-		if not filterFunc(entry) then
-			return false
-		end
-	end
-	return true
-end
-
 function FilterHiveWhiteList(active)
 	return function(entry) return not active or entry.isHiveWhitelisted == true end
+end
+
+-- When filtering for NS2, also include NS2+ servers
+function FilterServerMode(mode)
+	local filterMode = string.upper(mode)
+	if filterMode ~= "NS2" then
+		return function(entry) return string.len(mode) == 0 or string.upper(entry.mode) == filterMode end
+	else
+		return function(entry) return string.upper(entry.mode) == filterMode or string.upper(entry.mode) == "NS2+" end
+	end
 end
 
 local oldServerTabsReset
