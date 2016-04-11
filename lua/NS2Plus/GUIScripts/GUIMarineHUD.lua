@@ -107,6 +107,7 @@ function(self)
 	
 	self.statusDisplay.healthBar:SetIsVisible(hpbar)
 	self.statusDisplay.armorBar:SetIsVisible(hpbar)
+	self.statusDisplay.regenBar:SetIsVisible(hpbar)
 	
 	local texture = ConditionalValue(hpbar, "ui/marine_HUD_status.dds", "ui/transparent.dds")
 	self.statusDisplay.statusbackground:SetTexture(texture)
@@ -286,6 +287,10 @@ originalMarineHUDUpdate = Class_ReplaceMethod( "GUIMarineHUD", "Update",
 			end
 			self.statusDisplay.healthBar:SetIsVisible(hpbar)
 			self.statusDisplay.healthText:SetIsVisible(true)
+			
+			if self.statusDisplay.lastRegenHealth and self.statusDisplay.lastRegenHealth > 0 and not hpbar then
+				self.statusDisplay.regenBar:SetIsVisible(false)
+			end
 		end
 		
 		-- In vanilla, the commander name doesn't get updated (or show!) if we use low detail HUD
