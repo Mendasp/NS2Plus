@@ -12,6 +12,23 @@ function FilterServerMode(mode)
 	end
 end
 
+-- Replace the buttons so the function used in the default tabs is this new one
+local kDefaultButtons = GetUpValue(ServerTabs.SetGameTypes, "kDefaultButtons", { LocateRecurse = true })
+kDefaultButtons = {
+
+    {
+        name = "ALL",
+        filters = { [1] = FilterServerMode(""), [8] = FilterFavoriteOnly(false), [11] = FilterHistoryOnly(false) },
+    },
+    
+    {
+        name = "NS2",
+        filters = { [1] = FilterServerMode("ns2"), [8] = FilterFavoriteOnly(false), [11] = FilterHistoryOnly(false) },
+    },
+    
+}
+ReplaceUpValue(ServerTabs.SetGameTypes, "kDefaultButtons", kDefaultButtons, { LocateRecurse = true })
+
 local oldServerTabsReset
 oldServerTabsReset = Class_ReplaceMethod("ServerTabs", "Reset",
 	function (self)
