@@ -1131,17 +1131,6 @@ CHUDOptions =
 				applyOnLoadComplete = true,
 				sort = "A02"
 			},
-			instantdissolve = { 
-				name = "CHUD_InstantDissolve",
-				label = "Ragdoll instant dissolve effect",
-				tooltip = "Makes the ragdoll start to disappear immediatly after kill.",
-				type = "select",
-				values  = { "Disabled", "Enabled" },
-				defaultValue = false,
-				category = "graphics",
-				valueType = "bool",
-				sort = "A03",
-			},
 			nsllights = {
 				name = "lowLights",
 				label = "High performance lights",
