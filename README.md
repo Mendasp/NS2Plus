@@ -263,6 +263,7 @@ Credits/Thanks to
 
 Past NS2+ features now included in vanilla NS2:
 =================
+- [295] Ragdolls dissolve instantly.
 - [286] The server browser highlights ranked servers.
 - [286] The server browser shows the total number of servers available as well as the total number that pass your filter settings.
 - [286] Resource nodes and Tech Points are highlighted on the minimap.
