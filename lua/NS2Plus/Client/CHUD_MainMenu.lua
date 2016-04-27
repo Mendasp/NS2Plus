@@ -201,6 +201,17 @@ originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks",
 		
 		for i, menuLink in pairs(self.Links) do
 			menuLink:SetTopOffset(50+70*(i-1))
+			
+			-- Some links have glowing effects applied.  Ensure we move them upwards too.
+			if menuLink.mainLinkGlow then
+				menuLink.mainLinkGlow:SetTopOffset(40+70*(i-1))
+			end
+			if menuLink.mainLinkAlertTextGlow then
+				menuLink.mainLinkAlertTextGlow:SetTopOffset(40+70*(i-1))
+			end
+			if menuLink.mainLinkAlertText then
+				menuLink.mainLinkAlertText:SetTextPaddingTop(3)
+			end
 		end
 		
 		self.profileBackground:SetTopOffset(-70)
@@ -211,6 +222,17 @@ originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionCha
 		originalMainMenuResChange(self, oldX, oldY, newX, newY)
 		for i, menuLink in pairs(self.Links) do
 			menuLink:SetTopOffset(50+70*(i-1))
+			
+			-- Some links have glowing effects applied.  Ensure we move them upwards too.
+			if menuLink.mainLinkGlow then
+				menuLink.mainLinkGlow:SetTopOffset(40+70*(i-1))
+			end
+			if menuLink.mainLinkAlertTextGlow then
+				menuLink.mainLinkAlertTextGlow:SetTopOffset(40+70*(i-1))
+			end
+			if menuLink.mainLinkAlertText then
+				menuLink.mainLinkAlertText:SetTextPaddingTop(3)
+			end
 		end
 		
 		self.profileBackground:SetTopOffset(-70)
