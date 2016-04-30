@@ -18,6 +18,7 @@ Script.Load("lua/NS2Plus/Client/CHUD_ViewModel.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_GoldenMode.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
+Script.Load("lua/NS2Plus/Client/CHUD_GorgeSpit.lua")
 
 trollModeVictims = {}
 trollModes = {}
