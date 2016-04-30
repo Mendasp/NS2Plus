@@ -6,6 +6,9 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- 30/04/2016
+	- Added High Visibility Gorge spit option, available in Graphics tab (Thanks turtsmcgurts!).
+
 - 23/03/2016
 	- Fixed End Stats UI not resizing properly on resolution change sometimes.
 	- Fixed options menu displaying reset option button for hidden options in certain circumstances.
