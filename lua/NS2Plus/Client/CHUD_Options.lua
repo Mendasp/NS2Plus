@@ -1194,6 +1194,17 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "A08",
 			},
+			gorgespit = { 
+				name = "CHUD_GorgeSpit",
+				label = "Gorge Spit",
+				tooltip = "Replaces gorge spit with a model (rifle_grenade) so it gets outlined and is easier to see with custom alien vision.",
+				type = "select",
+				values  = { "Default", "High Visibility" },
+				defaultValue = false,
+				category = "graphics",
+				valueType = "bool",
+				sort = "A09",
+			},
 			
 			
 			
@@ -1519,5 +1530,4 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "B02",
 			},
-
 }
