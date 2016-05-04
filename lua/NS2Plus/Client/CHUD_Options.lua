@@ -601,18 +601,6 @@ CHUDOptions =
 				applyFunction = function() CHUDRestartScripts({ "GUIUnitStatus" }) end,
 				sort = "A07",
 			},
-			nameplatesdistance = {
-				name = "CHUD_Nameplates_Distance",
-				label = "Nameplates Distance",
-				tooltip = "Chooses how far away, in meters, the nameplates render (ie. when aiming at a building to check its health). This includes teammate names while not aiming at them. High values will decrease performance.",
-				type = "slider",
-				defaultValue = 13,
-				minValue = 5,
-				maxValue = 30,
-				category = "hud",
-				valueType = "float",
-				sort = "A08",
-			},
 			score = {
 				name = "CHUD_ScorePopup",
 				label = "Score popup",

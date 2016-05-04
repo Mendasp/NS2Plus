@@ -145,8 +145,6 @@ oldUnitStatusInit = Class_ReplaceMethod( "GUIUnitStatus", "Initialize",
 local oldUnitStatusUpdate
 oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
 	function(self, deltaTime)
-		GUIUnitStatus.kMaxUnitStatusDistance = ConditionalValue(PlayerUI_GetIsSpecating(), 30, CHUDGetOption("nameplatesdistance"))
-		
 		CHUDHint = true
 		oldUnitStatusUpdate( self, deltaTime )
 		CHUDHint = false
