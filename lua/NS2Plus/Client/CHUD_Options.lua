@@ -781,7 +781,7 @@ CHUDOptions =
 				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator") end,
 				applyOnLoadComplete = true,
 				sort = "A02",
-				resetSettingInBuild = 297
+				resetSettingInBuild = 346
 			},
 			fasterdamagenumbers = {
 				name = "CHUD_FasterDamageNumbers",
