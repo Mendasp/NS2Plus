@@ -359,6 +359,9 @@ local function AddTeamGraphKill(teamNumber, killer, victim, weapon, doer)
 			killerClass = doer:GetClassName()
 		end
 		local doerLocation, doerPosition
+		if doer and doer:isa("WhipBomb") and doer.shooter then
+			doer = doer.shooter
+		end
 		-- Don't log doerLocation/Position for weapons that have parents (rifle, bite, etc)
 		-- These are meant for things like mines, grenades, etc
 		if doer and doer.GetParent and doer:GetParent() == nil then
