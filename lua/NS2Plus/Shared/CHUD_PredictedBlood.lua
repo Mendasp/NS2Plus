@@ -1,8 +1,14 @@
 if Client then
-local oldDamageMixinDoDamage = DamageMixin.DoDamage
-	function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)
-		if not CHUDGetOption("serverblood") or not target then
+	local oldDamageMixinDoDamage = DamageMixin.DoDamage
+	local oldHandleHitEffect = HandleHitEffect
+	function DamageMixin:DoDamage(damage, target, point, direction, surface, altMode, showtracer)        
+		if not CHUDGetOption("serverblood") or not target then         
 			return oldDamageMixinDoDamage(self, damage, target, point, direction, surface, altMode, showtracer)
+		else
+			HandleHitEffect = function()end
+			local killedFromDamage = oldDamageMixinDoDamage(self, damage, target, point, direction, surface, altMode, showtracer)
+			HandleHitEffect = oldHandleHitEffect
+			return killedFromDamage
 		end
 	end
 elseif Server then
