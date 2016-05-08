@@ -430,6 +430,8 @@ local function GetAttackerWeapon(attacker, doer)
 						attackerWeapon = kTechId.ClusterGrenade
 					elseif deathIcon == kDeathMessageIcon.Flamethrower then
 						attackerWeapon = kTechId.Flamethrower
+					elseif deathIcon == kDeathMessageIcon.EMPBlast then
+						attackerWeapon = kTechId.PowerSurge
 					end
 				end
 			end
