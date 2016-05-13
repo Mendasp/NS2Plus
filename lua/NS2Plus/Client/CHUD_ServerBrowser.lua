@@ -1,53 +1,14 @@
-function FilterHiveWhiteList(active)
-	return function(entry) return not active or entry.isHiveWhitelisted == true end
-end
-
 -- When filtering for NS2, also include NS2+ servers
 function FilterServerMode(mode)
-	local filterMode = string.upper(mode)
-	if filterMode ~= "NS2" then
-		return function(entry) return string.len(mode) == 0 or string.upper(entry.mode) == filterMode end
-	else
-		return function(entry) return string.upper(entry.mode) == filterMode or string.upper(entry.mode) == "NS2+" end
+	return function(entry)
+		local entryMode = string.upper(entry.originalMode or entry.mode)
+
+		return
+			string.len(mode) == 0 or
+			mode == "custom" and not kFilterFromCustom[entryMode] or
+			string.upper(entryMode) == string.upper(mode)
 	end
 end
-
--- Replace the buttons so the function used in the default tabs is this new one
-local kDefaultButtons = GetUpValue(ServerTabs.SetGameTypes, "kDefaultButtons", { LocateRecurse = true })
-kDefaultButtons = {
-
-    {
-        name = "ALL",
-        filters = { [1] = FilterServerMode(""), [8] = FilterFavoriteOnly(false), [11] = FilterHistoryOnly(false) },
-    },
-    
-    {
-        name = "NS2",
-        filters = { [1] = FilterServerMode("ns2"), [8] = FilterFavoriteOnly(false), [11] = FilterHistoryOnly(false) },
-    },
-    
-}
-ReplaceUpValue(ServerTabs.SetGameTypes, "kDefaultButtons", kDefaultButtons, { LocateRecurse = true })
-
-local oldServerTabsReset
-oldServerTabsReset = Class_ReplaceMethod("ServerTabs", "Reset",
-	function (self)
-		oldServerTabsReset(self)
-		-- Try reloading the whitelist
-		if not CHUDHiveWhiteList then
-			CHUDSaveHiveWhiteList()
-		end
-	end)
-
--- Disable hive filter for the other buttons
-local oldEnableFilter
-oldEnableFilter = Class_ReplaceMethod("ServerTabs", "EnableFilter",
-	function(self, filters)
-		oldEnableFilter(self, filters)
-		if not filters[101] then
-			self.serverList:SetFilter(101, FilterHiveWhiteList(false))
-		end
-	end)
 
 local oldBuildServerEntry = BuildServerEntry
 function BuildServerEntry(serverIndex)
@@ -78,9 +39,6 @@ function BuildServerEntry(serverIndex)
 			if serverEntry.isNSL then
 				serverEntry.mode = serverEntry.mode .. " NSL"
 			end
-		end
-		if CHUDHiveWhiteList then
-			serverEntry.isHiveWhitelisted = CHUDHiveWhiteList[serverEntry.address] or false
 		end
 	end
 	
@@ -159,24 +117,10 @@ originalServerEntryInit = Class_ReplaceMethod( "ServerEntry", "Initialize",
 			else
 				self.favorite:SetColor(kFavoriteColor)
 			end
-			
-			if GUIItemContainsPoint(self.playerSkill, Client.GetCursorPosScreen()) then
-				self.playerSkill.tooltip:SetText(self.playerSkill.tooltipText)
-				self.playerSkill.tooltip:Show()
-			elseif self.modName.tooltipText and GUIItemContainsPoint(self.modName, Client.GetCursorPosScreen()) then
-					self.playerSkill.tooltip:SetText(self.modName.tooltipText)
-					self.playerSkill.tooltip:Show()
-			elseif self.mapName.tooltipText and GUIItemContainsPoint(self.mapName, Client.GetCursorPosScreen()) then
-				self.playerSkill.tooltip:SetText(self.mapName.tooltipText)
-				self.playerSkill.tooltip:Show()
-			else
-				self.playerSkill.tooltip:Hide()
-			end
 		end)
 		
 		table.insertunique(self.mouseOutCallbacks, function(self)
 			self.scriptHandle.highlightServer:SetIsVisible(false)
 			self.favorite:SetColor(kFavoriteColor)
-			self.playerSkill.tooltip:Hide()
 		end)
 	end)
