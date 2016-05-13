@@ -51,7 +51,11 @@ function BuildServerEntry(serverIndex)
 	
 end
 
-local kGold = Color(212/255, 175/255, 55/255)
+local kBlue = Color(0, 168/255 ,255/255)
+local kGreen = Color(0, 208/255, 103/255)
+local kYellow = kGreen --Color(1, 1, 0) --used for reserved full
+local kGold = kBlue --Color(212/255, 175/255, 55/255) --used for ranked
+local kRed = kBlue --Color(1, 0 ,0) --used for full
 local kNSLColor = ColorIntToColor(0x1aa7e2)
 local originalSetServerData
 originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
@@ -60,12 +64,13 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 		
 		local blockedString
 		if serverData.CHUDBitmask ~= nil then
-			self.modName:SetColor(kYellow)
-			
+			if serverData.ranked then
+				self.modName:SetColor(kGold)
+			end
 			for index, mask in pairs(CHUDTagBitmask) do
 				if CheckCHUDTagOption(serverData.CHUDBitmask, mask) then
 					if index == "mcr" then
-						self.playerCount:SetColor(kRed)
+						self.playerCount:SetColor(kYellow)
 					elseif serverData.isNSL then
 						self.modName:SetColor(kNSLColor)
 						self.serverName:SetColor(kNSLColor)
@@ -73,7 +78,7 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 						local val = ConditionalValue(CHUDOptions[index].disabledValue == nil, CHUDOptions[index].defaultValue, CHUDOptions[index].disabledValue)
 						
 						if CHUDOptions[index].currentValue ~= val then
-							self.modName:SetColor(kRed)
+							self.modName:SetColor(kYellow)
 							if not blockedString then
 								blockedString = ConditionalValue(serverData.ranked, "Ranked server. ", "") .. "This server has disabled these NS2+ settings that you're currently using: " .. CHUDOptions[index].label
 							else
@@ -86,10 +91,10 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 			end
 		end
 		
-		self.modName.tooltipText = blockedString or serverData.ranked and self.modName.tooltipText
+		self.modName.tooltipText = blockedString or serverData.ranked and Locale.ResolveString(string.format("SERVERBROWSER_RANKED_TOOLTIP"))
 		self.mapName:SetColor(kWhite)
 		self.mapName.tooltipText = nil
-		if serverData.ranked then
+		if serverData.ranked and blockedString then
 			self.mapName:SetColor(kGold)
 			self.mapName.tooltipText = Locale.ResolveString(string.format("SERVERBROWSER_RANKED_TOOLTIP"))
 		end
@@ -117,10 +122,21 @@ originalServerEntryInit = Class_ReplaceMethod( "ServerEntry", "Initialize",
 			else
 				self.favorite:SetColor(kFavoriteColor)
 			end
+			
+			if self.modName.tooltipText and GUIItemContainsPoint(self.modName, Client.GetCursorPosScreen()) then
+				self.modName.tooltip:SetText(self.modName.tooltipText)
+				self.modName.tooltip:Show()
+			elseif self.mapName.tooltipText and GUIItemContainsPoint(self.mapName, Client.GetCursorPosScreen()) then
+				self.modName.tooltip:SetText(self.mapName.tooltipText)
+				self.modName.tooltip:Show()
+			else
+				self.modName.tooltip:Hide()
+			end
 		end)
 		
 		table.insertunique(self.mouseOutCallbacks, function(self)
 			self.scriptHandle.highlightServer:SetIsVisible(false)
 			self.favorite:SetColor(kFavoriteColor)
+			self.modName.tooltip:Hide()
 		end)
 	end)
