@@ -695,6 +695,10 @@ CHUDOptions =
 				type = "select",
 				values  = { "Disabled", "Equipment Only", "All pickupables" },
 				defaultValue = 2,
+				applyFunction = function()
+					GUIPickups.kShouldShowExpirationBars = CHUDGetOption("pickupexpire") > 0
+					GUIPickups.kOnlyShowExpirationBarsForWeapons = CHUDGetOption("pickupexpire") == 1
+				end,
 				category = "hud",
 				valueType = "int",
 				sort = "A16",
@@ -706,7 +710,10 @@ CHUDOptions =
 				tooltip = "Makes the expire bar colored depending on time left.",
 				type = "select",
 				values  = { "Disabled", "Enabled" },
-				defaultValue = 0,
+				defaultValue = 1,
+				applyFunction = function()
+					GUIPickups.kUseColorIndicatorForExpirationBars = CHUDGetOption("pickupexpirecolor") > 0
+				end,
 				category = "hud",
 				valueType = "int",
 				sort = "A17",

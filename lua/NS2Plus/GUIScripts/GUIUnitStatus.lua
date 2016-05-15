@@ -64,21 +64,6 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 			updateBlip.smokeyBackground:SetIsVisible(false)
 		end
 	end
-
-	if blipData.IsWorldWeapon and updateBlip.AbilityBar then
-		if CHUDGetOption("pickupexpire") == 0 then
-			updateBlip.AbilityBarBg:SetIsVisible(false)
-		end
-		if CHUDGetOption("pickupexpirecolor") > 0 then
-			if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
-				updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
-			elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
-				updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
-			elseif blipData.AbilityFraction < 0.25 then
-				updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
-			end
-		end
-	end
 	
 	-- Percentages Nameplates
 	if nameplates == 1 or nameplates == 3 then
