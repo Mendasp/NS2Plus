@@ -738,6 +738,9 @@ CHUDOptions =
 				type = "select",
 				values  = { "Disabled", "Enabled" },
 				defaultValue = 1,
+				applyFunction = function()
+					GUIUnitStatus.kUseColoredWrench = CHUDGetOption("wrenchicon") == 1
+				end
 				category = "hud",
 				valueType = "int",
 				sort = "B02",
