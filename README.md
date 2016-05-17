@@ -252,6 +252,7 @@ Some fields will be null sometimes like in Suicides or death by Natural Causes o
 Credits/Thanks to
 =================
 - Regular contributors
+	- [**Mendasp**](https://github.com/mendasp)
 	- [**remi.D**](https://github.com/sclark39)
 	- **rantology**
 
@@ -344,4 +345,4 @@ Past NS2+ fixes now included in vanilla NS2:
 - [265] Fixed inactive/unbuilt structures not blinking red when under attack.
 - [265] Fixed alien structures not blinking red when uncysted.
 
-Copyright 2016 - [Mendasp](http://steamcommunity.com/profiles/76561197960305571/). All rights reserved.
+Copyright 2016 - Unknown Worlds Entertainment. All rights reserved.
