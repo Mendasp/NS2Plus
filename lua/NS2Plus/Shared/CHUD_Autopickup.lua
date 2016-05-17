@@ -34,7 +34,7 @@ originalMarineOnInit = Class_ReplaceMethod( "Marine", "OnInitialized",
 			self.autoPickupBetter = CHUDGetOption("autopickupbetter")
 			local message = 
 			{
-				autoPickup = self.autoPickup
+				autoPickup = self.autoPickup,
 				autoPickupBetter = self.autoPickupBetter
 			}
 			Client.SendNetworkMessage("SetCHUDAutopickup", message)

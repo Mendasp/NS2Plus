@@ -740,15 +740,11 @@ CHUDOptions =
 				defaultValue = 1,
 				applyFunction = function()
 					GUIUnitStatus.kUseColoredWrench = CHUDGetOption("wrenchicon") == 1
-				end
+				end,
 				category = "hud",
 				valueType = "int",
 				sort = "B02",
 			},
-			
-			
-			
-			
 			serverblood = {
 				name = "CHUD_ServerBlood",
 				label = "Server-side blood hits",
@@ -1416,7 +1412,7 @@ CHUDOptions =
 				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
 				type = "select",
 				values  = { "Off", "On" },
-				defaultValue = false,
+				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
 				sort = "A10",
