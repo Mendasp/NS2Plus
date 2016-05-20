@@ -22,7 +22,7 @@ Class_AddMethod( "GUIAlienHUD", "CHUDRepositionGUI",
 		biomass.background:SetTexture(biomassTexture)
 	end)
 
-Class_AddMethod( "GUIAlienHUD", "OnLocalPlayerChanged",
+Class_ReplaceMethod( "GUIAlienHUD", "OnLocalPlayerChanged",
 	function(self, newPlayer)
 	
 		if Client.GetIsControllingPlayer() then
