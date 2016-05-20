@@ -36,49 +36,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		hideBg = true
 	end
 	
-	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
-	
-	if CHUDGetOption("wrenchicon") == 1 then
-		if playerTeamType == kTeam1Index and (blipData.Status == kUnitStatus.Unrepaired or blipData.Status == kUnitStatus.Damaged) then
-			local percentage = blipData.IsPlayer and blipData.ArmorFraction or (blipData.HealthFraction + blipData.ArmorFraction)/2
-			local alpha = updateBlip.GraphicsItem:GetColor().a
-			local color = (percentage < 0.5 and LerpColor(kRed, kYellow, percentage*2)) or (percentage >= 0.5 and LerpColor(kYellow, kWhite, (percentage-0.5)*2))
-			color.a = alpha
-			
-			local x1, y1, x2, y2 = updateBlip.GraphicsItem:GetTexturePixelCoordinates()
-			
-			updateBlip.GraphicsItem:SetTexturePixelCoordinates(x1 + 512, y1, x2 + 512, y2)
-			updateBlip.OverLayGraphic:SetTexturePixelCoordinates(x1 + 512, y1, x2 + 512, y2)
-			updateBlip.GraphicsItem:SetColor(color)
-			updateBlip.OverLayGraphic:SetColor(color)
-		end
-	end
-	
-	-- Hide Background
-	if CHUDGetOption("mingui") or nameplates > 0 or hideBg then
-		updateBlip.statusBg:SetTexture(kTransparentTexture)
-		if updateBlip.BorderMask then
-			updateBlip.BorderMask:SetIsVisible(false)
-		end
-		if updateBlip.smokeyBackground then
-			updateBlip.smokeyBackground:SetIsVisible(false)
-		end
-	end
-
-	if blipData.IsWorldWeapon and updateBlip.AbilityBar then
-		if CHUDGetOption("pickupexpire") == 0 then
-			updateBlip.AbilityBarBg:SetIsVisible(false)
-		end
-		if CHUDGetOption("pickupexpirecolor") > 0 then
-			if blipData.AbilityFraction >= 0.5 and blipData.AbilityFraction < 0.75 then
-				updateBlip.AbilityBar:SetColor(Color(1, 1, 0, 1))
-			elseif blipData.AbilityFraction >= 0.25 and blipData.AbilityFraction < 0.5 then
-				updateBlip.AbilityBar:SetColor(Color(1, 0.5, 0, 1))
-			elseif blipData.AbilityFraction < 0.25 then
-				updateBlip.AbilityBar:SetColor(Color(1, 0, 0, 1))
-			end
-		end
-	end
+	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )		
 	
 	-- Percentages Nameplates
 	if nameplates == 1 or nameplates == 3 then
@@ -140,6 +98,9 @@ oldUnitStatusInit = Class_ReplaceMethod( "GUIUnitStatus", "Initialize",
 			GUIUnitStatus.kFontScaleProgress = GUIScale( Vector(1,1,1) ) * 0.6
 			GUIUnitStatus.kFontScaleSmall = GUIScale( Vector(1,1,1) ) * 0.65
 		end
+		
+		GUIUnitStatus.kUseColoredWrench = CHUDGetOption("wrenchicon") == 1
+		
 	end)
 
 local oldUnitStatusUpdate

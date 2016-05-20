@@ -315,7 +315,7 @@ CHUDOptions =
 				tooltip = "Sets the state the alien vision will be in when you respawn.",
 				type = "select",
 				values  = { "Off", "On" },
-				defaultValue = false,
+				defaultValue = true,
 				category = "ui",
 				valueType = "bool",
 				sort = "C04",
@@ -695,6 +695,10 @@ CHUDOptions =
 				type = "select",
 				values  = { "Disabled", "Equipment Only", "All pickupables" },
 				defaultValue = 2,
+				applyFunction = function()
+					GUIPickups.kShouldShowExpirationBars = CHUDGetOption("pickupexpire") > 0
+					GUIPickups.kOnlyShowExpirationBarsForWeapons = CHUDGetOption("pickupexpire") == 1
+				end,
 				category = "hud",
 				valueType = "int",
 				sort = "A16",
@@ -706,7 +710,10 @@ CHUDOptions =
 				tooltip = "Makes the expire bar colored depending on time left.",
 				type = "select",
 				values  = { "Disabled", "Enabled" },
-				defaultValue = 0,
+				defaultValue = 1,
+				applyFunction = function()
+					GUIPickups.kUseColorIndicatorForExpirationBars = CHUDGetOption("pickupexpirecolor") > 0
+				end,
 				category = "hud",
 				valueType = "int",
 				sort = "A17",
@@ -731,14 +738,13 @@ CHUDOptions =
 				type = "select",
 				values  = { "Disabled", "Enabled" },
 				defaultValue = 1,
+				applyFunction = function()
+					GUIUnitStatus.kUseColoredWrench = CHUDGetOption("wrenchicon") == 1
+				end,
 				category = "hud",
 				valueType = "int",
 				sort = "B02",
 			},
-			
-			
-			
-			
 			serverblood = {
 				name = "CHUD_ServerBlood",
 				label = "Server-side blood hits",
@@ -1406,7 +1412,7 @@ CHUDOptions =
 				tooltip = "Picks up weapons automatically as long as the slot they belong to is empty.",
 				type = "select",
 				values  = { "Off", "On" },
-				defaultValue = false,
+				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
 				sort = "A10",

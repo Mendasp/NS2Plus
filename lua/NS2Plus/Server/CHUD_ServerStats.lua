@@ -166,7 +166,7 @@ function ResearchMixin:TechResearched(structure, researchId)
 	
 	if structure and structure:GetId() == self:GetId() then
 		if researchId == kTechId.Recycle then
-			AddExportBuilding(structure:GetTeamNumber(), structure.GetTechId and structure:GetTechId(), structure:GetIsBuilt(), true, true)
+			AddExportBuilding(structure:GetTeamNumber(), structure.GetTechId and structure:GetTechId(), structure:GetIsBuilt(), true, true) -- Recycling ?11
 			
 			if structure:isa("ResourceTower") then
 				AddRTStat(structure:GetTeamNumber(), structure:GetIsBuilt(), true, true, tostring(structure:GetOrigin()), structure:GetLocationName())
@@ -177,7 +177,7 @@ function ResearchMixin:TechResearched(structure, researchId)
 		elseif techLoggedAsBuilding[researchId] then
 			AddBuildingStat(structure:GetTeamNumber(), researchId, false)
 			
-			AddExportBuilding(structure:GetTeamNumber(), researchId, true, false, false)
+			AddExportBuilding(structure:GetTeamNumber(), researchId, true, false, false) --  Tech Researched 100
 		else
 			-- Don't add recycles to the tech log
 			AddTechStat(structure:GetTeamNumber(), researchId, true, false, false)
@@ -191,7 +191,7 @@ local oldConstructionComplete = ConstructMixin.OnConstructionComplete
 function ConstructMixin:OnConstructionComplete(builder)
 	oldConstructionComplete(self, builder)
 	
-	AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true, false, false)
+	AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true, false, false) -- Construction Complete 100
 	
 	if self:isa("ResourceTower") then
 		AddRTStat(self:GetTeamNumber(), true, false, false, tostring(self:GetOrigin()), self:GetLocationName())
@@ -619,7 +619,7 @@ function LiveMixin:TakeDamage(damage, attacker, doer, point, direction, armorUse
 				AddRTStat(targetTeam, self:GetIsBuilt(), true, false, tostring(self:GetOrigin()), self:GetLocationName())
 			elseif not self:isa("Player") and not self:isa("Weapon") then
 				if techLoggedAsBuilding[self.GetTechId and self:GetTechId()] or className == "Drifter" then
-					AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true, true, false)
+					AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), true, true, false) -- Destroyed drifter/tech 110
 				end
 				if className then
 					if not notLoggedBuildings[className] then
@@ -837,7 +837,7 @@ originalDrifterEggHatch = Class_ReplaceMethod("DrifterEgg", "Hatch",
 		originalDrifterEggHatch(self)
 		
 		AddBuildingStat(self:GetTeamNumber(), kTechId.Drifter, false)
-		AddExportBuilding(self:GetTeamNumber(), kTechId.Drifter, true, false, false)
+		AddExportBuilding(self:GetTeamNumber(), kTechId.Drifter, true, false, false) -- Drifter Hatch 100
 	end)
 	
 local originalNS2GamerulesEndGame
@@ -1241,7 +1241,7 @@ function ConstructMixin:OnKill()
 	if self:isa("Hive") and self:GetIsBuilt() then
 		extraInfo = {name = "biomass", value = self:GetTeam():GetBioMassLevel()-self:GetBioMassLevel()}
 	end
-	AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), self:GetIsBuilt(),  true, false, extraInfo)
+	AddExportBuilding(self:GetTeamNumber(), self.GetTechId and self:GetTechId(), self:GetIsBuilt(),  true, false, extraInfo)  -- Killed structure ?10
 	originalConstructMixinOnKill(self)
 end
 

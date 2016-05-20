@@ -108,37 +108,6 @@ end
 Event.Hook("Console_ironmode", ToggleIron)
 Event.Hook("Console_ironhorsemode", ToggleIron)
 
--- Add drop circles for some tech
-LookupTechData(kTechId.Hallucinate, kTechDataGhostModelClass, "AlienGhostModel")
-LookupTechData(kTechId.Hallucinate, kVisualRange, HallucinationCloud.kRadius)
-LookupTechData(kTechId.Hallucinate, kTechDataModel, BoneWall.kModelName)
-LookupTechData(kTechId.Hallucinate, kTechDataIgnorePathingMesh, true)
-LookupTechData(kTechId.Hallucinate, kTechDataAllowStacking, true)
-
-LookupTechData(kTechId.EnzymeCloud, kTechDataGhostModelClass, "AlienGhostModel")
-LookupTechData(kTechId.EnzymeCloud, kVisualRange, EnzymeCloud.kRadius)
-LookupTechData(kTechId.EnzymeCloud, kTechDataModel, BoneWall.kModelName)
-LookupTechData(kTechId.EnzymeCloud, kTechDataIgnorePathingMesh, true)
-LookupTechData(kTechId.EnzymeCloud, kTechDataAllowStacking, true)
-
-LookupTechData(kTechId.MucousMembrane, kTechDataGhostModelClass, "AlienGhostModel")
-LookupTechData(kTechId.MucousMembrane, kVisualRange, MucousMembrane.kRadius)
-LookupTechData(kTechId.MucousMembrane, kTechDataModel, BoneWall.kModelName)
-LookupTechData(kTechId.MucousMembrane, kTechDataIgnorePathingMesh, true)
-LookupTechData(kTechId.MucousMembrane, kTechDataAllowStacking, true)
-
-LookupTechData(kTechId.NutrientMist, kTechDataGhostModelClass, "AlienGhostModel")
-LookupTechData(kTechId.NutrientMist, kVisualRange, NutrientMist.kSearchRange)
-LookupTechData(kTechId.NutrientMist, kTechDataModel, BoneWall.kModelName)
-LookupTechData(kTechId.NutrientMist, kTechDataIgnorePathingMesh, true)
-LookupTechData(kTechId.NutrientMist, kTechDataAllowStacking, true)
-
-LookupTechData(kTechId.Rupture, kTechDataGhostModelClass, "AlienGhostModel")
-LookupTechData(kTechId.Rupture, kVisualRange, Rupture.kRadius)
-LookupTechData(kTechId.Rupture, kTechDataModel, BoneWall.kModelName)
-LookupTechData(kTechId.Rupture, kTechDataIgnorePathingMesh, true)
-LookupTechData(kTechId.Rupture, kTechDataAllowStacking, true)
-
 local function OnLoadComplete()
 	GetCHUDSettings()
 	Script.Load("lua/NS2Plus/CHUD_GUIScripts.lua")
