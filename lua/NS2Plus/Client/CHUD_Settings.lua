@@ -196,9 +196,10 @@ function GetCHUDSettings()
 		
 		if lastCHUD < kCHUDVersion and option.resetSettingInBuild and kCHUDVersion >= option.resetSettingInBuild and lastCHUD < option.resetSettingInBuild then
 			PrintConsoleText(string.format("[NS2+] The default setting for \"%s\" was changed in NS2+ build %d, resetting to default.", option.label, option.resetSettingInBuild))
-			CHUDSetOption(name, option.defaultValue)
+            local multiplier = option.multiplier or 1
+            CHUDSetOption(name, option.defaultValue * multiplier )
 		end
-		
+        
 		if option.applyOnLoadComplete and option.applyFunction and not CHUDMainMenu then
 			option.applyFunction()
 		end
