@@ -19,9 +19,11 @@ local blockedVO = set {
 					"sound/NS2.fev/marine/voiceovers/move" }
 					
 Script.Load("lua/SoundEffect.lua")
+
+local oldStartSoundEffectOnEntity = StartSoundEffectOnEntity
 function StartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
 	if not blockedVO[soundEffectName] or CHUDGetOption("wps") then
-		Shared.PlaySound(onEntity, soundEffectName, volume or 1)
+        oldStartSoundEffectOnEntity(soundEffectName, onEntity, volume, predictor)
 	end
 end
 
