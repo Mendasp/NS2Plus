@@ -319,6 +319,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "bool",
 				sort = "C04",
+                resetSettingInBuild = 359
 			},
 			av = {
 				name = "CHUD_AV",
@@ -702,7 +703,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "int",
 				sort = "A16",
-				resetSettingInBuild = 191,
+                resetSettingInBuild = 359
 			},
 			pickupexpirecolor = { 
 				name = "CHUD_PickupExpireBarColor",
@@ -717,6 +718,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "int",
 				sort = "A17",
+                resetSettingInBuild = 359
 			},		
 			motiontracking = {
 				name = "CHUD_MotionTracking",
@@ -744,6 +746,7 @@ CHUDOptions =
 				category = "hud",
 				valueType = "int",
 				sort = "B02",
+                resetSettingInBuild = 359
 			},
 			serverblood = {
 				name = "CHUD_ServerBlood",
@@ -792,6 +795,7 @@ CHUDOptions =
 						kWorldDamageNumberAnimationSpeed = speeds[CHUDGetOption("fasterdamagenumbers")]
 					end,
 				sort = "A03",
+                resetSettingInBuild = 359
 			},
 			overkilldamagenumbers = {
 				name = "CHUD_OverkillDamageNumbers",
