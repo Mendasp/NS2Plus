@@ -140,3 +140,31 @@ originalServerEntryInit = Class_ReplaceMethod( "ServerEntry", "Initialize",
 			self.modName.tooltip:Hide()
 		end)
 	end)
+
+function ServerTabs:SetGameTypes(gameTypes)
+
+	local types = {}
+	for gameType, playerCount in pairs(gameTypes) do
+		table.insert(types, {name = gameType, count = playerCount})
+	end
+
+	local playercounts = {0,0}
+
+	for _, type in ipairs(types) do
+
+		local gameType = type.name
+
+		if gameType == "ns2" or gameType == "ns2+" then
+
+			playercounts[1] = playercounts[1] + type.count
+
+		else
+			playercounts[2] = playercounts[2] + type.count
+
+		end
+
+	end
+
+	self.tabs.NS2.player:SetText(string.format("(%s)", playercounts[1]))
+	self.tabs.MODDED.player:SetText(string.format("(%s)", playercounts[2]))
+end
