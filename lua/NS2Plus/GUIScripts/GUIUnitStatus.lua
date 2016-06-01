@@ -31,7 +31,7 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 		showHints = false
 	elseif nameplates == 3 then
 		showHints = true
-	elseif PlayerUI_GetIsSpecating() and isEnabled and blipData.IsPlayer then
+	elseif PlayerUI_GetIsSpecating() and isEnabled and blipData.IsPlayer and playerTeamType == kNeutralTeamType then
 		blipData.IsCrossHairTarget = true
 		hideBg = true
 	end
