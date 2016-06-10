@@ -118,7 +118,7 @@ if Client then
 	function CHUDGetGameTimeString()
 
 		local gameTime, state = PlayerUI_GetGameLengthTime()
-		if state == kGameState.NotStarted then
+		if state < kGameState.PreGame then
 			gameTime = 0
 		end
 
