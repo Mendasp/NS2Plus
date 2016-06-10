@@ -1655,9 +1655,11 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		
 		-- Shine:IsExtensionEnabled was only returning plugin state, but not the plugin
 		local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
+
+		local warmupActive = gameInfo.GetWarmUpActive and gameInfo:GetWarmUpActive()
 		
 		-- Hide the stats when the game starts if we're on a team
-		if PlayerUI_GetHasGameStarted() and not pgpEnabled and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
+		if PlayerUI_GetHasGameStarted() and not warmupActive and not pgpEnabled and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
 			self:SetIsVisible(false)
 			self.actionIconGUI:Hide()
 		end
