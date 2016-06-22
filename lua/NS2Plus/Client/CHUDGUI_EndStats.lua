@@ -1397,10 +1397,14 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 		
 		CHUDEndStatsVisible = visible
 		self.slideOffset = 0
+
+		local gamefeedback = ClientUI.GetScript("GUIGameFeedback")
 		
 		if not visible then
 			self.hoverMenu:Hide()
 			self.tooltip:Hide(0)
+		elseif gamefeedback and gamefeedback:GetIsVisible() then
+			gamefeedback:OnResolutionChanged() --fix issue with the layer system
 		end
 		
 		MouseTracker_SetIsVisible(visible)
