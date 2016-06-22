@@ -1397,14 +1397,10 @@ function CHUDGUI_EndStats:SetIsVisible(visible)
 		
 		CHUDEndStatsVisible = visible
 		self.slideOffset = 0
-
-		local gamefeedback = ClientUI.GetScript("GUIGameFeedback")
 		
 		if not visible then
 			self.hoverMenu:Hide()
 			self.tooltip:Hide(0)
-		elseif gamefeedback and gamefeedback:GetIsVisible() then
-			gamefeedback:OnResolutionChanged() --fix issue with the layer system
 		end
 		
 		MouseTracker_SetIsVisible(visible)
@@ -1768,8 +1764,9 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		else
 			self.actionIconGUI:Hide()
 		end
-		
-		if timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
+
+		local gamefeedback = ClientUI.GetScript("GUIGameFeedback")
+		if (not gamefeedback or not gamefeedback:GetIsVisible()) and timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
 			self:SetIsVisible(gameInfo and gameInfo.showEndStatsAuto and CHUDGetOption("deathstats") > 1)
 			self.displayed = true
 		end
