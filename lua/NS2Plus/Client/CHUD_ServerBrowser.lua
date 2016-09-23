@@ -10,6 +10,10 @@ function FilterServerMode(mode)
 	end
 end
 
+function FilterRankedOnly(active)
+	return function(entry) return entry.originalMode ~= "ns2" or not active or entry.ranked end
+end
+
 local oldBuildServerEntry = BuildServerEntry
 function BuildServerEntry(serverIndex)
 
