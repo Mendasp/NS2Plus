@@ -6,6 +6,33 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- 28/09/2016
+	- Fixed Server Browser ranked filter not working correctly
+	- Fix End game stats issue with warmup mode
+    
+- 15/07/2016
+	- Fix enemy health bars showing up while spawning in
+    
+- 22/06/2016
+	- Fixed compatibility issue between feedback GUI and NS2+ end stats
+    
+- 10/06/2016
+	- Take warmup mode into account when checking for game start
+    
+- 03/06/2016
+	- Fixed server browser tabs not showing correct player counts
+    
+- 31/05/32016
+	- Reset options that have been integreated to vanilla
+	- Fixed resetting non-slider options in NS2+
+
+- 20/05/2015
+	- Autopickup integrated into vanilla
+	- Colored wrench integrated to vanilla
+	- Khamm range circles integrated to vanilla
+	- AV state default to ON integrated to vanilla
+
+    
 - 30/04/2016
 	- Added High Visibility Gorge spit option, available in Graphics tab (Thanks turtsmcgurts!).
 
