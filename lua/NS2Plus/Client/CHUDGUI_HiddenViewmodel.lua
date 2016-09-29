@@ -66,7 +66,7 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 			self.leftIndicator:SetColor(Color(1,1,1,1))
 		elseif cloak then
 			self.leftIndicator:SetTexture(buildTexture)
-			self.leftIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Phantom)))
+			self.leftIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Vampirism)))
 			self.leftIndicator:SetColor(kAlienFontColor)
 			
 			-- Do this to not override the original kAlienFontColor
