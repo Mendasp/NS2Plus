@@ -247,7 +247,7 @@ if GetNSLMode then
 				for index, entry in ipairs(self.hoverMenu.links) do
 					if not entry.isSeparator then
 						local text = entry.link:GetText()
-						if text == Locale.ResolveString("SB_MENU_HIVE_PROFILE") then
+						if text == Locale.ResolveString("SB_MENU_STEAM_PROFILE") then
 							teamColorBg = entry.bgColor
 							teamColorHighlight = entry.bgHighlightColor
 							found = index
