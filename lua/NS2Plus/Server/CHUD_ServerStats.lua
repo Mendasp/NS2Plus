@@ -1144,83 +1144,91 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		originalNS2GamerulesEndGame(self, winningTeam)
 	end)
 
+
 local oldPreOnKill 
-oldPreOnKill = Class_ReplaceMethod("Player", "PreOnKill",
-	function (self, killer, doer, point, direction)
+local function NS2PlusPlayerPreOnKill(self, killer, doer, point, direction)
+	if oldPreOnKill then
 		oldPreOnKill( self, killer, doer, point, direction )
-		
-		-- Send stats to the player on death
-		if CHUDGetGameStarted() then
-			local steamId = GetSteamIdForClientIndex(self:GetClientIndex())
-			if steamId and steamId > 0 then
-				local teamNumber = self:GetTeamNumber()
-				MaybeInitCHUDClientStats(steamId, nil, teamNumber)
-				if CHUDClientStats[steamId] then
-					local lastStat = CHUDClientStats[steamId]["last"]
-					local totalStats = CHUDClientStats[steamId]["weapons"]
-					local msg = {}
-					local lastAcc = 0
-					local lastAccOnos = 0
-					local currentAcc = 0
-					local currentAccOnos = 0
-					local hitssum = 0
-					local missessum = 0
-					local onossum = 0
-					
-					for _, wStats in pairs(totalStats) do
-						-- Display current accuracy for the current team's weapons
-						if wStats.teamNumber == teamNumber then
-							hitssum = hitssum + wStats.hits
-							onossum = onossum + wStats.onosHits
-							missessum = missessum + wStats.misses
-						end
-					end
-					
-					if lastStat.hits > 0 or lastStat.misses > 0 then
-						lastAcc, lastAccOnos = CHUDGetAccuracy(lastStat.hits, lastStat.misses, lastStat.onosHits)
-					end
-					
-					if hitssum > 0 or missessum > 0 then
-						currentAcc, currentAccOnos = CHUDGetAccuracy(hitssum, missessum, onossum)
-					end
-					
-					if lastStat.hits > 0 or lastStat.misses > 0 or lastStat.pdmg > 0 or lastStat.sdmg > 0 then
-						msg.lastAcc = lastAcc
-						msg.lastAccOnos = lastAccOnos
-						msg.currentAcc = currentAcc
-						msg.currentAccOnos = currentAccOnos
-						msg.pdmg = lastStat.pdmg
-						msg.sdmg = lastStat.sdmg
-						msg.kills = lastStat.kills
-						
-						Server.SendNetworkMessage(Server.GetOwner(self), "CHUDDeathStats", msg, true)
+	end
+
+	-- Send stats to the player on death
+	if CHUDGetGameStarted() then
+		local steamId = GetSteamIdForClientIndex(self:GetClientIndex())
+		if steamId and steamId > 0 then
+			local teamNumber = self:GetTeamNumber()
+			MaybeInitCHUDClientStats(steamId, nil, teamNumber)
+			if CHUDClientStats[steamId] then
+				local lastStat = CHUDClientStats[steamId]["last"]
+				local totalStats = CHUDClientStats[steamId]["weapons"]
+				local msg = {}
+				local lastAcc = 0
+				local lastAccOnos = 0
+				local currentAcc = 0
+				local currentAccOnos = 0
+				local hitssum = 0
+				local missessum = 0
+				local onossum = 0
+				
+				for _, wStats in pairs(totalStats) do
+					-- Display current accuracy for the current team's weapons
+					if wStats.teamNumber == teamNumber then
+						hitssum = hitssum + wStats.hits
+						onossum = onossum + wStats.onosHits
+						missessum = missessum + wStats.misses
 					end
 				end
-				ResetCHUDLastLifeStats(steamId)
+				
+				if lastStat.hits > 0 or lastStat.misses > 0 then
+					lastAcc, lastAccOnos = CHUDGetAccuracy(lastStat.hits, lastStat.misses, lastStat.onosHits)
+				end
+				
+				if hitssum > 0 or missessum > 0 then
+					currentAcc, currentAccOnos = CHUDGetAccuracy(hitssum, missessum, onossum)
+				end
+				
+				if lastStat.hits > 0 or lastStat.misses > 0 or lastStat.pdmg > 0 or lastStat.sdmg > 0 then
+					msg.lastAcc = lastAcc
+					msg.lastAccOnos = lastAccOnos
+					msg.currentAcc = currentAcc
+					msg.currentAccOnos = currentAccOnos
+					msg.pdmg = lastStat.pdmg
+					msg.sdmg = lastStat.sdmg
+					msg.kills = lastStat.kills
+					
+					Server.SendNetworkMessage(Server.GetOwner(self), "CHUDDeathStats", msg, true)
+				end
 			end
-			
-			local targetTeam = self.GetTeamNumber and self:GetTeamNumber() or 0
-			
-			-- Now save the attacker weapon
-			local killerSteamId, killerWeapon, killerTeam = GetAttackerWeapon(killer, doer)
-			
-			if not self.isHallucination then
-				if killerSteamId and killerTeam ~= targetTeam then
-					AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
-				end
-				-- If there's a teamkill or a death by natural causes, award the kill to the other team
-				if killerTeam == targetTeam or killerTeam == nil then
-					if targetTeam == 1 then
-						killerTeam = 2
-					else
-						killerTeam = 1
-					end
-				end
-				AddTeamGraphKill(killerTeam, killer, self, killerWeapon, doer)
-			end
+			ResetCHUDLastLifeStats(steamId)
 		end
 		
-	end)
+		local targetTeam = self.GetTeamNumber and self:GetTeamNumber() or 0
+		
+		-- Now save the attacker weapon
+		local killerSteamId, killerWeapon, killerTeam = GetAttackerWeapon(killer, doer)
+		
+		if not self.isHallucination then
+			if killerSteamId and killerTeam ~= targetTeam then
+				AddWeaponKill(killerSteamId, killerWeapon, killerTeam)
+			end
+			-- If there's a teamkill or a death by natural causes, award the kill to the other team
+			if killerTeam == targetTeam or killerTeam == nil then
+				if targetTeam == 1 then
+					killerTeam = 2
+				else
+					killerTeam = 1
+				end
+			end
+			AddTeamGraphKill(killerTeam, killer, self, killerWeapon, doer)
+		end
+	end
+	
+end
+
+if Player.PreOnKill then
+	oldPreOnKill = Class_ReplaceMethod("Player", "PreOnKill", NS2PlusPlayerPreOnKill )
+else
+	Class_AddMethod("Player","PreOnKill", NS2PlusPlayerPreOnKill )
+end
 
 local originalConstructMixinConstruct = ConstructMixin.Construct
 function ConstructMixin:Construct(elapsedTime, builder)
