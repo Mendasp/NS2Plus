@@ -1144,8 +1144,11 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 		originalNS2GamerulesEndGame(self, winningTeam)
 	end)
 
-Class_AddMethod("Player", "PreOnKill",
+local oldPreOnKill 
+oldPreOnKill = Class_ReplaceMethod("Player", "PreOnKill",
 	function (self, killer, doer, point, direction)
+		oldPreOnKill( self, killer, doer, point, direction )
+		
 		-- Send stats to the player on death
 		if CHUDGetGameStarted() then
 			local steamId = GetSteamIdForClientIndex(self:GetClientIndex())

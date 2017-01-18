@@ -1765,8 +1765,10 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.actionIconGUI:Hide()
 		end
 
-		local gamefeedback = ClientUI.GetScript("GUIGameFeedback")
-		if (not gamefeedback or not gamefeedback:GetIsVisible()) and timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
+		local gameEndSummary = Client.shouldShowEndSummary or ClientUI.GetScript("GUIGameEndPage") and ClientUI.GetScript("GUIGameEndPage"):GetIsVisible()
+		local gameFeedback = Client.shouldShowFeedback or ClientUI.GetScript("GUIGameFeedback") and ClientUI.GetScript("GUIGameFeedback"):GetIsVisible()
+
+		if not gameEndSummary and not gameFeedback and timeSinceRoundEnd > 7.5 and lastGameEnd > 0 and not self.displayed then
 			self:SetIsVisible(gameInfo and gameInfo.showEndStatsAuto and CHUDGetOption("deathstats") > 1)
 			self.displayed = true
 		end
