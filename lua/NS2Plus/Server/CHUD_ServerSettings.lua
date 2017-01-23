@@ -144,7 +144,7 @@ function CHUDSetServerOption(key, value)
 			option.applyFunction()
 		end
 
-		// Don't waste time saving settings we already have set like that
+		-- Don't waste time saving settings we already have set like that
 		if oldValue ~= option.currentValue then
 			CHUDSaveServerConfig()
 		end

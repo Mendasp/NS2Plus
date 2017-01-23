@@ -908,7 +908,7 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 					msg.pdmg = wStats.pdmg
 					msg.sdmg = wStats.sdmg
 					msg.teamNumber = wStats.teamNumber
-					
+					--Log("NS2+ %s : %s -> %s", wTechId, wStats, msg ) 
 					Server.SendNetworkMessage(client, "CHUDEndStatsWeapon", msg, true)
 					
 					-- Use more consistent naming for exported stats
@@ -1290,7 +1290,7 @@ end
 
 local kChargeTime, kBulletSize
 local function NewExecuteShot(self, startPoint, endPoint, player)
-	// Filter ourself out of the trace so that we don't hit ourselves.
+	-- Filter ourself out of the trace so that we don't hit ourselves.
 	local filter = EntityFilterTwo(player, self)
 	local trace = Shared.TraceRay(startPoint, endPoint, CollisionRep.Damage, PhysicsMask.Bullets, EntityFilterAllButIsa("Tunnel"))
 	local hitPointOffset = trace.normal * 0.3
@@ -1424,7 +1424,7 @@ local function NewFireSpikes(self)
 	viewAngles.roll = NetworkRandom() * math.pi * 2
 	local shootCoords = viewAngles:GetCoords()
 	
-	// Filter ourself out of the trace so that we don't hit ourselves.
+	-- Filter ourself out of the trace so that we don't hit ourselves.
 	local filter = EntityFilterOneAndIsa(player, "Babbler")
 	local range = kSpikesRange
 	
@@ -1438,7 +1438,7 @@ local function NewFireSpikes(self)
 	
 	for spike = 1, numSpikes do
 
-		// Calculate spread for each shot, in case they differ    
+		-- Calculate spread for each shot, in case they differ    
 		local spreadDirection = CalculateSpread(viewCoords, kSpread, NetworkRandom) 
 
 		local endPoint = startPoint + spreadDirection * range
