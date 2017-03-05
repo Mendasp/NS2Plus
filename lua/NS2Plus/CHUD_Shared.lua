@@ -1,5 +1,5 @@
 kCHUDElixerVersion = 1.8
-kCHUDVersion = 369
+kCHUDVersion = 370
 
 Script.Load("lua/NS2Plus/Shared/CHUD_Utility.lua")
 Script.Load("lua/NS2Plus/Elixer_Utility.lua")
