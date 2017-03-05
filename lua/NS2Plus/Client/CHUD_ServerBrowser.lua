@@ -1,25 +1,3 @@
--- When filtering for NS2, also include NS2+ servers
-function FilterServerMode(mode)
-	return function(entry)
-		local entryMode = string.upper(entry.originalMode or entry.mode)
-
-		return
-			string.len(mode) == 0 or
-			mode == "custom" and not kFilterFromCustom[entryMode] or
-			string.upper(entryMode) == string.upper(mode)
-	end
-end
-
-function FilterRankedOnly(active)
-	return function(entry) 
-        if entry.originalMode then
-            return entry.originalMode ~= "ns2" or not active or entry.ranked
-        else
-            return entry.mode ~= "ns2" or not active or entry.ranked
-        end
-    end
-end
-
 local oldBuildServerEntry = BuildServerEntry
 function BuildServerEntry(serverIndex)
 
@@ -42,19 +20,6 @@ function BuildServerEntry(serverIndex)
 				break
 			end
 		end
-		
-		if serverEntry.CHUDBitmask ~= nil then
-			serverEntry.originalMode = serverEntry.mode
-			serverEntry.mode = serverEntry.mode:gsub("ns2", "ns2+", 1)
-			if serverEntry.isNSL then
-				serverEntry.mode = serverEntry.mode .. " NSL"
-			end
-		end
-	end
-	
-	-- Revert to the original mode if we're not in the server browser
-	if serverEntry.originalMode and not serverBrowserOpen then
-		serverEntry.mode = serverEntry.originalMode
 	end
 	
 	return serverEntry
@@ -74,6 +39,12 @@ originalSetServerData = Class_ReplaceMethod( "ServerEntry", "SetServerData",
 		
 		local blockedString
 		if serverData.CHUDBitmask ~= nil then
+			local mode = serverData.mode:gsub("ns2", "ns2+", 1)
+			if serverData.isNSL then
+				mode = mode .. " NSL"
+			end
+			self.modName:SetText(mode)
+
 			if serverData.ranked then
 				self.modName:SetColor(kGold)
 			end
@@ -150,31 +121,3 @@ originalServerEntryInit = Class_ReplaceMethod( "ServerEntry", "Initialize",
 			self.modName.tooltip:Hide()
 		end)
 	end)
-
-function ServerTabs:SetGameTypes(gameTypes)
-
-	local types = {}
-	for gameType, playerCount in pairs(gameTypes) do
-		table.insert(types, {name = gameType, count = playerCount})
-	end
-
-	local playercounts = {0,0}
-
-	for _, type in ipairs(types) do
-
-		local gameType = type.name
-
-		if gameType == "ns2" or gameType == "ns2+" then
-
-			playercounts[1] = playercounts[1] + type.count
-
-		else
-			playercounts[2] = playercounts[2] + type.count
-
-		end
-
-	end
-
-	self.tabs.NS2.player:SetText(string.format("(%s)", playercounts[1]))
-	self.tabs.MODDED.player:SetText(string.format("(%s)", playercounts[2]))
-end
