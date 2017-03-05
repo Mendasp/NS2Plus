@@ -4,9 +4,6 @@ gCHUDBadgesData = {}
 gCHUDBadgesData["ns2plus_dev"] = {scoreboardTexture = "ui/badges/ns2plus_dev_20.dds", formalName = "NS2+ Developer"}
 gCHUDBadgesData["ns2plus_god"] = {scoreboardTexture = "ui/badges/ns2plus_dev_20.dds", formalName = "NS2+ God / Developer"}
 gCHUDBadgesData["ns2news"] = {scoreboardTexture = "ui/badges/ns2news_20.dds", formalName = "NS2News Contributor"}
-gCHUDBadgesData["ns2wc_winner"] = {scoreboardTexture = "ui/badges/ns2wc_winner_20.dds", formalName = "NS2WC 2014 Winner"}
-gCHUDBadgesData["ns2wc_runnerup"] = {scoreboardTexture = "ui/badges/ns2wc_runnerup_20.dds", formalName = "NS2WC 2014 Finalist"}
-gCHUDBadgesData["ns2wc_semi"] = {scoreboardTexture = "ui/badges/ns2wc_semi_20.dds", formalName = "NS2WC 2014 Semifinalist"}
 gCHUDBadgesData["golden_pax"] = {scoreboardTexture = "ui/badges/golden_pax_20.dds", formalName = "PAX 2012 (Smurfing Golden exclusive)"}
 
 local CHUDBadgesTable = {}
