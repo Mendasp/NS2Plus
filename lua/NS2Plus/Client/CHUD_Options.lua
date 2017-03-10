@@ -764,7 +764,7 @@ CHUDOptions =
 				end,
 				sort = "A01",
 			},
-			hitindicator = { 
+			hitindicator297 = { 
 				name = "CHUD_HitIndicator",
 				label = "Hit indicator fade time",
 				tooltip = "Controls how long the crosshair hit indicator will last after hitting a target.",
@@ -775,7 +775,7 @@ CHUDOptions =
 				multiplier = 100,
 				category = "damage",
 				valueType = "float",
-				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator") end,
+				applyFunction = function() Player.kShowGiveDamageTime = CHUDGetOption("hitindicator297") end,
 				applyOnLoadComplete = true,
 				sort = "A02",
 				resetSettingInBuild = 357
