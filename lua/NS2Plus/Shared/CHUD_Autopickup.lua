@@ -44,6 +44,34 @@ originalMarineOnInit = Class_ReplaceMethod( "Marine", "OnInitialized",
 		end
 	end)
 
+local function PickupWeapon(self, weapon, wasAutoPickup)
+    
+    -- some weapons completely replace other weapons (welder > axe).
+    local replacement = weapon.GetReplacementWeaponMapName and weapon:GetReplacementWeaponMapName()
+    local obsoleteWep = replacement and self:GetWeapon(replacement)
+    if obsoleteWep then
+        self:RemoveWeapon(obsoleteWep)
+        DestroyEntity(obsoleteWep)
+    end
+    
+    -- find the weapon that is about to be dropped to make room for this one
+    local slot = weapon:GetHUDSlot()
+    local oldWep = self:GetWeaponInHUDSlot(slot)
+    
+    -- perform the actual weapon pickup (also drops weapon in the slot)
+    self:AddWeapon(weapon, not wasAutoPickup or slot == 1) -- change from vanilla is here. this prevents e.g. autoswitching to welder if you autopick it up
+    StartSoundEffectAtOrigin(Marine.kGunPickupSound, self:GetOrigin())
+    
+    if not wasAutoPickup then
+        self:SetHUDSlotActive(weapon:GetHUDSlot())
+    end
+    
+    self.timeOfLastPickUpWeapon = Shared.GetTime()
+    self.lastDroppedWeapon = oldWep
+    
+end
+
+ReplaceUpValue(Marine.HandleButtons, "PickupWeapon", PickupWeapon, { LocateRecurse = true; CopyUpValues = true })
 
 if Server then
 	local function OnSetCHUDAutopickup(client, message)
