@@ -53,9 +53,10 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 				commanderTooltip.smokeyBackground:SetTexture(tooltipTexture)
 				
 				local biomass = ClientUI.GetScript("GUIBioMassDisplay")
+				local biomassSmokeyBackground = ConditionalValue(mingui, "ui/alien_commander_bg_smoke.dds", "ui/transparent.dds")
 				local biomassTexture = ConditionalValue(mingui, "ui/biomass_bar.dds", "ui/transparent.dds")
 				
-				biomass.smokeyBackground:SetIsVisible(mingui)
+				biomass.smokeyBackground:SetAdditionalTexture("noise", biomassSmokeyBackground)
 				biomass.background:SetTexture(biomassTexture)
 			end
 		end

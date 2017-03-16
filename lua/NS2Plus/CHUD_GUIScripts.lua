@@ -30,7 +30,6 @@ Script.Load("lua/NS2Plus/GUIScripts/GUIInventory.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIProduction.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIFeedback.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIJetpackFuel.lua")
-Script.Load("lua/NS2Plus/GUIScripts/GuiBioMassDisplay.lua")
 
 GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
 GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
