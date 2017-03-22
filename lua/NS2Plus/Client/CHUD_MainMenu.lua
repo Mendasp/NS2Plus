@@ -184,14 +184,20 @@ originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks",
 		originalCreateMainLinks(self)
 		
 		for i, menuLink in pairs(self.Links) do
-			menuLink:SetTopOffset(50+70*(i-1))
+			
+			local playRoomOffset = MainMenu_IsInGame() and 0 or 1
+			if menuLink:isa("BigLink") then
+				playRoomOffset = 0
+			end
+			
+			menuLink:SetTopOffset(50+70*(i-1 + playRoomOffset))
 			
 			-- Some links have glowing effects applied.  Ensure we move them upwards too.
 			if menuLink.mainLinkGlow then
-				menuLink.mainLinkGlow:SetTopOffset(40+70*(i-1))
+				menuLink.mainLinkGlow:SetTopOffset(40+70*(i-1 + playRoomOffset))
 			end
 			if menuLink.mainLinkAlertTextGlow then
-				menuLink.mainLinkAlertTextGlow:SetTopOffset(40+70*(i-1))
+				menuLink.mainLinkAlertTextGlow:SetTopOffset(40+70*(i-1 + playRoomOffset))
 			end
 			if menuLink.mainLinkAlertText then
 				menuLink.mainLinkAlertText:SetTextPaddingTop(3)
