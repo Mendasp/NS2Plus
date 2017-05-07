@@ -124,7 +124,10 @@ originalUpdateClientEffects = Class_ReplaceMethod( "Commander", "UpdateClientEff
 		originalUpdateClientEffects(self, deltaTime, isLocal)
 		
 		found = false
-		self.production.InProgress:ForEach(displayTimeTooltip)
+		
+		if CHUDGetOption("researchtimetooltip") then
+			self.production.InProgress:ForEach(displayTimeTooltip)
+		end
 		
 		if found then
 			self.tooltip:SetText(tooltipText)
