@@ -185,7 +185,18 @@ function CHUDGUI_HUDBars:Initialize()
 	self.lastReserveAmmo = -1
 	self.lastHealth = -1
 	self.lastArmor = -1
+	
+	HelpScreen_AddObserver(self)
+	
+	self.vis = true -- ie, not forcibly hidden by something else.
 
+end
+
+function CHUDGUI_HUDBars:OnHelpScreenVisChange(state)
+	
+	self.vis = not state
+	self:Update(0)
+	
 end
 
 function CHUDGUI_HUDBars:Uninitialize()
@@ -207,6 +218,8 @@ function CHUDGUI_HUDBars:Uninitialize()
 		self.reserveBar:Destroy()
 		self.reserveBar = nil
 	end
+	
+	HelpScreen_RemoveObserver(self)
 
 end
 
@@ -232,7 +245,7 @@ function CHUDGUI_HUDBars:Update(deltaTime)
 
 	GUIAnimatedScript.Update(self, deltaTime)
 
-	if player and player:GetIsAlive() then
+	if player and player:GetIsAlive() and self.vis then
 		self.leftBarBg:SetIsVisible(true)
 		self.rightBarBg:SetIsVisible(true)
 	

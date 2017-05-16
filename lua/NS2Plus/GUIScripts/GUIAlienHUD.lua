@@ -208,6 +208,17 @@ Class_AddMethod( "GUIAlienHUD", "CHUDUpdateHealthBall",
 		self:UpdateFading(self.healthBall:GetBackground(), self.healthBarPercentage * self.armorBarPercentage, deltaTime)
 	end)
 
+local originalAlienSetIsVisible
+originalAlienSetIsVisible = Class_ReplaceMethod( "GUIAlienHUD", "SetIsVisible",
+	function(self, state)
+		originalAlienSetIsVisible(self, state)
+		
+		if self.gameTime then
+			self.gameTime:SetIsVisible(state)
+		end
+		
+	end)
+
 local originalAlienUpdate
 originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 	function(self, deltaTime)
@@ -236,7 +247,7 @@ originalAlienUpdate = Class_ReplaceMethod( "GUIAlienHUD", "Update",
 		
 		if self.gameTime then
 			self.gameTime:SetText(CHUDGetGameTimeString())
-			self.gameTime:SetIsVisible(gametime)
+			self.gameTime:SetIsVisible(gametime and self.visible)
 		end
 		
 		self.resourceDisplay.teamText:SetIsVisible(showcomm)
