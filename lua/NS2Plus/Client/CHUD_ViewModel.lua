@@ -1,5 +1,22 @@
 gCHUDHiddenViewModel = true
+
+local reloadFraction = -1
+local overheatLeftFraction = -1
+local overheatRightFraction = -1
+
+function CHUDGetReloadFraction()
+	return math.min(reloadFraction, 1)
+end
+
+function CHUDGetOverheatFraction()
+	return math.min(overheatLeftFraction, 1), math.min(overheatRightFraction, 1)
+end
+
+local insertNum
+local lastSeq
+local initialFraction
 local originalViewModelOnUpdateRender
+local lastReloadFraction
 originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRender",
 	function(self)
 		originalViewModelOnUpdateRender(self)
@@ -12,9 +29,85 @@ originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRend
 				(player:isa("Alien") and not CHUDGetOption("drawviewmodel_a")) or
 				(player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo")))
 			)
-
+		
 		self:SetIsVisible(trollModes["swalkMode"] or self:GetIsVisible() and not gCHUDHiddenViewModel)
+		
+		reloadFraction = -1
+		local weapon = self:GetWeapon()
+		if weapon then
+			if player:isa("Marine") or player:isa("Exo") then
+				local model = Shared.GetModel(self.modelIndex)
+				if model then
+					local seqLength = model:GetSequenceLength(self.animationSequence)
+					local seqName = model:GetSequenceName(self.animationSequence)
+					if lastSeq ~= seqName then
+						lastSeq = seqName
+						if weapon:isa("Shotgun") then
+							if seqName == "reload_start" then
+								insertNum = weapon:GetClip()
+							elseif seqName == "reload_insert" then
+								insertNum = insertNum + 1
+								initialFraction = insertNum/weapon:GetClipSize()
+							end
+						elseif weapon:isa("GrenadeLauncher") then
+							if string.find(seqName, "reload") and not string.find(seqName, "end") or not seqName == "reload_one" then
+								insertNum = weapon:GetClip()
+								initialFraction = insertNum/weapon:GetClipSize()
+							end
+						end
+					end
+					
+					if seqName == "reload" or weapon:isa("Rifle") and seqName == "secondary" then
+						reloadFraction = (Shared.GetTime()-self.animationStart) / (seqLength/self.animationSpeed)
+					elseif weapon:isa("Shotgun") then
+						if seqName == "reload_start" then
+							reloadFraction = (insertNum + (Shared.GetTime()-self.animationStart) / (seqLength/self.animationSpeed)) / weapon:GetClipSize()
+						elseif seqName == "reload_insert" then
+							reloadFraction = initialFraction + (Shared.GetTime()-self.animationStart) / (seqLength*(weapon:GetClipSize()-insertNum)/self.animationSpeed)*(1-initialFraction)
+						end
+					elseif weapon:isa("GrenadeLauncher") then
+						if string.find(seqName, "reload") then
+							if not string.find(seqName, "end") or not seqName == "reload_one" then
+								reloadFraction = (insertNum + (Shared.GetTime()-self.animationStart) / (seqLength/self.animationSpeed)) / weapon:GetClipSize()
+								lastReloadFraction = reloadFraction
+							else
+								reloadFraction = lastReloadFraction + (Shared.GetTime()-self.animationStart) / (seqLength/self.animationSpeed)*(1-lastReloadFraction)
+							end
+						end
+					elseif weapon:isa("ExoWeaponHolder") then
+						overheatLeftFraction = -1
+						overheatRightFraction = -1
+						local leftWeapon = Shared.GetEntity(weapon.leftWeaponId)
+						local rightWeapon = Shared.GetEntity(weapon.rightWeaponId)
+						if leftWeapon:isa("Minigun") and seqName == "attack_l_heat" then
+							overheatLeftFraction = (Shared.GetTime()-self.animationStart) / (seqLength/self.animationSpeed)
+						end
+						if rightWeapon:isa("Minigun") and model:GetSequenceName(self.layer1AnimationSequence) == "attack_r_heat" then
+							overheatRightFraction = (Shared.GetTime()-self.layer1AnimationStart) / (model:GetSequenceLength(self.layer1AnimationSequence)/self.layer1AnimationSpeed)
+						end
+					end
+				end
+			elseif player:isa("Alien") then
+				reloadFraction = AlienUI_GetMovementSpecialCooldown()
+			end
+		end
+	end)
 
+-- Correct heat display on Exos for their cooldown with the animation progress (not the heat amount)
+-- The animation is what determines how long it's going to take until we can actually fire again
+local oldMinigunOnUpdateRender
+oldMinigunOnUpdateRender = Class_ReplaceMethod("Minigun", "OnUpdateRender",
+	function(self)
+		oldMinigunOnUpdateRender(self)
+		
+		if self.heatDisplayUI then
+			local slotName = self:GetExoWeaponSlotName()
+			local leftOverheatFraction, rightOverheatFraction = CHUDGetOverheatFraction()
+			local overheatFraction = slotName == "left" and leftOverheatFraction or rightOverheatFraction
+			if overheatFraction > -1 then
+				self.heatDisplayUI:SetGlobal("heatAmount" .. slotName, math.min(1, 1-overheatFraction))
+			end
+		end
 	end)
 
 local direction = 1
@@ -26,7 +119,7 @@ originalViewModelOnAdjustModelCoords = Class_ReplaceMethod("ViewModel", "OnAdjus
 	
 		local newCoords = originalViewModelOnAdjustModelCoords(self, coords)
 		local rollIncrement
-		if self:GetNumModelCameras() > 0 and coords and newCoords and trollModes["swalkMode"] then
+		if trollModes["swalkMode"] and self:GetNumModelCameras() > 0 and coords and newCoords then
 			
 			local player = Client.GetLocalPlayer()
 			
@@ -61,7 +154,7 @@ originalGetCameraViewCoordsOverride = Class_ReplaceMethod("Player", "GetCameraVi
 	
 		local newCoords = originalGetCameraViewCoordsOverride(self, cameraCoords)
 		local rollIncrement
-		if cameraCoords and newCoords and trollModes["swalkMode"] then
+		if trollModes["swalkMode"] and cameraCoords and newCoords then
 			local player = Client.GetLocalPlayer()
 			
 			if player then

@@ -105,6 +105,34 @@ CHUDOptions =
 				end,
 				sort = "A05",
 			},
+			reloadindicator = {
+				name = "CHUD_ReloadIndicator",
+				label = "Reload and cooldown indicator",
+				tooltip = "Enables or disables a reload indicator around your crosshair. It also displays the cooldown status of some alien movement abilities. Useful for hidden viewmodels.",
+				type = "select",
+				values  = { "Off", "Only hidden viewmodels", "On" },
+				defaultValue = 1,
+				category = "ui",
+				valueType = "int",
+				sort = "A06",
+				applyFunction = function()
+					CHUDRestartScripts({"GUICrosshair"})
+				end,
+				children = { "reloadindicatorcolor" },
+				hideValues = { 0 },
+			},
+			reloadindicatorcolor = {
+				name = "CHUD_ReloadIndicatorColor",
+				label = "Reload indicator color",
+				tooltip = "Sets the color for the reload indicator.",
+				defaultValue = 0x00A0FF,
+				category = "ui",
+				valueType = "color",
+				sort = "A07",
+				applyFunction = function()
+					CHUDRestartScripts({"GUICrosshair"})
+				end,
+			},
 			banners = {
 				name = "CHUD_Banners",
 				label = "Objective banners",
@@ -114,7 +142,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "ui",
 				valueType = "bool",
-				sort = "A06",
+				sort = "A08",
 			},
 			unlocks = {
 				name = "CHUD_Unlocks",
@@ -125,7 +153,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "ui",
 				valueType = "bool",
-				sort = "A07",
+				sort = "A09",
 			},
 			inventory = {
 				name = "CHUD_Inventory",
@@ -143,7 +171,7 @@ CHUDOptions =
 					}) end,
 				helpImage = "ui/helpImages/inventory.dds",
 				helpImageSize = Vector(256, 128, 0),
-				sort = "A08",
+				sort = "A10",
 			},
 			
 			minimap = {
