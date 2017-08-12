@@ -276,9 +276,10 @@ function CHUDGUI_HUDBars:Update(deltaTime)
 				rightFraction = energy / maxEnergy
 				rightPulsatingRed = energy < energyCost
 			elseif player:isa("Marine") or player:isa("Exo") then
-				rightFraction = CHUDGetWeaponAmmoFraction(activeWeapon)
+				local isReloading = activeWeapon:isa("ClipWeapon") and activeWeapon:GetIsReloading()
+				rightFraction = isReloading and CHUDGetReloadFraction() or CHUDGetWeaponAmmoFraction(activeWeapon)
 				reserveFraction = CHUDGetWeaponReserveAmmoFraction(activeWeapon)
-				if reserveFraction ~= -1 then
+				if not isReloading and reserveFraction ~= -1 then
 					rightPulsatingRed = rightFraction <= 0.4 or (activeWeapon:isa("GrenadeLauncher") and rightFraction <= 0.5)
 				end
 			end

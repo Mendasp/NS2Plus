@@ -6,6 +6,10 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- XX/XX/2XXX
+	- Added reload indicators around the crosshair. Also displays ability cooldowns for aliens.
+	- Made exo overheat UI display proper values to show when we are able to fire again.
+
 - 28/09/2016
 	- Fixed Server Browser ranked filter not working correctly
 	- Fix End game stats issue with warmup mode
