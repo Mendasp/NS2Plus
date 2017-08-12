@@ -40,6 +40,7 @@ CHUDOptions =
 				applyFunction = function() CHUDRestartScripts({
 					"Hud/Marine/GUIMarineHUD",
 					"GUIAlienHUD",
+					"GUIHiveStatus",
 					}) end,
 				sort = "A01",
 			},
@@ -146,6 +147,20 @@ CHUDOptions =
 				sort = "A08",
 			},
 			
+			hivestatus = {
+				name = "CHUD_HiveStatus",
+				label = "Alien Hive Status UI",
+				tooltip = "Enables or disables the hive status display in the top left of the alien HUD.",
+				type = "select",
+				values = {"On", "Off"},
+				defaultValue = false,
+				category = "ui",
+				valueType = "bool",
+				applyFunction = function() CHUDRestartScripts({
+					"GUIHiveStatus",
+					}) end,
+				sort = "B00.5",
+			},
 			minimap = {
 				name = "CHUD_Minimap",
 				label = "Marine minimap",
