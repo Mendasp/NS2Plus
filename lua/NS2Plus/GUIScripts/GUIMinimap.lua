@@ -17,7 +17,7 @@ Class_AddMethod("GUIMinimap", "UpdateCHUDCommSettings",
 			local commanderTooltip = GetGUIManager():GetGUIScriptSingle("GUICommanderTooltip")
 			local minimapFrame = ClientUI.GetScript("GUIMinimapFrame")
 			
-			// Move buttons off-screen so we can click through
+			-- Move buttons off-screen so we can click through
 			local buttonPos = ConditionalValue(mingui, 0, -9999)
 			minimapButtons.background:SetIsVisible(mingui)
 			minimapButtons.pingButton:SetPosition(Vector(buttonPos,0,0))

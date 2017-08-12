@@ -9,7 +9,7 @@ Class_AddMethod( "GUIMarineHUD", "CHUDRepositionGUI",
 		local commactions = CHUDGetOption("commactions")
 		local gametime = CHUDGetOption("gametime")
 		
-		// Position of toggleable elements
+		-- Position of toggleable elements
 		local y = 30
 		
 		if minimap then
@@ -80,8 +80,8 @@ function(self)
 	self.welderIcon:SetIsVisible(false)
 	self.background:AddChild(self.welderIcon)
 	
-	// Reversed the setting since when it's enabled it hides stuff...
-	// It makes sense to me at least, didn't like seeing so much negativity
+	-- Reversed the setting since when it's enabled it hides stuff...
+	-- It makes sense to me at least, didn't like seeing so much negativity
 	local mingui = not CHUDGetOption("mingui")
 	local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("hudbars_m") ~= 2
 	local minimap = CHUDGetOption("minimap")
@@ -114,7 +114,7 @@ function(self)
 	
 	self:CHUDRepositionGUI()
 	
-	// Fixes marine elements showing up in the Exo HUD when reloading the script
+	-- Fixes marine elements showing up in the Exo HUD when reloading the script
 	self:OnLocalPlayerChanged(Client.GetLocalPlayer())
 	
 	if CHUDGetOption("hudbars_m") == 2 then

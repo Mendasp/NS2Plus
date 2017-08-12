@@ -49,12 +49,12 @@ originalAlienInit = Class_ReplaceMethod( "GUIAlienHUD", "Initialize",
 		local kTextureNameCHUD = CHUDGetOptionAssocVal("aliencircles")
 		local kBackgroundCHUD = ConditionalValue(mingui, PrecacheAsset("ui/alien_commander_bg_smoke.dds"), PrecacheAsset("ui/transparent.dds"))
 		
-		// Backgrounds of health/energy
+		-- Backgrounds of health/energy
 		self.healthBall.dialBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
 		self.energyBall.dialBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
 		self.secondaryAbilityBackground:SetAdditionalTexture("noise", kBackgroundCHUD)
 		
-		// Alien bars
+		-- Alien bars
 		self.healthBall:SetForegroundTexture(kTextureNameCHUD)
 		self.armorBall:SetForegroundTexture(kTextureNameCHUD)
 		self.energyBall:SetForegroundTexture(kTextureNameCHUD)
@@ -195,12 +195,12 @@ Class_AddMethod( "GUIAlienHUD", "CHUDUpdateHealthBall",
 			self.armorBarPercentage = armorBarPercentageGoal
 		end
 
-		// don't use more than 60% for armor in case armor value is bigger than health
-		// for skulk use 10 / 70 = 14% as armor and 86% as health
+		-- don't use more than 60% for armor in case armor value is bigger than health
+		-- for skulk use 10 / 70 = 14% as armor and 86% as health
 		local armorUseFraction = Clamp( PlayerUI_GetPlayerMaxArmor() / PlayerUI_GetPlayerMaxHealth(), 0, 0.6)
 		local healthUseFraction = 1 - armorUseFraction
 
-		// set global rotation to snap to the health ring
+		-- set global rotation to snap to the health ring
 		self.armorBall:SetRotation( - 2 * math.pi * self.healthBarPercentage * healthUseFraction )
 
 		self.healthBall:SetPercentage(self.healthBarPercentage * healthUseFraction)

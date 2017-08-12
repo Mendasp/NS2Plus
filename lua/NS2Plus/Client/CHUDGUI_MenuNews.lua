@@ -68,8 +68,8 @@ function CHUDGUI_MenuNews:SendKeyEvent(key, down, amount)
         
         local containsPoint, withinX, withinY = GUIItemContainsPoint(self.webContainer, mouseX, mouseY)
         
-        // If we pressed the button inside the window, always send it the button up
-        // even if the cursor was outside the window.
+        -- If we pressed the button inside the window, always send it the button up
+        -- even if the cursor was outside the window.
         if containsPoint or (not down and self.buttonDown[key]) then
         
             local buttonCode = key - InputKey.MouseButton0

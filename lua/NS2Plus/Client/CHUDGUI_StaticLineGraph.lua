@@ -1,12 +1,12 @@
-// ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
-//
-// lua\graphs\LineGraph.lua
-//
-// Created by: Jon Hughes (jon@jhuze.com)
-//
-// LineGraph!
-//
-// ========= For more information, visit us at http://www.unknownworlds.com =====================
+-- ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
+--
+-- lua\graphs\LineGraph.lua
+--
+-- Created by: Jon Hughes (jon@jhuze.com)
+--
+-- LineGraph!
+--
+-- ========= For more information, visit us at http://www.unknownworlds.com =====================
 
 class 'CHUDGUI_StaticLineGraph'
 

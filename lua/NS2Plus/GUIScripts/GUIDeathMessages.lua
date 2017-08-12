@@ -30,7 +30,7 @@ originalDeathMessagesUpdate = Class_ReplaceMethod("GUIDeathMessages", "Update",
 				end
 
 				message["Background"]:SetColor(currentColor)
-				// Left and right elements inherit alpha from their parent
+				-- Left and right elements inherit alpha from their parent
 				currentColor.a = 1
 				message["Background"].left:SetColor(currentColor)
 				message["Background"].right:SetColor(currentColor)

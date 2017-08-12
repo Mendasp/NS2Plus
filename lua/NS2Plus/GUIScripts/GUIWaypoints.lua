@@ -15,19 +15,19 @@ originalWPUpdate = Class_ReplaceMethod( "GUIWaypoints", "Update",
 			self.finalWaypoint:SetTexture(self.usedTexture)
 		end
 		
-		// If we have disabled waypoints, we still want to see Attack waypoints
+		-- If we have disabled waypoints, we still want to see Attack waypoints
 		if finalWaypointData and not CHUDGetOption("wps") then
 			self.finalWaypoint:SetIsVisible(finalWaypointData.type == kTechId.Attack)
 		end
 		
-		// Disabled auto waypoints only
+		-- Disabled auto waypoints only
 		if finalWaypointData and not CHUDGetOption("autowps") and CHUDGetOption("wps") then
 			if finalWaypointData.type == kTechId.AutoConstruct or finalWaypointData.type == kTechId.AutoWeld then
 				self.finalWaypoint:SetIsVisible(false)
 			end
 		end
 		
-		// Hide the arrows in any of the modes
+		-- Hide the arrows in any of the modes
 		for a = 1, #self.worldArrows do
 			self.worldArrows[a].model:SetIsVisible(not (CHUDGetOption("minwps") or not CHUDGetOption("wps")))
 			self.worldArrows[a].light:SetIsVisible(not (CHUDGetOption("minwps") or not CHUDGetOption("wps")))

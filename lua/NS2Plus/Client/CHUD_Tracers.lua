@@ -1,4 +1,4 @@
-// MODIFIED FROM BETTER NS2 BY LWF
+-- MODIFIED FROM BETTER NS2 BY LWF
 
 Script.Load("lua/Weapons/Marine/ClipWeapon.lua")
 local OriginalClipFreq

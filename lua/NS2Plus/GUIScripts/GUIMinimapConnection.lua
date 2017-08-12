@@ -15,8 +15,8 @@ Class_ReplaceMethod("GUIMinimapConnection", "UpdateAnimation",
 		
 		self.line:SetTexture(ConditionalValue(pglines == 2, kDashedLineTexture, kLineTexture))
 
-		// Don't draw arrows for just 2 PGs, the direction is clear here
-		// Gorge tunnels also don't need this since it is limited to entrance/exit
+		-- Don't draw arrows for just 2 PGs, the direction is clear here
+		-- Gorge tunnels also don't need this since it is limited to entrance/exit
 		local textureIndex = ConditionalValue(animatedArrows and pglines > 0, 16, 0)
 		
 		self.line:SetTexturePixelCoordinates(x1Coord, textureIndex, x2Coord, textureIndex + 16)

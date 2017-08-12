@@ -4,7 +4,7 @@ Script.Load("lua/NS2Plus/GUIScripts/GUIAlienHUD.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIMarineHUD.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIExoHUD.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIEvent.lua")
-Script.Load("lua/NS2Plus/GUIScripts/GUIMinimap.lua") // Comm stuff is here
+Script.Load("lua/NS2Plus/GUIScripts/GUIMinimap.lua") -- Comm stuff is here
 Script.Load("lua/NS2Plus/GUIScripts/GUIMinimapConnection.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIProgressBar.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIAlienBuyMenu.lua")
@@ -32,8 +32,5 @@ Script.Load("lua/NS2Plus/GUIScripts/GUIFeedback.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIJetpackFuel.lua")
 Script.Load("lua/NS2Plus/GUIScripts/GUIHiveStatus.lua")
 
-GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
-GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
-
-// I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
+-- I suppose these aren't really GUIScripts, but... they still draw stuff on screen? :D
 Script.Load("lua/NS2Plus/GUIScripts/GhostModel.lua")

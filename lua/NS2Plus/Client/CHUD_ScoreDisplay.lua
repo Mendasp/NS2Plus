@@ -3,10 +3,10 @@ local pendingScore = 0
 local pendingRes = 0
 local pendingWasKill = false
 
-/**
-* Gets current score variable, returns it and sets var to 0. Also 
-* returns res given to player (0 to not display).
-*/
+--
+-- Gets current score variable, returns it and sets var to 0. Also
+-- returns res given to player (0 to not display).
+--
 function ScoreDisplayUI_GetNewScore()
 
 	local tempScore = pendingScore
@@ -22,9 +22,9 @@ function ScoreDisplayUI_GetNewScore()
 end
 
 
-/**
-* Called to set latest score
-*/
+--
+-- Called to set latest score
+--
 function ScoreDisplayUI_SetNewScore(score, res, wasKill)
 
 	if CHUDGetOption("score") and (wasKill or CHUDGetOption("assists")) then

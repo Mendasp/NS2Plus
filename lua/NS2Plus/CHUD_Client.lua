@@ -20,6 +20,10 @@ Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_GorgeSpit.lua")
 
+GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
+GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
+
+
 trollModeVictims = {}
 trollModes = {}
 local localTesting = false
@@ -75,7 +79,7 @@ function GUIScale(size)
 		local scale = CHUDGetOption("uiscale") or 1
 		return originalGUIScale(size*scale)
 	elseif trollModes["masterresMode"] then
-		//return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
+		--return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
 		return originalGUIScale(size)
 	elseif CHUDGetOption("brokenscaling") then
 		local screenWidth = Client.GetScreenWidth()
@@ -139,10 +143,10 @@ Event.Hook("LocalPlayerChanged", OnLocalPlayerChanged)
 
 function Client.AddWorldMessage(messageType, message, position, entityId)
 
-	// Only add damage messages if we have it enabled
+	-- Only add damage messages if we have it enabled
 	if messageType ~= kWorldTextMessageType.Damage or Client.GetOptionBoolean( "drawDamage", true ) then
 
-		// If we already have a message for this entity id, update existing message instead of adding new one
+		-- If we already have a message for this entity id, update existing message instead of adding new one
 		local time = Client.GetTime()
 			
 		local updatedExisting = false

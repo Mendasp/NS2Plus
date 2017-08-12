@@ -295,7 +295,7 @@ local viewModelCinematics = set {
 						"cinematics/marine/shotgun/shell.cinematic",
 }
 
-// Precache all the new cinematics
+-- Precache all the new cinematics
 PrecacheAsset("chud_cinematics/blank.cinematic")
 for cinematic,_ in pairs(replacedCinematics) do
 	PrecacheAsset("chud_" .. cinematic)
@@ -304,7 +304,7 @@ end
 local originalSetCinematic
 originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic", 
 	function(self, cinematicName)
-		//Print(cinematicName)
+		--Print(cinematicName)
 		if Client.fullyLoaded then
 
 			if gCHUDHiddenViewModel and viewModelCinematics[cinematicName] then
@@ -316,7 +316,7 @@ originalSetCinematic = Class_ReplaceMethod( "Cinematic", "SetCinematic",
 					cinematicName = "chud_" .. cinematicName
 				elseif blockedCinematics[cinematicName] then
 					cinematicName = "chud_cinematics/blank.cinematic"
-				// Easier than doing this in like 10 folders
+				-- Easier than doing this in like 10 folders
 				elseif string.find(cinematicName, "ricochetMinigun.cinematic") then
 					cinematicName = string.gsub(cinematicName, "ricochetMinigun.cinematic", "ricochet.cinematic")
 				end

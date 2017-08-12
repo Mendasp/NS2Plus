@@ -1,11 +1,11 @@
-// turtsmcgurts
-// the reasoning behind this option is to make it easier for gorges to see their 'spit' with alien vision and adjust their aim properly.
-// https://i.imgur.com/S9rqKxm.png
-// https://youtu.be/397QWoxpFWI
+-- turtsmcgurts
+-- the reasoning behind this option is to make it easier for gorges to see their 'spit' with alien vision and adjust their aim properly.
+-- https://i.imgur.com/S9rqKxm.png
+-- https://youtu.be/397QWoxpFWI
 
-// kProjectileCinematic is for .cinematic files (which do not get affected by alien vision, making their effects difficult to see especially with darker AV)
-// kModelName is for .model files (which DO get affected by alien vision)
-// must alternate using these for the different files.
+-- kProjectileCinematic is for .cinematic files (which do not get affected by alien vision, making their effects difficult to see especially with darker AV)
+-- kModelName is for .model files (which DO get affected by alien vision)
+-- must alternate using these for the different files.
 
 --Script.Load("lua/Weapons/PredictedProjectile.lua")
 local oldCreatePredictedProjectile = PredictedProjectileShooterMixin.CreatePredictedProjectile

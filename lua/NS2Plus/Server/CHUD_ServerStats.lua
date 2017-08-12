@@ -1301,7 +1301,7 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 	
 	if parent and trace.fraction < 1 then
 	
-		// do a max of 10 capsule traces, should be sufficient
+		-- do a max of 10 capsule traces, should be sufficient
 		local hitEntities = {}
 		local isPlayer = false
 		local playerTargets = 0
@@ -1333,7 +1333,7 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 				break
 			end
 			
-			// use new start point
+			-- use new start point
 			startPoint = Vector(capsuleTrace.endPoint) + direction * extents.x * 3
 		
 		end
@@ -1346,7 +1346,7 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 			end
 		end
 		
-		// for tracer
+		-- for tracer
 		local effectFrequency = self:GetTracerEffectFrequency()
 		local showTracer = ConditionalValue(GetIsVortexed(player), false, math.random() < effectFrequency)
 		self:DoDamage(0, nil, trace.endPoint + hitPointOffset, direction, trace.surface, false, showTracer)
@@ -1375,12 +1375,12 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack"
 			
 			self:TriggerEffects("parasite_attack")
 			
-			// Trace ahead to see if hit enemy player or structure
+			-- Trace ahead to see if hit enemy player or structure
 
 			local viewCoords = player:GetViewAngles():GetCoords()
 			local startPoint = player:GetEyePos()
 		
-			// double trace; first as a ray to allow us to hit through narrow openings, then as a fat box if the first one misses
+			-- double trace; first as a ray to allow us to hit through narrow openings, then as a fat box if the first one misses
 			local trace = Shared.TraceRay(startPoint, startPoint + viewCoords.zAxis * kRange, CollisionRep.Damage, PhysicsMask.Bullets, EntityFilterOneAndIsa(player, "Babbler"))
 			if not trace.entity then
 				local extents = GetDirectedExtentsForDiameter(viewCoords.zAxis, kParasiteSize)
@@ -1454,7 +1454,7 @@ local function NewFireSpikes(self)
 		
 		if trace.fraction < 1 then
 
-			// Have damage increase to reward close combat
+			-- Have damage increase to reward close combat
 			local damageDistScalar = Clamp(1 - (distToTarget / kSpikeMinDamageRange), 0, 1)
 			local damage = kSpikeMinDamage + damageDistScalar * (kSpikeMaxDamage - kSpikeMinDamage)
 			local direction = (trace.endPoint - startPoint):GetUnit()
