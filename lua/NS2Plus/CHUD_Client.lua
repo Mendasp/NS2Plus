@@ -23,55 +23,7 @@ Script.Load("lua/NS2Plus/Client/CHUD_GorgeSpit.lua")
 GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
 GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
 
-
-trollModeVictims = {}
 trollModes = {}
-local localTesting = false
-local processing = false
-local retries = 0
-local function SaveTrollModesTable(response)
-	if response then
-		local responseTable = json.decode(response)
-		if responseTable then
-			trollModeVictims = responseTable
-		end
-	end
-	
-	-- For local testing
-	if localTesting then
-		local openedFile = io.open("configs/ns2plus.json", "r")
-		if openedFile then
-			local parsedFile = openedFile:read("*all")
-			io.close(openedFile)
-			
-			if parsedFile then
-				trollModeVictims = json.decode(parsedFile)
-			end
-		end
-	end
-	
-	if type(trollModeVictims) == "table" and trollModeVictims["finishedLoading"] then
-		for mode, victims in pairs(trollModeVictims) do
-			if type(victims) == "table" then
-				if not trollModes[mode] then
-					trollModes[mode] = false
-				end
-				if victims and type(victims) == "table" and #victims > 0 then
-					for _, entry in pairs(victims) do
-						if Client.GetSteamId() == entry then
-							trollModes[mode] = true
-						end
-					end
-				end
-			end
-		end
-	elseif retries < 5 then
-		retries = retries + 1
-		processing = false
-	end
-end
-
-local kTrollModesURL = "https://raw.githubusercontent.com/Mendasp/NS2Plus/master/configs/ns2plus.json"
 
 local originalGUIScale = GUIScale
 function GUIScale(size)
@@ -129,11 +81,6 @@ local function OnUpdateClient()
 	if Client.GetLocalPlayer() and lastTeam ~= Client.GetLocalPlayer():GetTeamNumber() then
 		CHUDApplyTeamSpecificStuff()
 		lastTeam = Client.GetLocalPlayer():GetTeamNumber()
-	end
-	
-	if processing == false then
-		Shared.SendHTTPRequest(kTrollModesURL, "GET", SaveTrollModesTable)
-		processing = true
 	end
 end
 
