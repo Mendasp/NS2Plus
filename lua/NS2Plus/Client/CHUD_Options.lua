@@ -1529,4 +1529,15 @@ CHUDOptions =
 				valueType = "bool",
 				sort = "B02",
 			},
+			researchtimetooltip = {
+				name = "CHUD_ResearchTimeTooltip",
+				label = "(Comm) Research Time Tooltip",
+				tooltip = "Displays the time remaining when hovering over the research icon.",
+				type = "select",
+				values = { "Off", "On" },
+				defaultValue = false,
+				category = "misc",
+				valueType = "bool",
+				sort = "B03",
+			}
 }

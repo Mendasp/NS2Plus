@@ -1,11 +1,36 @@
 local tooltipText = ""
 local found = false
 local foundTime = -1
-local function displayTooltip(tech)
+local function displayNameTooltip(tech)
 	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
 		found = true
 		foundTime = Shared.GetTime(true)
 		tooltipText = GetDisplayNameForTechId(tech.Id)
+	end
+end
+
+local function displayNameTimeTooltip(tech)
+	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
+		found = true
+		foundTime = Shared.GetTime(true)
+		tooltipText = GetDisplayNameForTechId(tech.Id)
+		
+		local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
+		local minutes = math.floor(timeLeft/60)
+		local seconds = math.ceil(timeLeft - minutes*60)
+		tooltipText = string.format("%s - %01.0f:%02.0f", tooltipText, minutes, seconds)
+	end
+end
+
+local function displayTimeTooltip(tech)
+	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
+		found = true
+		foundTime = Shared.GetTime(true)
+		
+		local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
+		local minutes = math.floor(timeLeft/60)
+		local seconds = math.ceil(timeLeft - minutes*60)
+		tooltipText = string.format("%01.0f:%02.0f", minutes, seconds)
 	end
 end
 
@@ -55,11 +80,55 @@ originalSpectatorUpdate = Class_ReplaceMethod( "GUISpectator", "Update",
 		originalSpectatorUpdate(self, deltaTime)
 		
 		found = false
-		self.guiMarineProduction.InProgress:ForEach(displayTooltip)
-		self.guiMarineProduction.Complete:ForEach(displayTooltip)
-		self.guiAlienProduction.InProgress:ForEach(displayTooltip)
-		self.guiAlienProduction.Complete:ForEach(displayTooltip)
+		self.guiMarineProduction.InProgress:ForEach(displayNameTimeTooltip)
+		self.guiMarineProduction.Complete:ForEach(displayNameTooltip)
+		self.guiAlienProduction.InProgress:ForEach(displayNameTimeTooltip)
+		self.guiAlienProduction.Complete:ForEach(displayNameTooltip)
 			
+		if found then
+			self.tooltip:SetText(tooltipText)
+			self.tooltip:Show()
+		elseif foundTime > -1 and foundTime + 0.1 < Shared.GetTime(true) then
+			self.tooltip:Hide()
+			foundTime = -1
+		end
+	end)
+
+local originalCommanderOnInit
+originalCommanderOnInit = Class_ReplaceMethod( "Commander", "OnInitLocalClient",
+	function(self)
+		originalCommanderOnInit(self)
+		
+		self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
+		tooltipText = ""
+		found = false
+		foundTime = -1
+	end)
+
+local originalCommanderOnDestroy
+originalCommanderOnDestroy = Class_ReplaceMethod( "Commander", "OnDestroy",
+	function(self)
+		originalCommanderOnDestroy(self)
+		
+		self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
+		tooltipText = ""
+		found = false
+		
+		self.tooltip:Hide(0)
+		foundTime = -1
+	end)
+
+local originalUpdateClientEffects
+originalUpdateClientEffects = Class_ReplaceMethod( "Commander", "UpdateClientEffects",
+	function(self, deltaTime, isLocal)
+		originalUpdateClientEffects(self, deltaTime, isLocal)
+		
+		found = false
+		
+		if CHUDGetOption("researchtimetooltip") then
+			self.production.InProgress:ForEach(displayTimeTooltip)
+		end
+		
 		if found then
 			self.tooltip:SetText(tooltipText)
 			self.tooltip:Show()
