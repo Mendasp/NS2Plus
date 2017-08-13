@@ -1,7 +1,7 @@
 local isEnabled = Client.GetOptionBoolean("CHUD_SpectatorHPUnitStatus", true)
-local parent, OldUpdateUnitStatusBlip = LocateUpValue( GUIUnitStatus.Update, "UpdateUnitStatusBlip", { LocateRecurse = true } )
+local OldUpdateUnitStatusBlip = GUIUnitStatus.UpdateUnitStatusBlip
 
-function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
+function GUIUnitStatus:UpdateUnitStatusBlip( blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
 	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates") or 0
 	local CHUDBlipData
@@ -85,31 +85,27 @@ function NewUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsComma
 	
 end
 
-ReplaceUpValue( parent, "UpdateUnitStatusBlip", NewUpdateUnitStatusBlip, { LocateRecurse = true } )
+local oldUnitStatusInit = GUIUnitStatus.Initialize
+function GUIUnitStatus:Initialize()
+	oldUnitStatusInit(self)
 
-local oldUnitStatusInit
-oldUnitStatusInit = Class_ReplaceMethod( "GUIUnitStatus", "Initialize",
-	function(self)
-		oldUnitStatusInit(self)
-		
-		if CHUDGetOption("smallnps") then
-			GUIUnitStatus.kFontScale = GUIScale( Vector(1,1,1) ) * 0.8
-			GUIUnitStatus.kActionFontScale = GUIScale( Vector(1,1,1) ) * 0.7
-			GUIUnitStatus.kFontScaleProgress = GUIScale( Vector(1,1,1) ) * 0.6
-			GUIUnitStatus.kFontScaleSmall = GUIScale( Vector(1,1,1) ) * 0.65
-		end
-		
-		GUIUnitStatus.kUseColoredWrench = CHUDGetOption("wrenchicon") == 1
-		
-	end)
+	if CHUDGetOption("smallnps") then
+		GUIUnitStatus.kFontScale = GUIScale( Vector(1,1,1) ) * 0.8
+		GUIUnitStatus.kActionFontScale = GUIScale( Vector(1,1,1) ) * 0.7
+		GUIUnitStatus.kFontScaleProgress = GUIScale( Vector(1,1,1) ) * 0.6
+		GUIUnitStatus.kFontScaleSmall = GUIScale( Vector(1,1,1) ) * 0.65
+	end
 
-local oldUnitStatusUpdate
-oldUnitStatusUpdate = Class_ReplaceMethod( "GUIUnitStatus", "Update",
-	function(self, deltaTime)
-		CHUDHint = true
-		oldUnitStatusUpdate( self, deltaTime )
-		CHUDHint = false
-	end)
+	GUIUnitStatus.kUseColoredWrench = CHUDGetOption("wrenchicon") == 1
+
+end
+
+local oldUnitStatusUpdate = GUIUnitStatus.Update
+function GUIUnitStatus:Update(deltaTime)
+	CHUDHint = true
+	oldUnitStatusUpdate( self, deltaTime )
+	CHUDHint = false
+end
 
 local function isValidSpectatorMode()
 	local player = Client.GetLocalPlayer()
@@ -118,19 +114,18 @@ local function isValidSpectatorMode()
 end
 
 local lastDown = false
-local originalUnitStatusSKE
-originalUnitStatusSKE = Class_ReplaceMethod("GUIUnitStatus", "SendKeyEvent",
-	function(self, key, down)
-		local ret = originalUnitStatusSKE(self, key, down)
-		local player = Client.GetLocalPlayer()
-		if player and not ret and isValidSpectatorMode() and GetIsBinding(key, "Use") and lastDown ~= down then
-			lastDown = down
-			if not down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
-				isEnabled = not isEnabled
-				Client.SetOptionBoolean("CHUD_SpectatorHPUnitStatus", isEnabled)
-				return true
-			end
+local originalUnitStatusSKE = GUIUnitStatus.SendKeyEvent
+function GUIUnitStatus:SendKeyEvent(key, down)
+	local ret = originalUnitStatusSKE(self, key, down)
+	local player = Client.GetLocalPlayer()
+	if player and not ret and isValidSpectatorMode() and GetIsBinding(key, "Use") and lastDown ~= down then
+		lastDown = down
+		if not down and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() then
+			isEnabled = not isEnabled
+			Client.SetOptionBoolean("CHUD_SpectatorHPUnitStatus", isEnabled)
+			return true
 		end
-		
-		return ret
-	end)
+	end
+
+	return ret
+end

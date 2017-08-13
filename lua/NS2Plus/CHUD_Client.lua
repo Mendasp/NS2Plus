@@ -20,9 +20,6 @@ Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_GorgeSpit.lua")
 
-GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
-GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
-
 trollModes = {}
 
 local originalGUIScale = GUIScale
@@ -66,7 +63,10 @@ Event.Hook("Console_ironhorsemode", ToggleIron)
 
 local function OnLoadComplete()
 	GetCHUDSettings()
-	Script.Load("lua/NS2Plus/CHUD_GUIScripts.lua")
+
+	GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
+	GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
+
 	Shared.Message("NS2+ v" .. kCHUDVersion .. " loaded (NS2 Build " .. Shared.GetBuildNumber() .. "). Type \"plus\" in console for available commands. You can also customize your game from the options menu.")
 end
 
