@@ -6,9 +6,28 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
-- XX/XX/2XXX
-	- Added reload indicators around the crosshair. Also displays ability cooldowns for aliens.
+- XX/08/2017
+	- Refactored the way GUI modifications are loaded to fix and avoid load order issues with new ns2 updates.
+	- Fixed the critical performance issues caused by various GUI modifications.
+	- Removed the death message icon scaling option because it wasn't working in all situations.
+	- Removed the remote config trolling system.
+	- Removed the remote config badge system.
+	- Updated or removed all outdated web references.
+	- Added reload indicators around the crosshair. Also displays ability cool downs for aliens.
 	- Made exo overheat UI display proper values to show when we are able to fire again.
+	- Added a new option to completely disable the hive status UI.
+    - The existing minimal GUI option now removes some background elements from the hive status UI.
+    - Added research times to overhead view tech tool tips
+      
+- 26/05/2017
+    - Fixed compatibility issues with the new ns2 help screen	
+
+- 05/03/2017
+    - Removed the wc badges as those are part of vanilla ns2 now
+    - Refactored the way the gamemode is set in the serverbrowser to avoid conflicts with future ns2 updates
+	
+- 09/02/2017
+    - Improved the stats tracking to work better with recent ns2 changes.
 
 - 28/09/2016
 	- Fixed Server Browser ranked filter not working correctly
@@ -376,4 +395,4 @@ Past NS2+ fixes now included in vanilla NS2:
 - [265] Fixed inactive/unbuilt structures not blinking red when under attack.
 - [265] Fixed alien structures not blinking red when uncysted.
 
-Copyright 2016 - Unknown Worlds Entertainment. All rights reserved.
+Copyright 2017 - Unknown Worlds Entertainment. All rights reserved.
