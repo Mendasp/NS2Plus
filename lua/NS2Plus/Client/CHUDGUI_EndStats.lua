@@ -15,8 +15,6 @@ local screenHeight = Client.GetScreenHeight()
 local aspectRatio = screenWidth/screenHeight
 
 local kSteamProfileURL = "http://steamcommunity.com/profiles/"
-local kHiveProfileURL = "http://hive.naturalselection2.com/profile/"
-local kNS2StatsProfileURL = "http://ns2stats.com/player/ns2id/"
 
 -- To avoid printing 200.00 or things like that
 local function printNum(number)
@@ -2729,12 +2727,6 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				local function openSteamProf()
 					Client.ShowWebpage(string.format("%s[U:1:%s]", kSteamProfileURL, self.lastRow.steamId))
 				end
-				local function openHiveProf()
-					Client.ShowWebpage(string.format("%s%s", kHiveProfileURL, self.lastRow.steamId))
-				end
-				local function openNS2StatsProf()
-					Client.ShowWebpage(string.format("%s%s", kNS2StatsProfileURL, self.lastRow.steamId))
-				end
 				
 				self.hoverMenu:ResetButtons()
 				
@@ -2754,8 +2746,6 @@ function CHUDGUI_EndStats:SendKeyEvent(key, down)
 				end
 				self.hoverMenu:AddButton(name, nameBgColor, nameBgColor, textColor)
 				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_STEAM_PROFILE"), teamColorBg, teamColorHighlight, textColor, openSteamProf)
-				self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_HIVE_PROFILE"), teamColorBg, teamColorHighlight, textColor, openHiveProf)
-				--self.hoverMenu:AddButton("NS2Stats profile", teamColorBg, teamColorHighlight, textColor, openNS2StatsProf, found)
 				
 				StartSoundEffect(kButtonClickSound)
 				self.hoverMenu:Show()

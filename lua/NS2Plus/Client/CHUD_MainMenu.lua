@@ -291,7 +291,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	local changelogButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
 	changelogButton:SetCSSClass("chud_changelog")
 	changelogButton:SetText("CHANGELOG")
-	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/135458820"
+	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/860455634"
 	changelogButton:AddEventCallbacks( { OnClick = function() Client.ShowWebpage(kChangeURL) end } )
 	
 	self.warningLabel = CreateMenuElement(self.CHUDOptionWindow, "MenuButton", false)
