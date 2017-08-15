@@ -6,10 +6,6 @@ CHUDStatsVisible = false
 
 local gStatsUI
 
-local screenWidth = Client.GetScreenWidth()
-local screenHeight = Client.GetScreenHeight()
-local aspectRatio = screenWidth/screenHeight
-
 local statsTable = nil
 
 -- To avoid printing 200.00 or things like that
@@ -27,10 +23,10 @@ end
 
 local kTitleFontName = Fonts.kAgencyFB_Medium
 local kRowFontName = Fonts.kArial_17
-local kRowBorderSize
+local kRowSize, kTableContainerOffset, kRowBorderSize
 local kTitleSize
 local scaledVector
-local kTopOffset
+local kRowPlayerNameOffset, kTopOffset
 local kTextShadowOffset
 
 local kHeaderTexture = PrecacheAsset("ui/statsheader.dds")
@@ -43,7 +39,7 @@ local kAlienStatsColor = Color(0.84, 0.48, 0.17, 0.8)
 local kStatsEvenColor = Color(0, 0, 0, 0.9)
 local kStatsOddColor = Color(0, 0, 0, 0.8)
 
-local function UpdateSizeOfUI(self, screenWidth, screenHeight)
+function CHUDGUI_DeathStats:UpdateSizeOfUI()
 	kTitleSize = Vector(GUILinearScale(250), GUILinearScale(50), 0)
 	scaledVector = GUILinearScale(Vector(1,1,1))
 	kTopOffset = GUILinearScale(64)
@@ -56,10 +52,6 @@ local function UpdateSizeOfUI(self, screenWidth, screenHeight)
 end
 
 function CHUDGUI_DeathStats:OnResolutionChanged(oldX, oldY, newX, newY)
-	screenWidth = newX
-	screenHeight = newY
-	aspectRatio = screenWidth/screenHeight
-	
 	self:Uninitialize()
 	self:Initialize()
 end
@@ -67,8 +59,8 @@ end
 function CHUDGUI_DeathStats:Initialize()
 
 	GUIAnimatedScript.Initialize(self)
-	
-	UpdateSizeOfUI(self, screenWidth, screenHeight)
+
+	self:UpdateSizeOfUI(self)
 	
 	self.titleBackground = self:CreateAnimatedGraphicItem()
 	self.titleBackground:SetTexture(kHeaderTexture)

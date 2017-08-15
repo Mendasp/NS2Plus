@@ -1,6 +1,6 @@
 local function CHUDRestartScripts(scripts)
 
-	for _, currentScript in pairs(scripts) do
+	for _, currentScript in ipairs(scripts) do
 		local script = ClientUI.GetScript(currentScript)
 		if script then
 			script:Uninitialize()
@@ -603,22 +603,6 @@ CHUDOptions =
 					CHUDRestartScripts({ "GUIDeathMessages" })
 				end,
 				sort = "A04",
-			},
-			killfeediconscale = {
-				name = "CHUD_KillFeedIconScale",
-				label = "Killfeed icon scale",
-				tooltip = "Lets you scale the size of the icons in the killfeed.",
-				type = "slider",
-				defaultValue = 1,
-				minValue = 1,
-				maxValue = 2,
-				multiplier = 100,
-				category = "hud",
-				valueType = "float",
-				applyFunction = function()
-					CHUDRestartScripts({ "GUIDeathMessages" })
-				end,
-				sort = "A05",
 			},
 			nameplates = {
 				name = "CHUD_Nameplates",

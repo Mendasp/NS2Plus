@@ -171,77 +171,41 @@ local function BoolToIndex(value)
 	return 1
 end
 
-originalCreateMainLinks = Class_ReplaceMethod( "GUIMainMenu", "CreateMainLinks", function(self)
-		mainMenu = self
-		local OnClick = function(self)
-			if not self.scriptHandle.CHUDOptionWindow then
-				self.scriptHandle:CreateCHUDOptionWindow()
-			end
-			self.scriptHandle:TriggerOpenAnimation(self.scriptHandle.CHUDOptionWindow)
-			self.scriptHandle:HideMenu()
+local originalCreateMainLinks = GUIMainMenu.CreateMainLinks
+function GUIMainMenu:CreateMainLinks()
+	mainMenu = self
+	local OnClick = function(self)
+		if not self.scriptHandle.CHUDOptionWindow then
+			self.scriptHandle:CreateCHUDOptionWindow()
 		end
-		self:AddMainLink( "NS2+ OPTIONS", 6, OnClick, 3)
-		originalCreateMainLinks(self)
-		
-		for i, menuLink in pairs(self.Links) do
-			
-			local playRoomOffset = MainMenu_IsInGame() and 0 or 1
-			if menuLink:isa("BigLink") then
-				playRoomOffset = 0
-			end
-			
-			menuLink:SetTopOffset(50+70*(i-1 + playRoomOffset))
-			
-			-- Some links have glowing effects applied.  Ensure we move them upwards too.
-			if menuLink.mainLinkGlow then
-				menuLink.mainLinkGlow:SetTopOffset(40+70*(i-1 + playRoomOffset))
-			end
-			if menuLink.mainLinkAlertTextGlow then
-				menuLink.mainLinkAlertTextGlow:SetTopOffset(40+70*(i-1 + playRoomOffset))
-			end
-			if menuLink.mainLinkAlertText then
-				menuLink.mainLinkAlertText:SetTextPaddingTop(3)
-			end
-		end
-		
-		self.profileBackground:SetTopOffset(-70)
-	end)
+		self.scriptHandle:TriggerOpenAnimation(self.scriptHandle.CHUDOptionWindow)
+		self.scriptHandle:HideMenu()
+	end
+	self:AddMainLink( "NS2+ OPTIONS", 6, OnClick, 3)
+
+	originalCreateMainLinks(self)
+end
 	
-originalMainMenuResChange = Class_ReplaceMethod( "GUIMainMenu", "OnResolutionChanged",
-	function(self, oldX, oldY, newX, newY)
-		originalMainMenuResChange(self, oldX, oldY, newX, newY)
-		for i, menuLink in pairs(self.Links) do
-			menuLink:SetTopOffset(50+70*(i-1))
-			
-			-- Some links have glowing effects applied.  Ensure we move them upwards too.
-			if menuLink.mainLinkGlow then
-				menuLink.mainLinkGlow:SetTopOffset(40+70*(i-1))
-			end
-			if menuLink.mainLinkAlertTextGlow then
-				menuLink.mainLinkAlertTextGlow:SetTopOffset(40+70*(i-1))
-			end
-			if menuLink.mainLinkAlertText then
-				menuLink.mainLinkAlertText:SetTextPaddingTop(3)
-			end
-		end
-		
-		self.profileBackground:SetTopOffset(-70)
-		
-		if CHUDGetOption("mingui") then
-			mainMenu.mainWindow:SetBackgroundTexture("ui/transparent.dds")
-		else
-			mainMenu.mainWindow:SetBackgroundTexture("ui/menu/grid.dds")
-			mainMenu.mainWindow:SetBackgroundRepeat(true)
-		end
-		CHUDResortForm()
-	end)
+local originalMainMenuResChange = GUIMainMenu.OnResolutionChanged
+function GUIMainMenu:OnResolutionChanged(oldX, oldY, newX, newY)
+	originalMainMenuResChange(self, oldX, oldY, newX, newY)
+
+	self.profileBackground:SetTopOffset(-70)
+
+	if CHUDGetOption("mingui") then
+		self.mainWindow:SetBackgroundTexture("ui/transparent.dds")
+	else
+		self.mainWindow:SetBackgroundTexture("ui/menu/grid.dds")
+		self.mainWindow:SetBackgroundRepeat(true)
+	end
+	CHUDResortForm()
+end
 
 Client.PrecacheLocalSound("sound/chud.fev/CHUD/open_menu")
 	
 function MainMenu_OnOpenMenu()
 	StartSoundEffect("sound/chud.fev/CHUD/open_menu")
 	mainMenu.tvGlareImage:SetIsVisible(not MainMenu_IsInGame())
-	mainMenu.scanLine:SetIsVisible(not CHUDGetOption("mingui"))
 	
 	if CHUDGetOption("mingui") then
 		mainMenu.mainWindow:SetBackgroundTexture("ui/transparent.dds")
@@ -327,7 +291,7 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	local changelogButton = CreateMenuElement( self.CHUDOptionWindow, "MenuButton" )
 	changelogButton:SetCSSClass("chud_changelog")
 	changelogButton:SetText("CHANGELOG")
-	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/135458820"
+	local kChangeURL = "http://steamcommunity.com/sharedfiles/filedetails/changelog/860455634"
 	changelogButton:AddEventCallbacks( { OnClick = function() Client.ShowWebpage(kChangeURL) end } )
 	
 	self.warningLabel = CreateMenuElement(self.CHUDOptionWindow, "MenuButton", false)

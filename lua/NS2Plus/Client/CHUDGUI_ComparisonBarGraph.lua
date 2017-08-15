@@ -1,11 +1,11 @@
-// ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
-//
-// lua\graphs\CHUDGUI_ComparisonBarGraph.lua
-//
-// Created by: Jon Hughes (jon@jhuze.com)
-//
-//
-// ========= For more information, visit us at http://www.unknownworlds.com =====================
+-- ======= Copyright (c) 2003-2011, Unknown Worlds Entertainment, Inc. All rights reserved. =======
+--
+-- lua\graphs\CHUDGUI_ComparisonBarGraph.lua
+--
+-- Created by: Jon Hughes (jon@jhuze.com)
+--
+--
+-- ========= For more information, visit us at http://www.unknownworlds.com =====================
 
 class 'CHUDGUI_ComparisonBarGraph'
 

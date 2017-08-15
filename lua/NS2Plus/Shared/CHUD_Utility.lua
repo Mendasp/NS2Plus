@@ -26,7 +26,7 @@ function CHUDWrapTextIntoTable( str, limit, indent, indent1 )
 		function( sp, st, word, fi )
 			if fi-here > limit then
 				here = st - #indent
-				//Print(indent..word)
+				--Print(indent..word)
 				return "\n"..indent..word
 			end
 		end )
@@ -56,7 +56,7 @@ if Server then
 		
 		if client then
 		
-			// First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
+			-- First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
 			local messageList = CHUDWrapTextIntoTable(message, kMaxPrintLength)
 			
 			for m = 1, #messageList do

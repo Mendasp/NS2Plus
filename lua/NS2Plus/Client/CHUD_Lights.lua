@@ -56,7 +56,7 @@ local function LoadLightData(filename)
 	return LoadData
 end
 
-// Save the low lights group to a json file
+-- Save the low lights group to a json file
 local function OnCommandSaveLights()
 	if Client and Shared.GetCheatsEnabled() and #Client.lowLightList > 0 then
 		local filename = Shared.GetMapName()
@@ -64,7 +64,7 @@ local function OnCommandSaveLights()
 		lightsFile:write("[")
 		for i, object in ipairs(Client.lowLightList) do
 			object.values = UpdateValuesForObject(object.values, false)
-			// Disable casting shadows for all lights (can't really do this efficiently in the editor)
+			-- Disable casting shadows for all lights (can't really do this efficiently in the editor)
 			if object.values.casts_shadows then
 				object.values.casts_shadows = false
 			end
@@ -79,9 +79,9 @@ local function OnCommandSaveLights()
 	end
 end
 
-// I don't remember how I got to make this function look like this
-// Fragile, do not touch
-// Rewrite, actually
+-- I don't remember how I got to make this function look like this
+-- Fragile, do not touch
+-- Rewrite, actually
 function CHUDLoadLights()
 	if not lowLightsSwitched then
 	

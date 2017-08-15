@@ -24,14 +24,14 @@ function HiveVisionExtra_Shutdown()
 	HiveVisionExtra_screenEffect = nil
 end
 
-/** Enables or disabls the hive vision effect. When the effect is not needed it should 
- * be disabled to boost performance. */
+-- Enables or disabls the hive vision effect. When the effect is not needed it should
+-- be disabled to boost performance.
 function HiveVisionExtra_SetEnabled(enabled)
 	HiveVisionExtra_camera:SetIsVisible(enabled and _enabled)
 	HiveVisionExtra_screenEffect:SetActive(enabled and _enabled) 
 end
 
-/** Must be called prior to rendering */
+-- Must be called prior to rendering
 function HiveVisionExtra_SyncCamera(camera, forCommander)
 	local distance = ConditionalValue(forCommander, _maxDistance_Commander, _maxDistance)
 
@@ -42,7 +42,7 @@ function HiveVisionExtra_SyncCamera(camera, forCommander)
 	HiveVisionExtra_screenEffect:SetParameter("maxDistance", distance)
 end
 
-/** Adds a model to the hive vision */
+-- Adds a model to the hive vision
 function HiveVisionExtra_AddModel(model)
 
 	local renderMask = model:GetRenderMask()
@@ -50,7 +50,7 @@ function HiveVisionExtra_AddModel(model)
 
 end
 
-/** Removes a model from the hive vision */
+-- Removes a model from the hive vision
 function HiveVisionExtra_RemoveModel(model)
 
 	local renderMask = model:GetRenderMask()
@@ -64,7 +64,7 @@ end
 
 function UpdateCHUDOutlines()
 	local player = Client.GetLocalPlayer()
-	// If we have a player, use them to setup the camera. 
+	-- If we have a player, use them to setup the camera.
 	if player ~= nil then
 		local outlinePlayers = Client.GetOutlinePlayers() and Client.GetLocalClientTeamNumber() == kSpectatorIndex
 

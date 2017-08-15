@@ -8,7 +8,7 @@ originalMarineUpdateRender = Class_ReplaceMethod( "Marine", "OnUpdateRender",
 		
 		if self.flashlightOn then
 				
-			// Only display atmospherics for third person players.
+			-- Only display atmospherics for third person players.
 			local density = CHUDGetOption("flashatmos")*0.2
 			if isLocal and not self:GetIsThirdPerson() then
 				density = 0
@@ -30,7 +30,7 @@ originalExoUpdateRender = Class_ReplaceMethod( "Exo", "OnUpdateRender",
 		
 		if self.flashlightOn then
 				
-			// Only display atmospherics for third person players.
+			-- Only display atmospherics for third person players.
 			local density = CHUDGetOption("flashatmos")*0.2
 			if isLocal and not self:GetIsThirdPerson() then
 				density = 0
