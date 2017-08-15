@@ -1,6 +1,6 @@
 local function CHUDRestartScripts(scripts)
 
-	for _, currentScript in pairs(scripts) do
+	for _, currentScript in ipairs(scripts) do
 		local script = ClientUI.GetScript(currentScript)
 		if script then
 			script:Uninitialize()

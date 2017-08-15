@@ -20,7 +20,7 @@ Shared.Message("------[NS2+ Server Settings]------")
 
 if #CHUDClientOptions > 0 then
 	local blockedString = ""
-	for _, option in pairs(CHUDClientOptions) do
+	for _, option in ipairs(CHUDClientOptions) do
 		if blockedString ~= "" then
 			blockedString = blockedString .. ", " .. option
 		else
