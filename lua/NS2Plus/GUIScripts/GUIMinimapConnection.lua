@@ -2,7 +2,7 @@ local kLineTextureCoord = {0, 0, 64, 16}
 local kLineTexture = "ui/mapconnector_line.dds"
 local kDashedLineTexture = PrecacheAsset("ui/chud_mapconnector_dashed.dds")
 
-function GUIMinimapConnection:UpdateAnimation()
+function GUIMinimapConnection:UpdateAnimation(teamNumber, modeIsMini)
 	local pglines = CHUDGetOption("pglines")
 
 	local animatedArrows = not modeIsMini and teamNumber == kTeam1Index and #GetEntitiesForTeam("MapConnector", kTeam1Index) > 2
