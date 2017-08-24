@@ -1,11 +1,9 @@
-local kNS2StatsProfileURL = "http://ns2stats.com/player/ns2id/"
 local kNSLUserURL = "http://www.ensl.org/users/"
 local kNSLTeamURL = "http://www.ensl.org/teams/"
 local team1Skill, team2Skill, textHeight, teamItemWidth
 
-local originalScoreboardUpdateTeam
-originalScoreboardUpdateTeam = Class_ReplaceMethod( "GUIScoreboard", "UpdateTeam",
-function(self, updateTeam)
+local originalScoreboardUpdateTeam = GUIScoreboard.UpdateTeam
+function GUIScoreboard:UpdateTeam(updateTeam)
 	originalScoreboardUpdateTeam(self, updateTeam)
 	
 	local teamGUIItem = updateTeam["GUIs"]["Background"]
@@ -14,17 +12,17 @@ function(self, updateTeam)
 	local playerList = updateTeam["PlayerList"]
 	
 	local teamAvgSkill = 0
-	local numPlayers = table.count(teamScores)
+	local numPlayers = #teamScores
 	
 	-- Resize the player list if it doesn't match.
-	if table.count(playerList) ~= numPlayers then
+	if #playerList ~= numPlayers then
 		self:ResizePlayerList(playerList, numPlayers, teamGUIItem)
 	end
 	
 	-- Recount the players so we can exclude bots
 	numPlayers = 0
 	local currentPlayerIndex = 1
-	for index, player in pairs(playerList) do
+	for index, player in ipairs(playerList) do
 		local playerRecord = teamScores[currentPlayerIndex]
 		currentPlayerIndex = currentPlayerIndex + 1
 		local clientIndex = playerRecord.ClientIndex
@@ -56,11 +54,10 @@ function(self, updateTeam)
 			team2Skill = skill
 		end
 	end
-end)
+end
 
-local originalScoreboardInit
-originalScoreboardInit = Class_ReplaceMethod( "GUIScoreboard", "Initialize",
-function(self)
+local originalScoreboardInit = GUIScoreboard.Initialize
+function GUIScoreboard:Initialize()
 	originalScoreboardInit(self)
 	
 	self.avgSkillItemBg = GUIManager:CreateGraphicItem()
@@ -105,11 +102,10 @@ function(self)
 	
 	self.avgSkillItemBg:SetSize(Vector(teamItemWidth, textHeight+5*GUIScoreboard.kScalingFactor, 0))
 	self.avgSkillItem2Bg:SetSize(Vector(teamItemWidth, textHeight+5*GUIScoreboard.kScalingFactor, 0))
-end)
+end
 
-local originalScoreboardUpdate
-originalScoreboardUpdate = Class_ReplaceMethod( "GUIScoreboard", "Update",
-function(self, deltaTime)
+local originalScoreboardUpdate = GUIScoreboard.Update
+function GUIScoreboard:Update(deltaTime)
 	
 	originalScoreboardUpdate(self, deltaTime)
 	
@@ -201,13 +197,12 @@ function(self, deltaTime)
 			end
 		end
 	end
-end)
+end
 
 -- Only add this if the NSL mod is running
 if GetNSLMode then
-	local originalScoreboardSKE
-	originalScoreboardSKE = Class_ReplaceMethod( "GUIScoreboard", "SendKeyEvent",
-	function(self, key, down)
+	local originalScoreboardSKE = GUIScoreboard.SendKeyEvent
+	function GUIScoreboard:SendKeyEvent(key, down)
 		local ret = originalScoreboardSKE(self, key, down)
 		
 		if GetIsBinding(key, "Scoreboard") and not down then
@@ -280,7 +275,7 @@ if GetNSLMode then
 		end
 		
 		return ret
-	end)
+	end
 end
 
 local originalLocaleResolveString = Locale.ResolveString

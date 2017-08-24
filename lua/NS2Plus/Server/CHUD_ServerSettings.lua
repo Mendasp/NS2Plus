@@ -159,7 +159,7 @@ local function CHUDServerHelp(...)
 	local client = args[1]
 	
 	if #args == 1 then
-		// Show the options in alphabetical order
+		-- Show the options in alphabetical order
 		local SortedOptions = { }
 		for idx, option in pairs(CHUDServerOptions) do
 			table.insert(SortedOptions, idx)
@@ -208,7 +208,7 @@ local function CHUDServerSetting(...)
 	local client = args[1]
 	
 	for idx, arg in pairs(args) do
-		// First parameter is the client that ran the cmd
+		-- First parameter is the client that ran the cmd
 		if idx > 1 then
 			args[idx] = string.lower(arg)
 		end
@@ -247,7 +247,7 @@ WriteDefaultConfigFile(configFileName, defaultCHUDConfig)
 local config = LoadConfigFile(configFileName) or defaultCHUDConfig
 
 for option, value in pairs(config) do
-	// Make sure the option exists in our table
+	-- Make sure the option exists in our table
 	if CHUDServerOptions[option] then
 		CHUDServerOptions[option].currentValue = value
 		local setValue = CHUDSetServerOption(option, value)
@@ -257,7 +257,7 @@ for option, value in pairs(config) do
 	end
 end
 
-// Add blocked options to a table so when clients connect we can send them a command to do so
+-- Add blocked options to a table so when clients connect we can send them a command to do so
 for index, option in pairs(CHUDServerOptions) do
 	if option.currentValue == nil then
 		CHUDSetServerOption(index, CHUDServerOptions[index].defaultValue)
@@ -268,7 +268,7 @@ for index, option in pairs(CHUDServerOptions) do
 		local option = string.sub(index, pos+1)
 		table.insert(CHUDClientOptions, option)
 		
-		// Add server tags for disabled features
+		-- Add server tags for disabled features
 		AddCHUDTagBitmask(CHUDTagBitmask[option])
 	end
 end

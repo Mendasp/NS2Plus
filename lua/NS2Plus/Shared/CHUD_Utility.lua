@@ -26,7 +26,7 @@ function CHUDWrapTextIntoTable( str, limit, indent, indent1 )
 		function( sp, st, word, fi )
 			if fi-here > limit then
 				here = st - #indent
-				//Print(indent..word)
+				--Print(indent..word)
 				return "\n"..indent..word
 			end
 		end )
@@ -56,7 +56,7 @@ if Server then
 		
 		if client then
 		
-			// First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
+			-- First we must split up the message into a list of messages no bigger than kMaxPrintLength each.
 			local messageList = CHUDWrapTextIntoTable(message, kMaxPrintLength)
 			
 			for m = 1, #messageList do
@@ -266,7 +266,7 @@ if Client then
 		local hiddenviewmodelScript = "NS2Plus/Client/CHUDGUI_HiddenViewmodel"
 		if not player:isa("Commander") then
 			if teamNumber == kTeam1Index then
-				if CHUDGetOption("classicammo") or (player:isa("Exo") and isViewModelHidden) then
+				if CHUDGetOption("classicammo") then
 					GetGUIManager():CreateGUIScriptSingle(classicammoScript)
 					classicammo = true
 				end
@@ -275,13 +275,19 @@ if Client then
 					GetGUIManager():CreateGUIScriptSingle(hudbarsScript)
 					customhud = true
 				end
+				
+				if player:isa("Exo") then
+					if isViewModelHidden then
+						hiddenviewmodel = true
+					end
+				end
 			elseif teamNumber == kTeam2Index then
 				if CHUDGetOption("hudbars_a") > 0 then
 					GetGUIManager():CreateGUIScriptSingle(hudbarsScript)
 					customhud = true
 				end
+				
 				if isViewModelHidden then
-					GetGUIManager():CreateGUIScriptSingle(hiddenviewmodelScript)
 					hiddenviewmodel = true
 				end
 			end
@@ -293,8 +299,11 @@ if Client then
 		if GetGUIManager():GetGUIScriptSingle(hudbarsScript) and not customhud then
 			GetGUIManager():DestroyGUIScriptSingle(hudbarsScript)
 		end
-		if GetGUIManager():GetGUIScriptSingle(hiddenviewmodelScript) and not hiddenviewmodel then
+		if GetGUIManager():GetGUIScriptSingle(hiddenviewmodelScript) then
 			GetGUIManager():DestroyGUIScriptSingle(hiddenviewmodelScript)
+		end
+		if hiddenviewmodel then
+			GetGUIManager():CreateGUIScriptSingle(hiddenviewmodelScript)
 		end
 	end
 	

@@ -20,54 +20,7 @@ Script.Load("lua/NS2Plus/Client/CHUD_TeamMessenger.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_MinimapMoveMixin.lua")
 Script.Load("lua/NS2Plus/Client/CHUD_GorgeSpit.lua")
 
-trollModeVictims = {}
 trollModes = {}
-local localTesting = false
-local processing = false
-local retries = 0
-local function SaveTrollModesTable(response)
-	if response then
-		local responseTable = json.decode(response)
-		if responseTable then
-			trollModeVictims = responseTable
-		end
-	end
-	
-	-- For local testing
-	if localTesting then
-		local openedFile = io.open("configs/ns2plus.json", "r")
-		if openedFile then
-			local parsedFile = openedFile:read("*all")
-			io.close(openedFile)
-			
-			if parsedFile then
-				trollModeVictims = json.decode(parsedFile)
-			end
-		end
-	end
-	
-	if type(trollModeVictims) == "table" and trollModeVictims["finishedLoading"] then
-		for mode, victims in pairs(trollModeVictims) do
-			if type(victims) == "table" then
-				if not trollModes[mode] then
-					trollModes[mode] = false
-				end
-				if victims and type(victims) == "table" and #victims > 0 then
-					for _, entry in pairs(victims) do
-						if Client.GetSteamId() == entry then
-							trollModes[mode] = true
-						end
-					end
-				end
-			end
-		end
-	elseif retries < 5 then
-		retries = retries + 1
-		processing = false
-	end
-end
-
-local kTrollModesURL = "https://raw.githubusercontent.com/Mendasp/NS2Plus/master/configs/ns2plus.json"
 
 local originalGUIScale = GUIScale
 function GUIScale(size)
@@ -75,7 +28,7 @@ function GUIScale(size)
 		local scale = CHUDGetOption("uiscale") or 1
 		return originalGUIScale(size*scale)
 	elseif trollModes["masterresMode"] then
-		//return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
+		--return originalGUIScale(size*(1+PlayerUI_GetGameLengthTime()/60))
 		return originalGUIScale(size)
 	elseif CHUDGetOption("brokenscaling") then
 		local screenWidth = Client.GetScreenWidth()
@@ -110,7 +63,10 @@ Event.Hook("Console_ironhorsemode", ToggleIron)
 
 local function OnLoadComplete()
 	GetCHUDSettings()
-	Script.Load("lua/NS2Plus/CHUD_GUIScripts.lua")
+
+	GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_DeathStats")
+	GetGUIManager():CreateGUIScript("NS2Plus/Client/CHUDGUI_EndStats")
+
 	Shared.Message("NS2+ v" .. kCHUDVersion .. " loaded (NS2 Build " .. Shared.GetBuildNumber() .. "). Type \"plus\" in console for available commands. You can also customize your game from the options menu.")
 end
 
@@ -126,11 +82,6 @@ local function OnUpdateClient()
 		CHUDApplyTeamSpecificStuff()
 		lastTeam = Client.GetLocalPlayer():GetTeamNumber()
 	end
-	
-	if processing == false then
-		Shared.SendHTTPRequest(kTrollModesURL, "GET", SaveTrollModesTable)
-		processing = true
-	end
 end
 
 Event.Hook("UpdateClient", OnUpdateClient)
@@ -139,10 +90,10 @@ Event.Hook("LocalPlayerChanged", OnLocalPlayerChanged)
 
 function Client.AddWorldMessage(messageType, message, position, entityId)
 
-	// Only add damage messages if we have it enabled
+	-- Only add damage messages if we have it enabled
 	if messageType ~= kWorldTextMessageType.Damage or Client.GetOptionBoolean( "drawDamage", true ) then
 
-		// If we already have a message for this entity id, update existing message instead of adding new one
+		-- If we already have a message for this entity id, update existing message instead of adding new one
 		local time = Client.GetTime()
 			
 		local updatedExisting = false

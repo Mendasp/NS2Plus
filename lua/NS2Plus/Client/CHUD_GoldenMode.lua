@@ -1,33 +1,6 @@
 local isPlaying = false
 local globeModel, originalSKE, lastDown
 
-/*Client.PrecacheLocalSound("sound/mlg.fev/mlg/sanic")
-originalSKE = Class_ReplaceMethod("GUIManager", "SendKeyEvent",
-function(self, key, down, amount)
-	local ret = originalSKE(self, key, down, amount)
-	
-	if GetIsBinding(key, "MovementModifier") then
-		if lastDown ~= down then
-			lastDown = down
-			
-			if trollModes["goldenMode"] and down == true then
-				if down == true and not isPlaying then
-					StartSoundEffect("sound/mlg.fev/mlg/sanic")
-				else
-					Shared.StopSound(nil, "sound/mlg.fev/mlg/sanic")
-				end
-				isPlaying = not isPlaying
-			end
-		end
-	end
-	
-	if not trollModes["goldenMode"] and isPlaying then
-		Shared.StopSound(nil, "sound/mlg.fev/mlg/sanic")
-	end
-	
-	return ret
-end)*/
-
 local function GoldenMode()
 	if trollModes["goldenMode"] then
 	
