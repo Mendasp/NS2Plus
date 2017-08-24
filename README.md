@@ -6,7 +6,7 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
-- XX/08/2017
+- 24/08/2017
 	- Refactored the way GUI modifications are loaded to fix and avoid load order issues with new ns2 updates.
 	- Fixed the critical performance issues caused by various GUI modifications.
 	- Removed the death message icon scaling option because it wasn't working in all situations.
