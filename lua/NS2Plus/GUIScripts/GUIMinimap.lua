@@ -69,27 +69,6 @@ function GUIMinimap:Initialize()
 	self:InitializeLocationNames()
 end
 
-local applyFriends = false --switch to set if we override Client.GetIsSteamFriend or not
-local oldPlayerUI_GetStaticMapBlips = PlayerUI_GetStaticMapBlips
-function PlayerUI_GetStaticMapBlips()
-	applyFriends = true
-	local blipData = oldPlayerUI_GetStaticMapBlips()
-	applyFriends = false
-	
-	return blipData
-end
-
-local oldClient_GetIsSteamFriend = Client.GetIsSteamFriend
-function Client.GetIsSteamFriend(steamId)	
-	local friends = not applyFriends or CHUDGetOption("friends")
-	
-	if friends then
-		return oldClient_GetIsSteamFriend(steamId)
-	else
-		return false
-	end	
-end
-
 local originalMinimapOnResChanged = GUIMinimap.OnResolutionChanged
 function GUIMinimap:OnResolutionChanged(oldX, oldY, newX, newY)
 	originalMinimapOnResChanged(self, oldX, oldY, newX, newY)
@@ -136,59 +115,6 @@ function Commander:OnDestroy()
 	self.gameTime = nil
 	gameTime = nil
 	originalCommanderOnDestroy(self)
-end
-
-local marinePlayers = set {
-	kMinimapBlipType.Marine, kMinimapBlipType.JetpackMarine, kMinimapBlipType.Exo
-}
-local alienPlayers = set {
-	kMinimapBlipType.Skulk, kMinimapBlipType.Gorge, kMinimapBlipType.Lerk, kMinimapBlipType.Fade, kMinimapBlipType.Onos 
-}
-
-local mapElements = set {
-	kMinimapBlipType.TechPoint, kMinimapBlipType.ResourcePoint
-}
-
-local originalMapBlipGetMapBlipColor = MapBlip.GetMapBlipColor
-function MapBlip:GetMapBlipColor(minimap, item)
-	local returnColor = originalMapBlipGetMapBlipColor(self, minimap, item)
-	
-	local player = Client.GetLocalPlayer()
-	local highlight = CHUDGetOption("commhighlight")
-	local highlightColor = ColorIntToColor(CHUDGetOption("commhighlightcolor"))
-	local blipTeam = self:GetMapBlipTeam(minimap)
-	local teamVisible = self.OnSameMinimapBlipTeam(minimap.playerTeam, blipTeam) or minimap.spectating
-	local isHighlighted = false
-	
-	if marinePlayers[self.mapBlipType] then
-		returnColor = ColorIntToColor(CHUDGetOption("playercolor_m"))
-	elseif alienPlayers[self.mapBlipType] and not (teamVisible and self.isHallucination) then
-		returnColor = ColorIntToColor(CHUDGetOption("playercolor_a"))
-	elseif mapElements[self.mapBlipType] then
-		returnColor = ColorIntToColor(CHUDGetOption("mapelementscolor"))
-	elseif player and player:GetIsCommander() and highlight and EnumToString(kTechId, player:GetGhostModelTechId()) == EnumToString(kMinimapBlipType, self.mapBlipType) then
-		returnColor = highlightColor
-		isHighlighted = true
-	end
-	
-	if not self.isHallucination then
-		if teamVisible then
-			if self.isInCombat then
-				if self.MinimapBlipTeamIsActive(blipTeam) then
-					if isHighlighted then
-						local percentage = (math.cos(Shared.GetTime() * 10) + 1) * 0.5
-						returnColor = LerpColor(kRed, highlightColor, percentage)
-					else
-						returnColor = self.PulseRed(1.0)
-					end
-				else
-					returnColor = self.PulseDarkRed(returnColor)
-				end
-			end
-		end
-	end
-	
-	return returnColor
 end
 
 local originalMinimapUpdate = GUIMinimap.Update
