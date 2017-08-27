@@ -12,6 +12,7 @@ function CHUDGetOverheatFraction()
 	return math.min(overheatLeftFraction, 1), math.min(overheatRightFraction, 1)
 end
 
+--Todo: Clean this up to work with less locals
 local insertNum
 local lastSeq
 local initialFraction
@@ -46,6 +47,7 @@ originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRend
 							if seqName == "reload_start" then
 								insertNum = weapon:GetClip()
 							elseif seqName == "reload_insert" then
+								insertNum = insertNum or weapon:GetClip()
 								insertNum = insertNum + 1
 								initialFraction = insertNum/weapon:GetClipSize()
 							end
