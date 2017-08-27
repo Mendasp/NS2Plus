@@ -55,7 +55,10 @@ function GUIMinimap:UpdateCHUDCommSettings()
 	end
 end
 
-local minimapScript, gameTime
+local minimapScript
+function GetGUIMinimap()
+	return minimapScript
+end
 
 local originalMinimapInit = GUIMinimap.Initialize
 function GUIMinimap:Initialize()
@@ -72,6 +75,8 @@ end
 local originalMinimapOnResChanged = GUIMinimap.OnResolutionChanged
 function GUIMinimap:OnResolutionChanged(oldX, oldY, newX, newY)
 	originalMinimapOnResChanged(self, oldX, oldY, newX, newY)
+
+	local gameTime = GetGUIGameTime and GetGUIGameTime()
 	
 	if gameTime then
 		gameTime:SetFontName(GUIMarineHUD.kTextFontName)
@@ -79,42 +84,6 @@ function GUIMinimap:OnResolutionChanged(oldX, oldY, newX, newY)
 		gameTime:SetPosition(GUIScale(Vector(35, 60, 0)))
 		GUIMakeFontScale(gameTime)
 	end
-end
-
-local originalCommanderInit = Commander.OnInitLocalClient
-function Commander:OnInitLocalClient()
-	originalCommanderInit(self)
-	
-	minimapScript:UpdateCHUDCommSettings()
-	
-	self.gameTime = GUIManager:CreateTextItem()
-	self.gameTime:SetFontIsBold(true)
-	self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
-	self.gameTime:SetColor(Color(0.5, 0.5, 0.5, 1))
-	self.gameTime:SetPosition(GUIScale(Vector(35, 60, 0)))
-	self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
-	self.gameTime:SetScale(GetScaledVector())
-	GUIMakeFontScale(self.gameTime)
-	
-	gameTime = self.gameTime
-end
-
-local originalCommanderUpdate = Commander.UpdateMisc
-function Commander:UpdateMisc(input)
-	originalCommanderUpdate(self, input)
-	
-	if self.gameTime then
-		self.gameTime:SetText(CHUDGetGameTimeString())
-		self.gameTime:SetIsVisible(CHUDGetOption("gametime"))
-	end
-end
-
-local originalCommanderOnDestroy = Commander.OnDestroy
-function Commander:OnDestroy()
-	GUI.DestroyItem(self.gameTime)
-	self.gameTime = nil
-	gameTime = nil
-	originalCommanderOnDestroy(self)
 end
 
 local originalMinimapUpdate = GUIMinimap.Update

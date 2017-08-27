@@ -1,14 +1,40 @@
-local originalCommanderOnInit
-originalCommanderOnInit = Commander.OnInitLocalClient
+if not Client then return end --Don't run inside Predict VM
+
+local gameTime
+function GetGUIGameTime()
+    return gameTime
+end
+
+local originalCommanderOnInit = Commander.OnInitLocalClient
 function Commander:OnInitLocalClient()
     originalCommanderOnInit(self)
 
     self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
+
+    local minimapScript = GetGUIMinimap and GetGUIMinimap()
+    if minimapScript then
+        minimapScript:UpdateCHUDCommSettings()
+    end
+
+    self.gameTime = GUIManager:CreateTextItem()
+    self.gameTime:SetFontIsBold(true)
+    self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
+    self.gameTime:SetColor(Color(0.5, 0.5, 0.5, 1))
+    self.gameTime:SetPosition(GUIScale(Vector(35, 60, 0)))
+    self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
+    self.gameTime:SetScale(GetScaledVector())
+    GUIMakeFontScale(self.gameTime)
+
+    gameTime = self.gameTime
 end
 
 local originalCommanderOnDestroy = Commander.OnDestroy
 function Commander:OnDestroy()
     originalCommanderOnDestroy(self)
+
+    gameTime = nil
+    self.gameTime = nil
+    GUI.DestroyItem(self.gameTime)
 
     if self.tooltip then
         self.tooltip:Hide(0)
@@ -38,6 +64,16 @@ function Commander:UpdateClientEffects(deltaTime, isLocal)
         self.tooltip:SetText(tooltipText)
         self.tooltip:Show(0.1)
         tooltipText = nil
+    end
+end
+
+local originalCommanderUpdate = Commander.UpdateMisc
+function Commander:UpdateMisc(input)
+    originalCommanderUpdate(self, input)
+
+    if self.gameTime then
+        self.gameTime:SetText(CHUDGetGameTimeString())
+        self.gameTime:SetIsVisible(CHUDGetOption("gametime"))
     end
 end
 

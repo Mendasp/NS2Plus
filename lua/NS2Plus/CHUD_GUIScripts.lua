@@ -31,7 +31,7 @@ ModLoader.SetupFileHook("lua/GUIInsight_PlayerHealthbars.lua", "lua/NS2Plus/GUIS
 ModLoader.SetupFileHook("lua/GUIInsight_OtherHealthbars.lua", "lua/NS2Plus/GUIScripts/GUIInsight_OtherHealthbars.lua", "post")
 ModLoader.SetupFileHook("lua/Hud/GUIInventory.lua", "lua/NS2Plus/GUIScripts/GUIInventory.lua", "post")
 ModLoader.SetupFileHook("lua/GUIProduction.lua", "lua/NS2Plus/GUIScripts/GUIProduction.lua", "post")
-ModLoader.SetupFileHook("lua/Commander.lua", "lua/NS2Plus/GUIScripts/Commander.lua", "post")
+ModLoader.SetupFileHook("lua/Commander_Client.lua", "lua/NS2Plus/GUIScripts/Commander_Client.lua", "post")
 ModLoader.SetupFileHook("lua/GUIFeedback.lua", "lua/NS2Plus/GUIScripts/GUIFeedback.lua", "post")
 ModLoader.SetupFileHook("lua/GUIJetpackFuel.lua", "lua/NS2Plus/GUIScripts/GUIJetpackFuel.lua", "post")
 ModLoader.SetupFileHook("lua/GUIHiveStatus.lua", "lua/NS2Plus/GUIScripts/GUIHiveStatus.lua", "post")
