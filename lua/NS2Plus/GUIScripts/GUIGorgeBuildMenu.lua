@@ -1,5 +1,5 @@
-local originalGorgeBuyMenuInit = GUIGorgeBuildMenu.Initialize
-function GUIGorgeBuildMenu:Initialize()
+local originalGorgeBuyMenuReset = GUIGorgeBuildMenu.Reset
+function GUIGorgeBuildMenu:Reset()
 	if CHUDGetOption("mingui") then
 		self.kSmokeSmallTextureCoordinates = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}
 		self.kSmokeyBackgroundSize = Vector(0, 0, 0)
@@ -8,5 +8,5 @@ function GUIGorgeBuildMenu:Initialize()
 		self.kSmokeyBackgroundSize = GUIScale(Vector(220, 400, 0))
 	end
 
-	originalGorgeBuyMenuInit(self)
+	originalGorgeBuyMenuReset(self)
 end
