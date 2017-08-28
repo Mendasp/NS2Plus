@@ -6,6 +6,7 @@ ModLoader.SetupFileHook("lua/Hud/Marine/GUIExoHUD.lua", "lua/NS2Plus/GUIScripts/
 ModLoader.SetupFileHook("lua/Weapons/Marine/ExoWeaponHolder.lua", "lua/NS2Plus/GUIScripts/ExoWeaponHolder.lua", "post")
 ModLoader.SetupFileHook("lua/Hud/GUIEvent.lua", "lua/NS2Plus/GUIScripts/GUIEvent.lua", "post")
 ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/NS2Plus/GUIScripts/GUIMinimap.lua", "post") -- Comm stuff is here
+ModLoader.SetupFileHook("lua/MapBlip.lua", "lua/NS2Plus/GUIScripts/MapBlip.lua", "post")
 ModLoader.SetupFileHook("lua/GUIMinimapFrame.lua", "lua/NS2Plus/GUIScripts/GUIMinimapFrame.lua", "post")
 ModLoader.SetupFileHook("lua/GUIMinimapConnection.lua", "lua/NS2Plus/GUIScripts/GUIMinimapConnection.lua", "post")
 ModLoader.SetupFileHook("lua/GUIProgressBar.lua", "lua/NS2Plus/GUIScripts/GUIProgressBar.lua", "post")
@@ -30,6 +31,7 @@ ModLoader.SetupFileHook("lua/GUIInsight_PlayerHealthbars.lua", "lua/NS2Plus/GUIS
 ModLoader.SetupFileHook("lua/GUIInsight_OtherHealthbars.lua", "lua/NS2Plus/GUIScripts/GUIInsight_OtherHealthbars.lua", "post")
 ModLoader.SetupFileHook("lua/Hud/GUIInventory.lua", "lua/NS2Plus/GUIScripts/GUIInventory.lua", "post")
 ModLoader.SetupFileHook("lua/GUIProduction.lua", "lua/NS2Plus/GUIScripts/GUIProduction.lua", "post")
+ModLoader.SetupFileHook("lua/Commander_Client.lua", "lua/NS2Plus/GUIScripts/Commander_Client.lua", "post")
 ModLoader.SetupFileHook("lua/GUIFeedback.lua", "lua/NS2Plus/GUIScripts/GUIFeedback.lua", "post")
 ModLoader.SetupFileHook("lua/GUIJetpackFuel.lua", "lua/NS2Plus/GUIScripts/GUIJetpackFuel.lua", "post")
 ModLoader.SetupFileHook("lua/GUIHiveStatus.lua", "lua/NS2Plus/GUIScripts/GUIHiveStatus.lua", "post")

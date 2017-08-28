@@ -1,36 +1,18 @@
-local tooltipText = ""
-local found = false
-local foundTime = -1
+local tooltipText
 local function displayNameTooltip(tech)
 	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
-		found = true
-		foundTime = Shared.GetTime(true)
 		tooltipText = GetDisplayNameForTechId(tech.Id)
 	end
 end
 
 local function displayNameTimeTooltip(tech)
 	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
-		found = true
-		foundTime = Shared.GetTime(true)
-		tooltipText = GetDisplayNameForTechId(tech.Id)
+		local text = GetDisplayNameForTechId(tech.Id)
 		
 		local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
 		local minutes = math.floor(timeLeft/60)
 		local seconds = math.ceil(timeLeft - minutes*60)
-		tooltipText = string.format("%s - %01.0f:%02.0f", tooltipText, minutes, seconds)
-	end
-end
-
-local function displayTimeTooltip(tech)
-	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
-		found = true
-		foundTime = Shared.GetTime(true)
-		
-		local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
-		local minutes = math.floor(timeLeft/60)
-		local seconds = math.ceil(timeLeft - minutes*60)
-		tooltipText = string.format("%01.0f:%02.0f", minutes, seconds)
+		tooltipText = string.format("%s - %01.0f:%02.0f", text, minutes, seconds)
 	end
 end
 
@@ -39,21 +21,15 @@ function GUISpectator:Initialize()
 	originalSpectatorInit(self)
 
 	self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
-	tooltipText = ""
-	found = false
-	foundTime = -1
 end
 	
 local originalSpectatorUninit = GUISpectator.Uninitialize
 function GUISpectator:Uninitialize()
 	originalSpectatorUninit(self)
 
-	self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
-	tooltipText = ""
-	found = false
-
-	self.tooltip:Hide(0)
-	foundTime = -1
+	if self.tooltip then
+		self.tooltip:Hide(0)
+	end
 end
 
 local originalSpectatorLeft = GUIProduction.SetSpectatorLeft
@@ -74,60 +50,16 @@ local originalSpectatorUpdate = GUISpectator.Update
 function GUISpectator:Update(deltaTime)
 	originalSpectatorUpdate(self, deltaTime)
 
-	found = false
 	self.guiMarineProduction.InProgress:ForEach(displayNameTimeTooltip)
 	self.guiMarineProduction.Complete:ForEach(displayNameTooltip)
 	self.guiAlienProduction.InProgress:ForEach(displayNameTimeTooltip)
 	self.guiAlienProduction.Complete:ForEach(displayNameTooltip)
 
-	if found then
+	if tooltipText then
 		self.tooltip:SetText(tooltipText)
-		self.tooltip:Show()
-	elseif foundTime > -1 and foundTime + 0.1 < Shared.GetTime(true) then
-		self.tooltip:Hide()
-		foundTime = -1
+		self.tooltip:Show(0.1)
+		tooltipText = nil
 	end
 end
 
 -- Todo: Refactor all Commander class modifications into one lua file
-local originalCommanderOnInit
-originalCommanderOnInit = Commander.OnInitLocalClient
-function Commander:OnInitLocalClient()
-	originalCommanderOnInit(self)
-
-	self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
-	tooltipText = ""
-	found = false
-	foundTime = -1
-end
-
-local originalCommanderOnDestroy = Commander.OnDestroy
-function Commander:OnDestroy()
-	originalCommanderOnDestroy(self)
-
-	self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
-	tooltipText = ""
-	found = false
-
-	self.tooltip:Hide(0)
-	foundTime = -1
-end
-
-local originalUpdateClientEffects = Commander.UpdateClientEffects
-function Commander:UpdateClientEffects(deltaTime, isLocal)
-	originalUpdateClientEffects(self, deltaTime, isLocal)
-
-	found = false
-
-	if CHUDGetOption("researchtimetooltip") then
-		self.production.InProgress:ForEach(displayTimeTooltip)
-	end
-
-	if found then
-		self.tooltip:SetText(tooltipText)
-		self.tooltip:Show()
-	elseif foundTime > -1 and foundTime + 0.1 < Shared.GetTime(true) then
-		self.tooltip:Hide()
-		foundTime = -1
-	end
-end

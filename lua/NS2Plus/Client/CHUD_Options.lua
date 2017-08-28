@@ -180,14 +180,15 @@ CHUDOptions =
 				label = "Alien Hive Status UI",
 				tooltip = "Enables or disables the hive status display in the top left of the alien HUD.",
 				type = "select",
-				values = {"On", "Off"},
-				defaultValue = false,
+				values = { "Off", "On" },
+				defaultValue = true,
 				category = "ui",
 				valueType = "bool",
 				applyFunction = function() CHUDRestartScripts({
 					"GUIHiveStatus",
 					}) end,
 				sort = "B00.5",
+				resetSettingInBuild = 372,
 			},
 			minimap = {
 				name = "CHUD_Minimap",
@@ -943,13 +944,8 @@ CHUDOptions =
 				values  = { "Off", "On" },
 				defaultValue = true,
 				category = "minimap",
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 				valueType = "bool",
-				applyFunction = function() 	local friends = CHUDGetOption("friends")
-					ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendAlien =
-						ConditionalValue(friends, kMinimapBlipTeam.FriendAlien, kMinimapBlipTeam.Alien) } )
-					ReplaceLocals(PlayerUI_GetStaticMapBlips, { kMinimapBlipTeamFriendMarine =
-						ConditionalValue(friends, kMinimapBlipTeam.FriendMarine, kMinimapBlipTeam.Marine) } )
-				end,
 				sort = "A03",
 			},
 			pglines = { 
@@ -1057,6 +1053,7 @@ CHUDOptions =
 				tooltip = "Sets the color of alien players in the minimap different from the structures.",
 				defaultValue = 0xFF8A00,
 				category = "minimap",
+				applyFunction = function() CHUDRestartScripts({ "Hud/Marine/GUIMarineHUD" }) end,
 				valueType = "color",
 				sort = "A11",
 				resetSettingInBuild = 264,
