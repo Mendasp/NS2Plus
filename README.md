@@ -6,6 +6,14 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+
+- 28/08/2017
+    - Fixed that the research time tooltips did not work for Commanders
+    - Fixed that the mingui option did not effect some minimap and gorge build menu backgrounds
+    - Fixed that the custom minimap color options (including hidding friends) had no effect.
+    - Fixed a script error occuring while spectating a marine reloading their shotgun.
+    - Fixed a script error occuring while spectating a gorge placing structures.
+
 - 24/08/2017
 	- Refactored the way GUI modifications are loaded to fix and avoid load order issues with new ns2 updates.
 	- Fixed the critical performance issues caused by various GUI modifications.
