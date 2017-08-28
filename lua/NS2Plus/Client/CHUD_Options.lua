@@ -180,14 +180,15 @@ CHUDOptions =
 				label = "Alien Hive Status UI",
 				tooltip = "Enables or disables the hive status display in the top left of the alien HUD.",
 				type = "select",
-				values = {"On", "Off"},
-				defaultValue = false,
+				values = { "Off", "On" },
+				defaultValue = true,
 				category = "ui",
 				valueType = "bool",
 				applyFunction = function() CHUDRestartScripts({
 					"GUIHiveStatus",
 					}) end,
 				sort = "B00.5",
+				resetSettingInBuild = 372,
 			},
 			minimap = {
 				name = "CHUD_Minimap",

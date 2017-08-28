@@ -13,6 +13,7 @@ Latest changes
     - Fixed that the custom minimap color options (including hidding friends) had no effect.
     - Fixed a script error occuring while spectating a marine reloading their shotgun.
     - Fixed a script error occuring while spectating a gorge placing structures.
+    - Changed the hivestatus option entry to behave the same way like the other option toogles.
 
 - 24/08/2017
 	- Refactored the way GUI modifications are loaded to fix and avoid load order issues with new ns2 updates.
