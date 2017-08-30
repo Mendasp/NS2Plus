@@ -9,6 +9,7 @@ Latest changes
 
 - 30/08/2017
     - Fixed that the hivestatus UI was hidden by default.
+    - Fixed that the hide friends at the minimap option still had no effect.
     
 - 28/08/2017
     - Fixed that the research time tooltips did not work for Commanders
