@@ -932,7 +932,9 @@ CHUDOptions =
 				category = "minimap",
 				valueType = "float",
 				applyFunction = function()
-					Shared.ConsoleCommand("setmaplocationcolor 255 255 255 " .. tostring(tonumber(CHUDGetOption("locationalpha"))*255))
+					if OnCommandSetMapLocationColor then
+						OnCommandSetMapLocationColor(255, 255, 255, tonumber(CHUDGetOption("locationalpha"))*255)
+					end
 				end,
 				sort = "A02",
 			},

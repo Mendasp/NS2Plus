@@ -10,6 +10,8 @@ Latest changes
 - 30/08/2017
     - Fixed that the hivestatus UI was hidden by default.
     - Fixed that the hide friends at the minimap option still had no effect.
+    - Fixed that the minimap location name alpha option did not work and caused script errors.
+    - 
     
 - 28/08/2017
     - Fixed that the research time tooltips did not work for Commanders
