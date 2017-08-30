@@ -7,6 +7,9 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 Latest changes
 ==============
 
+- 30/08/2017
+    - Fixed that the hivestatus UI was hidden by default.
+    
 - 28/08/2017
     - Fixed that the research time tooltips did not work for Commanders
     - Fixed that the mingui option did not effect some minimap and gorge build menu backgrounds
