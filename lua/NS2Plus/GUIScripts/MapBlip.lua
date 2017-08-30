@@ -63,7 +63,7 @@ local oldGetMapBlipTeam = MapBlip.GetMapBlipTeam
 function MapBlip:GetMapBlipTeam(minimap)
     local blipTeam = oldGetMapBlipTeam(self, minimap)
 
-    if not CHUDGetOption("friends") and friendTeams[returnColor] then
+    if not CHUDGetOption("friends") and friendTeams[blipTeam] then
         blipTeam = friendTeams[blipTeam]
     end
 

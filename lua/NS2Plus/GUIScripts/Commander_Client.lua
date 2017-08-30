@@ -56,11 +56,11 @@ local originalUpdateClientEffects = Commander.UpdateClientEffects
 function Commander:UpdateClientEffects(deltaTime, isLocal)
     originalUpdateClientEffects(self, deltaTime, isLocal)
 
-    if CHUDGetOption("researchtimetooltip") then
+    if CHUDGetOption("researchtimetooltip") and self.production then
         self.production.InProgress:ForEach(displayTimeTooltip)
     end
 
-    if tooltipText then
+    if tooltipText and self.tooltip then
         self.tooltip:SetText(tooltipText)
         self.tooltip:Show(0.1)
         tooltipText = nil

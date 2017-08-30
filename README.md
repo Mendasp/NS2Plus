@@ -7,13 +7,19 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 Latest changes
 ==============
 
+- 30/08/2017
+    - Fixed that the hivestatus UI was hidden by default.
+    - Fixed that the hide friends at the minimap option still had no effect.
+    - Fixed that the minimap location name alpha option did not work and caused script errors.
+    - Fixed a script error occurring for commanders caused by the research time tool tips trying to update before the Commander has been fully initialized
+    
 - 28/08/2017
     - Fixed that the research time tooltips did not work for Commanders
     - Fixed that the mingui option did not effect some minimap and gorge build menu backgrounds
     - Fixed that the custom minimap color options (including hidding friends) had no effect.
-    - Fixed a script error occuring while spectating a marine reloading their shotgun.
-    - Fixed a script error occuring while spectating a gorge placing structures.
-    - Changed the hivestatus option entry to behave the same way like the other option toogles.
+    - Fixed a script error occurring while spectating a marine reloading their shotgun.
+    - Fixed a script error occurring while spectating a gorge placing structures.
+    - Changed the hivestatus option entry to behave like the other option toogles.
 
 - 24/08/2017
 	- Refactored the way GUI modifications are loaded to fix and avoid load order issues with new ns2 updates.

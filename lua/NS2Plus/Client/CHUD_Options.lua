@@ -180,15 +180,15 @@ CHUDOptions =
 				label = "Alien Hive Status UI",
 				tooltip = "Enables or disables the hive status display in the top left of the alien HUD.",
 				type = "select",
-				values = { "Off", "On" },
-				defaultValue = true,
+				values = { "On", "Off" },
+				defaultValue = false,
 				category = "ui",
 				valueType = "bool",
 				applyFunction = function() CHUDRestartScripts({
 					"GUIHiveStatus",
 					}) end,
 				sort = "B00.5",
-				resetSettingInBuild = 372,
+				resetSettingInBuild = 373,
 			},
 			minimap = {
 				name = "CHUD_Minimap",
@@ -932,7 +932,9 @@ CHUDOptions =
 				category = "minimap",
 				valueType = "float",
 				applyFunction = function()
-					Shared.ConsoleCommand("setmaplocationcolor 255 255 255 " .. tostring(tonumber(CHUDGetOption("locationalpha"))*255))
+					if OnCommandSetMapLocationColor then
+						OnCommandSetMapLocationColor(255, 255, 255, tonumber(CHUDGetOption("locationalpha"))*255)
+					end
 				end,
 				sort = "A02",
 			},
