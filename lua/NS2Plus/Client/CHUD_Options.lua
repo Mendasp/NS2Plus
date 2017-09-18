@@ -1346,7 +1346,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
-				children = { "sensitivity_m", "sensitivity_a" },
+				children = { "sensitivity_m", "sensitivity_a", "sensitivity_perlifeform" },
 				hideValues = { false },
 				sort = "A04",
 				ignoreCasterMode = true,
@@ -1381,8 +1381,115 @@ CHUDOptions =
 				valueType = "float",
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
+					CHUDApplyLifeformSpecificStuff()
 				end,
 				sort = "A06",
+				ignoreCasterMode = true,
+			},
+			sensitivity_perlifeform = {
+				name = "CHUD_SensitivityPerLifeform",
+				label = "Lifeform specific sensitivities",
+				tooltip = "Lets you have different sensitivities for each alien lifeform. Overrides Alien sensitivity above.",
+				type = "select",
+				values = { "Off", "On" },
+				defaultValue = false,
+				category = "misc",
+				valueType = "bool",
+				applyFunction = function()
+					CHUDApplyLifeformSpecificStuff()
+				end,
+				children = {
+					"sensitivity_skulk", "sensitivity_gorge",
+					"sensitivity_lerk", "sensitivity_fade",
+					"sensitivity_onos"
+				},
+				hideValues = { false },
+				sort = "A06.1",
+				ignoreCasterMode = true,
+			},
+			sensitivity_skulk = {
+				name = "CHUD_Sensitivity_Skulk",
+				label = "Skulk sensitivity",
+				tooltip = "Sensitivity for Skulk.",
+				type = "slider",
+				defaultValue = 2,
+				minValue = 0.01,
+				maxValue = 20,
+				multiplier = 1,
+				category = "misc",
+				valueType = "float",
+				applyFunction = function()
+					CHUDApplyLifeformSpecificStuff()
+				end,
+				sort = "A06.2",
+				ignoreCasterMode = true,
+			},
+			sensitivity_gorge = {
+				name = "CHUD_Sensitivity_Gorge",
+				label = "Gorge sensitivity",
+				tooltip = "Sensitivity for Gorge.",
+				type = "slider",
+				defaultValue = 2,
+				minValue = 0.01,
+				maxValue = 20,
+				multiplier = 1,
+				category = "misc",
+				valueType = "float",
+				applyFunction = function()
+					CHUDApplyLifeformSpecificStuff()
+				end,
+				sort = "A06.3",
+				ignoreCasterMode = true,
+			},
+			sensitivity_lerk = {
+				name = "CHUD_Sensitivity_Lerk",
+				label = "Lerk sensitivity",
+				tooltip = "Sensitivity for Lerk.",
+				type = "slider",
+				defaultValue = 2,
+				minValue = 0.01,
+				maxValue = 20,
+				multiplier = 1,
+				category = "misc",
+				valueType = "float",
+				applyFunction = function()
+					CHUDApplyLifeformSpecificStuff()
+				end,
+				sort = "A06.4",
+				ignoreCasterMode = true,
+			},
+			sensitivity_fade = {
+				name = "CHUD_Sensitivity_Fade",
+				label = "Fade sensitivity",
+				tooltip = "Sensitivity for Fade.",
+				type = "slider",
+				defaultValue = 2,
+				minValue = 0.01,
+				maxValue = 20,
+				multiplier = 1,
+				category = "misc",
+				valueType = "float",
+				applyFunction = function()
+					CHUDApplyLifeformSpecificStuff()
+				end,
+				sort = "A06.5",
+				ignoreCasterMode = true,
+			},
+			sensitivity_onos = {
+				name = "CHUD_Sensitivity_Onos",
+				label = "Onos sensitivity",
+				tooltip = "Sensitivity for Onos.",
+				type = "slider",
+				defaultValue = 2,
+				minValue = 0.01,
+				maxValue = 20,
+				multiplier = 1,
+				category = "misc",
+				valueType = "float",
+				applyFunction = function()
+					CHUDApplyLifeformSpecificStuff()
+				end,
+				sort = "A06.6",
 				ignoreCasterMode = true,
 			},
 			fov_perteam = { 
