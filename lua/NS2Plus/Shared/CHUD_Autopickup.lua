@@ -131,18 +131,18 @@ Class_ReplaceMethod( "Marine", "HandleButtons",
                 local dropPressed = bit.band(input.commands, Move.Drop) ~= 0
                 if dropPressed then
 
-                    -- drop the active weapon.
-                    local activeWeapon = self:GetActiveWeapon()
-                    if self:Drop() then
-                        self.lastDroppedWeapon = activeWeapon
-                        self.timeOfLastPickUpWeapon = Shared.GetTime()
-
-                        -- check for new weapon to pickup (in case autopickup is disabled)
-                        local pickupWeapon = self:GetNearbyPickupableWeapon()
-                        if pickupWeapon then
-                            self:PickupWeapon(pickupWeapon, false)
+                    local pickupWeapon = self:GetNearbyPickupableWeapon()
+                    if pickupWeapon then
+                        self:PickupWeapon(pickupWeapon, false)
+                    else
+                        -- drop the active weapon.
+                        local activeWeapon = self:GetActiveWeapon()
+                        if self:Drop() then
+                            self.lastDroppedWeapon = activeWeapon
+                            self.timeOfLastPickUpWeapon = Shared.GetTime()
                         end
                     end
+
 
                 end
 
