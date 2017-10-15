@@ -17,6 +17,17 @@ originalUpdateScreenEff = Class_ReplaceMethod( "Player", "UpdateScreenEffects",
 	end
 )
 
+local originalSESetActive
+originalSESetActive = Class_ReplaceMethod("ScreenEffect", "SetActive",
+	function(self, setActive)
+		if self == Player.screenEffects.gorgetunnel then
+			setActive = false
+		end
+
+		originalSESetActive(self, setActive)
+	end
+)
+
 -- Disables low health effects
 function UpdateDSPEffects()
 	-- We're not doing anything in this function
