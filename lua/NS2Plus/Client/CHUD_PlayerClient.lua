@@ -8,14 +8,15 @@ originalBlur = Class_ReplaceMethod( "Player", "SetBlurEnabled",
 	end
 )
 
+--[[
 originalUpdateScreenEff = Class_ReplaceMethod( "Player", "UpdateScreenEffects",
 	function(self, deltaTime)
 		originalUpdateScreenEff(self, deltaTime)
-		--if not Client.GetOptionBoolean("CHUD_LowHealthEff", true) then
-			Player.screenEffects.lowHealth:SetActive(false)
-		--end
+
+		Player.screenEffects.lowHealth:SetActive(false)
 	end
 )
+--]]
 
 local originalSESetActive
 originalSESetActive = Class_ReplaceMethod("ScreenEffect", "SetActive",
