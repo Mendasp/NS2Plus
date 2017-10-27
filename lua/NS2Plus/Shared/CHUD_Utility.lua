@@ -318,12 +318,37 @@ if Client then
 		local sensitivity_perteam = CHUDGetOption("sensitivity_perteam")
 		local fov_perteam = CHUDGetOption("fov_perteam")
 		
-		if CHUDGetOption("sensitivity_perteam") then
+		-- Aliens with per-lifeform sens will have it set separately.
+		if CHUDGetOption("sensitivity_perteam") and
+			(isMarine or not CHUDGetOption("sensitivity_perlifeform")) then
+
 			OptionsDialogUI_SetMouseSensitivity(sensitivity)
 		end
 		
 		if CHUDGetOption("fov_perteam") then
 			Client.SetOptionFloat("graphics/display/fov-adjustment", fov)
+		end
+	end
+
+	function CHUDApplyLifeformSpecificStuff()
+		local player = Client.GetLocalPlayer()
+		local eggTechId = player:isa("Embryo") and player:GetGestationTechId()
+		local sensitivity
+
+		if player:isa("Skulk") or eggTechId == kTechId.Skulk then
+			sensitivity = CHUDGetOption("sensitivity_skulk")
+		elseif player:isa("Gorge") or eggTechId == kTechId.Gorge then
+			sensitivity = CHUDGetOption("sensitivity_gorge")
+		elseif player:isa("Lerk") or eggTechId == kTechId.Lerk then
+			sensitivity = CHUDGetOption("sensitivity_lerk")
+		elseif player:isa("Fade") or eggTechId == kTechId.Fade then
+			sensitivity = CHUDGetOption("sensitivity_fade")
+		elseif player:isa("Onos") or eggTechId == kTechId.Onos then
+			sensitivity = CHUDGetOption("sensitivity_onos")
+		end
+
+		if CHUDGetOption("sensitivity_perlifeform") and sensitivity then
+			OptionsDialogUI_SetMouseSensitivity(sensitivity)
 		end
 	end
 	
