@@ -430,15 +430,9 @@ local function OnCommandPlusExport()
 			stats = 7,
 			misc = 8
 		}
-		
-		
-			for idx, option in pairs(CHUDOptions) do
-				if not OptionsMenuTable[option.category] then
-					OptionsMenuTable[option.category] = {}
-				end
-				table.insert(OptionsMenuTable[option.category], CHUDOptions[idx])
-			
-			-- Add the options that are hidden in the options menu here so we don't print them later
+
+		-- If an option has hidden children, add them (and their children...) to the skip table
+		local function SkipChildren(option)
 			if option.children then
 				local show = true
 				for _, value in pairs(option.hideValues) do
@@ -446,15 +440,31 @@ local function OnCommandPlusExport()
 						show = false
 					end
 				end
-				
+
+				-- Skip children if we skipped the parent
+				if skipOptions[option.name] then
+					show = false
+				end
+
 				for _, optionIndex in pairs(option.children) do
 					local optionName = CHUDGetOptionParam(optionIndex, "name")
 					if optionName and not show then
 						skipOptions[optionName] = true
+
+						SkipChildren(CHUDOptions[optionIndex])
 					end
 				end
 			end
+		end
+
+		for idx, option in pairs(CHUDOptions) do
+			if not OptionsMenuTable[option.category] then
+				OptionsMenuTable[option.category] = {}
+			end
+			table.insert(OptionsMenuTable[option.category], CHUDOptions[idx])
 			
+			-- Add the options that are hidden in the options menu here so we don't print them later
+			SkipChildren(option)
 		end
 		
 		local function CHUDOptionsSort(a, b)
