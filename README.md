@@ -7,6 +7,11 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 Latest changes
 ==============
 
+- 27/10/2017
+    - Fixed compatibility issues with ns2 build 319
+    - Added per-lifeform sensitivity for aliens
+    - Added some screen-occluding effects of gorge tunnels and embryos to be disabled when minimal particles is enabled
+
 - 6/10/2017
     - Fixed that you couldn't pickup weapons with autopickup disabled with build 318
         
