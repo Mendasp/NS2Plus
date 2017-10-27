@@ -32,12 +32,12 @@ originalSESetActive = Class_ReplaceMethod("ScreenEffect", "SetActive",
 -- Disables low health effects
 function UpdateDSPEffects()
 	-- We're not doing anything in this function
-    -- but leave this for future generations to wonder why this was an option in the first place
+	-- but leave this for future generations to wonder why this was an option in the first place
 
-    -- Most ancient piece of code in this mod - Archaeologists pls be careful, this code has a curse
-	/*if Client.GetOptionBoolean("CHUD_LowHealthEff", true) then
-		originalDSPEff()
-	end*/
+	-- Most ancient piece of code in this mod - Archaeologists pls be careful, this code has a curse
+	--if Client.GetOptionBoolean("CHUD_LowHealthEff", true) then
+		--originalDSPEff()
+	--end
 end
 
 local lastIngameNumPlayers = 0
