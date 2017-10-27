@@ -22,7 +22,7 @@ function GUIRequestMenu:Update(deltaTime)
 		end
 		self.voteConcedeButton.Background:SetTexture("ui/transparent.dds")
 
-		for _, button in pairs(self.menuButtons) do
+		for _, button in ipairs(self.menuButtons) do
 			if self.selectedButton == button then
 				button.Description:SetColor(highlightColor)
 			else
