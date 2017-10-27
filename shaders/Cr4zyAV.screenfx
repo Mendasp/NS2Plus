@@ -21,6 +21,14 @@ settings =
 		{ name="fogIntensity" 		default=1.0 }
 		{ name="avDesat" 			default=1.0 }
 		{ name="desatIntensity" 	default=1.0 }
+		{ name="avViewModel"		default=1.0 }
+		{ name="avViewModelStyle"	default=1.0 }
+		{ name="avWorldIntensity"	default=1.0 }
+		{ name="avAspect"			default=2.0 }
+		{ name="avToggle"			default=0.0 }
+		{ name="avSky"				default=1.0 }
+		{ name="avBlend"			default=1.0 }
+		{ name="avDesatBlend"		default=1.0 }
         { name="depthTexture"  }
         { name="normalTexture" }
     ]
@@ -54,10 +62,17 @@ layers =
 					fogIntensity			= "fogIntensity"
 					avDesat					= "avDesat"
 					desatIntensity			= "desatIntensity"
+					avViewModel				= "avViewModel"
+					avViewModelStyle		= "avViewModelStyle"
+					avWorldIntensity		= "avWorldIntensity"
+					avAspect				= "avAspect"
+					avToggle				= "avToggle"
+					avSky					= "avSky"
+					avBlend					= "avBlend"
+					avDesatBlend			= "avDesatBlend"
                     baseTexture             = { resource="source_buffer" linear=true }
                     depthTexture            = { resource="depthTexture" linear=true }
                     normalTexture           = { resource="normalTexture" linear=true }
                 }
         }
     ]
-        
