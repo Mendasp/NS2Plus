@@ -1,7 +1,10 @@
 local isEnabled = Client.GetOptionBoolean("CHUD_SpectatorHPUnitStatus", true)
 local OldUpdateUnitStatusBlip = GUIUnitStatus.UpdateUnitStatusBlip
 
-function GUIUnitStatus:UpdateUnitStatusBlip( blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
+function GUIUnitStatus:UpdateUnitStatusBlip( blipIndex, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
+	
+	local blipData = self.activeStatusInfo[blipIndex]
+	local updateBlip = self.activeBlipList[blipIndex]
 	
 	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates") or 0
 	local CHUDBlipData
@@ -36,7 +39,7 @@ function GUIUnitStatus:UpdateUnitStatusBlip( blipData, updateBlip, localPlayerIs
 		hideBg = true
 	end
 	
-	OldUpdateUnitStatusBlip( self, blipData, updateBlip, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )		
+	OldUpdateUnitStatusBlip( self, blipIndex, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )		
 	
 	-- Percentages Nameplates
 	if nameplates == 1 or nameplates == 3 then
