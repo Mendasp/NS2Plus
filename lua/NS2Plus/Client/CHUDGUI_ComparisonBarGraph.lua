@@ -65,10 +65,10 @@ function CHUDGUI_ComparisonBarGraph:refreshBar()
     local leftCoords = {0,0,fraction*textureSize.x,textureSize.y}
     local rightCoords = {fraction*textureSize.x,0,textureSize.x,textureSize.y}
     
-    self.leftBar:SetTexturePixelCoordinates(unpack(leftCoords))
+    self.leftBar:SetTexturePixelCoordinates(GUIUnpackCoords(leftCoords))
     self.leftBar:SetSize(leftSize)
     
-    self.rightBar:SetTexturePixelCoordinates(unpack(rightCoords))
+    self.rightBar:SetTexturePixelCoordinates(GUIUnpackCoords(rightCoords))
     self.rightBar:SetSize(rightSize)
     self.rightBar:SetPosition(Vector(leftSize.x, 0, 0))
 
