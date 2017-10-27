@@ -151,6 +151,7 @@ local blockedCinematics = set {
 							"cinematics/alien/fade/trail_dark_2.cinematic",
 							"cinematics/alien/fade/trail_light_1.cinematic",
 							"cinematics/alien/fade/trail_light_2.cinematic",
+							"cinematics/alien/tunnel/entrance_use_1p.cinematic",
 							"cinematics/death_1p.cinematic",
 							"cinematics/marine/commander_arrow.cinematic",
 							"cinematics/marine/exo/hurt_severe_view.cinematic",
