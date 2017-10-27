@@ -103,29 +103,37 @@ local function CHUDSaveMenuSetting(name)
 			end
 			
 			CHUDMenuOption.resetOption:SetIsVisible(CHUDMenuOption:GetIsVisible() and CHUDOption.defaultValue ~= CHUDOption.currentValue)
-			
-			if CHUDOption.children then
-				local show = true
-				for _, value in pairs(CHUDOption.hideValues) do
-					if CHUDOption.currentValue == value then
+
+			-- Show or hide an option's children (and their children...) as appropriate
+			local function PropagateVisibility(CHUDOption)
+				if CHUDOption.children then
+					local show = true
+					for _, value in pairs(CHUDOption.hideValues) do
+						if CHUDOption.currentValue == value then
+							show = false
+						end
+					end
+					
+					local CHUDMenuOption = mainMenu.CHUDOptionElements[CHUDOption["name"]]
+
+					-- Hide children options if the parent is also hidden
+					if CHUDMenuOption:GetIsVisible() == false then
 						show = false
 					end
-				end
-				
-				-- Hide children options if the parent is also hidden
-				if CHUDMenuOption:GetIsVisible() == false then
-					show = false
-				end
-				
-				for _, option in pairs(CHUDOption.children) do
-					local optionName = CHUDGetOptionParam(option, "name")
-					if optionName then
-						CHUDSetOptionVisible(mainMenu.CHUDOptionElements[optionName], show)
+
+					for _, option in pairs(CHUDOption.children) do
+						local optionName = CHUDGetOptionParam(option, "name")
+						if optionName then
+							CHUDSetOptionVisible(mainMenu.CHUDOptionElements[optionName], show)
+
+							PropagateVisibility(CHUDOptions[option])
+						end
 					end
 				end
-				
-				CHUDResortForm()
 			end
+
+			PropagateVisibility(CHUDOption)
+			CHUDResortForm()
 		end
 	end
 end
@@ -741,7 +749,8 @@ function GUIMainMenu:CreateColorPickerWindow()
 		tmpButton:SetLeftOffset((30 + 10) * currentX)
 		tmpButton:SetWidth(30)
 		tmpButton:SetHeight(30)
-		local color = Color(unpack(colors[i]))
+		local colorE = colors[i]
+		local color = Color(colorE[1], colorE[2], colorE[3])
 		tmpButton:SetBackgroundColor(color)
 		tmpButton:AddEventCallbacks({ OnClick = function(self)
 			self.scriptHandle.colorPickerRedInput:SetValue(tostring(math.ceil(color.r*255)))

@@ -68,7 +68,7 @@ function GUIMarineHUD:Initialize()
 		self.welderIcon:SetPosition(Vector(GUIMarineHUD.kUpgradePos.x, GUIMarineHUD.kUpgradePos.y + (GUIMarineHUD.kUpgradeSize.y)*2 + 16, 0) * self.scale)
 		self.welderIcon:SetSize(GUIMarineHUD.kUpgradeSize * self.scale)
 		self.welderIcon:SetTexture("ui/buildmenu.dds")
-		self.welderIcon:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Welder)))
+		self.welderIcon:SetTexturePixelCoordinates(GUIUnpackCoords(GetTextureCoordinatesForIcon(kTechId.Welder)))
 	else
 		self.welderIcon:SetPosition(Vector(GUIMarineHUD.kUpgradePos.x * 0.9, GUIMarineHUD.kUpgradePos.y + (GUIMarineHUD.kUpgradeSize.y)*2, 0) * self.scale)
 		self.welderIcon:SetSize(Vector(96, 48, 0) * self.scale)
@@ -162,7 +162,7 @@ function GUIMarineHUD:ShowNewArmorLevel(armorLevel)
 		local x1 = armorLevel * 80 - 80
 		local x2 = x1 + 80
 		local textureCoords = { x1, 0, x2, 80 }
-		self.armorLevel:SetTexturePixelCoordinates(unpack(textureCoords))
+		self.armorLevel:SetTexturePixelCoordinates(GUIUnpackCoords(textureCoords))
 	end
 end
 			
@@ -179,7 +179,7 @@ function GUIMarineHUD:ShowNewWeaponLevel(weaponLevel)
 		local x1 = 160 + weaponLevel * 80
 		local x2 = x1 + 80
 		local textureCoords = { x1, 0, x2, 80 }
-		self.weaponLevel:SetTexturePixelCoordinates(unpack(textureCoords))
+		self.weaponLevel:SetTexturePixelCoordinates(GUIUnpackCoords(textureCoords))
 	end
 end
 

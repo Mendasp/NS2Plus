@@ -2,7 +2,7 @@ local originalInit = GUIHiveStatus.Initialize
 function GUIHiveStatus:Initialize()
 	originalInit(self)
 
-	local hivestatus = not CHUDGetOption("hivestatus")
+	local hivestatus = CHUDGetOption("hivestatus")
 
 	self:SetIsVisible(hivestatus)
 end

@@ -23,7 +23,8 @@ function GUIInsight_OtherHealthbars:Update(deltaTime)
 
 	local kAmmoColors = GUIInsight_PlayerHealthbars.kAmmoColors or {}
 
-	for entId, other in pairs(self.otherList) do
+	for _, entId in ipairs(self.otherIds) do
+		local other = self.otherList[entId]
 		local entity = Shared.GetEntity(entId)
 		if entity then
 			if entity:isa("PhaseGate") or entity:isa("TunnelEntrance") or entity:isa("TunnelExit") then
@@ -53,6 +54,7 @@ function GUIInsight_OtherHealthbars:Update(deltaTime)
 			if not self.otherList[otherIndex] then -- Add new GUI for new units
 
 				otherGUI = self:CreateOtherGUIItem()
+				table.insert(self.otherIds, otherIndex)
 				table.insert(self.otherList, otherIndex, otherGUI)
 
 			else

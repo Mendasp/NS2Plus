@@ -73,6 +73,7 @@ end
 local function OnLocalPlayerChanged()
 	CHUDLoadLights()
 	CHUDEvaluateGUIVis()
+	CHUDApplyLifeformSpecificStuff()
 end
 
 -- Apparently NS2 doesn't always call OnLocalPlayerChanged when changing teams, so this

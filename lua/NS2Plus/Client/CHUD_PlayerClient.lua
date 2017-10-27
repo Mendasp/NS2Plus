@@ -8,24 +8,36 @@ originalBlur = Class_ReplaceMethod( "Player", "SetBlurEnabled",
 	end
 )
 
+--[[
 originalUpdateScreenEff = Class_ReplaceMethod( "Player", "UpdateScreenEffects",
 	function(self, deltaTime)
 		originalUpdateScreenEff(self, deltaTime)
-		--if not Client.GetOptionBoolean("CHUD_LowHealthEff", true) then
-			Player.screenEffects.lowHealth:SetActive(false)
-		--end
+
+		Player.screenEffects.lowHealth:SetActive(false)
+	end
+)
+--]]
+
+local originalSESetActive
+originalSESetActive = Class_ReplaceMethod("ScreenEffect", "SetActive",
+	function(self, setActive)
+		if self == Player.screenEffects.gorgetunnel then
+			setActive = false
+		end
+
+		originalSESetActive(self, setActive)
 	end
 )
 
 -- Disables low health effects
 function UpdateDSPEffects()
 	-- We're not doing anything in this function
-    -- but leave this for future generations to wonder why this was an option in the first place
+	-- but leave this for future generations to wonder why this was an option in the first place
 
-    -- Most ancient piece of code in this mod - Archaeologists pls be careful, this code has a curse
-	/*if Client.GetOptionBoolean("CHUD_LowHealthEff", true) then
-		originalDSPEff()
-	end*/
+	-- Most ancient piece of code in this mod - Archaeologists pls be careful, this code has a curse
+	--if Client.GetOptionBoolean("CHUD_LowHealthEff", true) then
+		--originalDSPEff()
+	--end
 end
 
 local lastIngameNumPlayers = 0

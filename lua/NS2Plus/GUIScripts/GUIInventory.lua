@@ -1,5 +1,5 @@
 local oldInventoryUpdate = GUIInventory.Update
-function GUIInventory:Update(deltaTime, parameters)
+function GUIInventory:Update(_, parameters)
 	local inventoryMode = CHUDGetOption("inventory")
 
 	if inventoryMode == 1 then
@@ -9,7 +9,7 @@ function GUIInventory:Update(deltaTime, parameters)
 		-- Start original update
 		PROFILE("GUIInventory:Update")
 
-		local activeWeaponTechId, inventoryTechIds = unpack(parameters)
+		local activeWeaponTechId, inventoryTechIds = parameters[1], parameters[2]
 
 		if #self.inventoryIcons > #inventoryTechIds then
 

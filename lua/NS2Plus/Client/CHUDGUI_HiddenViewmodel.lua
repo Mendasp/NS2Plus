@@ -24,7 +24,7 @@ function CHUDGUI_HiddenViewmodel:Initialize()
 	self.umbraIndicator:SetLayer(kGUILayerPlayerHUD)
 	self.umbraIndicator:SetIsVisible(false)
 	self.umbraIndicator:SetTexture(buildTexture)
-	self.umbraIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Umbra)))
+	self.umbraIndicator:SetTexturePixelCoordinates(GUIUnpackCoords(GetTextureCoordinatesForIcon(kTechId.Umbra)))
 	self.umbraIndicator:SetSize(iconSize)
 	self.umbraIndicator:SetColor(kAlienFontColor)
 	
@@ -33,7 +33,7 @@ function CHUDGUI_HiddenViewmodel:Initialize()
 	self.enzymeIndicator:SetLayer(kGUILayerPlayerHUD)
 	self.enzymeIndicator:SetIsVisible(false)
 	self.enzymeIndicator:SetTexture(buildTexture)
-	self.enzymeIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.EnzymeCloud)))
+	self.enzymeIndicator:SetTexturePixelCoordinates(GUIUnpackCoords(GetTextureCoordinatesForIcon(kTechId.EnzymeCloud)))
 	self.enzymeIndicator:SetSize(iconSize)
 	self.enzymeIndicator:SetColor(kAlienFontColor)
 
@@ -80,11 +80,11 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 		
 		if obs then
 			self.leftIndicator:SetTexture(obsIndicatorTexture)
-			self.leftIndicator:SetTexturePixelCoordinates(unpack(obsTextureCoords))
+			self.leftIndicator:SetTexturePixelCoordinates(GUIUnpackCoords(obsTextureCoords))
 			self.leftIndicator:SetColor(Color(1,1,1,1))
 		elseif cloak then
 			self.leftIndicator:SetTexture(buildTexture)
-			self.leftIndicator:SetTexturePixelCoordinates(unpack(GetTextureCoordinatesForIcon(kTechId.Vampirism)))
+			self.leftIndicator:SetTexturePixelCoordinates(GUIUnpackCoords(GetTextureCoordinatesForIcon(kTechId.Vampirism)))
 			self.leftIndicator:SetColor(kAlienFontColor)
 			
 			-- Do this to not override the original kAlienFontColor
