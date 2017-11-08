@@ -333,7 +333,6 @@ if Client then
 	function CHUDApplyLifeformSpecificStuff()
 		local player = Client.GetLocalPlayer()
 		local eggTechId = player:isa("Embryo") and player:GetGestationTechId()
-		local sensitivity_perlifeform = CHUDGetOption("sensitivity_perteam") and CHUDGetOption("sensitivity_perlifeform")
 		local sensitivity
 
 		if player:isa("Skulk") or eggTechId == kTechId.Skulk then
@@ -348,7 +347,7 @@ if Client then
 			sensitivity = CHUDGetOption("sensitivity_onos")
 		end
 
-		if sensitivity_perlifeform and sensitivity then
+		if CHUDGetOption("sensitivity_perlifeform") and sensitivity then
 			OptionsDialogUI_SetMouseSensitivity(sensitivity)
 		end
 	end
