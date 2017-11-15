@@ -24,11 +24,21 @@ originalViewModelOnUpdateRender = Class_ReplaceMethod("ViewModel", "OnUpdateRend
 		
 		local player = Client.GetLocalPlayer()
 		local drawviewmodel = CHUDGetOption("drawviewmodel")
+		local drawviewmodel_a = CHUDGetOption("drawviewmodel_a")
 		gCHUDHiddenViewModel = drawviewmodel == 1 or
-			(drawviewmodel == 2 and
-				((player:isa("Marine") and not CHUDGetOption("drawviewmodel_m")) or
-				(player:isa("Alien") and not CHUDGetOption("drawviewmodel_a")) or
-				(player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo")))
+			drawviewmodel == 2 and
+			(
+				player:isa("Marine") and not CHUDGetOption("drawviewmodel_m") or
+				player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo") or
+				player:isa("Alien") and drawviewmodel_a ~= 0 and
+				(
+					drawviewmodel_a == 1 or
+					player:isa("Skulk") and not CHUDGetOption("drawviewmodel_skulk") or
+					player:isa("Gorge") and not CHUDGetOption("drawviewmodel_gorge") or
+					player:isa("Lerk") and not CHUDGetOption("drawviewmodel_lerk") or
+					player:isa("Fade") and not CHUDGetOption("drawviewmodel_fade") or
+					player:isa("Onos") and not CHUDGetOption("drawviewmodel_onos")
+				)
 			)
 		
 		self:SetIsVisible(trollModes["swalkMode"] or self:GetIsVisible() and not gCHUDHiddenViewModel)

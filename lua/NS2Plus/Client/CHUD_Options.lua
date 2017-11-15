@@ -1679,7 +1679,7 @@ CHUDOptions =
 					Client.SendNetworkMessage("SetCHUDAutopickup", message)
 				end,
 			},
-			drawviewmodel = { 
+			drawviewmodel = {
 				name = "CHUD_DrawViewModel",
 				label = "Draw viewmodel",
 				tooltip = "Enables or disables showing the viewmodel.",
@@ -1697,7 +1697,7 @@ CHUDOptions =
 				hideValues = { 0, 1 },
 				resetSettingInBuild = 290,
 			},
-			drawviewmodel_m = { 
+			drawviewmodel_m = {
 				name = "CHUD_DrawViewModel_M",
 				label = "Marine viewmodel",
 				tooltip = "Enables or disables showing the marine viewmodel.",
@@ -1712,21 +1712,7 @@ CHUDOptions =
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
 				end,
 			},
-			drawviewmodel_a = { 
-				name = "CHUD_DrawViewModel_A",
-				label = "Alien viewmodel",
-				tooltip = "Enables or disables showing the alien viewmodel.",
-				type = "select",
-				values  = { "Hide", "Display" },
-				defaultValue = true,
-				category = "misc",
-				valueType = "bool",
-				sort = "A14",
-				applyFunction = function()
-					CHUDEvaluateGUIVis()
-				end,
-			},
-			drawviewmodel_exo = { 
+			drawviewmodel_exo = {
 				name = "CHUD_DrawViewModel_Exo",
 				label = "Exo viewmodel",
 				tooltip = "Enables or disables showing the exo viewmodel.",
@@ -1735,10 +1721,100 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A15",
+				sort = "A13.1",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
+				end,
+			},
+			drawviewmodel_a = {
+				name = "CHUD_DrawViewModel_A",
+				label = "Alien viewmodel",
+				tooltip = "Enables or disables showing the alien viewmodel.",
+				type = "select",
+				values  = { "Display all", "Hide all", "Custom" },
+				defaultValue = 0,
+				category = "misc",
+				valueType = "int",
+				sort = "A14",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
+				children = {
+					"drawviewmodel_skulk", "drawviewmodel_gorge",
+					"drawviewmodel_lerk", "drawviewmodel_fade",
+					"drawviewmodel_onos"
+				},
+				hideValues = { 0, 1 },
+			},
+			drawviewmodel_skulk = {
+				name = "CHUD_DrawViewModel_Skulk",
+				label = "Skulk viewmodel",
+				tooltip = "Enables or disables showing the Skulk viewmodel.",
+				type = "select",
+				values = { "Hide", "Display" },
+				defaultValue = true,
+				valueType = "bool",
+				category = "misc",
+				sort = "A14.1",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
+			},
+			drawviewmodel_gorge = {
+				name = "CHUD_DrawViewModel_Gorge",
+				label = "Gorge viewmodel",
+				tooltip = "Enables or disables showing the Gorge viewmodel.",
+				type = "select",
+				values = { "Hide", "Display" },
+				defaultValue = true,
+				valueType = "bool",
+				category = "misc",
+				sort = "A14.2",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
+			},
+			drawviewmodel_lerk = {
+				name = "CHUD_DrawViewModel_Lerk",
+				label = "Lerk viewmodel",
+				tooltip = "Enables or disables showing the Lerk viewmodel.",
+				type = "select",
+				values = { "Hide", "Display" },
+				defaultValue = true,
+				valueType = "bool",
+				category = "misc",
+				sort = "A14.3",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
+			},
+			drawviewmodel_fade = {
+				name = "CHUD_DrawViewModel_Fade",
+				label = "Fade viewmodel",
+				tooltip = "Enables or disables showing the Fade viewmodel.",
+				type = "select",
+				values = { "Hide", "Display" },
+				defaultValue = true,
+				valueType = "bool",
+				category = "misc",
+				sort = "A14.4",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
+				end,
+			},
+			drawviewmodel_onos = {
+				name = "CHUD_DrawViewModel_Onos",
+				label = "Onos viewmodel",
+				tooltip = "Enables or disables showing the Onos viewmodel.",
+				type = "select",
+				values = { "Hide", "Display" },
+				defaultValue = true,
+				valueType = "bool",
+				category = "misc",
+				sort = "A14.5",
+				applyFunction = function()
+					CHUDEvaluateGUIVis()
 				end,
 			},
 			
