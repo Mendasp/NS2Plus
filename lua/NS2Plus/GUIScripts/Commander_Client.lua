@@ -46,6 +46,7 @@ local tooltipText
 local function displayTimeTooltip(tech)
     if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
         local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
+        timeLeft = timeLeft < 0 and 0 or timeLeft
         local minutes = math.floor(timeLeft/60)
         local seconds = math.ceil(timeLeft - minutes*60)
         tooltipText = string.format("%01.0f:%02.0f", minutes, seconds)
