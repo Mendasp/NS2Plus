@@ -10,6 +10,7 @@ local function displayNameTimeTooltip(tech)
 		local text = GetDisplayNameForTechId(tech.Id)
 		
 		local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
+		timeLeft = timeLeft < 0 and 0 or timeLeft
 		local minutes = math.floor(timeLeft/60)
 		local seconds = math.ceil(timeLeft - minutes*60)
 		tooltipText = string.format("%s - %01.0f:%02.0f", text, minutes, seconds)
