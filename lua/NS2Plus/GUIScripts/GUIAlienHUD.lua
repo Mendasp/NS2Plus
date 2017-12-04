@@ -96,53 +96,8 @@ function GUIAlienHUD:Initialize()
 
 	-- Cr4zyAV config options
 	if CHUDGetOption("av") == 5 then
-		local useShader = Player.screenEffects.darkVision
-		local av_close = ColorIntToColor(CHUDGetOption("av_closecolor"))
-		local av_distant = ColorIntToColor(CHUDGetOption("av_distantcolor"))
-		local av_fog = ColorIntToColor(CHUDGetOption("av_fogcolor"))
-		local av_style = CHUDGetOption("av_style")
-		local av_offstyle = CHUDGetOption("av_offstyle")
-		local av_edges = CHUDGetOption("av_edges")
-		local av_edgesize = CHUDGetOption("av_edgesize")
-		local edgeThickness = av_edgesize / 1000
-		local av_closeIntensity = CHUDGetOption("av_closeintensity")
-		local av_distantIntensity = CHUDGetOption("av_distantintensity")
-		local av_fogIntensity = CHUDGetOption("av_fogintensity")
-		local av_desat = CHUDGetOption("av_desaturation")
-		local av_desatIntensity = CHUDGetOption("av_desaturationintensity")
-
-		--close colours
-		useShader:SetParameter("closeR", av_close.r)
-		useShader:SetParameter("closeG", av_close.g)
-		useShader:SetParameter("closeB", av_close.b)
-		useShader:SetParameter("closeIntensity", av_closeIntensity)
-
-		--distant colours
-		useShader:SetParameter("distantR", av_distant.r)
-		useShader:SetParameter("distantG", av_distant.g)
-		useShader:SetParameter("distantB", av_distant.b)
-		useShader:SetParameter("distantIntensity", av_distantIntensity)
-
-		--fog colours
-		useShader:SetParameter("fogR", av_fog.r)
-		useShader:SetParameter("fogG", av_fog.g)
-		useShader:SetParameter("fogB", av_fog.b)
-		useShader:SetParameter("fogIntensity", av_fogIntensity)
-
-		--style selectors
-		useShader:SetParameter("modeAV", av_style)
-		useShader:SetParameter("modeAVoff", av_offstyle)
-
-		--type of edges
-		useShader:SetParameter("avEdge", av_edges)
-
-		--edge size
-		useShader:SetParameter("edgeSize", edgeThickness)
-
-		--desaturation
-		useShader:SetParameter("avDesat", av_desat)
-		useShader:SetParameter("desatIntensity", av_desatIntensity)
-	end
+        updateAlienVision()
+    end
 
 	if CHUDGetOption("hudbars_a") > 0 then
 		if CHUDGetOption("hudbars_a") == 2 then
@@ -299,4 +254,73 @@ function GUIAlienHUD:Uninitialize()
 
 	GUI.DestroyItem(self.gameTime)
 	self.gameTime = nil
+end
+
+function updateAlienVision()
+    local player = Client.GetLocalPlayer()
+    local useShader = Player.screenEffects.darkVision
+    local av_close = ColorIntToColor(CHUDGetOption("av_closecolor"))
+    local av_distant = ColorIntToColor(CHUDGetOption("av_distantcolor"))
+    local av_fog = ColorIntToColor(CHUDGetOption("av_fogcolor"))
+    local av_style = CHUDGetOption("av_style")
+    local av_offstyle = CHUDGetOption("av_offstyle")
+    local av_edges = CHUDGetOption("av_edges")
+    local av_edgesize = CHUDGetOption("av_edgesize") / 1000
+    local av_closeIntensity = CHUDGetOption("av_closeintensity")
+    local av_distantIntensity = CHUDGetOption("av_distantintensity")
+    local av_fogIntensity = CHUDGetOption("av_fogintensity")
+    local av_desat = CHUDGetOption("av_desaturation")
+    local av_desatIntensity = CHUDGetOption("av_desaturationintensity")
+    local av_viewModelStyle = CHUDGetOption("av_viewmodelstyle")
+    local av_viewModelIntensity = CHUDGetOption("av_viewmodelintensity")
+    local av_worldIntensity = CHUDGetOption("av_worldintensity")
+    local av_activateEffect = CHUDGetOption("av_activationeffect")
+    local av_skyBox = CHUDGetOption("av_skybox")
+    local av_blendDistance = CHUDGetOption("av_blenddistance")
+    local av_desatBlend = CHUDGetOption("av_desaturationblend")
+    local actualAspect   = Client.GetScreenWidth() / Client.GetScreenHeight()
+    
+    --player aspect ratio, so drawing circles is better
+    useShader:SetParameter("avAspect", actualAspect)
+
+    --close colours
+    useShader:SetParameter("closeR", av_close.r)
+    useShader:SetParameter("closeG", av_close.g)
+    useShader:SetParameter("closeB", av_close.b)
+    useShader:SetParameter("closeIntensity", av_closeIntensity)
+    
+    --distant colours
+    useShader:SetParameter("distantR", av_distant.r)
+    useShader:SetParameter("distantG", av_distant.g)
+    useShader:SetParameter("distantB", av_distant.b)
+    useShader:SetParameter("distantIntensity", av_distantIntensity)
+
+    --fog colours
+    useShader:SetParameter("fogR", av_fog.r)
+    useShader:SetParameter("fogG", av_fog.g)
+    useShader:SetParameter("fogB", av_fog.b)
+    useShader:SetParameter("fogIntensity", av_fogIntensity)
+
+    --style selectors
+    useShader:SetParameter("modeAV", av_style)
+    useShader:SetParameter("modeAVoff", av_offstyle)
+
+    --edge values
+    useShader:SetParameter("avEdge", av_edges)
+    useShader:SetParameter("edgeSize", av_edgesize)
+
+    --world values
+    useShader:SetParameter("avDesat", av_desat)
+    useShader:SetParameter("desatIntensity", av_desatIntensity)
+    useShader:SetParameter("avDesatBlend", av_desatBlend)
+    useShader:SetParameter("avWorldIntensity", av_worldIntensity)
+    useShader:SetParameter("avSky", av_skyBox)
+    useShader:SetParameter("avBlend", av_blendDistance)
+    
+    --activation effect
+    useShader:SetParameter("avToggle", av_activateEffect)
+    
+    --viewmodel
+    useShader:SetParameter("avViewModelStyle", av_viewModelStyle)
+    useShader:SetParameter("avViewModel", av_viewModelIntensity)
 end

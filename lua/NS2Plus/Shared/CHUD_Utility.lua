@@ -249,14 +249,24 @@ if Client then
 		
 		local teamNumber = player:GetTeamNumber()
 		local drawviewmodel = CHUDGetOption("drawviewmodel")
+		local drawviewmodel_a = CHUDGetOption("drawviewmodel_a")
 		-- Cannot use the gCHUDHiddenViewModel global as it changes in the frame after this is run
 		local isViewModelHidden = drawviewmodel == 1 or
-			(drawviewmodel == 2 and
-				((player:isa("Marine") and not CHUDGetOption("drawviewmodel_m")) or
-				(player:isa("Alien") and not CHUDGetOption("drawviewmodel_a")) or
-				(player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo")))
+			drawviewmodel == 2 and
+			(
+				player:isa("Marine") and not CHUDGetOption("drawviewmodel_m") or
+				player:isa("Exo") and not CHUDGetOption("drawviewmodel_exo") or
+				player:isa("Alien") and drawviewmodel_a ~= 0 and
+				(
+					drawviewmodel_a == 1 or
+					player:isa("Skulk") and not CHUDGetOption("drawviewmodel_skulk") or
+					player:isa("Gorge") and not CHUDGetOption("drawviewmodel_gorge") or
+					player:isa("Lerk") and not CHUDGetOption("drawviewmodel_lerk") or
+					player:isa("Fade") and not CHUDGetOption("drawviewmodel_fade") or
+					player:isa("Onos") and not CHUDGetOption("drawviewmodel_onos")
+				)
 			)
-		
+
 		local classicammo = false
 		local customhud = false
 		local hiddenviewmodel = false
@@ -333,6 +343,7 @@ if Client then
 	function CHUDApplyLifeformSpecificStuff()
 		local player = Client.GetLocalPlayer()
 		local eggTechId = player:isa("Embryo") and player:GetGestationTechId()
+		local sensitivity_perlifeform = CHUDGetOption("sensitivity_perteam") and CHUDGetOption("sensitivity_perlifeform")
 		local sensitivity
 
 		if player:isa("Skulk") or eggTechId == kTechId.Skulk then
@@ -347,7 +358,7 @@ if Client then
 			sensitivity = CHUDGetOption("sensitivity_onos")
 		end
 
-		if CHUDGetOption("sensitivity_perlifeform") and sensitivity then
+		if sensitivity_perlifeform and sensitivity then
 			OptionsDialogUI_SetMouseSensitivity(sensitivity)
 		end
 	end
