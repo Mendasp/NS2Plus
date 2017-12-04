@@ -47,7 +47,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 	end
 
 	if (teamNumber == 1 or teamNumber == 2) and self.showAvgSkill then
-		local skill = teamAvgSkill/numPlayers
+		local skill = numPlayers > 0 and teamAvgSkill/numPlayers or 0
 		if teamNumber == 1 then
 			team1Skill = skill
 		elseif teamNumber == 2 then
