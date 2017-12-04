@@ -6,7 +6,11 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
-
+- 4/12/2017
+    - Added Observatory (https://observatory.morrolan.ch) profile links to the scoreboard and end stats
+    - Fixed that the player entry hover menu of the end stats view was hidden immediably
+    - Fixed that the overhead research tooltips displayed a negative research time after completion
+    
 - 27/10/2017
     - Fixed compatibility issues with ns2 build 319
     - Added per-lifeform sensitivity for aliens

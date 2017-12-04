@@ -21,7 +21,7 @@ originalUpdateScreenEff = Class_ReplaceMethod( "Player", "UpdateScreenEffects",
 local originalSESetActive
 originalSESetActive = Class_ReplaceMethod("ScreenEffect", "SetActive",
 	function(self, setActive)
-		if self == Player.screenEffects.gorgetunnel then
+		if CHUDGetOption("particles") and self == Player.screenEffects.gorgetunnel then
 			setActive = false
 		end
 

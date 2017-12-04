@@ -1,5 +1,8 @@
 local kNSLUserURL = "http://www.ensl.org/users/"
 local kNSLTeamURL = "http://www.ensl.org/teams/"
+
+local kObservatoryUserURL = "http://observatory.morrolan.ch/player?steam_id="
+
 local team1Skill, team2Skill, textHeight, teamItemWidth
 
 local originalScoreboardUpdateTeam = GUIScoreboard.UpdateTeam
@@ -47,7 +50,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 	end
 
 	if (teamNumber == 1 or teamNumber == 2) and self.showAvgSkill then
-		local skill = teamAvgSkill/numPlayers
+		local skill = numPlayers > 0 and teamAvgSkill/numPlayers or 0
 		if teamNumber == 1 then
 			team1Skill = skill
 		elseif teamNumber == 2 then
@@ -199,20 +202,20 @@ function GUIScoreboard:Update(deltaTime)
 	end
 end
 
--- Only add this if the NSL mod is running
-if GetNSLMode then
-	local originalScoreboardSKE = GUIScoreboard.SendKeyEvent
-	function GUIScoreboard:SendKeyEvent(key, down)
-		local ret = originalScoreboardSKE(self, key, down)
-		
-		if GetIsBinding(key, "Scoreboard") and not down then
-			self.hoverMenu:Hide()
-		end
-		
-		if self.visible and self.hoverMenu.background:GetIsVisible() then
-			local NSLuid = 0
-			local NSLtid = 0
-			local NSLname, isNSL
+local originalScoreboardSKE = GUIScoreboard.SendKeyEvent
+function GUIScoreboard:SendKeyEvent(key, down)
+	local ret = originalScoreboardSKE(self, key, down)
+
+	if GetIsBinding(key, "Scoreboard") and not down then
+		self.hoverMenu:Hide()
+	end
+
+	if self.visible and self.hoverMenu.background:GetIsVisible() then
+		local NSLuid = 0
+		local NSLtid = 0
+		local NSLname, isNSL
+
+		if GetNSLMode then
 			for _, pie in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 				if pie.clientId == self.hoverPlayerClientIndex then
 					NSLuid = pie.NSL_ID
@@ -225,57 +228,67 @@ if GetNSLMode then
 					break
 				end
 			end
-			if isNSL and NSLuid > 0 then
-				local function openNSLUserPage()
-					Client.ShowWebpage(string.format("%s%s", kNSLUserURL, NSLuid))
-				end
-				local function openNSLTeamPage()
-					Client.ShowWebpage(string.format("%s%s", kNSLTeamURL, NSLtid))
-				end
-				
-				local found = 0
-				local added = false
-				local titleColor = Color(0, 0, 0, 0)
-				local teamColorBg = Color(0.5, 0.5, 0.5, 0.5)
-				local teamColorHighlight = Color(0.75, 0.75, 0.75, 0.75)
-				local textColor = Color(1, 1, 1, 1)
-				for index, entry in ipairs(self.hoverMenu.links) do
-					if not entry.isSeparator then
-						local text = entry.link:GetText()
-						if text == Locale.ResolveString("SB_MENU_STEAM_PROFILE") then
-							teamColorBg = entry.bgColor
-							teamColorHighlight = entry.bgHighlightColor
-							found = index
-						elseif text == "NSL profile" then
-							added = true
-						end
-					end
-				end
-				
-				if not added then
-					if found > 0 then
-						found = found+1
-					else
-						found = nil
-					end
-					
-					-- Don't add the button if we can't find the one we expect
-					if found then
-						self.hoverMenu:AddSeparator("NSL", found)
-						self.hoverMenu:AddButton(NSLname, titleColor, titleColor, textColor, nil, found)
-						self.hoverMenu:AddButton("NSL profile", teamColorBg, teamColorHighlight, textColor, openNSLUserPage, found+1)
-						if NSLtid > 0 then
-							self.hoverMenu:AddButton("NSL team", teamColorBg, teamColorHighlight, textColor, openNSLTeamPage, found+2)
-						end
-						-- Calling the show function will reposition the menu (in case we're out of the window)
-						self.hoverMenu:Show()
-					end
+		end
+
+		local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex) or 0
+		local function openObservatoryProf()
+			Client.ShowWebpage(string.format("%s%s", kObservatoryUserURL, steamId))
+		end
+
+		local function openNSLUserPage()
+			Client.ShowWebpage(string.format("%s%s", kNSLUserURL, NSLuid))
+		end
+		local function openNSLTeamPage()
+			Client.ShowWebpage(string.format("%s%s", kNSLTeamURL, NSLtid))
+		end
+
+		local found = 0
+		local added = false
+		local titleColor = Color(0, 0, 0, 0)
+		local teamColorBg = Color(0.5, 0.5, 0.5, 0.5)
+		local teamColorHighlight = Color(0.75, 0.75, 0.75, 0.75)
+		local textColor = Color(1, 1, 1, 1)
+		for index, entry in ipairs(self.hoverMenu.links) do
+			if not entry.isSeparator then
+				local text = entry.link:GetText()
+				if text == Locale.ResolveString("SB_MENU_STEAM_PROFILE") then
+					teamColorBg = entry.bgColor
+					teamColorHighlight = entry.bgHighlightColor
+					found = index
+				elseif text == "Observatory profile" and NSLuid == 0 then
+					added = true
+				elseif text == "NSL profile" then
+					added = true
 				end
 			end
 		end
-		
-		return ret
+
+		if not added then
+			if found > 0 then
+				found = found + 1
+			else
+				found = nil
+			end
+
+			-- Don't add the button if we can't find the one we expect
+			if found then
+				self.hoverMenu:AddButton("Observatory profile", teamColorBg, teamColorHighlight, textColor, openObservatoryProf, found)
+
+				if isNSL and NSLuid > 0 then
+					found = found + 1
+					self.hoverMenu:AddSeparator("NSL", found)
+					self.hoverMenu:AddButton(NSLname, titleColor, titleColor, textColor, nil, found)
+					self.hoverMenu:AddButton("NSL profile", teamColorBg, teamColorHighlight, textColor, openNSLUserPage, found+1)
+					self.hoverMenu:AddButton("NSL team", teamColorBg, teamColorHighlight, textColor, openNSLTeamPage, found+2)
+				end
+
+				-- Calling the show function will reposition the menu (in case we're out of the window)
+				self.hoverMenu:Show()
+			end
+		end
 	end
+
+	return ret
 end
 
 local originalLocaleResolveString = Locale.ResolveString
