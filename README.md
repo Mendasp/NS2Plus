@@ -6,6 +6,9 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- 6/12/2017
+    - Fixed that the end stats hover menu consumed the player's input after initialization without being visible.
+    
 - 4/12/2017
     - Added Observatory (https://observatory.morrolan.ch) profile links to the scoreboard and end stats
     - Fixed that the player entry hover menu of the end stats was hidden instantly
