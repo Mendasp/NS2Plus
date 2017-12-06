@@ -279,6 +279,7 @@ function updateAlienVision()
     local av_blendDistance = CHUDGetOption("av_blenddistance")
     local av_desatBlend = CHUDGetOption("av_desaturationblend")
     local actualAspect   = Client.GetScreenWidth() / Client.GetScreenHeight()
+    local av_marineColor = CHUDGetOption("av_marinecolor")
     
     --player aspect ratio, so drawing circles is better
     useShader:SetParameter("avAspect", actualAspect)
@@ -300,6 +301,10 @@ function updateAlienVision()
     useShader:SetParameter("fogG", av_fog.g)
     useShader:SetParameter("fogB", av_fog.b)
     useShader:SetParameter("fogIntensity", av_fogIntensity)
+    
+    --marine colour changer
+    useShader:SetParameter("marineColor", av_marineColor)
+    
 
     --style selectors
     useShader:SetParameter("modeAV", av_style)
