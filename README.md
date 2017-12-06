@@ -8,7 +8,7 @@ Latest changes
 ==============
 - 4/12/2017
     - Added Observatory (https://observatory.morrolan.ch) profile links to the scoreboard and end stats
-    - Fixed that the player entry hover menu of the end stats view was hidden immediably
+    - Fixed that the player entry hover menu of the end stats was hidden instantly
     - Fixed that the overhead research tooltips displayed a negative research time after completion
     
 - 27/10/2017

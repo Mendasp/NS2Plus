@@ -279,7 +279,9 @@ function GUIScoreboard:SendKeyEvent(key, down)
 					self.hoverMenu:AddSeparator("NSL", found)
 					self.hoverMenu:AddButton(NSLname, titleColor, titleColor, textColor, nil, found)
 					self.hoverMenu:AddButton("NSL profile", teamColorBg, teamColorHighlight, textColor, openNSLUserPage, found+1)
-					self.hoverMenu:AddButton("NSL team", teamColorBg, teamColorHighlight, textColor, openNSLTeamPage, found+2)
+					if NSLtid > 0 then
+						self.hoverMenu:AddButton("NSL team", teamColorBg, teamColorHighlight, textColor, openNSLTeamPage, found+2)
+					end
 				end
 
 				-- Calling the show function will reposition the menu (in case we're out of the window)
