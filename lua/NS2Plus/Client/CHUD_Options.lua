@@ -390,7 +390,7 @@ CHUDOptions =
 			},
 			av_style = { 
 				name = "CHUD_AVStyle",
-				label = "  Alien Vision Style",
+				label = "Alien Vision Style",
 				tooltip = "Switches between different configurable styles of Alien Vision.",
 				type = "select",
 				values  = { "Minimal", "Original", "Depth Fog", "Edge and World" },
@@ -406,7 +406,7 @@ CHUDOptions =
 			},
 			av_offstyle = { 
 				name = "CHUD_AVOffStyle",
-				label = "  Disabled Alien Vision Style",
+				label = "Disabled Alien Vision Style",
 				tooltip = "Switches between different options for when Alien Vision is disabled.\nColoured edges use Colour One & Two values",
 				type = "select",
 				values  = { "Nothing", "Minimal world edges", "Coloured edges", "Marine only edges" },
@@ -420,8 +420,8 @@ CHUDOptions =
 			},
 			av_closecolor = {
 				name = "CHUD_AVCloseColor",
-				label = "  Alien Vision Colour One",
-				tooltip = "Sets the first color in Alien Vision.",
+				label = "Alien Vision Colour: One",
+				tooltip = "Sets the first colour in Alien Vision.",
 				defaultValue = 0x0030FE,
 				category = "ui",
 				valueType = "color",
@@ -431,7 +431,7 @@ CHUDOptions =
 			},
 			av_closeintensity = { 
 				name = "CHUD_AVCloseIntensity",
-				label = "  Colour One Intensity",
+				label = "Colour One Intensity",
 				tooltip = "Sets the 'brightness' value of the first (closer) colour.",
 				type = "slider",
 				defaultValue = 1.0,
@@ -444,7 +444,7 @@ CHUDOptions =
 			},
 			av_distantcolor = {
 				name = "CHUD_AVDistantColor",
-				label = "  Alien Vision Colour Two",
+				label = "Alien Vision Colour: Two",
 				tooltip = "Sets the second colour in Alien Vision.",
 				defaultValue = 0x00FF00,
 				category = "ui",
@@ -454,7 +454,7 @@ CHUDOptions =
 			},
 			av_distantintensity = { 
 				name = "CHUD_AVDistantIntensity",
-				label = "  Colour Two Intensity",
+				label = "Colour Two Intensity",
 				tooltip = "Sets the 'brightness' value of the second (distant) colour.",
 				type = "slider",
 				defaultValue = 1.0,
@@ -467,7 +467,7 @@ CHUDOptions =
 			},
 			av_fogcolor = {
 				name = "CHUD_AVFogColor",
-				label = "  Alien Vision Colour Three",
+				label = "Alien Vision Colour: Three",
 				tooltip = "Depending on mode sets either fog, model or outline colour.",
 				defaultValue = 0x140228,
 				category = "ui",
@@ -477,7 +477,7 @@ CHUDOptions =
 			},
 			av_fogintensity = { 
 				name = "CHUD_AVFogIntensity",
-				label = "  Color Three Intensity",
+				label = "Color Three Intensity",
 				tooltip = "Sets the 'brightness' value of the third colour.",
 				type = "slider",
 				defaultValue = 1.0,
@@ -490,8 +490,8 @@ CHUDOptions =
 			},
 			av_marinecolor = { 
 				name = "CHUD_AVMarineColor",
-				label = "  Marine Colour",
-				tooltip = "Allows Marines to be coloured separately.\nColour One and Two apply to 'Minimal' and 'Depth Fog' marines.\nColour Three is inverted for 'Original' and 'Edge and World' marines",
+				label = "Marine Colour",
+				tooltip = "Allows Marines to be coloured separately.\nColour One and Two apply to 'Minimal' and 'Depth Fog' Styles.\nColour Three is inverted for 'Original' and 'Edge and World' Styles",
 				type = "select",
 				values  = { "Same Colour", "Marines Only", "Separate Team Colours" },
 				defaultValue = 0,
@@ -504,7 +504,7 @@ CHUDOptions =
 			},
             av_advancedmode = { 
 				name = "CHUD_AVAdvancedMode",
-				label = "  Advanced Editing",
+				label = "Advanced Editing",
 				tooltip = "Enables more configurable options for alien vision.",
 				type = "select",
 				values  = { "Simple", "Advanced" },
@@ -517,7 +517,7 @@ CHUDOptions =
 			},
 			av_blenddistance = { 
 				name = "CHUD_AVBlendDistance",
-				label = "      Blend Distance",
+				label = "Blend Distance",
 				tooltip = "Allows you to modify the distance at which colour blending occurs.",
 				type = "slider",
 				defaultValue = 1.5,
@@ -530,7 +530,7 @@ CHUDOptions =
 			},
 			av_worldintensity = { 
 				name = "CHUD_AVWorldIntensity",
-				label = "      World Intensity",
+				label = "World Intensity",
 				tooltip = "Sets the brightness value of the world.",
 				type = "slider",
 				defaultValue = 1,
@@ -543,7 +543,7 @@ CHUDOptions =
 			},
 			av_edges = { 
 				name = "CHUD_AVEdges",
-				label = "      Edge Style",
+				label = "Edge Style",
 				tooltip = "Switches between edge outlines that are uniform in size or ones that thicken in peripheral vision.",
 				type = "select",
 				values  = { "Normal", "Thicker Peripheral Edges" },
@@ -556,7 +556,7 @@ CHUDOptions =
 			},
 			av_edgesize = { 
 				name = "CHUD_AVEdgeSize",
-				label = "      Edge Thickness",
+				label = "Edge Thickness",
 				tooltip = "Sets the thickness of edges in alien vision.",
 				type = "slider",
 				defaultValue = 0.4,
@@ -569,7 +569,7 @@ CHUDOptions =
 			},	
 			av_desaturation = { 
 				name = "CHUD_AVDesaturation",
-				label = "      World Desaturation",
+				label = "World Desaturation",
 				tooltip = "Switches between different types of desaturation.",
 				type = "select",
 				values  = { "None", "Full Scene", "Desaturate Distance", "Desaturate Close" },
@@ -584,7 +584,7 @@ CHUDOptions =
 			},
 			av_desaturationintensity = { 
 				name = "CHUD_AVDesaturationIntensity",
-				label = "          Desaturation Intensity",
+				label = "Desaturation Intensity",
 				tooltip = "Sets the desaturation amount.",
 				type = "slider",
 				defaultValue = 0.25,
@@ -597,7 +597,7 @@ CHUDOptions =
 			},
 			av_desaturationblend = { 
 				name = "CHUD_AVDesaturationBlend",
-				label = "          Desaturation Blend Distance",
+				label = "Desaturation Blend Distance",
 				tooltip = "Sets the blending range for desaturation.",
 				type = "slider",
 				defaultValue = 0.25,
@@ -610,11 +610,11 @@ CHUDOptions =
 			},
 			av_viewmodelstyle = { 
 				name = "CHUD_AVViewModelStyle",
-				label = "      View Model Style",
+				label = "View Model Style",
 				tooltip = "Switches between default view model or view model with AV applied.",
 				type = "select",
 				values  = { "Alien Vision", "Default" },
-				defaultValue = 0,
+				defaultValue = 1,
 				category = "ui",
 				valueType = "int",
 				applyFunction = function() updateAlienVision() end,
@@ -624,7 +624,7 @@ CHUDOptions =
 			},
 			av_viewmodelintensity = { 
 				name = "CHUD_AVViewModelIntensity",
-				label = "          View Model Intensity",
+				label = "View Model Intensity",
 				tooltip = "Sets the amount of Alien Vision applied to the viewmodel.",
 				type = "slider",
 				defaultValue = 0.0,
@@ -637,7 +637,7 @@ CHUDOptions =
 			},
 			av_skybox = {
 				name = "CHUD_AVSkybox",
-				label = "      Skybox Style",
+				label = "Skybox Style",
 				tooltip = "Lets you set the way the sky appears in Alien Vision.",
 				type = "select",
 				values  = { "Normal Sky", "Black", "Alien Vision" },
@@ -649,7 +649,7 @@ CHUDOptions =
 			},
 			av_activationeffect = {
 				name = "CHUD_AVActivationEffect",
-				label = "      Activation Effect",
+				label = "Activation Effect",
 				tooltip = "Sets the transition effect when enabling Alien Vision.",
 				type = "select",
 				values  = { "Distance Pulse", "Fade In", "Instant On" },
