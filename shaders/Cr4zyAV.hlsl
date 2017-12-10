@@ -480,7 +480,7 @@ float4 SFXDarkVisionPS(PS_INPUT input) : COLOR0
     if (amount < 1){
         if (modeAVoff >= 1){
             if (modeAVoff > 1){
-                if (modeAVoff >= 2){
+                if (modeAVoff > 2){
                     return inputPixel * (1 + edge) + (offOutline * marineMask) * .4 + world * .6;
                 }
             //coloured outlines
