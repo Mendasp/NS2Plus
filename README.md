@@ -6,8 +6,9 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
-- 17/12/2017
+- XX/12/2017
 	- Fixed compatibility problem with b320 emissive-toggle change (power-state changes)
+	- Fixed that the custom nameplate style options did not work. Please note that the displayed information of the custom nameplate styles may only update every 200 ms.
 	
 - 6/12/2017
     - Fixed that the end stats hover menu consumed the player's input after initialization without being visible.
