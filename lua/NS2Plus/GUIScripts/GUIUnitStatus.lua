@@ -1,16 +1,19 @@
 local isEnabled = Client.GetOptionBoolean("CHUD_SpectatorHPUnitStatus", true)
 local OldUpdateUnitStatusBlip = GUIUnitStatus.UpdateUnitStatusBlip
 
-function GUIUnitStatus:UpdateUnitStatusBlip( blipIndex, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
+function GUIUnitStatus:UpdateUnitStatusBlip(blipIndex, localPlayerIsCommander, baseResearchRot, showHints, playerTeamType )
 	
 	local blipData = self.activeStatusInfo[blipIndex]
 	local updateBlip = self.activeBlipList[blipIndex]
 	
 	local nameplates = not localPlayerIsCommander and CHUDGetOption("nameplates") or 0
-	local CHUDBlipData
-	if type(blipData.Hint) == "table" then
+	local CHUDBlipData = blipData.CHUDBlipData
+
+	if not CHUDBlipData and type(blipData.Hint) == "table" then
 		CHUDBlipData = blipData.Hint
-		blipData.Hint = CHUDBlipData.Hint
+		blipData.CHUDBlipData = CHUDBlipData --write CHUDBlipData into blipdata cache
+		blipData.Hint = CHUDBlipData.Hint --restore vanilla hint entry
+
 		if nameplates == 1 or nameplates == 3 then
 			blipData.Hint = CHUDBlipData.Status
 		end
@@ -26,8 +29,6 @@ function GUIUnitStatus:UpdateUnitStatusBlip( blipIndex, localPlayerIsCommander, 
 	local isEnemy = (playerTeamType ~= blipData.TeamType) and (blipData.TeamType ~= kNeutralTeamType)
 	local isCrosshairTarget = blipData.IsCrossHairTarget
 	local player = Client.GetLocalPlayer()
-	
-	local showHints = showHints
 	
 	local hideBg = false
 	if nameplates == 1 then
@@ -101,13 +102,6 @@ function GUIUnitStatus:Initialize()
 
 	GUIUnitStatus.kUseColoredWrench = CHUDGetOption("wrenchicon") == 1
 
-end
-
-local oldUnitStatusUpdate = GUIUnitStatus.Update
-function GUIUnitStatus:Update(deltaTime)
-	CHUDHint = true
-	oldUnitStatusUpdate( self, deltaTime )
-	CHUDHint = false
 end
 
 local function isValidSpectatorMode()
