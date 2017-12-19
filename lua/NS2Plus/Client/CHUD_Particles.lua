@@ -399,8 +399,8 @@ function LoadMapEntity(className, groupName, values)
 			table.insert(propCache, Client.propList[#Client.propList])
 			if not Client.fullyLoaded then
 				table.insert(propValuesCache, {className = className, groupName = groupName, values = values})
-            end
-            table.remove(Client.glowingProps, #Client.glowingProps)
+			end
+			table.remove(Client.glowingProps, #Client.glowingProps)
 			table.remove(Client.propList, #Client.propList)
 		end
 	end
