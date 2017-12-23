@@ -1,13 +1,14 @@
-originalGetUnitHint = UnitStatusMixin.GetUnitHint
+local originalGetUnitHint = UnitStatusMixin.GetUnitHint
 function UnitStatusMixin:GetUnitHint(forEntity)
 	
 	local player = Client.GetLocalPlayer()
+	local hint = originalGetUnitHint(self, forEntity)
 	
-	if HasMixin(self, "Live") and (not self.GetShowHealthFor or self:GetShowHealthFor(player)) and CHUDHint then
-	
+	if HasMixin(self, "Live") and (not self.GetShowHealthFor or self:GetShowHealthFor(player)) then
+
 		local hintTable = { }
 		
-		hintTable.Hint = originalGetUnitHint(self, forEntity)
+		hintTable.Hint = hint
 		
 		local status = string.format("%d/%d",math.max(1, math.ceil(self:GetHealth())),math.ceil(self:GetArmor()))
 		if self:isa("Exo") or self:isa("Exosuit") then

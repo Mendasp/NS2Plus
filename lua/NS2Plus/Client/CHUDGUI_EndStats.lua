@@ -1354,6 +1354,8 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
 	self.hoverMenu = GetGUIManager():CreateGUIScript("GUIHoverMenu")
+	self.hoverMenu:Hide()
+
 	self.lastRow = nil
 	
 	self.background:SetIsVisible(false)

@@ -6,9 +6,16 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- XX/12/2017
+	- Fixed compatibility problem with b320 emissive-toggle change (power-state changes)
+	- Fixed that the custom nameplate style options did not work. Please note that the displayed information of the custom nameplate styles may only update every 200 ms.
+	
+- 6/12/2017
+    - Fixed that the end stats hover menu consumed the player's input after initialization without being visible.
+    
 - 4/12/2017
     - Added Observatory (https://observatory.morrolan.ch) profile links to the scoreboard and end stats
-    - Fixed that the player entry hover menu of the end stats view was hidden immediably
+    - Fixed that the player entry hover menu of the end stats was hidden instantly
     - Fixed that the overhead research tooltips displayed a negative research time after completion
     
 - 27/10/2017
