@@ -30,6 +30,14 @@ local function printNum(number)
 	end
 end
 
+local function printNum2(number)
+  if number and IsNumber(number) then
+    return string.format("%.2f", number)
+  else
+    return "NaN"
+  end
+end
+
 local kTitleFontName = Fonts.kAgencyFB_Medium
 local kSubTitleFontName = Fonts.kAgencyFB_Small
 local kRowFontName = Fonts.kArial_17
@@ -93,6 +101,7 @@ local finalStatsTable = {}
 local avgAccTable = {}
 local miscDataTable = {}
 local cardsTable = {}
+local hiveSkillGraphTable = {}
 local rtGraphTable = {}
 local commanderStats = nil
 local killGraphTable = {}
@@ -370,7 +379,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.timePlayed)
 	item.timePlayed:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.timePlayed:SetTextAlignmentY(GUIItem.Align_Center)
-	item.timePlayed:SetTextAlignmentX(GUIItem.Align_Center)
+	item.timePlayed:SetTextAlignmentX(GUIItem.Align_Max)
 	item.timePlayed:SetPosition(Vector(xOffset, 0, 0))
 	item.timePlayed:SetText(timePlayed or "")
 	item.timePlayed:SetLayer(kGUILayerMainMenu)
@@ -386,7 +395,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.timeBuilding)
 	item.timeBuilding:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.timeBuilding:SetTextAlignmentY(GUIItem.Align_Center)
-	item.timeBuilding:SetTextAlignmentX(GUIItem.Align_Center)
+	item.timeBuilding:SetTextAlignmentX(GUIItem.Align_Max)
 	item.timeBuilding:SetPosition(Vector(xOffset, 0, 0))
 	item.timeBuilding:SetText(timeBuilding or "")
 	item.timeBuilding:SetLayer(kGUILayerMainMenu)
@@ -402,7 +411,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.sdmg)
 	item.sdmg:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.sdmg:SetTextAlignmentY(GUIItem.Align_Center)
-	item.sdmg:SetTextAlignmentX(GUIItem.Align_Center)
+	item.sdmg:SetTextAlignmentX(GUIItem.Align_Max)
 	item.sdmg:SetPosition(Vector(xOffset, 0, 0))
 	item.sdmg:SetText(sdmg or "")
 	item.sdmg:SetLayer(kGUILayerMainMenu)
@@ -418,13 +427,13 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.pdmg)
 	item.pdmg:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.pdmg:SetTextAlignmentY(GUIItem.Align_Center)
-	item.pdmg:SetTextAlignmentX(GUIItem.Align_Center)
+	item.pdmg:SetTextAlignmentX(GUIItem.Align_Max)
 	item.pdmg:SetPosition(Vector(xOffset, 0, 0))
 	item.pdmg:SetText(pdmg or "")
 	item.pdmg:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.pdmg)
 	
-	xOffset = xOffset - kItemSize - ConditionalValue(avgAccTable.marineOnosAcc == -1, kItemPaddingSmallMedium, kItemPaddingMediumLarge)
+	xOffset = xOffset - kItemSize - kItemSize
 	
 	item.acc = GUIManager:CreateTextItem()
 	item.acc:SetStencilFunc(GUIItem.NotEqual)
@@ -434,13 +443,13 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.acc)
 	item.acc:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.acc:SetTextAlignmentY(GUIItem.Align_Center)
-	item.acc:SetTextAlignmentX(GUIItem.Align_Center)
+	item.acc:SetTextAlignmentX(GUIItem.Align_Max)
 	item.acc:SetPosition(Vector(xOffset, 0, 0))
 	item.acc:SetText(acc or "")
 	item.acc:SetLayer(kGUILayerMainMenu)
 	item.background:AddChild(item.acc)
 	
-	xOffset = xOffset - kItemSize - ConditionalValue(avgAccTable.marineOnosAcc == -1, kItemPaddingExtraSmall, kItemPaddingMedium)
+	xOffset = xOffset - kItemSize - ConditionalValue(avgAccTable.marineOnosAcc == -1, kItemPaddingSmall, kItemPaddingMediumLarge)*2
 	
 	item.deaths = GUIManager:CreateTextItem()
 	item.deaths:SetStencilFunc(GUIItem.NotEqual)
@@ -450,7 +459,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.deaths)
 	item.deaths:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.deaths:SetTextAlignmentY(GUIItem.Align_Center)
-	item.deaths:SetTextAlignmentX(GUIItem.Align_Center)
+	item.deaths:SetTextAlignmentX(GUIItem.Align_Max)
 	item.deaths:SetPosition(Vector(xOffset, 0, 0))
 	item.deaths:SetText(deaths or "")
 	item.deaths:SetLayer(kGUILayerMainMenu)
@@ -466,7 +475,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.assists)
 	item.assists:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.assists:SetTextAlignmentY(GUIItem.Align_Center)
-	item.assists:SetTextAlignmentX(GUIItem.Align_Center)
+	item.assists:SetTextAlignmentX(GUIItem.Align_Max)
 	item.assists:SetPosition(Vector(xOffset, 0, 0))
 	item.assists:SetText(assists or "")
 	item.assists:SetLayer(kGUILayerMainMenu)
@@ -482,7 +491,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 	GUIMakeFontScale(item.kills)
 	item.kills:SetAnchor(GUIItem.Left, GUIItem.Center)
 	item.kills:SetTextAlignmentY(GUIItem.Align_Center)
-	item.kills:SetTextAlignmentX(GUIItem.Align_Center)
+	item.kills:SetTextAlignmentX(GUIItem.Align_Max)
 	item.kills:SetPosition(Vector(xOffset, 0, 0))
 	item.kills:SetText(kills or "")
 	item.kills:SetLayer(kGUILayerMainMenu)
@@ -1187,6 +1196,32 @@ function CHUDGUI_EndStats:Initialize()
 	self.techLogText:SetPosition(Vector(-kTextShadowOffset, -kTextShadowOffset, 0))
 	self.techLogText:SetLayer(kGUILayerMainMenu)
 	self.techLogTextShadow:AddChild(self.techLogText)
+
+  self.hiveSkillGraphTextShadow = GUIManager:CreateTextItem()
+  self.hiveSkillGraphTextShadow:SetStencilFunc(GUIItem.NotEqual)
+  self.hiveSkillGraphTextShadow:SetFontName(kTitleFontName)
+  self.hiveSkillGraphTextShadow:SetColor(Color(0,0,0,1))
+  self.hiveSkillGraphTextShadow:SetScale(scaledVector)
+  GUIMakeFontScale(self.hiveSkillGraphTextShadow)
+  self.hiveSkillGraphTextShadow:SetIsVisible(false)
+  self.hiveSkillGraphTextShadow:SetText("HIVESKILL GRAPH")
+  self.hiveSkillGraphTextShadow:SetAnchor(GUIItem.Left, GUIItem.Top)
+  self.hiveSkillGraphTextShadow:SetTextAlignmentX(GUIItem.Align_Center)
+  self.hiveSkillGraphTextShadow:SetLayer(kGUILayerMainMenu)
+  self.background:AddChild(self.hiveSkillGraphTextShadow)
+
+  self.hiveSkillGraphText = GUIManager:CreateTextItem()
+  self.hiveSkillGraphText:SetStencilFunc(GUIItem.NotEqual)
+  self.hiveSkillGraphText:SetFontName(kTitleFontName)
+  self.hiveSkillGraphText:SetColor(Color(1,1,1,1))
+  self.hiveSkillGraphText:SetScale(scaledVector)
+  GUIMakeFontScale(self.hiveSkillGraphText)
+  self.hiveSkillGraphText:SetText("HIVESKILL GRAPH")
+  self.hiveSkillGraphText:SetAnchor(GUIItem.Left, GUIItem.Top)
+  self.hiveSkillGraphText:SetTextAlignmentX(GUIItem.Align_Center)
+  self.hiveSkillGraphText:SetPosition(Vector(-kTextShadowOffset, -kTextShadowOffset, 0))
+  self.hiveSkillGraphText:SetLayer(kGUILayerMainMenu)
+  self.hiveSkillGraphTextShadow:AddChild(self.hiveSkillGraphText)
 	
 	self.rtGraphTextShadow = GUIManager:CreateTextItem()
 	self.rtGraphTextShadow:SetStencilFunc(GUIItem.NotEqual)
@@ -1252,8 +1287,23 @@ function CHUDGUI_EndStats:Initialize()
 	
 	self.statsCards = {}
 	self.techLogs = {}
+  self.hiveSkillGraphs = {}
 	self.rtGraphs = {}
 	self.killGraphs = {}
+
+  self.hiveSkillGraph = _G["CHUDGUI_StaticLineGraph"]()
+  self.hiveSkillGraph:Initialize()
+  self.hiveSkillGraph:SetAnchor(GUIItem.Middle, GUIItem.Top)
+  self.hiveSkillGraph:SetSize(rtGraphSize)
+  self.hiveSkillGraph:SetYGridSpacing(1)
+  self.hiveSkillGraph:SetIsVisible(false)
+  self.hiveSkillGraph:SetXAxisIsTime(true)
+  self.hiveSkillGraph:ExtendXAxisToBounds(true)
+  self.hiveSkillGraph:GiveParent(self.background)
+  self.hiveSkillGraph:SetStencilFunc(GUIItem.NotEqual)
+
+  self.hiveSkillGraph:StartLine(kTeam1Index, kBlueColor)
+  self.hiveSkillGraph:StartLine(kTeam2Index, kRedColor)
 	
 	self.rtGraph = _G["CHUDGUI_StaticLineGraph"]()
 	self.rtGraph:Initialize()
@@ -1334,6 +1384,7 @@ function CHUDGUI_EndStats:Initialize()
 				avgAccTable = parsedFile.avgAccTable or {}
 				miscDataTable = parsedFile.miscDataTable or {}
 				cardsTable = parsedFile.cardsTable or {}
+				hiveSkillGraphTable = parsedFile.hiveSkillGraphTable or {}
 				rtGraphTable = parsedFile.rtGraphTable or {}
 				commanderStats = parsedFile.commanderStats or nil
 				techLogTable = parsedFile.techLogTable or {}
@@ -1503,6 +1554,16 @@ local function repositionStats(self)
 			local team2YSize = self.techLogs[2].header.background:GetSize().y + self.techLogs[2].header.tableBackground:GetSize().y
 			
 			yPos = yPos + GUILinearScale(32) + math.max(team1YSize, team2YSize)
+		end
+
+    self.hiveSkillGraphTextShadow:SetIsVisible(#self.hiveSkillGraphs > 0)
+    self.hiveSkillGraph:SetIsVisible(#self.hiveSkillGraphs > 0)
+		if #self.hiveSkillGraphs > 0 then
+      self.hiveSkillGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+      yPos = yPos + GUILinearScale(32)
+      
+      self.hiveSkillGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
+      yPos = yPos + rtGraphSize.y + GUILinearScale(72)
 		end
 		
 		self.rtGraphTextShadow:SetIsVisible(#self.rtGraphs > 0)
@@ -1930,7 +1991,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 				playerTextColor = kCurrentPlayerStatsTextColor
 			end
 			
-			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum(message.pdmg), printNum(message.sdmg), string.format("%d:%02d", minutes, seconds), string.format("%d:%02d", pMinutes, pSeconds), message.minutesComm > 0 and string.format("%d:%02d", cMinutes, cSeconds) or nil, message.steamId, message.isRookie, message.hiveSkill))
+			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum2(message.pdmg), printNum2(message.sdmg), string.format("%d:%02d", minutes, seconds), string.format("%d:%02d", pMinutes, pSeconds), message.minutesComm > 0 and string.format("%d:%02d", cMinutes, cSeconds) or nil, message.steamId, message.isRookie, message.hiveSkill))
 			-- Store some of the original info so we can sort afterwards
 			teamObj.playerRows[#teamObj.playerRows].originalOrder = playerCount
 			teamObj.playerRows[#teamObj.playerRows].message = message
@@ -1999,12 +2060,12 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		-- When there's only one player in a team, the total and the average will be the same
 		-- Don't even bother displaying this, it looks odd
 		if numPlayers1 > 1 then
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum(totalPdmg1), printNum(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum(totalPdmg1/numPlayers1), printNum(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg), string.format("%d:%02d", minutes1PAvg, seconds1PAvg)))
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum2(totalPdmg1), printNum2(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
+			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum2(totalPdmg1/numPlayers1), printNum2(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg), string.format("%d:%02d", minutes1PAvg, seconds1PAvg)))
 		end
 		if numPlayers2 > 1 then
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum(totalPdmg2), printNum(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum(totalPdmg2/numPlayers2), printNum(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg), string.format("%d:%02d", minutes2PAvg, seconds2PAvg)))
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum2(totalPdmg2), printNum2(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
+			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum2(totalPdmg2/numPlayers2), printNum2(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg), string.format("%d:%02d", minutes2PAvg, seconds2PAvg)))
 		end
 		
 		local teamStatsVisible = gameInfo.showEndStatsTeamBreakdown
@@ -2180,38 +2241,84 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 		end
 		
+		self.hiveSkillGraphs = {}
+		if #hiveSkillGraphTable > 0 then
+      table.sort(hiveSkillGraphTable, function(a, b)
+        return a.gameMinute < b.gameMinute
+      end)
+
+      self.hiveSkillGraphs[1] = {}
+      self.hiveSkillGraphs[2] = {}
+      local hiveSkill = {0, 0}
+      local lineOffset = {0, 0.5}
+      local maxHiveSkill = 0
+      local players = {0,0}
+      local curMaxPlayers = 1
+
+      -- Handle gameMinute 0 special to avoid artificially spikes because of arbitrary joining order
+      for _, entry in ipairs(hiveSkillGraphTable) do
+        if entry.gameMinute > 0 then break end
+        local teamNumber = entry.teamNumber
+        players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
+        curMaxPlayers = math.max(1,players[1],players[2])
+        hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, entry.hiveSkill, -entry.hiveSkill))
+        maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+      end
+
+      table.insert(self.hiveSkillGraphs[1], Vector(0, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))        
+      table.insert(self.hiveSkillGraphs[2], Vector(0, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+
+      -- Handle end game special to avoid artificially spikes because of arbitrary disjoin order
+      local skipAfter = miscDataTable.gameLengthMinutes - 5/60
+      for _, entry in ipairs(hiveSkillGraphTable) do
+        if entry.gameMinute > skipAfter then break end
+        if entry.gameMinute > 0 then
+          table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))        
+          table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+
+          local teamNumber = entry.teamNumber
+          players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
+          curMaxPlayers = math.max(1,players[1],players[2])
+          hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, entry.hiveSkill, -entry.hiveSkill))
+          maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+        
+          table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))        
+          table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+        end
+      end
+
+      self.hiveSkillGraph:SetPoints(1, self.hiveSkillGraphs[1])
+      self.hiveSkillGraph:SetPoints(2, self.hiveSkillGraphs[2])
+      self.hiveSkillGraph:SetYBounds(0, maxHiveSkill+100, true)
+      
+      local gameLength = miscDataTable.gameLengthMinutes*60
+      local xSpacing = GetXSpacing(gameLength)
+      
+      self.hiveSkillGraph:SetXBounds(0, gameLength)
+      self.hiveSkillGraph:SetXGridSpacing(xSpacing)
+      self.hiveSkillGraph:SetYGridSpacing(math.ceil(maxHiveSkill/(15*100))*100)
+		end		
+		
 		self.rtGraphs = {}
 		if #rtGraphTable > 0 then
 			table.sort(rtGraphTable, function(a, b)
-				if a.teamNumber == b.teamNumber then
-					return a.gameMinute < b.gameMinute
-				else
-					return a.teamNumber > b.teamNumber
-				end
+			return a.gameMinute < b.gameMinute
 			end)
 			
-			local rtCount = 0
-			local teamNumber = -1
-			self.rtGraphs[1] = {}
-			self.rtGraphs[2] = {}
+      self.rtGraphs[1] = {}
+      self.rtGraphs[2] = {}
+			local rtCount = {0, 0}
+			local lineOffset = {0, 0.05}
 			local maxRTs = 0
+
 			for _, entry in ipairs(rtGraphTable) do
-				if teamNumber ~= entry.teamNumber then
-					teamNumber = entry.teamNumber
-					rtCount = 0
-				end
-				
-				if teamNumber == entry.teamNumber then
-					local adjustment = 0
-					if teamNumber == 2 then
-						adjustment = 0.05
-					end
-					table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount, 0))
-					rtCount = math.floor(rtCount + ConditionalValue(entry.destroyed, -1, 1)) + adjustment
-					maxRTs = math.max(rtCount, maxRTs)
-					table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount, 0))
-				end
+			  local teamNumber = entry.teamNumber
+				table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount[teamNumber]+lineOffset[teamNumber], 0))
+				rtCount[teamNumber] = rtCount[teamNumber] + ConditionalValue(entry.destroyed, -1, 1)
+  			table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount[teamNumber]+lineOffset[teamNumber], 0))
+  			maxRTs = math.max(maxRTs,rtCount[teamNumber])
 			end
+			
 			self.rtGraph:SetPoints(1, self.rtGraphs[1])
 			self.rtGraph:SetPoints(2, self.rtGraphs[2])
 			self.rtGraph:SetYBounds(0, maxRTs+1, true)
@@ -2238,44 +2345,28 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 		end
 		
+		-- pebl
 		self.killGraphs = {}
 		if #killGraphTable > 0 then
 			table.sort(killGraphTable, function(a, b)
-				if a.teamNumber == b.teamNumber then
-					return a.gameMinute < b.gameMinute
-				else
-					return a.teamNumber > b.teamNumber
-				end
+				return a.gameMinute < b.gameMinute
 			end)
 			
-			local killCount = 0
-			local teamNumber = -1
 			self.killGraphs[1] = {}
 			self.killGraphs[2] = {}
-			local team1Kills = 0
-			local team2Kills = 0
+			local teamKills = {0, 0}
+      local lineOffsets = {0, 0.05}
+      
 			for _, entry in ipairs(killGraphTable) do
-				if teamNumber ~= entry.teamNumber then
-					teamNumber = entry.teamNumber
-					killCount = 0
-				end
-				
-				if teamNumber == entry.teamNumber then
-					local adjustment = 0
-					if teamNumber == 1 then
-						team1Kills = team1Kills + 1
-					else
-						team2Kills = team2Kills + 1
-						adjustment = 0.05
-					end
-					table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, killCount, 0))
-					killCount = math.floor(killCount) + 1 + adjustment
-					table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, killCount, 0))
-				end
+			  local teamNumber = entry.teamNumber
+        table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, teamKills[teamNumber]+lineOffsets[teamNumber], 0))
+        teamKills[teamNumber] = teamKills[teamNumber] + 1
+        table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, teamKills[teamNumber]+lineOffsets[teamNumber], 0))
 			end
+			
 			self.killGraph:SetPoints(1, self.killGraphs[1])
 			self.killGraph:SetPoints(2, self.killGraphs[2])
-			local yElems = math.max(team1Kills, team2Kills)+1
+			local yElems = math.max(teamKills[1], teamKills[2])+1
 			self.killGraph:SetYBounds(0, yElems, true)
 			local gameLength = miscDataTable.gameLengthMinutes*60
 			local xSpacing = GetXSpacing(gameLength)
@@ -2285,13 +2376,13 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self.killGraph:SetXGridSpacing(xSpacing)
 			self.killGraph:SetYGridSpacing(ySpacing)
 			
-			self.killComparison:SetValues(team1Kills, team2Kills)
+			self.killComparison:SetValues(teamKills[1], teamKills[2])
 			
-			if team1Kills > 0 then
-				self.killComparison:SetLeftText("(" .. printNum(team1Kills/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(team1Kills))
+			if teamKills[1] > 0 then
+				self.killComparison:SetLeftText("(" .. printNum(teamKills[1]/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(teamKills[1]))
 			end
-			if team2Kills > 0 then
-				self.killComparison:SetRightText(tostring(team2Kills) .. "  (" .. printNum(team2Kills/miscDataTable.gameLengthMinutes) .. "/min)")
+			if teamKills[2] > 0 then
+				self.killComparison:SetRightText(tostring(teamKills[2]) .. "  (" .. printNum(teamKills[2]/miscDataTable.gameLengthMinutes) .. "/min)")
 			end
 		end
 		
@@ -2303,6 +2394,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			savedStats.avgAccTable = avgAccTable
 			savedStats.miscDataTable = miscDataTable
 			savedStats.cardsTable = cardsTable
+      savedStats.hiveSkillGraphTable = hiveSkillGraphTable
 			savedStats.rtGraphTable = rtGraphTable
 			savedStats.commanderStats = commanderStats
 			savedStats.killGraphTable = killGraphTable
@@ -2322,6 +2414,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		avgAccTable = {}
 		miscDataTable = {}
 		cardsTable = {}
+		hiveSkillTable = {}
 		rtGraphTable = {}
 		commanderStats = nil
 		killGraphTable = {}
@@ -2615,6 +2708,15 @@ local function CHUDSetGlobalCommStats(message)
 	
 	lastStatsMsg = Shared.GetTime()
 end
+
+local function CHUDSetHiveSkillGraph(message)
+  if message and message.gameMinute then
+    table.insert(hiveSkillGraphTable, message)
+  end
+  
+  lastStatsMsg = Shared.GetTime()
+end
+
 local function CHUDSetRTGraph(message)
 	if message and message.gameMinute then
 		table.insert(rtGraphTable, message)
@@ -2837,6 +2939,7 @@ function CHUDGUI_EndStats:OnResolutionChanged(oldX, oldY, newX, newY)
 	loadedLastRound = false
 	
 	-- We need to trigger this manually to update font sizes
+  self.hiveSkillGraph:OnResolutionChanged(oldX, oldY, newX, newY)
 	self.rtGraph:OnResolutionChanged(oldX, oldY, newX, newY)
 	self.builtRTsComp:OnResolutionChanged(oldX, oldY, newX, newY)
 	self.lostRTsComp:OnResolutionChanged(oldX, oldY, newX, newY)
@@ -2869,6 +2972,7 @@ Client.HookNetworkMessage("CHUDEndStatsWeapon", CHUDSetWeaponStats)
 Client.HookNetworkMessage("CHUDEndStatsStatus", CHUDSetStatusStats)
 Client.HookNetworkMessage("CHUDMarineCommStats", CHUDSetCommStats)
 Client.HookNetworkMessage("CHUDGlobalCommStats", CHUDSetGlobalCommStats)
+Client.HookNetworkMessage("CHUDHiveSkillGraph", CHUDSetHiveSkillGraph)
 Client.HookNetworkMessage("CHUDRTGraph", CHUDSetRTGraph)
 Client.HookNetworkMessage("CHUDKillGraph", CHUDSetKillGraph)
 Client.HookNetworkMessage("CHUDTechLog", CHUDSetTechLog)
