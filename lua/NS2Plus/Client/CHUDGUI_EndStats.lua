@@ -122,6 +122,47 @@ local lastSortedT1WasInv = false
 local lastSortedT2 = "kills"
 local lastSortedT2WasInv = false
 
+local function estimateHiveSkillGraph()
+  if #hiveSkillGraphTable ~= 0 or #finalStatsTable == 0 then
+    return
+  end
+
+  -- split and sort into teams
+  local teams = {}
+  for _, stat in ipairs(finalStatsTable) do
+    if stat.score ~= 0 and stat.minutesPlaying > 0 and stat.teamNumber ~= 0 then
+      if not teams[stat.teamNumber] then
+        teams[stat.teamNumber] = {}
+      end      
+      table.insert(teams[stat.teamNumber],stat)
+    end
+  end
+  
+  table.sort(teams[1], function(a, b) return a.minutesPlaying > b.minutesPlaying end)
+  table.sort(teams[2], function(a, b) return a.minutesPlaying > b.minutesPlaying end)
+
+  -- greedy knapsack
+  local gameLength = miscDataTable.gameLengthMinutes
+  local left = gameLength
+  for _, team in ipairs(teams) do
+    repeat 
+      left = gameLength
+      for i, player in ipairs(team) do
+        if player and player.minutesPlaying then
+          if left - player.minutesPlaying >= 0 then
+            table.insert(hiveSkillGraphTable,{ gameMinute = gameLength-left, joined = true, teamNumber = player.teamNumber, hiveSkill = player.hiveSkill, steamId = player.steamId })
+            left = left - player.minutesPlaying
+            table.insert(hiveSkillGraphTable,{ gameMinute = gameLength-left, joined = false, teamNumber = player.teamNumber, hiveSkill = player.hiveSkill, steamId = player.steamId })
+						-- allow some time for others to reach and join instead
+            left = left - 10/60
+            team[i] = {}            
+          end        
+        end
+      end
+    until left == gameLength
+  end 
+end
+
 local function UpdateSizeOfUI(self)
 	screenWidth = Client.GetScreenWidth()
 	screenHeight = Client.GetScreenHeight()
@@ -1391,6 +1432,10 @@ function CHUDGUI_EndStats:Initialize()
 				killGraphTable = parsedFile.killGraphTable or {}
 				buildingSummaryTable = parsedFile.buildingSummaryTable or {}
 				statusSummaryTable = parsedFile.statusSummaryTable or {}
+
+				if #hiveSkillGraphTable == 0 then
+				  estimateHiveSkillGraph()
+				end				
 			end
 			
 			self.saved = true
@@ -2252,6 +2297,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
       local hiveSkill = {0, 0}
       local lineOffset = {0, 0.5}
       local maxHiveSkill = 0
+      local minHiveSkill = 0
       local players = {0,0}
       local curMaxPlayers = 1
 
@@ -2262,8 +2308,10 @@ function CHUDGUI_EndStats:Update(deltaTime)
         players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
         curMaxPlayers = math.max(1,players[1],players[2])
         hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, entry.hiveSkill, -entry.hiveSkill))
-        maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
       end
+
+      maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+      minHiveSkill = maxHiveSkill
 
       table.insert(self.hiveSkillGraphs[1], Vector(0, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))        
       table.insert(self.hiveSkillGraphs[2], Vector(0, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
@@ -2281,6 +2329,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
           curMaxPlayers = math.max(1,players[1],players[2])
           hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, entry.hiveSkill, -entry.hiveSkill))
           maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+          minHiveSkill = math.min(minHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
         
           table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))        
           table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
@@ -2289,7 +2338,7 @@ function CHUDGUI_EndStats:Update(deltaTime)
 
       self.hiveSkillGraph:SetPoints(1, self.hiveSkillGraphs[1])
       self.hiveSkillGraph:SetPoints(2, self.hiveSkillGraphs[2])
-      self.hiveSkillGraph:SetYBounds(0, maxHiveSkill+100, true)
+      self.hiveSkillGraph:SetYBounds(math.floor((minHiveSkill-100)/100)*100, maxHiveSkill+100, true)
       
       local gameLength = miscDataTable.gameLengthMinutes*60
       local xSpacing = GetXSpacing(gameLength)
@@ -2345,7 +2394,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			end
 		end
 		
-		-- pebl
 		self.killGraphs = {}
 		if #killGraphTable > 0 then
 			table.sort(killGraphTable, function(a, b)
