@@ -270,7 +270,7 @@ function CHUDGUI_HUDBars:Update(deltaTime)
 			if player:isa("Alien") then
 				local energy = player:GetEnergy()
 				local maxEnergy = player:GetMaxEnergy()
-				local energyCost = activeWeapon:GetEnergyCost()
+				local energyCost = activeWeapon:GetEnergyCost(player)
 				
 				self.rightBar:SetIsVisible(false)
 				rightFraction = energy / maxEnergy
