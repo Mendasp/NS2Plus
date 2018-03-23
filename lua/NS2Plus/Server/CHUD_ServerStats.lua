@@ -158,10 +158,9 @@ oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
 			CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
 
 			local joined = teamNumber ~= 0
-			local hiveSkill = math.max(0,player.playerSkill)
 			local steamId = GetSteamIdForClientIndex(player.clientIndex)
 			local affectedTeamNumber = ConditionalValue(joined, teamNumber, player.teamAtEntrance)
-			table.insert(CHUDHiveSkillGraph, { gameMinute = CHUDGetGameTime(true), joined = joined, teamNumber = affectedTeamNumber, hiveSkill = hiveSkill, steamId = steamId } )
+			table.insert(CHUDHiveSkillGraph, { gameMinute = CHUDGetGameTime(true), joined = joined, teamNumber = affectedTeamNumber, steamId = steamId } )
 		end
 		
 		return CHUDUnpackRetVals(retVals)
@@ -729,7 +728,7 @@ local function CHUDResetStats()
 		end
 
 		if playerInfo.teamNumber ~= 0 then
-			table.insert(CHUDHiveSkillGraph, { gameMinute = 0, joined = true, teamNumber = playerInfo.teamNumber, hiveSkill = playerInfo.hiveSkill, steamId = playerInfo.steamId } )
+			table.insert(CHUDHiveSkillGraph, { gameMinute = 0, joined = true, teamNumber = playerInfo.teamNumber, steamId = playerInfo.steamId } )
 		end
 	end
 end

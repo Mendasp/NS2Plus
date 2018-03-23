@@ -98,6 +98,7 @@ local kRowBorderSize
 local kRowPlayerNameOffset
 
 local finalStatsTable = {}
+local playerStatMap = {}
 local avgAccTable = {}
 local miscDataTable = {}
 local cardsTable = {}
@@ -150,9 +151,9 @@ local function estimateHiveSkillGraph()
 			for i, player in ipairs(team) do
 				if player and player.minutesPlaying then
 					if left - player.minutesPlaying >= 0 then
-						table.insert(hiveSkillGraphTable,{ gameMinute = gameLength-left, joined = true, teamNumber = player.teamNumber, hiveSkill = player.hiveSkill, steamId = player.steamId })
+						table.insert(hiveSkillGraphTable,{ gameMinute = gameLength-left, joined = true, teamNumber = player.teamNumber, steamId = player.steamId })
 						left = left - player.minutesPlaying
-						table.insert(hiveSkillGraphTable,{ gameMinute = gameLength-left, joined = false, teamNumber = player.teamNumber, hiveSkill = player.hiveSkill, steamId = player.steamId })
+						table.insert(hiveSkillGraphTable,{ gameMinute = gameLength-left, joined = false, teamNumber = player.teamNumber, steamId = player.steamId })
 						-- allow some time for others to reach and join instead
 						left = left - 10/60
 						team[i] = {}
@@ -1332,7 +1333,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.rtGraphs = {}
 	self.killGraphs = {}
 
-	self.hiveSkillGraph = _G["CHUDGUI_StaticLineGraph"]()
+	self.hiveSkillGraph = CHUDGUI_StaticLineGraph()
 	self.hiveSkillGraph:Initialize()
 	self.hiveSkillGraph:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.hiveSkillGraph:SetSize(rtGraphSize)
@@ -1345,8 +1346,7 @@ function CHUDGUI_EndStats:Initialize()
 
 	self.hiveSkillGraph:StartLine(kTeam1Index, kBlueColor)
 	self.hiveSkillGraph:StartLine(kTeam2Index, kRedColor)
-	
-	self.rtGraph = _G["CHUDGUI_StaticLineGraph"]()
+	self.rtGraph = CHUDGUI_StaticLineGraph()
 	self.rtGraph:Initialize()
 	self.rtGraph:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.rtGraph:SetSize(rtGraphSize)
@@ -1360,7 +1360,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.rtGraph:StartLine(kTeam1Index, kBlueColor)
 	self.rtGraph:StartLine(kTeam2Index, kRedColor)
 	
-	self.killGraph = _G["CHUDGUI_StaticLineGraph"]()
+	self.killGraph = CHUDGUI_StaticLineGraph()
 	self.killGraph:Initialize()
 	self.killGraph:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.killGraph:SetSize(rtGraphSize)
@@ -1374,7 +1374,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.killGraph:StartLine(kTeam1Index, kBlueColor)
 	self.killGraph:StartLine(kTeam2Index, kRedColor)
 	
-	self.builtRTsComp =  _G["CHUDGUI_ComparisonBarGraph"]()
+	self.builtRTsComp =  CHUDGUI_ComparisonBarGraph()
 	self.builtRTsComp:Initialize()
 	self.builtRTsComp:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.builtRTsComp:SetSize(comparisonSize)
@@ -1383,7 +1383,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.builtRTsComp:SetTitle("Built RTs")
 	self.builtRTsComp:GiveParent(self.background)
 	
-	self.lostRTsComp =  _G["CHUDGUI_ComparisonBarGraph"]()
+	self.lostRTsComp =  CHUDGUI_ComparisonBarGraph()
 	self.lostRTsComp:Initialize()
 	self.lostRTsComp:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.lostRTsComp:SetSize(comparisonSize)
@@ -1392,7 +1392,7 @@ function CHUDGUI_EndStats:Initialize()
 	self.lostRTsComp:SetTitle("Lost RTs")
 	self.lostRTsComp:GiveParent(self.background)
 	
-	self.killComparison =  _G["CHUDGUI_ComparisonBarGraph"]()
+	self.killComparison =  CHUDGUI_ComparisonBarGraph()
 	self.killComparison:Initialize()
 	self.killComparison:SetAnchor(GUIItem.Middle, GUIItem.Top)
 	self.killComparison:SetSize(comparisonSize)
@@ -1564,85 +1564,86 @@ local function repositionStatsCards(self)
 end
 
 local function repositionStats(self)
-		local yPos = GUILinearScale(16)
-		
-		self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
-		
-		if CHUDGetOption("endstatsorder") == 1 then
-			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = yPos + repositionStatsCards(self)
-		end
-		
-		if self.team1UI.background:GetIsVisible() then
-			self.teamStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = yPos + GUILinearScale(32)
-			self.team1UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
-			yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
-			self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
-			yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
-		end
-		
-		if CHUDGetOption("endstatsorder") == 0 then
-			self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = yPos + repositionStatsCards(self)
-		end
-		
-		self.techLogTextShadow:SetIsVisible(#self.techLogs > 0)
-		if #self.techLogs > 0 then
-			self.techLogTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = yPos + GUILinearScale(32)
-			
-			self.techLogs[1].header.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
-			self.techLogs[2].header.background:SetPosition(Vector(kTechLogTitleSize.x + GUILinearScale(16), yPos, 0))
-			
-			local team1YSize = self.techLogs[1].header.background:GetSize().y + self.techLogs[1].header.tableBackground:GetSize().y
-			local team2YSize = self.techLogs[2].header.background:GetSize().y + self.techLogs[2].header.tableBackground:GetSize().y
-			
-			yPos = yPos + GUILinearScale(32) + math.max(team1YSize, team2YSize)
-		end
+	local yPos = GUILinearScale(16)
 
-		self.hiveSkillGraphTextShadow:SetIsVisible(#self.hiveSkillGraphs > 0)
-		self.hiveSkillGraph:SetIsVisible(#self.hiveSkillGraphs > 0)
-		if #self.hiveSkillGraphs > 0 then
-			self.hiveSkillGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = yPos + GUILinearScale(32)
+	self.yourStatsTextShadow:SetIsVisible(#self.statsCards > 0)
 
-			self.hiveSkillGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
-			yPos = yPos + rtGraphSize.y + GUILinearScale(72)
-		end
-		
-		self.rtGraphTextShadow:SetIsVisible(#self.rtGraphs > 0)
-		self.rtGraph:SetIsVisible(#self.rtGraphs > 0)
-		self.builtRTsComp:SetIsVisible(#self.rtGraphs > 0)
-		self.lostRTsComp:SetIsVisible(#self.rtGraphs > 0)
-		if #self.rtGraphs > 0 then
-			self.rtGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = yPos + GUILinearScale(32)
-			
-			self.rtGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
-			yPos = yPos + rtGraphSize.y + GUILinearScale(72)
-			
-			self.builtRTsComp:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
-			yPos = yPos + comparisonSize.y + GUILinearScale(48)
-			
-			self.lostRTsComp:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
-			yPos = yPos + comparisonSize.y + GUILinearScale(48)
-		end
-		
-		self.killGraphTextShadow:SetIsVisible(#self.killGraphs > 0)
-		self.killGraph:SetIsVisible(#self.killGraphs > 0)
-		self.killComparison:SetIsVisible(#self.killGraphs > 0)
-		if #self.killGraphs > 0 then
-			self.killGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
-			yPos = yPos + GUILinearScale(32)
-			
-			self.killGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
-			yPos = yPos + rtGraphSize.y + GUILinearScale(72)
-			
-			self.killComparison:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
-			yPos = yPos + comparisonSize.y + GUILinearScale(48)
-		end
-		self.contentSize = math.max(self.contentSize, yPos)
+	if CHUDGetOption("endstatsorder") == 1 then
+		self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		yPos = yPos + repositionStatsCards(self)
+	end
+
+	if self.team1UI.background:GetIsVisible() then
+		self.teamStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		yPos = yPos + GUILinearScale(32)
+		self.team1UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+		yPos = yPos + self.team1UI.tableBackground:GetSize().y + self.team1UI.background:GetSize().y
+		self.team2UI.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+		yPos = yPos + self.team2UI.tableBackground:GetSize().y + self.team2UI.background:GetSize().y + GUILinearScale(32)
+	end
+
+	if CHUDGetOption("endstatsorder") == 0 then
+		self.yourStatsTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		yPos = yPos + repositionStatsCards(self)
+	end
+
+	self.techLogTextShadow:SetIsVisible(#self.techLogs > 0)
+	if #self.techLogs > 0 then
+		self.techLogTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		yPos = yPos + GUILinearScale(32)
+
+		self.techLogs[1].header.background:SetPosition(Vector(GUILinearScale(16), yPos, 0))
+		self.techLogs[2].header.background:SetPosition(Vector(kTechLogTitleSize.x + GUILinearScale(16), yPos, 0))
+
+		local team1YSize = self.techLogs[1].header.background:GetSize().y + self.techLogs[1].header.tableBackground:GetSize().y
+		local team2YSize = self.techLogs[2].header.background:GetSize().y + self.techLogs[2].header.tableBackground:GetSize().y
+
+		yPos = yPos + GUILinearScale(32) + math.max(team1YSize, team2YSize)
+	end
+
+	self.rtGraphTextShadow:SetIsVisible(#self.rtGraphs > 0)
+	self.rtGraph:SetIsVisible(#self.rtGraphs > 0)
+	self.builtRTsComp:SetIsVisible(#self.rtGraphs > 0)
+	self.lostRTsComp:SetIsVisible(#self.rtGraphs > 0)
+	if #self.rtGraphs > 0 then
+		self.rtGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		yPos = yPos + GUILinearScale(32)
+
+		self.rtGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
+		yPos = yPos + rtGraphSize.y + GUILinearScale(72)
+
+		self.builtRTsComp:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
+		yPos = yPos + comparisonSize.y + GUILinearScale(48)
+
+		self.lostRTsComp:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
+		yPos = yPos + comparisonSize.y + GUILinearScale(48)
+	end
+
+	self.killGraphTextShadow:SetIsVisible(#self.killGraphs > 0)
+	self.killGraph:SetIsVisible(#self.killGraphs > 0)
+	self.killComparison:SetIsVisible(#self.killGraphs > 0)
+	if #self.killGraphs > 0 then
+		self.killGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		yPos = yPos + GUILinearScale(32)
+
+		self.killGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
+		yPos = yPos + rtGraphSize.y + GUILinearScale(72)
+
+		self.killComparison:SetPosition(Vector((kTitleSize.x-comparisonSize.x-rtGraphPadding)/2, yPos, 0))
+		yPos = yPos + comparisonSize.y + GUILinearScale(48)
+	end
+
+	self.hiveSkillGraphTextShadow:SetIsVisible(#self.hiveSkillGraphs > 0)
+	self.hiveSkillGraph:SetIsVisible(#self.hiveSkillGraphs > 0)
+	if #self.hiveSkillGraphs > 0 then
+		self.hiveSkillGraphTextShadow:SetPosition(Vector((kTitleSize.x-GUILinearScale(32))/2, yPos, 0))
+		yPos = yPos + GUILinearScale(32)
+
+		self.hiveSkillGraph:SetPosition(Vector((kTitleSize.x-rtGraphSize.x)/2, yPos, 0))
+		yPos = yPos + rtGraphSize.y + GUILinearScale(72)
+	end
+
+	self.contentSize = math.max(self.contentSize, yPos)
 end
 
 local function HandleSlidebarClicked(self)
@@ -1747,6 +1748,7 @@ local function GetYSpacing(value)
 	return ySpacing
 end
 
+-- Todo: Split this moster into submethods
 function CHUDGUI_EndStats:Update(deltaTime)
 
 	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
@@ -1986,6 +1988,13 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			message.steamId = message.steamId or 1
 			message.isRookie = message.isRookie or false
 			message.hiveSkill = message.hiveSkill or -1
+
+			local isMarine = message.isMarine
+
+			-- save player stats into a map for later usage (e.g. hive skill graph)
+			local teamNumber = isMarine and 1 or 2
+			if not playerStatMap[teamNumber] then playerStatMap[teamNumber] = {} end
+			playerStatMap[teamNumber][message.steamId] = message
 			
 			local minutes = math.floor(message.minutesBuilding)
 			local seconds = (message.minutesBuilding % 1)*60
@@ -1995,8 +2004,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			
 			local cMinutes = math.floor(message.minutesComm)
 			local cSeconds = (message.minutesComm % 1)*60
-			
-			local isMarine = message.isMarine
 			
 			local teamObj
 			
@@ -2302,12 +2309,21 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			local curMaxPlayers = 1
 
 			-- Handle gameMinute 0 special to avoid artificially spikes because of arbitrary joining order
-			for _, entry in ipairs(hiveSkillGraphTable) do
-				if entry.gameMinute > 0 then break end
+			local next = 1
+			for i = next, #hiveSkillGraphTable do
+				local entry = hiveSkillGraphTable[i]
+				if entry.gameMinute > 0 then
+					next = i
+					break
+				end
+
 				local teamNumber = entry.teamNumber
+				local playerEntry = playerStatMap[teamNumber] and playerStatMap[teamNumber][entry.steamId]
+				local playerSkill = playerEntry and math.max(playerEntry.hiveSkill, 0) or 0
+
 				players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
 				curMaxPlayers = math.max(1,players[1],players[2])
-				hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, entry.hiveSkill, -entry.hiveSkill))
+				hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
 			end
 
 			maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
@@ -2318,22 +2334,25 @@ function CHUDGUI_EndStats:Update(deltaTime)
 
 			-- Handle end game special to avoid artificially spikes because of arbitrary disjoin order
 			local skipAfter = miscDataTable.gameLengthMinutes - 5/60
-			for _, entry in ipairs(hiveSkillGraphTable) do
+			for i = next, #hiveSkillGraphTable do
+				local entry = hiveSkillGraphTable[i]
 				if entry.gameMinute > skipAfter then break end
-				if entry.gameMinute > 0 then
-					table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-					table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
 
-					local teamNumber = entry.teamNumber
-					players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
-					curMaxPlayers = math.max(1,players[1],players[2])
-					hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, entry.hiveSkill, -entry.hiveSkill))
-					maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
-					minHiveSkill = math.min(minHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+				table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
+				table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
 
-					table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-					table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
-				end
+				local teamNumber = entry.teamNumber
+				local playerEntry = playerStatMap[teamNumber] and playerStatMap[teamNumber][entry.steamId]
+				local playerSkill = playerEntry and math.max(playerEntry.hiveSkill, 0) or 0
+
+				players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
+				curMaxPlayers = math.max(1,players[1],players[2])
+				hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
+				maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+				minHiveSkill = math.min(minHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+
+				table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
+				table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
 			end
 
 			self.hiveSkillGraph:SetPoints(1, self.hiveSkillGraphs[1])
@@ -2459,10 +2478,11 @@ function CHUDGUI_EndStats:Update(deltaTime)
 		end
 		
 		finalStatsTable = {}
+		playerStatMap = {}
 		avgAccTable = {}
 		miscDataTable = {}
 		cardsTable = {}
-		hiveSkillTable = {}
+		hiveSkillGraphTable = {}
 		rtGraphTable = {}
 		commanderStats = nil
 		killGraphTable = {}
