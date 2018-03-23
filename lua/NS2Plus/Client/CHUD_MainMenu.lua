@@ -125,7 +125,6 @@ local function CHUDSaveMenuSetting(name)
 						local optionName = CHUDGetOptionParam(option, "name")
 						if optionName then
 							CHUDSetOptionVisible(mainMenu.CHUDOptionElements[optionName], show)
-
 							PropagateVisibility(CHUDOptions[option])
 						end
 					end
@@ -136,6 +135,29 @@ local function CHUDSaveMenuSetting(name)
 			CHUDResortForm()
 		end
 	end
+end
+
+local function CHUDIndentChildren(name)
+    if mainMenu ~= nil and mainMenu.CHUDOptionElements ~= nil then
+        local CHUDMenuOption = mainMenu.CHUDOptionElements[name]
+        local index = CHUDMenuOption.index
+        local CHUDOption = CHUDOptions[index]
+        --apply additional indents to deeper child options
+        local function PropagateIndent(CHUDOption)
+            if CHUDOption.children then
+                for _, option in pairs(CHUDOption.children) do
+                    local optionName = CHUDGetOptionParam(option, "name")
+                    if optionName then
+                        local indentOption = mainMenu.CHUDOptionElements[optionName]
+                        local getIndent = indentOption.label.background:GetPosition()
+                        indentOption.label:SetLeftOffset(getIndent.x + 20)
+                        PropagateIndent(CHUDOptions[option])
+                    end
+                end
+            end
+        end
+        PropagateIndent(CHUDOption)
+    end
 end
 
 local function ResetMenuOption(option)
@@ -238,6 +260,9 @@ function GUIMainMenu:CreateCHUDOptionWindow()
 	local function InitOptionWindow()
 		for idx, option in pairs(CHUDOptions) do
 			self.CHUDOptionElements[option.name].index = idx
+            if option.children then
+                CHUDIndentChildren(option.name)
+            end
 			if option.valueType == "bool" then
 				self.CHUDOptionElements[option.name]:SetOptionActive( BoolToIndex(CHUDOptions[idx].currentValue) )
 			elseif option.valueType == "int" and option.type == "select" then

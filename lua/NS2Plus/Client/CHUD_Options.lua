@@ -368,7 +368,7 @@ CHUDOptions =
 			av = {
 				name = "CHUD_AV",
 				label = "Alien vision",
-				tooltip = "Lets you choose between different Alien Vision types.",
+				tooltip = "Lets you choose between different Alien Vision types. Please note that Cr4zyAV may impact the game's performance significantly negatively!",
 				type = "select",
 				values  = { "Default", "Huze's Old AV", "Huze's Minimal AV", "Uke's AV", "Old AV (Fanta)", "Cr4zyAV Configurable" },
 				valueTable = {
@@ -383,7 +383,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "int",
 				applyFunction = function() CHUDRestartScripts({ "GUIAlienHUD" }) end,
-				children = { "av_advancedmode", "av_style", "av_offstyle", "av_closecolor", "av_closeintensity", "av_distantcolor", "av_distantintensity" },
+				children = { "av_advancedmode", "av_style", "av_offstyle", "av_closecolor", "av_closeintensity", "av_distantcolor", "av_distantintensity", "av_marinecolor" },
 				hideValues = { 0, 1, 2, 3, 4 },
 				sort = "C05",
 				resetSettingInBuild = 237,
@@ -407,9 +407,9 @@ CHUDOptions =
 			av_offstyle = { 
 				name = "CHUD_AVOffStyle",
 				label = "Disabled Alien Vision Style",
-				tooltip = "Switches between different options for when Alien Vision is disabled.",
+				tooltip = "Switches between different options for when Alien Vision is disabled.\nColoured edges use Colour One & Two values",
 				type = "select",
-				values  = { "Nothing", "Minimal world edges", "Coloured edges" },
+				values  = { "Nothing", "Minimal world edges", "Coloured edges", "Marine only edges" },
 				defaultValue = 0,
 				category = "ui",
 				valueType = "int",
@@ -420,8 +420,8 @@ CHUDOptions =
 			},
 			av_closecolor = {
 				name = "CHUD_AVCloseColor",
-				label = "Alien Vision Colour One",
-				tooltip = "Sets the first color in Alien Vision.",
+				label = "Alien Vision Colour: One",
+				tooltip = "Sets the first colour in Alien Vision.",
 				defaultValue = 0x0030FE,
 				category = "ui",
 				valueType = "color",
@@ -444,7 +444,7 @@ CHUDOptions =
 			},
 			av_distantcolor = {
 				name = "CHUD_AVDistantColor",
-				label = "Alien Vision Colour Two",
+				label = "Alien Vision Colour: Two",
 				tooltip = "Sets the second colour in Alien Vision.",
 				defaultValue = 0x00FF00,
 				category = "ui",
@@ -467,7 +467,7 @@ CHUDOptions =
 			},
 			av_fogcolor = {
 				name = "CHUD_AVFogColor",
-				label = "Alien Vision Colour Three",
+				label = "Alien Vision Colour: Three",
 				tooltip = "Depending on mode sets either fog, model or outline colour.",
 				defaultValue = 0x140228,
 				category = "ui",
@@ -488,6 +488,20 @@ CHUDOptions =
 				applyFunction = function() updateAlienVision() end,
 				sort = "C13",
 			},
+			av_marinecolor = { 
+				name = "CHUD_AVMarineColor",
+				label = "Marine Colour",
+				tooltip = "Allows Marines to be coloured separately.\nColour One and Two apply to 'Minimal' and 'Depth Fog' Styles.\nColour Three is inverted for 'Original' and 'Edge and World' Styles",
+				type = "select",
+				values  = { "Same Colour", "Marines Only", "Separate Team Colours" },
+				defaultValue = 0,
+				category = "ui",
+				valueType = "int",
+				applyFunction = function() updateAlienVision() end,
+                helpImage = "ui/helpImages/av_marinecol.dds",
+				helpImageSize = Vector(384, 192, 0),
+				sort = "C14",
+			},
             av_advancedmode = { 
 				name = "CHUD_AVAdvancedMode",
 				label = "Advanced Editing",
@@ -499,7 +513,7 @@ CHUDOptions =
 				valueType = "int",
 				children = { "av_blenddistance", "av_worldintensity", "av_edges", "av_edgesize", "av_desaturation", "av_viewmodelstyle", "av_activationeffect", "av_skybox" },
 				hideValues = { 0 },
-				sort = "C14",
+				sort = "C15",
 			},
 			av_blenddistance = { 
 				name = "CHUD_AVBlendDistance",
@@ -512,7 +526,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "float",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C15",
+				sort = "C16",
 			},
 			av_worldintensity = { 
 				name = "CHUD_AVWorldIntensity",
@@ -525,7 +539,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "float",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C16",
+				sort = "C17",
 			},
 			av_edges = { 
 				name = "CHUD_AVEdges",
@@ -537,7 +551,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "int",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C17",
+				sort = "C18",
 				resetSettingInBuild = 237,
 			},
 			av_edgesize = { 
@@ -551,7 +565,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "float",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C18",
+				sort = "C19",
 			},	
 			av_desaturation = { 
 				name = "CHUD_AVDesaturation",
@@ -565,7 +579,7 @@ CHUDOptions =
 				applyFunction = function() updateAlienVision() end,
                 children = { "av_desaturationintensity", "av_desaturationblend" },
                 hideValues = { 0 },
-				sort = "C19",
+				sort = "C20",
 				resetSettingInBuild = 237,
 			},
 			av_desaturationintensity = { 
@@ -579,7 +593,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "float",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C20",
+				sort = "C21",
 			},
 			av_desaturationblend = { 
 				name = "CHUD_AVDesaturationBlend",
@@ -592,7 +606,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "float",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C21",
+				sort = "C22",
 			},
 			av_viewmodelstyle = { 
 				name = "CHUD_AVViewModelStyle",
@@ -600,13 +614,13 @@ CHUDOptions =
 				tooltip = "Switches between default view model or view model with AV applied.",
 				type = "select",
 				values  = { "Alien Vision", "Default" },
-				defaultValue = 0,
+				defaultValue = 1,
 				category = "ui",
 				valueType = "int",
 				applyFunction = function() updateAlienVision() end,
 				children = { "av_viewmodelintensity" },
 				hideValues = { 1 },
-				sort = "C22",
+				sort = "C23",
 			},
 			av_viewmodelintensity = { 
 				name = "CHUD_AVViewModelIntensity",
@@ -619,7 +633,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "float",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C23",
+				sort = "C24",
 			},
 			av_skybox = {
 				name = "CHUD_AVSkybox",
@@ -631,7 +645,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "int",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C24",
+				sort = "C25",
 			},
 			av_activationeffect = {
 				name = "CHUD_AVActivationEffect",
@@ -643,7 +657,7 @@ CHUDOptions =
 				category = "ui",
 				valueType = "int",
 				applyFunction = function() updateAlienVision() end,
-				sort = "C25",
+				sort = "C26",
 			},
 			
 			
