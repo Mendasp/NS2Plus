@@ -157,11 +157,11 @@ oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
 			CHUDTeamStats[1].maxPlayers = math.max(CHUDTeamStats[1].maxPlayers, self.team1:GetNumPlayers())
 			CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
 
-      local joined = teamNumber ~= 0
-      local hiveSkill = math.max(0,player.playerSkill)
-      local steamId = GetSteamIdForClientIndex(player.clientIndex)
-      local affectedTeamNumber = ConditionalValue(joined, teamNumber, player.teamAtEntrance)
-      table.insert(CHUDHiveSkillGraph, { gameMinute = CHUDGetGameTime(true), joined = joined, teamNumber = affectedTeamNumber, hiveSkill = hiveSkill, steamId = steamId } )
+			local joined = teamNumber ~= 0
+			local hiveSkill = math.max(0,player.playerSkill)
+			local steamId = GetSteamIdForClientIndex(player.clientIndex)
+			local affectedTeamNumber = ConditionalValue(joined, teamNumber, player.teamAtEntrance)
+			table.insert(CHUDHiveSkillGraph, { gameMinute = CHUDGetGameTime(true), joined = joined, teamNumber = affectedTeamNumber, hiveSkill = hiveSkill, steamId = steamId } )
 		end
 		
 		return CHUDUnpackRetVals(retVals)
@@ -715,7 +715,7 @@ local function CHUDResetStats()
 	CHUDMarineComm = 0
 	CHUDResetCommStats(0)
 
-  CHUDHiveSkillGraph = {}
+	CHUDHiveSkillGraph = {}
 	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 	
@@ -728,9 +728,9 @@ local function CHUDResetStats()
 			MaybeInitCHUDClientStats(playerInfo.steamId, nil, playerInfo.teamNumber)
 		end
 
-	  if playerInfo.teamNumber ~= 0 then
-	    table.insert(CHUDHiveSkillGraph, { gameMinute = 0, joined = true, teamNumber = playerInfo.teamNumber, hiveSkill = playerInfo.hiveSkill, steamId = playerInfo.steamId } )
-	  end
+		if playerInfo.teamNumber ~= 0 then
+			table.insert(CHUDHiveSkillGraph, { gameMinute = 0, joined = true, teamNumber = playerInfo.teamNumber, hiveSkill = playerInfo.hiveSkill, steamId = playerInfo.steamId } )
+		end
 	end
 end
 
@@ -1020,9 +1020,9 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				end
 			end
 			
-      for _, entry in ipairs(CHUDHiveSkillGraph) do
-        Server.SendNetworkMessage("CHUDHiveSkillGraph", entry, true)
-      end
+			for _, entry in ipairs(CHUDHiveSkillGraph) do
+				Server.SendNetworkMessage("CHUDHiveSkillGraph", entry, true)
+			end
 
 			for _, entry in ipairs(CHUDRTGraph) do
 				Server.SendNetworkMessage("CHUDRTGraph", entry, true)

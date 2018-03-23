@@ -56,13 +56,13 @@ if not CHUDMainMenu then
 		gameLengthMinutes = "float (0 to 1023 by 0.01)",
 	}
 
-  local kCHUDHiveSkillGraphMessage = {
-    gameMinute = "float (0 to 1023 by 0.01)",
-    joined = "boolean",
-    teamNumber = "integer (1 to 2)",
-    hiveSkill = "integer",
-    steamId = "integer",
-  }
+	local kCHUDHiveSkillGraphMessage = {
+		gameMinute = "float (0 to 1023 by 0.01)",
+		joined = "boolean",
+		teamNumber = "integer (1 to 2)",
+		hiveSkill = "integer",
+		steamId = "integer",
+	}
 	
 	local kCHUDRTGraphMessage =
 	{
@@ -155,7 +155,7 @@ if not CHUDMainMenu then
 	Shared.RegisterNetworkMessage( "CHUDGlobalCommStats", kCHUDMarineCommStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDPlayerStats", kCHUDPlayerStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDGameData", kCHUDGameDataMessage)
-  Shared.RegisterNetworkMessage( "CHUDHiveSkillGraph", kCHUDHiveSkillGraphMessage)
+	Shared.RegisterNetworkMessage( "CHUDHiveSkillGraph", kCHUDHiveSkillGraphMessage)
 	Shared.RegisterNetworkMessage( "CHUDRTGraph", kCHUDRTGraphMessage)
 	Shared.RegisterNetworkMessage( "CHUDKillGraph", kCHUDKillGraphMessage)
 	Shared.RegisterNetworkMessage( "CHUDTechLog", kCHUDTechLogMessage)
