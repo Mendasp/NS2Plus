@@ -1,6 +1,7 @@
 local CHUDClientStats = {}
 local CHUDTeamStats = {}
 local CHUDRTGraph = {}
+local CHUDHiveSkillGraph = {}
 local CHUDKillGraph = {}
 local CHUDResearchTree = {}
 local CHUDBuildingSummary = {}
@@ -149,12 +150,17 @@ local techLogBuildings = set {
 
 local oldJoinTeam
 oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
-	function(self, ...)
-		local retVals = { oldJoinTeam(self, ...) }
-		
+	function(self, player, teamNumber, ...)
+		local retVals = { oldJoinTeam(self, player, teamNumber, ...) }
+
 		if CHUDGetGameStarted() then
 			CHUDTeamStats[1].maxPlayers = math.max(CHUDTeamStats[1].maxPlayers, self.team1:GetNumPlayers())
 			CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
+
+			local joined = teamNumber ~= 0
+			local steamId = GetSteamIdForClientIndex(player.clientIndex)
+			local affectedTeamNumber = ConditionalValue(joined, teamNumber, player.teamAtEntrance)
+			table.insert(CHUDHiveSkillGraph, { gameMinute = CHUDGetGameTime(true), joined = joined, teamNumber = affectedTeamNumber, steamId = steamId } )
 		end
 		
 		return CHUDUnpackRetVals(retVals)
@@ -707,6 +713,8 @@ local function CHUDResetStats()
 	-- Do this so we can spawn items without a commander with cheats on
 	CHUDMarineComm = 0
 	CHUDResetCommStats(0)
+
+	CHUDHiveSkillGraph = {}
 	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
 	
@@ -718,7 +726,10 @@ local function CHUDResetStats()
 			-- Init the commander player stats so they show up at the end-game stats
 			MaybeInitCHUDClientStats(playerInfo.steamId, nil, playerInfo.teamNumber)
 		end
-	
+
+		if playerInfo.teamNumber ~= 0 then
+			table.insert(CHUDHiveSkillGraph, { gameMinute = 0, joined = true, teamNumber = playerInfo.teamNumber, steamId = playerInfo.steamId } )
+		end
 	end
 end
 
@@ -1008,6 +1019,10 @@ originalNS2GamerulesEndGame = Class_ReplaceMethod("NS2Gamerules", "EndGame",
 				end
 			end
 			
+			for _, entry in ipairs(CHUDHiveSkillGraph) do
+				Server.SendNetworkMessage("CHUDHiveSkillGraph", entry, true)
+			end
+
 			for _, entry in ipairs(CHUDRTGraph) do
 				Server.SendNetworkMessage("CHUDRTGraph", entry, true)
 			end
