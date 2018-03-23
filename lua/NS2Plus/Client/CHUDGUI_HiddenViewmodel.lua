@@ -1,5 +1,6 @@
 class 'CHUDGUI_HiddenViewmodel' (GUIScript)
 
+local fireTexture = PrecacheAsset("ui/chud_fireindicator.dds")
 local obsIndicatorTexture = PrecacheAsset("ui/chud_scanindicator.dds")
 local obsTextureCoords = {0, 0, 64, 64}
 local buildTexture = PrecacheAsset("ui/buildmenu.dds")
@@ -12,6 +13,14 @@ function CHUDGUI_HiddenViewmodel:Initialize()
 	
 	local player = Client.GetLocalPlayer()
 	
+	self.fireIndicator = GUIManager:CreateGraphicItem()
+	self.fireIndicator:SetAnchor(GUIItem.Left, GUIItem.Bottom)
+	self.fireIndicator:SetLayer(kGUILayerPlayerHUD)
+	self.fireIndicator:SetIsVisible(false)
+	self.fireIndicator:SetTexture(fireTexture)
+	self.fireIndicator:SetSize(iconSize)
+	self.fireIndicator:SetColor(kAlienFontColor)
+
 	self.leftIndicator = GUIManager:CreateGraphicItem()
 	self.leftIndicator:SetAnchor(GUIItem.Left, GUIItem.Bottom)
 	self.leftIndicator:SetLayer(kGUILayerPlayerHUD)
@@ -66,18 +75,25 @@ function CHUDGUI_HiddenViewmodel:Update(deltaTime)
 		local leftPos = healthBall:GetPosition() + Vector(size.x-GUIScale(16), 0, 0)
 		local rightPos = energyBall:GetPosition() - Vector(size.x-GUIScale(48), 0, 0)
 		
+		local fire = player:GetIsOnFire()
 		local obs = player:GetIsDetected()
 		local cloak = player:GetCloakFraction() > 0.2
 		local umbra = player.umbraIntensity > 0
 		local enzyme = player:GetIsEnzymed()
 		
+		self.fireIndicator:SetIsVisible(player:GetIsAlive() and fire)
 		-- When under obs/scan, it removes cloaking, so only one of them happen at a time
 		self.leftIndicator:SetIsVisible(player:GetIsAlive() and (obs or cloak))
-		self.leftIndicator:SetPosition(leftPos)
-		
 		self.umbraIndicator:SetIsVisible(player:GetIsAlive() and umbra)
 		self.enzymeIndicator:SetIsVisible(player:GetIsAlive() and enzyme)
 		
+		if fire then
+			self.fireIndicator:SetPosition(leftPos)
+			leftPos = leftPos + Vector(iconSize.x, 0, 0)
+		end
+
+		self.leftIndicator:SetPosition(leftPos)
+
 		if obs then
 			self.leftIndicator:SetTexture(obsIndicatorTexture)
 			self.leftIndicator:SetTexturePixelCoordinates(GUIUnpackCoords(obsTextureCoords))
@@ -139,6 +155,11 @@ function CHUDGUI_HiddenViewmodel:OnResolutionChanged(oldX, oldY, newX, newY)
 end
 
 function CHUDGUI_HiddenViewmodel:Uninitialize()
+	if self.fireIndicator then
+		GUI.DestroyItem(self.fireIndicator)
+		self.fireIndicator = nil
+	end
+
 	if self.leftIndicator then
 		GUI.DestroyItem(self.leftIndicator)
 		self.leftIndicator = nil
