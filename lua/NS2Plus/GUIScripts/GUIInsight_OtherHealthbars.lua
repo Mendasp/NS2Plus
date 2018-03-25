@@ -26,7 +26,7 @@ function GUIInsight_OtherHealthbars:Update(deltaTime)
 	for _, entId in ipairs(self.otherIds) do
 		local other = self.otherList[entId]
 		local entity = Shared.GetEntity(entId)
-		if entity then
+		if entity and other then
 			if entity:isa("PhaseGate") or entity:isa("TunnelEntrance") or entity:isa("TunnelExit") then
 				other.Location:SetIsVisible(true)
 				other.Location:SetText(entity.GetDestinationLocationName and entity:GetDestinationLocationName() or "")
