@@ -62,9 +62,10 @@ end
 --Todo: Clean this mess of a local function
 local tooltipText
 local function displayTimeTooltip(tech)
-	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
+	local mouseX, mouseY = Client.GetCursorPosScreen()
+	if GUIItemContainsPoint(tech.Icon,  mouseX, mouseY) then
 		local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
-		timeLeft = timeLeft < 0 and 0 or timeLeft
+		timeLeft = math.max(0, timeLeft)
 		local minutes = math.floor(timeLeft/60)
 		local seconds = math.ceil(timeLeft - minutes*60)
 		tooltipText = string.format("%01.0f:%02.0f", minutes, seconds)
@@ -79,10 +80,14 @@ function Commander:UpdateClientEffects(deltaTime, isLocal)
 		self.production.InProgress:ForEach(displayTimeTooltip)
 	end
 
-	if tooltipText and self.tooltip then
-		self.tooltip:SetText(tooltipText)
-		self.tooltip:Show(0.1)
-		tooltipText = nil
+	if self.tooltip then
+		if tooltipText then
+			self.tooltip:SetText(tooltipText)
+			self.tooltip:Show()
+			tooltipText = nil
+		else
+			self.tooltip:Hide()
+		end
 	end
 end
 

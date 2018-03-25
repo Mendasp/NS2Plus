@@ -1,12 +1,14 @@
 local tooltipText
 local function displayNameTooltip(tech)
-	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
+	local mouseX, mouseY = Client.GetCursorPosScreen()
+	if GUIItemContainsPoint(tech.Icon, mouseX, mouseY) then
 		tooltipText = GetDisplayNameForTechId(tech.Id)
 	end
 end
 
 local function displayNameTimeTooltip(tech)
-	if GUIItemContainsPoint(tech.Icon, Client.GetCursorPosScreen()) then
+	local mouseX, mouseY = Client.GetCursorPosScreen()
+	if GUIItemContainsPoint(tech.Icon,mouseX, mouseY) then
 		local text = GetDisplayNameForTechId(tech.Id)
 		
 		local timeLeft = tech.StartTime + tech.ResearchTime - Shared.GetTime()
@@ -21,7 +23,7 @@ local originalSpectatorInit = GUISpectator.Initialize
 function GUISpectator:Initialize()
 	originalSpectatorInit(self)
 
-	self.tooltip = GetGUIManager():CreateGUIScriptSingle("menu/GUIHoverTooltip")
+	self.tooltip = GetGUIManager():CreateGUIScript("menu/GUIHoverTooltip")
 end
 	
 local originalSpectatorUninit = GUISpectator.Uninitialize
@@ -58,8 +60,10 @@ function GUISpectator:Update(deltaTime)
 
 	if tooltipText then
 		self.tooltip:SetText(tooltipText)
-		self.tooltip:Show(0.1)
+		self.tooltip:Show()
 		tooltipText = nil
+	else
+		self.tooltip:Hide()
 	end
 end
 
