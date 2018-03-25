@@ -73,6 +73,12 @@ CHUDServerOptions =
 		valueType = "bool",
 		defaultValue = false,
 		},
+	showprobabilityofteamvictory = {
+		label   = "Show probability of victory for each team",
+		tooltip = "Shows the probability of victory for each team on the scoreboard for clients.",
+		valueType = "bool",
+		defaultValue = false,
+		},
 	showplayerskill = {
 		label   = "Show player skill pregame",
 		tooltip = "Shows each player's Hive skill on the scoreboard before the game starts.",

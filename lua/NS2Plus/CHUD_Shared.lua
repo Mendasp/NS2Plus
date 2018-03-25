@@ -168,6 +168,7 @@ if not CHUDMainMenu then
 	local gameInfoNetworkVars =
 	{
 		showAvgSkill = "boolean",
+		showProbability = "boolean",
 		showPlayerSkill = "boolean",
 		showEndStatsAuto = "boolean",
 		showEndStatsTeamBreakdown = "boolean",

@@ -3,7 +3,8 @@ local kNSLTeamURL = "http://www.ensl.org/teams/"
 
 local kObservatoryUserURL = "http://observatory.morrolan.ch/player?steam_id="
 
-local team1Skill, team2Skill, textHeight, teamItemWidth
+local team1Skill, team2Skill, team1VictoryP = 0, 0, 0
+local textHeight, teamItemWidth
 
 local originalScoreboardUpdateTeam = GUIScoreboard.UpdateTeam
 function GUIScoreboard:UpdateTeam(updateTeam)
@@ -49,13 +50,17 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 		end
 	end
 
-	if (teamNumber == 1 or teamNumber == 2) and self.showAvgSkill then
+	if (teamNumber == 1 or teamNumber == 2) and (self.showAvgSkill or self.showProbability)then
 		local skill = numPlayers > 0 and teamAvgSkill/numPlayers or 0
 		if teamNumber == 1 then
 			team1Skill = skill
 		elseif teamNumber == 2 then
 			team2Skill = skill
 		end
+
+		-- calculate probability of victory using the simplified model
+		local skilldiff = team1Skill - team2Skill
+		team1VictoryP = Round(100 / (1 + math.exp(-(skilldiff/100))))
 	end
 end
 
@@ -114,14 +119,13 @@ function GUIScoreboard:Update(deltaTime)
 	
 	if self.visible then
 		self.centerOnPlayer = CHUDGetOption("sbcenter")
-		
-		-- Shine:IsExtensionEnabled was only returning plugin state, but not the plugin
-		local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
 
-		self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and (pgpEnabled or not PlayerUI_GetHasGameStarted())
+		self.showPlayerSkill = GetGameInfoEntity().showPlayerSkill and not PlayerUI_GetHasGameStarted()
 		self.showAvgSkill = GetGameInfoEntity().showAvgSkill
+		self.showProbability = GetGameInfoEntity().showProbability
 
-		if self.showAvgSkill == true then
+
+		if self.showAvgSkill or self.showProbability then
 			local team1Players = #self.teams[2]["GetScores"]()
 			local team2Players = #self.teams[3]["GetScores"]()
 			local hasText = false
@@ -131,10 +135,21 @@ function GUIScoreboard:Update(deltaTime)
 			
 			self.scoreboardBackground:AddChild(self.avgSkillItem)
 			self.scoreboardBackground:AddChild(self.avgSkillItem2)
-			if team1Players > 0 and team2Players > 0 and team1Skill and team2Skill then
-				local team1Text = string.format("Avg. marine skill: %d", team1Skill)
-				local team2Text = string.format("Avg. alien skill: %d", team2Skill)
-				
+
+			local team1Text, team2Text
+			if self.showAvgSkill and self.showProbability then
+				team1Text = string.format("Avg. skill: %d, Probability of victory: %d%%", team1Skill, team1VictoryP)
+				team2Text = string.format("Avg. skill: %d, Probability of Victory: %d%%", team2Skill, 100 - team1VictoryP)
+			elseif self.showAvgSkill then
+				team1Text = string.format("Avg. skill: %d", team1Skill)
+				team2Text = string.format("Avg. skill: %d", team2Skill)
+			else
+				team1Text = string.format("Probability of victory: %d%%", team1VictoryP)
+				team2Text = string.format("Probability of victory: %d%%", 100 - team1VictoryP)
+			end
+
+
+			if team1Players > 0 and team2Players > 0 then
 				self.avgSkillItem:SetText(team1Text)
 				self.avgSkillItem2:SetText(team2Text)
 				hasText = true
@@ -152,16 +167,16 @@ function GUIScoreboard:Update(deltaTime)
 					self.avgSkillItem:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 					self.avgSkillItem2:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 				end
-			elseif team1Players > 0 and team1Skill then
-				self.avgSkillItem:SetText(string.format("Avg. marine skill: %d", team1Skill))
+			elseif team1Players > 0 then
+				self.avgSkillItem:SetText(team1Text)
 				self.avgSkillItem:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 				
 				self.avgSkillItem2:SetText("")
 				self.avgSkillItem2Bg:SetIsVisible(false)
 				
 				hasText = true
-			elseif team2Players > 0 and team2Skill then
-				self.avgSkillItem2:SetText(string.format("Avg. alien skill: %d", team2Skill))
+			elseif team2Players > 0 then
+				self.avgSkillItem2:SetText(team2Text)
 				self.avgSkillItem2:SetPosition(Vector(0, textHeight/2+5*GUIScoreboard.kScalingFactor, 0))
 				
 				self.avgSkillItem:SetText("")
