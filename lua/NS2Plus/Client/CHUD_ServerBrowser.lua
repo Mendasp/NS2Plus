@@ -1,12 +1,9 @@
 local oldBuildServerEntry = BuildServerEntry
 function BuildServerEntry(serverIndex)
-
 	local serverEntry = oldBuildServerEntry(serverIndex)
 
-	local serverBrowserOpen = false
 	local mainMenu = GetCHUDMainMenu()
-	if mainMenu and mainMenu.playWindow and mainMenu.playWindow:GetIsVisible() then
-		serverBrowserOpen = true
+	if mainMenu and mainMenu.serverList and mainMenu.serverList:GetIsVisible() then
 		local serverTags = { }
 		Client.GetServerTags(serverIndex, serverTags)
 		
