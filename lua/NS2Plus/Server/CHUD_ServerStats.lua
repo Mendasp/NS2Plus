@@ -32,9 +32,7 @@ function CHUDGetLastRoundStats()
 end
 
 local function CHUDGetGameStarted()
-	local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
-	
-	return GetGamerules():GetGameStarted() or pgpEnabled
+	return GetGamerules():GetGameStarted()
 end
 
 local function CHUDGetGameTime(inMinutes)

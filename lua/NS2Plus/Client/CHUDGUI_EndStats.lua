@@ -1748,122 +1748,756 @@ local function GetYSpacing(value)
 	return ySpacing
 end
 
--- Todo: Split this moster into submethods
-function CHUDGUI_EndStats:Update(deltaTime)
+function CHUDGUI_EndStats:UpdateRowHighlight()
+	local mouseX, mouseY = Client.GetCursorPosScreen()
 
+	if not self.hoverMenu.background:GetIsVisible() then
+		self.lastRow = nil
+		highlightedField = nil
+		for index, row in ipairs(self.team1UI.playerRows) do
+			if index == 1 then
+				local highlightColor = kMarineHeaderRowTextHighlightColor
+				local textColor = kMarineHeaderRowTextColor
+				for fieldName, item in pairs(row) do
+					if item.GetText and item:GetText() ~= "" then
+						if GUIItemContainsPoint(item, mouseX, mouseY) then
+							highlightedField = fieldName
+							highlightedFieldMarine = true
+							item:SetColor(highlightColor)
+						else
+							item:SetColor(textColor)
+						end
+					end
+				end
+			else
+				CheckRowHighlight(self, row, mouseX, mouseY)
+			end
+		end
+		for index, row in ipairs(self.team2UI.playerRows) do
+			if index == 1 then
+				local highlightColor = kAlienHeaderRowTextHighlightColor
+				local textColor = kAlienHeaderRowTextColor
+				for fieldName, item in pairs(row) do
+					if item.GetText and item:GetText() ~= "" then
+						if GUIItemContainsPoint(item, mouseX, mouseY) then
+							highlightedField = fieldName
+							highlightedFieldMarine = false
+							item:SetColor(highlightColor)
+						else
+							item:SetColor(textColor)
+						end
+					end
+				end
+			else
+				CheckRowHighlight(self, row, mouseX, mouseY)
+			end
+		end
+
+		if self.lastRow == nil then
+			self.tooltip:Hide()
+		end
+
+		-- Change it to the field name on the message table for proper sorting
+		if highlightedField == "acc" then
+			highlightedField = "realAccuracy"
+		elseif highlightedField == "timeBuilding" then
+			highlightedField = "minutesBuilding"
+		elseif highlightedField == "timePlayed" then
+			highlightedField = "minutesPlaying"
+		elseif highlightedField == "playerName" then
+			highlightedField = "lowerCaseName"
+		end
+	end
+
+end
+
+function CHUDGUI_EndStats:UpdateSlidebar()
+	-- Handle sliderbar position and display
+	if self.sliderBarBg:GetIsVisible() and self.mousePressed and self.isDragging then
+		HandleSlidebarClicked(self)
+	end
+
+	-- Check if it's visible again since we hide the menu if the game starts
+	local showSlidebar = self.contentSize > kContentMaxYSize and self:GetIsVisible()
+	local sliderPos = (self.slideOffset / (self.contentSize - kContentMaxYSize) * kContentMaxYSize) - self.slider:GetSize().y/2
+	self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, -self.slideOffset + GUILinearScale(128), 0))
+
+	if math.abs(self.slider:GetPosition().y - sliderPos) > 2.5 then
+		StartSoundEffect(kSlideSound)
+	end
+
+	self.slider:SetPosition(Vector(-GUILinearScale(8), sliderPos, 0))
+	self.sliderBarBg:SetIsVisible(showSlidebar)
+end
+
+function CHUDGUI_EndStats:CheckGameState()
+	local gameInfo = GetGameInfoEntity()
+	local warmupActive = gameInfo.GetWarmUpActive and gameInfo:GetWarmUpActive()
+
+	-- Hide the stats when the game starts if we're on a team
+	if PlayerUI_GetHasGameStarted() and not warmupActive and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
+		self:SetIsVisible(false)
+		self.actionIconGUI:Hide()
+	end
+end
+
+function CHUDGUI_EndStats:UpdateCloseButton()
+	local mouseX, mouseY = Client.GetCursorPosScreen()
+
+	-- Close button
+	local kCloseButtonColor = Color(1, 0, 0, 0.5)
+	local kCloseButtonHighlightColor = Color(1, 0, 0, 0.75)
+
+	if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
+		if self.closeButton:GetColor() ~= kCloseButtonHighlightColor then
+			self.closeButton:SetColor(kCloseButtonHighlightColor)
+			StartSoundEffect(kMouseHoverSound)
+		end
+	elseif self.closeButton:GetColor() ~= kCloseButtonColor then
+		self.closeButton:SetColor(kCloseButtonColor)
+		StartSoundEffect(kMouseHoverSound)
+	end
+end
+
+function CHUDGUI_EndStats:UpdateVisibleUI()
+	-- When going back to the RR sometimes we'll lose the cursor
+	if not MouseTracker_GetIsVisible() then
+		MouseTracker_SetIsVisible(true)
+	end
+
+	self:CheckGameState()
+
+	if not self:GetIsVisible() then return end
+
+	self:UpdateRowHighlight()
+
+	self:UpdateSlidebar()
+
+	self:UpdateCloseButton()
+end
+
+-- Todo: Split this moster into submethods
+function CHUDGUI_EndStats:ProcessStats()
+	table.sort(finalStatsTable, function(a, b)
+		a.teamNumber = a.isMarine and 1 or 2
+		b.teamNumber = b.isMarine and 1 or 2
+		a.realAccuracy = a.accuracyOnos == -1 and a.accuracy or a.accuracyOnos
+		b.realAccuracy = b.accuracyOnos == -1 and b.accuracy or b.accuracyOnos
+		a.lowerCaseName = string.UTF8Lower(a.playerName)
+		b.lowerCaseName = string.UTF8Lower(b.playerName)
+		if a.teamNumber == b.teamNumber then
+			if a.kills == b.kills then
+				if a.assists == b.assists then
+					if a.deaths == b.deaths then
+						if a.realAccuracy == b.realAccuracy then
+							if a.pdmg == b.pdmg then
+								if a.sdmg == b.sdmg then
+									if a.minutesBuilding == b.minutesBuilding then
+										return a.lowerCaseName < b.lowerCaseName
+									else
+										return a.minutesBuilding > b.minutesBuilding
+									end
+								else
+									return a.sdmg > b.sdmg
+								end
+							else
+								return a.pdmg > b.pdmg
+							end
+						else
+							return a.accuracy > b.accuracy
+						end
+					else
+						return a.deaths < b.deaths
+					end
+				else
+					return a.assists > b.assists
+				end
+			else
+				return a.kills > b.kills
+			end
+		else
+			return a.teamNumber < b.teamNumber
+		end
+	end)
+
+	table.sort(cardsTable, function(a, b)
+		if a.order and b.order then
+			return a.order < b.order
+		elseif a.teamNumber == b.teamNumber then
+			if a.message.kills and b.message.kills then
+				a.message.realAccuracy = a.message.accuracyOnos == -1 and a.message.accuracy or a.message.accuracyOnos
+				b.message.realAccuracy = b.message.accuracyOnos == -1 and b.message.accuracy or b.message.accuracyOnos
+				if a.message.kills == b.message.kills then
+					return a.message.realAccuracy > b.message.realAccuracy
+				else
+					return a.message.kills > b.message.kills
+				end
+			end
+		else
+			return a.teamNumber < b.teamNumber
+		end
+	end)
+
+	local totalKills1 = 0
+	local totalKills2 = 0
+	local totalAssists1 = 0
+	local totalAssists2 = 0
+	local totalDeaths1 = 0
+	local totalDeaths2 = 0
+	local totalPdmg1 = 0
+	local totalPdmg2 = 0
+	local totalSdmg1 = 0
+	local totalSdmg2 = 0
+	local totalTimeBuilding1 = 0
+	local totalTimeBuilding2 = 0
+	local totalTimePlaying1 = 0
+	local totalTimePlaying2 = 0
+	local avgAccuracy1 = 0
+	local avgAccuracy1Onos = 0
+	local avgAccuracy2 = 0
+	local team1Comm = 0
+	local team2Comm = 0
+	local team1CommTime = 0
+	local team2CommTime = 0
+
+	self:Uninitialize()
+	self:Initialize()
+
+	for _, message in ipairs(finalStatsTable) do
+		-- Initialize the values in case there's something missing
+		message.isMarine = message.isMarine or false
+		message.playerName = message.playerName or "NSPlayer"
+		message.kills = message.kills or 0
+		message.assists = message.assists or 0
+		message.deaths = message.deaths or 0
+		message.accuracy = message.accuracy or 0
+		message.accuracyOnos = message.accuracyOnos or -1
+		message.pdmg = message.pdmg or 0
+		message.sdmg = message.sdmg or 0
+		message.minutesBuilding = message.minutesBuilding or 0
+		message.minutesPlaying = message.minutesPlaying or 0
+		message.minutesComm = message.minutesComm or 0
+		message.killstreak = message.killstreak or 0
+		message.steamId = message.steamId or 1
+		message.isRookie = message.isRookie or false
+		message.hiveSkill = message.hiveSkill or -1
+
+		local isMarine = message.isMarine
+
+		-- save player stats into a map for later usage (e.g. hive skill graph)
+		local teamNumber = isMarine and 1 or 2
+		if not playerStatMap[teamNumber] then playerStatMap[teamNumber] = {} end
+		playerStatMap[teamNumber][message.steamId] = message
+
+		local minutes = math.floor(message.minutesBuilding)
+		local seconds = (message.minutesBuilding % 1)*60
+
+		local pMinutes = math.floor(message.minutesPlaying)
+		local pSeconds = (message.minutesPlaying % 1)*60
+
+		local cMinutes = math.floor(message.minutesComm)
+		local cSeconds = (message.minutesComm % 1)*60
+
+		local teamObj
+
+		if isMarine then
+			teamObj = self.team1UI
+			totalKills1 = totalKills1 + message.kills
+			totalAssists1 = totalAssists1 + message.assists
+			totalDeaths1 = totalDeaths1 + message.deaths
+			totalPdmg1 = totalPdmg1 + message.pdmg
+			totalSdmg1 = totalSdmg1 + message.sdmg
+			totalTimeBuilding1 = totalTimeBuilding1 + message.minutesBuilding
+			totalTimePlaying1 = totalTimePlaying1 + message.minutesPlaying
+			avgAccuracy1 = avgAccTable.marineAcc
+			avgAccuracy1Onos = avgAccTable.marineOnosAcc
+		else
+			teamObj = self.team2UI
+			totalKills2 = totalKills2 + message.kills
+			totalAssists2 = totalAssists2 + message.assists
+			totalDeaths2 = totalDeaths2 + message.deaths
+			totalPdmg2 = totalPdmg2 + message.pdmg
+			totalSdmg2 = totalSdmg2 + message.sdmg
+			totalTimeBuilding2 = totalTimeBuilding2 + message.minutesBuilding
+			totalTimePlaying2 = totalTimePlaying2 + message.minutesPlaying
+			avgAccuracy2 = avgAccTable.alienAcc
+		end
+
+		local playerCount = #teamObj.playerRows
+		local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+		local playerTextColor = kPlayerStatsTextColor
+		if playerCount % 2 == 0 then
+			bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+		end
+
+		-- Color our own row in a different color
+		if message.steamId == Client.GetSteamId() then
+			bgColor = kCurrentPlayerStatsColor
+			playerTextColor = kCurrentPlayerStatsTextColor
+		end
+
+		table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum2(message.pdmg), printNum2(message.sdmg), string.format("%d:%02d", minutes, seconds), string.format("%d:%02d", pMinutes, pSeconds), message.minutesComm > 0 and string.format("%d:%02d", cMinutes, cSeconds) or nil, message.steamId, message.isRookie, message.hiveSkill))
+		-- Store some of the original info so we can sort afterwards
+		teamObj.playerRows[#teamObj.playerRows].originalOrder = playerCount
+		teamObj.playerRows[#teamObj.playerRows].message = message
+
+		if isMarine and message.minutesComm > team1CommTime then
+			team1Comm = playerCount+1
+			team1CommTime = message.minutesComm
+		elseif not isMarine and message.minutesComm > team2CommTime then
+			team2Comm = playerCount+1
+			team2CommTime = message.minutesComm
+		end
+	end
+
+	if team1Comm > 0 then
+		if self.team1UI.playerRows[team1Comm].message then
+			self.team1UI.playerRows[team1Comm].commIcon:SetTexture("ui/badges/commander_20.dds")
+		end
+	end
+
+	if team2Comm > 0 then
+		if self.team2UI.playerRows[team2Comm] then
+			self.team2UI.playerRows[team2Comm].commIcon:SetTexture("ui/badges/commander_20.dds")
+		end
+	end
+
+	local numPlayers1 = #self.team1UI.playerRows-1
+	local numPlayers2 = #self.team2UI.playerRows-1
+	self:SetPlayerCount(self.team1UI, numPlayers1)
+	self:SetPlayerCount(self.team2UI, numPlayers2)
+	miscDataTable.team1PlayerCount = numPlayers1
+	miscDataTable.team2PlayerCount = numPlayers2
+	self:SetTeamName(self.team1UI, miscDataTable.team1Name or "Frontiersmen")
+	self:SetTeamName(self.team2UI, miscDataTable.team2Name or "Kharaa")
+	local team1Result, team2Result = "DRAW", "DRAW"
+	if miscDataTable.winningTeam > 0 then
+		team1Result = miscDataTable.winningTeam == kMarineTeamType and "WINNER" or "LOSER"
+		team2Result = miscDataTable.winningTeam == kAlienTeamType and "WINNER" or "LOSER"
+	end
+	self:SetGameResult(self.team1UI, team1Result)
+	self:SetGameResult(self.team2UI, team2Result)
+
+	local minutes1 = math.floor(totalTimeBuilding1)
+	local seconds1 = (totalTimeBuilding1 % 1)*60
+	totalTimeBuilding1 = totalTimeBuilding1/numPlayers1
+	local minutes1Avg = math.floor(totalTimeBuilding1)
+	local seconds1Avg = (totalTimeBuilding1 % 1)*60
+
+	local minutesP1 = math.floor(totalTimePlaying1)
+	local secondsP1 = (totalTimePlaying1 % 1)*60
+	totalTimePlaying1 = totalTimePlaying1/numPlayers1
+	local minutes1PAvg = math.floor(totalTimePlaying1)
+	local seconds1PAvg = (totalTimePlaying1 % 1)*60
+
+	local minutes2 = math.floor(totalTimeBuilding2)
+	local seconds2 = (totalTimeBuilding2 % 1)*60
+	totalTimeBuilding2 = totalTimeBuilding2/numPlayers2
+	local minutes2Avg = math.floor(totalTimeBuilding2)
+	local seconds2Avg = (totalTimeBuilding2 % 1)*60
+
+	local minutesP2 = math.floor(totalTimePlaying2)
+	local secondsP2 = (totalTimePlaying2 % 1)*60
+	totalTimePlaying2 = totalTimePlaying2/numPlayers2
+	local minutes2PAvg = math.floor(totalTimePlaying2)
+	local seconds2PAvg = (totalTimePlaying2 % 1)*60
+
+	-- When there's only one player in a team, the total and the average will be the same
+	-- Don't even bother displaying this, it looks odd
+	if numPlayers1 > 1 then
+		table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum2(totalPdmg1), printNum2(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
+		table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum2(totalPdmg1/numPlayers1), printNum2(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg), string.format("%d:%02d", minutes1PAvg, seconds1PAvg)))
+	end
+	if numPlayers2 > 1 then
+		table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum2(totalPdmg2), printNum2(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
+		table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum2(totalPdmg2/numPlayers2), printNum2(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg), string.format("%d:%02d", minutes2PAvg, seconds2PAvg)))
+	end
+
+	local gameInfo = GetGameInfoEntity()
+	local teamStatsVisible = gameInfo.showEndStatsTeamBreakdown
+
+	self.team1UI.background:SetIsVisible(teamStatsVisible)
+	self.team2UI.background:SetIsVisible(teamStatsVisible)
+	self.teamStatsTextShadow:SetIsVisible(teamStatsVisible)
+
+	self.roundDate:SetText("Round date: " .. miscDataTable.roundDateString)
+	self.gameLength:SetText("Game length: " .. miscDataTable.gameLength)
+	self.serverName:SetText("Server name: " .. miscDataTable.serverName)
+	self.mapName:SetText("Map: " .. miscDataTable.mapName)
+
+	table.sort(statusSummaryTable, function(a, b)
+		if a.timeMinutes == b.timeMinutes then
+			return a.className < b.className
+		else
+			return a.timeMinutes > b.timeMinutes
+		end
+	end)
+	if #statusSummaryTable > 0 then
+		local bgColor = kStatusStatsColor
+		local statCard = self:CreateGraphicHeader("Class time distribution", bgColor)
+		statCard.rows = {}
+		statCard.teamNumber = -2
+
+		local totalTime = 0
+		for index, row in ipairs(statusSummaryTable) do
+			totalTime = totalTime + row.timeMinutes
+		end
+		for index, row in ipairs(statusSummaryTable) do
+			bgColor = ConditionalValue(index % 2 == 0, kMarinePlayerStatsEvenColor, kMarinePlayerStatsOddColor)
+			local minutes = math.floor(row.timeMinutes)
+			local seconds = (row.timeMinutes % 1)*60
+			local percentage = row.timeMinutes / totalTime * 100
+			table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.className, string.format("%d:%02d (%s%%)", minutes, seconds, printNum(percentage))))
+		end
+		table.insert(self.statsCards, statCard)
+	end
+
+	for _, card in ipairs(cardsTable) do
+		local bgColor
+		if card.teamNumber == 1 then
+			bgColor = kMarineStatsColor
+		elseif card.teamNumber == 2 then
+			bgColor = kAlienStatsColor
+		else
+			bgColor = kCommanderStatsColor
+		end
+		local statCard = self:CreateGraphicHeader(card.text, bgColor, card.logoTexture, card.logoCoords, card.logoSizeX, card.logoSizeY)
+		statCard.rows = {}
+		statCard.teamNumber = card.teamNumber
+
+		for index, row in ipairs(card.rows) do
+			if card.teamNumber == 1 then
+				bgColor = ConditionalValue(index % 2 == 0, kMarinePlayerStatsEvenColor, kMarinePlayerStatsOddColor)
+			elseif card.teamNumber == 2 then
+				bgColor = ConditionalValue(index % 2 == 0, kAlienPlayerStatsEvenColor, kAlienPlayerStatsOddColor)
+			else
+				bgColor = ConditionalValue(index % 2 == 0, kCommanderStatsEvenColor, kCommanderStatsOddColor)
+			end
+
+			table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.title, row.value))
+		end
+		table.insert(self.statsCards, statCard)
+	end
+
+	if #techLogTable > 0 or #buildingSummaryTable > 0 then
+		table.sort(techLogTable, function(a, b)
+			if a.teamNumber == b.teamNumber then
+				if a.finishedMinute == b.finishedMinute then
+					return a.name > b.name
+				else
+					return a.finishedMinute < b.finishedMinute
+				end
+			else
+				return a.teamNumber < b.teamNumber
+			end
+		end)
+
+		table.sort(buildingSummaryTable, function(a, b)
+			if a.teamNumber == b.teamNumber then
+				if a.built == b. built then
+					if a.lost == b.lost then
+						return a.techId < b.techId
+					else
+						return a.lost > b.lost
+					end
+				else
+					return a.built > b.built
+				end
+			else
+				return a.teamNumber < b.teamNumber
+			end
+		end)
+
+		local team1Name = miscDataTable.team1Name or "Frontiersmen"
+		local team2Name = miscDataTable.team2Name or "Kharaa"
+
+		self.techLogs[1] = {}
+		self.techLogs[1].header = self:CreateTechLogHeader(1, team1Name)
+		self.techLogs[1].rows = {}
+
+		self.techLogs[2] = {}
+		self.techLogs[2].header = self:CreateTechLogHeader(2, team2Name)
+		self.techLogs[2].rows = {}
+
+		-- Right now we only have marine comm stats so...
+		if commanderStats then
+			table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Commander Stats", "Acc.", "Effic.", "Refilled", "Picked", "Expired"))
+
+			local row = 1
+
+			if commanderStats.medpackResUsed > 0 or commanderStats.medpackResExpired > 0 then
+				table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Medpacks", printNum(commanderStats.medpackAccuracy) .. "%", printNum(commanderStats.medpackEfficiency) .. "%", commanderStats.medpackRefill, commanderStats.medpackResUsed, commanderStats.medpackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.MedPack), 24, 24, kIconColors[1]))
+				row = row + 1
+			end
+
+			if commanderStats.ammopackResUsed > 0 or commanderStats.ammopackResExpired > 0 then
+				table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Ammopacks", "-", printNum(commanderStats.ammopackEfficiency) .. "%", commanderStats.ammopackRefill, commanderStats.ammopackResUsed, commanderStats.ammopackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.AmmoPack), 24, 24, kIconColors[1]))
+				row = row + 1
+			end
+
+			if commanderStats.catpackResUsed > 0 or commanderStats.catpackResExpired > 0 then
+				table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Catpacks", "-", printNum(commanderStats.catpackEfficiency) .. "%", "-", commanderStats.catpackResUsed, commanderStats.catpackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.CatPack), 24, 24, kIconColors[1]))
+			end
+		end
+
+		if #buildingSummaryTable > 0 then
+			if buildingSummaryTable[1].teamNumber == 1 then
+				table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "", "Tech", "Built", "Lost"))
+			end
+
+			if buildingSummaryTable[#buildingSummaryTable].teamNumber == 2 then
+				table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "", "Tech", "Built", "Lost"))
+			end
+
+			for index, buildingEntry in ipairs(buildingSummaryTable) do
+				local isMarine = buildingEntry.teamNumber == 1
+				local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
+				local logoColor = kIconColors[buildingEntry.teamNumber]
+				local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+				if index % 2 == 0 then
+					bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+				end
+
+				table.insert(self.techLogs[buildingEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[buildingEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, "", buildingEntry.name, buildingEntry.built, buildingEntry.lost, buildingEntry.iconTexture, buildingEntry.iconCoords, buildingEntry.iconSizeX, buildingEntry.iconSizeY, logoColor))
+			end
+
+		end
+
+		if #techLogTable > 0 then
+			if techLogTable[1].teamNumber == 1 then
+				table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
+			end
+
+			if techLogTable[#techLogTable].teamNumber == 2 then
+				table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
+			end
+
+			for index, techLogEntry in ipairs(techLogTable) do
+				local isMarine = techLogEntry.teamNumber == 1
+				local isLost = techLogEntry.destroyed == true
+				local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
+				local logoColor = kIconColors[techLogEntry.teamNumber]
+				local bgColor = isLost and kLostTechOddColor or isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
+				if index % 2 == 0 then
+					bgColor = isLost and kLostTechEvenColor or isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
+				end
+
+				table.insert(self.techLogs[techLogEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[techLogEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, techLogEntry.finishedTime, techLogEntry.name, techLogEntry.activeRTs, techLogEntry.teamRes, techLogEntry.iconTexture, techLogEntry.iconCoords, techLogEntry.iconSizeX, techLogEntry.iconSizeY, logoColor))
+			end
+		end
+	end
+
+	self.hiveSkillGraphs = {}
+	if #hiveSkillGraphTable > 0 then
+		table.sort(hiveSkillGraphTable, function(a, b)
+			return a.gameMinute < b.gameMinute
+		end)
+
+		self.hiveSkillGraphs[1] = {}
+		self.hiveSkillGraphs[2] = {}
+		local hiveSkill = {0, 0}
+		local lineOffset = {0, 0.5}
+		local maxHiveSkill = 0
+		local minHiveSkill = 0
+		local players = {0,0}
+		local curMaxPlayers = 1
+
+		-- Handle gameMinute 0 special to avoid artificially spikes because of arbitrary joining order
+		local next = 1
+		for i = next, #hiveSkillGraphTable do
+			local entry = hiveSkillGraphTable[i]
+			if entry.gameMinute > 0 then
+				next = i
+				break
+			end
+
+			local teamNumber = entry.teamNumber
+			local playerEntry = playerStatMap[teamNumber] and playerStatMap[teamNumber][entry.steamId]
+			local playerSkill = playerEntry and math.max(playerEntry.hiveSkill, 0) or 0
+
+			players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
+			curMaxPlayers = math.max(1,players[1],players[2])
+			hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
+		end
+
+		maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+		minHiveSkill = maxHiveSkill
+
+		table.insert(self.hiveSkillGraphs[1], Vector(0, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
+		table.insert(self.hiveSkillGraphs[2], Vector(0, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+
+		-- Handle end game special to avoid artificially spikes because of arbitrary disjoin order
+		local skipAfter = miscDataTable.gameLengthMinutes - 5/60
+		for i = next, #hiveSkillGraphTable do
+			local entry = hiveSkillGraphTable[i]
+			if entry.gameMinute > skipAfter then break end
+
+			table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
+			table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+
+			local teamNumber = entry.teamNumber
+			local playerEntry = playerStatMap[teamNumber] and playerStatMap[teamNumber][entry.steamId]
+			local playerSkill = playerEntry and math.max(playerEntry.hiveSkill, 0) or 0
+
+			players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
+			curMaxPlayers = math.max(1,players[1],players[2])
+			hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
+			maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+			minHiveSkill = math.min(minHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
+
+			table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
+			table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+		end
+
+		self.hiveSkillGraph:SetPoints(1, self.hiveSkillGraphs[1])
+		self.hiveSkillGraph:SetPoints(2, self.hiveSkillGraphs[2])
+		self.hiveSkillGraph:SetYBounds(math.floor((minHiveSkill-100)/100)*100, maxHiveSkill+100, true)
+
+		local gameLength = miscDataTable.gameLengthMinutes*60
+		local xSpacing = GetXSpacing(gameLength)
+
+		self.hiveSkillGraph:SetXBounds(0, gameLength)
+		self.hiveSkillGraph:SetXGridSpacing(xSpacing)
+		self.hiveSkillGraph:SetYGridSpacing(math.ceil(maxHiveSkill/(15*100))*100)
+	end
+
+	self.rtGraphs = {}
+	if #rtGraphTable > 0 then
+		table.sort(rtGraphTable, function(a, b)
+			return a.gameMinute < b.gameMinute
+		end)
+
+		self.rtGraphs[1] = {}
+		self.rtGraphs[2] = {}
+		local rtCount = {0, 0}
+		local lineOffset = {0, 0.05}
+		local maxRTs = 0
+
+		for _, entry in ipairs(rtGraphTable) do
+			local teamNumber = entry.teamNumber
+			table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount[teamNumber]+lineOffset[teamNumber], 0))
+			rtCount[teamNumber] = rtCount[teamNumber] + ConditionalValue(entry.destroyed, -1, 1)
+			table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount[teamNumber]+lineOffset[teamNumber], 0))
+			maxRTs = math.max(maxRTs,rtCount[teamNumber])
+		end
+
+		self.rtGraph:SetPoints(1, self.rtGraphs[1])
+		self.rtGraph:SetPoints(2, self.rtGraphs[2])
+		self.rtGraph:SetYBounds(0, maxRTs+1, true)
+		local gameLength = miscDataTable.gameLengthMinutes*60
+		local xSpacing = GetXSpacing(gameLength)
+
+		self.rtGraph:SetXBounds(0, gameLength)
+		self.rtGraph:SetXGridSpacing(xSpacing)
+
+		self.builtRTsComp:SetValues(miscDataTable.marineRTsBuilt, miscDataTable.alienRTsBuilt)
+		self.lostRTsComp:SetValues(miscDataTable.marineRTsLost, miscDataTable.alienRTsLost)
+
+		if miscDataTable.marineRTsBuilt > 0 then
+			self.builtRTsComp:SetLeftText("(" .. printNum(miscDataTable.marineRTsBuilt/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(miscDataTable.marineRTsBuilt))
+		end
+		if miscDataTable.alienRTsBuilt > 0 then
+			self.builtRTsComp:SetRightText(tostring(miscDataTable.alienRTsBuilt) .. "  (" .. printNum(miscDataTable.alienRTsBuilt/miscDataTable.gameLengthMinutes) .. "/min)")
+		end
+		if miscDataTable.marineRTsLost > 0 then
+			self.lostRTsComp:SetLeftText("(" .. printNum(miscDataTable.marineRTsLost/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(miscDataTable.marineRTsLost))
+		end
+		if miscDataTable.alienRTsLost > 0 then
+			self.lostRTsComp:SetRightText(tostring(miscDataTable.alienRTsLost) .. "  (" .. printNum(miscDataTable.alienRTsLost/miscDataTable.gameLengthMinutes) .. "/min)")
+		end
+	end
+
+	self.killGraphs = {}
+	if #killGraphTable > 0 then
+		table.sort(killGraphTable, function(a, b)
+			return a.gameMinute < b.gameMinute
+		end)
+
+		self.killGraphs[1] = {}
+		self.killGraphs[2] = {}
+		local teamKills = {0, 0}
+		local lineOffsets = {0, 0.05}
+
+		for _, entry in ipairs(killGraphTable) do
+			local teamNumber = entry.teamNumber
+			table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, teamKills[teamNumber]+lineOffsets[teamNumber], 0))
+			teamKills[teamNumber] = teamKills[teamNumber] + 1
+			table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, teamKills[teamNumber]+lineOffsets[teamNumber], 0))
+		end
+
+		self.killGraph:SetPoints(1, self.killGraphs[1])
+		self.killGraph:SetPoints(2, self.killGraphs[2])
+		local yElems = math.max(teamKills[1], teamKills[2])+1
+		self.killGraph:SetYBounds(0, yElems, true)
+		local gameLength = miscDataTable.gameLengthMinutes*60
+		local xSpacing = GetXSpacing(gameLength)
+		local ySpacing = GetYSpacing(yElems)
+
+		self.killGraph:SetXBounds(0, gameLength)
+		self.killGraph:SetXGridSpacing(xSpacing)
+		self.killGraph:SetYGridSpacing(ySpacing)
+
+		self.killComparison:SetValues(teamKills[1], teamKills[2])
+
+		if teamKills[1] > 0 then
+			self.killComparison:SetLeftText("(" .. printNum(teamKills[1]/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(teamKills[1]))
+		end
+		if teamKills[2] > 0 then
+			self.killComparison:SetRightText(tostring(teamKills[2]) .. "  (" .. printNum(teamKills[2]/miscDataTable.gameLengthMinutes) .. "/min)")
+		end
+	end
+
+	repositionStats(self)
+
+	if not self.saved then
+		local savedStats = {}
+		savedStats.finalStatsTable = finalStatsTable
+		savedStats.avgAccTable = avgAccTable
+		savedStats.miscDataTable = miscDataTable
+		savedStats.cardsTable = cardsTable
+		savedStats.hiveSkillGraphTable = hiveSkillGraphTable
+		savedStats.rtGraphTable = rtGraphTable
+		savedStats.commanderStats = commanderStats
+		savedStats.killGraphTable = killGraphTable
+		savedStats.buildingSummaryTable = buildingSummaryTable
+		savedStats.statusSummaryTable = statusSummaryTable
+		savedStats.techLogTable = techLogTable
+
+		local savedFile = io.open(lastRoundFile, "w+")
+		if savedFile then
+			savedFile:write(json.encode(savedStats, { indent = true }))
+			io.close(savedFile)
+		end
+		self.saved = true
+	end
+
+	finalStatsTable = {}
+	playerStatMap = {}
+	avgAccTable = {}
+	miscDataTable = {}
+	cardsTable = {}
+	hiveSkillGraphTable = {}
+	rtGraphTable = {}
+	commanderStats = nil
+	killGraphTable = {}
+	buildingSummaryTable = {}
+	statusSummaryTable = {}
+	techLogTable = {}
+end
+
+function CHUDGUI_EndStats:Update()
 	local timeSinceRoundEnd = lastStatsMsg > 0 and Shared.GetTime() - lastGameEnd or 0
 	local gameInfo = GetGameInfoEntity()
 
 	if self:GetIsVisible() then
-		local mouseX, mouseY = Client.GetCursorPosScreen()
-		
-		-- When going back to the RR sometimes we'll lose the cursor
-		if not MouseTracker_GetIsVisible() then
-			MouseTracker_SetIsVisible(true)
-		end
-		
-		-- Shine:IsExtensionEnabled was only returning plugin state, but not the plugin
-		local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
-
-		local warmupActive = gameInfo.GetWarmUpActive and gameInfo:GetWarmUpActive()
-		
-		-- Hide the stats when the game starts if we're on a team
-		if PlayerUI_GetHasGameStarted() and not warmupActive and not pgpEnabled and (Client.GetLocalPlayer():GetTeamNumber() ~= kTeamReadyRoom and Client.GetLocalPlayer():GetTeamNumber() ~= kSpectatorIndex) then
-			self:SetIsVisible(false)
-			self.actionIconGUI:Hide()
-		end
-		
-		-- Handle row highlighting
-		if not self.hoverMenu.background:GetIsVisible() then
-			self.lastRow = nil
-			highlightedField = nil
-			for index, row in ipairs(self.team1UI.playerRows) do
-				if index == 1 then
-					local highlightColor = kMarineHeaderRowTextHighlightColor
-					local textColor = kMarineHeaderRowTextColor
-					for fieldName, item in pairs(row) do
-						if item.GetText and item:GetText() ~= "" then
-							if GUIItemContainsPoint(item, mouseX, mouseY) then
-								highlightedField = fieldName
-								highlightedFieldMarine = true
-								item:SetColor(highlightColor)
-							else
-								item:SetColor(textColor)
-							end
-						end
-					end
-				else
-					CheckRowHighlight(self, row, mouseX, mouseY)
-				end
-			end
-			for index, row in ipairs(self.team2UI.playerRows) do
-				if index == 1 then
-					local highlightColor = kAlienHeaderRowTextHighlightColor
-					local textColor = kAlienHeaderRowTextColor
-					for fieldName, item in pairs(row) do
-						if item.GetText and item:GetText() ~= "" then
-							if GUIItemContainsPoint(item, mouseX, mouseY) then
-								highlightedField = fieldName
-								highlightedFieldMarine = false
-								item:SetColor(highlightColor)
-							else
-								item:SetColor(textColor)
-							end
-						end
-					end
-				else
-					CheckRowHighlight(self, row, mouseX, mouseY)
-				end
-			end
-			
-			if self.lastRow == nil then
-				self.tooltip:Hide()
-			end
-			
-			-- Change it to the field name on the message table for proper sorting
-			if highlightedField == "acc" then
-				highlightedField = "realAccuracy"
-			elseif highlightedField == "timeBuilding" then
-				highlightedField = "minutesBuilding"
-			elseif highlightedField == "timePlayed" then
-				highlightedField = "minutesPlaying"
-			elseif highlightedField == "playerName" then
-				highlightedField = "lowerCaseName"
-			end
-		end
-		
-		-- Handle sliderbar position and display
-		if self.sliderBarBg:GetIsVisible() and self.mousePressed and self.isDragging then
-			HandleSlidebarClicked(self)
-		end
-		
-		-- Check if it's visible again since we hide the menu if the game starts
-		local showSlidebar = self.contentSize > kContentMaxYSize and self:GetIsVisible()
-		local sliderPos = (self.slideOffset / (self.contentSize - kContentMaxYSize) * kContentMaxYSize) - self.slider:GetSize().y/2
-		self.background:SetPosition(Vector(-(kTitleSize.x-GUILinearScale(32))/2, -self.slideOffset + GUILinearScale(128), 0))
-		
-		if math.abs(self.slider:GetPosition().y - sliderPos) > 2.5 then
-			StartSoundEffect(kSlideSound)
-		end
-		
-		self.slider:SetPosition(Vector(-GUILinearScale(8), sliderPos, 0))
-		self.sliderBarBg:SetIsVisible(showSlidebar)
-		
-		-- Close button
-		local kCloseButtonColor = Color(1, 0, 0, 0.5)
-		local kCloseButtonHighlightColor = Color(1, 0, 0, 0.75)
-		
-		if GUIItemContainsPoint(self.closeButton, mouseX, mouseY) then
-			if self.closeButton:GetColor() ~= kCloseButtonHighlightColor then
-				self.closeButton:SetColor(kCloseButtonHighlightColor)
-				StartSoundEffect(kMouseHoverSound)
-			end
-		elseif self.closeButton:GetColor() ~= kCloseButtonColor then
-			self.closeButton:SetColor(kCloseButtonColor)
-			StartSoundEffect(kMouseHoverSound)
-		end
+		self:UpdateVisibleUI()
 	else
 		self.lastRow = nil
+	end
+
+	-- Enough time has passed, so let's process the stats we received
+	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and (#finalStatsTable > 0 or #cardsTable > 0 or #miscDataTable > 0) and gameInfo then
+		self:ProcessStats()
 	end
 
 	-- Automatic data display on round end
@@ -1881,614 +2515,6 @@ function CHUDGUI_EndStats:Update(deltaTime)
 			self:SetIsVisible(gameInfo and gameInfo.showEndStatsAuto and CHUDGetOption("deathstats") > 1)
 			self.displayed = true
 		end
-	end
-	
-	-- Enough time has passed, so let's save the stats we received
-	if Shared.GetTime() > lastStatsMsg + kMaxAppendTime and (#finalStatsTable > 0 or #cardsTable > 0 or #miscDataTable > 0) and gameInfo then
-		table.sort(finalStatsTable, function(a, b)
-			a.teamNumber = a.isMarine and 1 or 2
-			b.teamNumber = b.isMarine and 1 or 2
-			a.realAccuracy = a.accuracyOnos == -1 and a.accuracy or a.accuracyOnos
-			b.realAccuracy = b.accuracyOnos == -1 and b.accuracy or b.accuracyOnos
-			a.lowerCaseName = string.UTF8Lower(a.playerName)
-			b.lowerCaseName = string.UTF8Lower(b.playerName)
-			if a.teamNumber == b.teamNumber then
-				if a.kills == b.kills then
-					if a.assists == b.assists then
-						if a.deaths == b.deaths then
-							if a.realAccuracy == b.realAccuracy then
-								if a.pdmg == b.pdmg then
-									if a.sdmg == b.sdmg then
-										if a.minutesBuilding == b.minutesBuilding then
-											return a.lowerCaseName < b.lowerCaseName
-										else
-											return a.minutesBuilding > b.minutesBuilding
-										end
-									else
-										return a.sdmg > b.sdmg
-									end
-								else
-									return a.pdmg > b.pdmg
-								end
-							else
-								return a.accuracy > b.accuracy
-							end
-						else
-							return a.deaths < b.deaths
-						end
-					else
-						return a.assists > b.assists
-					end
-				else
-					return a.kills > b.kills
-				end
-			else
-				return a.teamNumber < b.teamNumber
-			end
-		end)
-		
-		table.sort(cardsTable, function(a, b)
-			if a.order and b.order then
-				return a.order < b.order
-			elseif a.teamNumber == b.teamNumber then
-				if a.message.kills and b.message.kills then
-					a.message.realAccuracy = a.message.accuracyOnos == -1 and a.message.accuracy or a.message.accuracyOnos
-					b.message.realAccuracy = b.message.accuracyOnos == -1 and b.message.accuracy or b.message.accuracyOnos
-					if a.message.kills == b.message.kills then
-						return a.message.realAccuracy > b.message.realAccuracy
-					else
-						return a.message.kills > b.message.kills
-					end
-				end
-			else
-				return a.teamNumber < b.teamNumber
-			end
-		end)
-		
-		local totalKills1 = 0
-		local totalKills2 = 0
-		local totalAssists1 = 0
-		local totalAssists2 = 0
-		local totalDeaths1 = 0
-		local totalDeaths2 = 0
-		local totalPdmg1 = 0
-		local totalPdmg2 = 0
-		local totalSdmg1 = 0
-		local totalSdmg2 = 0
-		local totalTimeBuilding1 = 0
-		local totalTimeBuilding2 = 0
-		local totalTimePlaying1 = 0
-		local totalTimePlaying2 = 0
-		local avgAccuracy1 = 0
-		local avgAccuracy1Onos = 0
-		local avgAccuracy2 = 0
-		local team1Comm = 0
-		local team2Comm = 0
-		local team1CommTime = 0
-		local team2CommTime = 0
-		
-		self:Uninitialize()
-		self:Initialize()
-		
-		for _, message in ipairs(finalStatsTable) do
-			-- Initialize the values in case there's something missing
-			message.isMarine = message.isMarine or false
-			message.playerName = message.playerName or "NSPlayer"
-			message.kills = message.kills or 0
-			message.assists = message.assists or 0
-			message.deaths = message.deaths or 0
-			message.accuracy = message.accuracy or 0
-			message.accuracyOnos = message.accuracyOnos or -1
-			message.pdmg = message.pdmg or 0
-			message.sdmg = message.sdmg or 0
-			message.minutesBuilding = message.minutesBuilding or 0
-			message.minutesPlaying = message.minutesPlaying or 0
-			message.minutesComm = message.minutesComm or 0
-			message.killstreak = message.killstreak or 0
-			message.steamId = message.steamId or 1
-			message.isRookie = message.isRookie or false
-			message.hiveSkill = message.hiveSkill or -1
-
-			local isMarine = message.isMarine
-
-			-- save player stats into a map for later usage (e.g. hive skill graph)
-			local teamNumber = isMarine and 1 or 2
-			if not playerStatMap[teamNumber] then playerStatMap[teamNumber] = {} end
-			playerStatMap[teamNumber][message.steamId] = message
-			
-			local minutes = math.floor(message.minutesBuilding)
-			local seconds = (message.minutesBuilding % 1)*60
-			
-			local pMinutes = math.floor(message.minutesPlaying)
-			local pSeconds = (message.minutesPlaying % 1)*60
-			
-			local cMinutes = math.floor(message.minutesComm)
-			local cSeconds = (message.minutesComm % 1)*60
-			
-			local teamObj
-			
-			if isMarine then
-				teamObj = self.team1UI
-				totalKills1 = totalKills1 + message.kills
-				totalAssists1 = totalAssists1 + message.assists
-				totalDeaths1 = totalDeaths1 + message.deaths
-				totalPdmg1 = totalPdmg1 + message.pdmg
-				totalSdmg1 = totalSdmg1 + message.sdmg
-				totalTimeBuilding1 = totalTimeBuilding1 + message.minutesBuilding
-				totalTimePlaying1 = totalTimePlaying1 + message.minutesPlaying
-				avgAccuracy1 = avgAccTable.marineAcc
-				avgAccuracy1Onos = avgAccTable.marineOnosAcc
-			else
-				teamObj = self.team2UI
-				totalKills2 = totalKills2 + message.kills
-				totalAssists2 = totalAssists2 + message.assists
-				totalDeaths2 = totalDeaths2 + message.deaths
-				totalPdmg2 = totalPdmg2 + message.pdmg
-				totalSdmg2 = totalSdmg2 + message.sdmg
-				totalTimeBuilding2 = totalTimeBuilding2 + message.minutesBuilding
-				totalTimePlaying2 = totalTimePlaying2 + message.minutesPlaying
-				avgAccuracy2 = avgAccTable.alienAcc
-			end
-			
-			local playerCount = #teamObj.playerRows
-			local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
-			local playerTextColor = kPlayerStatsTextColor
-			if playerCount % 2 == 0 then
-				bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
-			end
-			
-			-- Color our own row in a different color
-			if message.steamId == Client.GetSteamId() then
-				bgColor = kCurrentPlayerStatsColor
-				playerTextColor = kCurrentPlayerStatsTextColor
-			end
-			
-			table.insert(teamObj.playerRows, CreateScoreboardRow(teamObj.tableBackground, bgColor, playerTextColor, message.playerName, printNum(message.kills), printNum(message.assists), printNum(message.deaths), message.accuracyOnos == -1 and string.format("%s%%", printNum(message.accuracy)) or string.format("%s%% (%s%%)", printNum(message.accuracy), printNum(message.accuracyOnos)), printNum2(message.pdmg), printNum2(message.sdmg), string.format("%d:%02d", minutes, seconds), string.format("%d:%02d", pMinutes, pSeconds), message.minutesComm > 0 and string.format("%d:%02d", cMinutes, cSeconds) or nil, message.steamId, message.isRookie, message.hiveSkill))
-			-- Store some of the original info so we can sort afterwards
-			teamObj.playerRows[#teamObj.playerRows].originalOrder = playerCount
-			teamObj.playerRows[#teamObj.playerRows].message = message
-			
-			if isMarine and message.minutesComm > team1CommTime then
-				team1Comm = playerCount+1
-				team1CommTime = message.minutesComm
-			elseif not isMarine and message.minutesComm > team2CommTime then
-				team2Comm = playerCount+1
-				team2CommTime = message.minutesComm
-			end
-		end
-		
-		if team1Comm > 0 then
-			if self.team1UI.playerRows[team1Comm].message then
-				self.team1UI.playerRows[team1Comm].commIcon:SetTexture("ui/badges/commander_20.dds")
-			end
-		end
-		
-		if team2Comm > 0 then
-			if self.team2UI.playerRows[team2Comm] then
-				self.team2UI.playerRows[team2Comm].commIcon:SetTexture("ui/badges/commander_20.dds")
-			end
-		end
-		
-		local numPlayers1 = #self.team1UI.playerRows-1
-		local numPlayers2 = #self.team2UI.playerRows-1
-		self:SetPlayerCount(self.team1UI, numPlayers1)
-		self:SetPlayerCount(self.team2UI, numPlayers2)
-		miscDataTable.team1PlayerCount = numPlayers1
-		miscDataTable.team2PlayerCount = numPlayers2
-		self:SetTeamName(self.team1UI, miscDataTable.team1Name or "Frontiersmen")
-		self:SetTeamName(self.team2UI, miscDataTable.team2Name or "Kharaa")
-		local team1Result, team2Result = "DRAW", "DRAW"
-		if miscDataTable.winningTeam > 0 then
-			team1Result = miscDataTable.winningTeam == kMarineTeamType and "WINNER" or "LOSER"
-			team2Result = miscDataTable.winningTeam == kAlienTeamType and "WINNER" or "LOSER"
-		end
-		self:SetGameResult(self.team1UI, team1Result)
-		self:SetGameResult(self.team2UI, team2Result)
-		
-		local minutes1 = math.floor(totalTimeBuilding1)
-		local seconds1 = (totalTimeBuilding1 % 1)*60
-		totalTimeBuilding1 = totalTimeBuilding1/numPlayers1
-		local minutes1Avg = math.floor(totalTimeBuilding1)
-		local seconds1Avg = (totalTimeBuilding1 % 1)*60
-		
-		local minutesP1 = math.floor(totalTimePlaying1)
-		local secondsP1 = (totalTimePlaying1 % 1)*60
-		totalTimePlaying1 = totalTimePlaying1/numPlayers1
-		local minutes1PAvg = math.floor(totalTimePlaying1)
-		local seconds1PAvg = (totalTimePlaying1 % 1)*60
-		
-		local minutes2 = math.floor(totalTimeBuilding2)
-		local seconds2 = (totalTimeBuilding2 % 1)*60
-		totalTimeBuilding2 = totalTimeBuilding2/numPlayers2
-		local minutes2Avg = math.floor(totalTimeBuilding2)
-		local seconds2Avg = (totalTimeBuilding2 % 1)*60
-		
-		local minutesP2 = math.floor(totalTimePlaying2)
-		local secondsP2 = (totalTimePlaying2 % 1)*60
-		totalTimePlaying2 = totalTimePlaying2/numPlayers2
-		local minutes2PAvg = math.floor(totalTimePlaying2)
-		local seconds2PAvg = (totalTimePlaying2 % 1)*60
-		
-		-- When there's only one player in a team, the total and the average will be the same
-		-- Don't even bother displaying this, it looks odd
-		if numPlayers1 > 1 then
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Total", printNum(totalKills1), printNum(totalAssists1), printNum(totalDeaths1), " ", printNum2(totalPdmg1), printNum2(totalSdmg1), string.format("%d:%02d", minutes1, seconds1)))
-			table.insert(self.team1UI.playerRows, CreateScoreboardRow(self.team1UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills1/numPlayers1), printNum(totalAssists1/numPlayers1), printNum(totalDeaths1/numPlayers1), avgAccuracy1Onos == -1 and string.format("%s%%", printNum(avgAccuracy1)) or string.format("%s%% (%s%%)", printNum(avgAccuracy1), printNum(avgAccuracy1Onos)), printNum2(totalPdmg1/numPlayers1), printNum2(totalSdmg1/numPlayers1), string.format("%d:%02d", minutes1Avg, seconds1Avg), string.format("%d:%02d", minutes1PAvg, seconds1PAvg)))
-		end
-		if numPlayers2 > 1 then
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Total", printNum(totalKills2), printNum(totalAssists2), printNum(totalDeaths2), " ", printNum2(totalPdmg2), printNum2(totalSdmg2), string.format("%d:%02d", minutes2, seconds2)))
-			table.insert(self.team2UI.playerRows, CreateScoreboardRow(self.team2UI.tableBackground, kAverageRowColor, kAverageRowTextColor, "Average", printNum(totalKills2/numPlayers2), printNum(totalAssists2/numPlayers2), printNum(totalDeaths2/numPlayers2), string.format("%s%%", printNum(avgAccuracy2)), printNum2(totalPdmg2/numPlayers2), printNum2(totalSdmg2/numPlayers2), string.format("%d:%02d", minutes2Avg, seconds2Avg), string.format("%d:%02d", minutes2PAvg, seconds2PAvg)))
-		end
-		
-		local teamStatsVisible = gameInfo.showEndStatsTeamBreakdown
-
-		self.team1UI.background:SetIsVisible(teamStatsVisible)
-		self.team2UI.background:SetIsVisible(teamStatsVisible)
-		self.teamStatsTextShadow:SetIsVisible(teamStatsVisible)
-		
-		self.roundDate:SetText("Round date: " .. miscDataTable.roundDateString)
-		self.gameLength:SetText("Game length: " .. miscDataTable.gameLength)
-		self.serverName:SetText("Server name: " .. miscDataTable.serverName)
-		self.mapName:SetText("Map: " .. miscDataTable.mapName)
-		
-		table.sort(statusSummaryTable, function(a, b)
-			if a.timeMinutes == b.timeMinutes then
-				return a.className < b.className
-			else
-				return a.timeMinutes > b.timeMinutes
-			end
-		end)
-		if #statusSummaryTable > 0 then
-			local bgColor = kStatusStatsColor
-			local statCard = self:CreateGraphicHeader("Class time distribution", bgColor)
-			statCard.rows = {}
-			statCard.teamNumber = -2
-			
-			local totalTime = 0
-			for index, row in ipairs(statusSummaryTable) do
-				totalTime = totalTime + row.timeMinutes
-			end
-			for index, row in ipairs(statusSummaryTable) do
-				bgColor = ConditionalValue(index % 2 == 0, kMarinePlayerStatsEvenColor, kMarinePlayerStatsOddColor)
-				local minutes = math.floor(row.timeMinutes)
-				local seconds = (row.timeMinutes % 1)*60
-				local percentage = row.timeMinutes / totalTime * 100
-				table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.className, string.format("%d:%02d (%s%%)", minutes, seconds, printNum(percentage))))
-			end
-			table.insert(self.statsCards, statCard)
-		end
-		
-		for _, card in ipairs(cardsTable) do
-			local bgColor
-			if card.teamNumber == 1 then
-				bgColor = kMarineStatsColor
-			elseif card.teamNumber == 2 then
-				bgColor = kAlienStatsColor
-			else
-				bgColor = kCommanderStatsColor
-			end
-			local statCard = self:CreateGraphicHeader(card.text, bgColor, card.logoTexture, card.logoCoords, card.logoSizeX, card.logoSizeY)
-			statCard.rows = {}
-			statCard.teamNumber = card.teamNumber
-			
-			for index, row in ipairs(card.rows) do
-				if card.teamNumber == 1 then
-					bgColor = ConditionalValue(index % 2 == 0, kMarinePlayerStatsEvenColor, kMarinePlayerStatsOddColor)
-				elseif card.teamNumber == 2 then
-					bgColor = ConditionalValue(index % 2 == 0, kAlienPlayerStatsEvenColor, kAlienPlayerStatsOddColor)
-				else
-					bgColor = ConditionalValue(index % 2 == 0, kCommanderStatsEvenColor, kCommanderStatsOddColor)
-				end
-				
-				table.insert(statCard.rows, CreateHeaderRow(statCard.tableBackground, bgColor, Color(1,1,1,1), row.title, row.value))
-			end
-			table.insert(self.statsCards, statCard)
-		end
-		
-		if #techLogTable > 0 or #buildingSummaryTable > 0 then
-			table.sort(techLogTable, function(a, b)
-				if a.teamNumber == b.teamNumber then
-					if a.finishedMinute == b.finishedMinute then
-						return a.name > b.name
-					else
-						return a.finishedMinute < b.finishedMinute
-					end
-				else
-					return a.teamNumber < b.teamNumber
-				end
-			end)
-			
-			table.sort(buildingSummaryTable, function(a, b)
-				if a.teamNumber == b.teamNumber then
-					if a.built == b. built then
-						if a.lost == b.lost then
-							return a.techId < b.techId
-						else
-							return a.lost > b.lost
-						end
-					else
-						return a.built > b.built
-					end
-				else
-					return a.teamNumber < b.teamNumber
-				end
-			end)
-			
-			local team1Name = miscDataTable.team1Name or "Frontiersmen"
-			local team2Name = miscDataTable.team2Name or "Kharaa"
-			
-			self.techLogs[1] = {}
-			self.techLogs[1].header = self:CreateTechLogHeader(1, team1Name)
-			self.techLogs[1].rows = {}
-			
-			self.techLogs[2] = {}
-			self.techLogs[2].header = self:CreateTechLogHeader(2, team2Name)
-			self.techLogs[2].rows = {}
-			
-			-- Right now we only have marine comm stats so...
-			if commanderStats then
-				table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Commander Stats", "Acc.", "Effic.", "Refilled", "Picked", "Expired"))
-				
-				local row = 1
-				
-				if commanderStats.medpackResUsed > 0 or commanderStats.medpackResExpired > 0 then
-					table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Medpacks", printNum(commanderStats.medpackAccuracy) .. "%", printNum(commanderStats.medpackEfficiency) .. "%", commanderStats.medpackRefill, commanderStats.medpackResUsed, commanderStats.medpackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.MedPack), 24, 24, kIconColors[1]))
-					row = row + 1
-				end
-				
-				if commanderStats.ammopackResUsed > 0 or commanderStats.ammopackResExpired > 0 then
-					table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Ammopacks", "-", printNum(commanderStats.ammopackEfficiency) .. "%", commanderStats.ammopackRefill, commanderStats.ammopackResUsed, commanderStats.ammopackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.AmmoPack), 24, 24, kIconColors[1]))
-					row = row + 1
-				end
-				
-				if commanderStats.catpackResUsed > 0 or commanderStats.catpackResExpired > 0 then
-					table.insert(self.techLogs[1].rows, CreateCommStatsRow(self.techLogs[1].header.tableBackground, row % 2 == 0 and kMarinePlayerStatsEvenColor or kMarinePlayerStatsOddColor, kMarineHeaderRowTextColor, "Catpacks", "-", printNum(commanderStats.catpackEfficiency) .. "%", "-", commanderStats.catpackResUsed, commanderStats.catpackResExpired, "ui/buildmenu.dds", GetTextureCoordinatesForIcon(kTechId.CatPack), 24, 24, kIconColors[1]))
-				end
-			end
-			
-			if #buildingSummaryTable > 0 then
-				if buildingSummaryTable[1].teamNumber == 1 then
-					table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "", "Tech", "Built", "Lost"))
-				end
-
-				if buildingSummaryTable[#buildingSummaryTable].teamNumber == 2 then
-					table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "", "Tech", "Built", "Lost"))
-				end
-				
-				for index, buildingEntry in ipairs(buildingSummaryTable) do
-					local isMarine = buildingEntry.teamNumber == 1
-					local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
-					local logoColor = kIconColors[buildingEntry.teamNumber]
-					local bgColor = isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
-					if index % 2 == 0 then
-						bgColor = isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
-					end
-					
-					table.insert(self.techLogs[buildingEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[buildingEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, "", buildingEntry.name, buildingEntry.built, buildingEntry.lost, buildingEntry.iconTexture, buildingEntry.iconCoords, buildingEntry.iconSizeX, buildingEntry.iconSizeY, logoColor))
-				end
-
-			end
-			
-			if #techLogTable > 0 then
-				if techLogTable[1].teamNumber == 1 then
-					table.insert(self.techLogs[1].rows, CreateTechLogRow(self.techLogs[1].header.tableBackground, kHeaderRowColor, kMarineHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
-				end
-				
-				if techLogTable[#techLogTable].teamNumber == 2 then
-					table.insert(self.techLogs[2].rows, CreateTechLogRow(self.techLogs[2].header.tableBackground, kHeaderRowColor, kAlienHeaderRowTextColor, "Time", "Tech", "RTs", "Res"))
-				end
-				
-				for index, techLogEntry in ipairs(techLogTable) do
-					local isMarine = techLogEntry.teamNumber == 1
-					local isLost = techLogEntry.destroyed == true
-					local rowTextColor = isMarine and kMarineHeaderRowTextColor or kAlienHeaderRowTextColor
-					local logoColor = kIconColors[techLogEntry.teamNumber]
-					local bgColor = isLost and kLostTechOddColor or isMarine and kMarinePlayerStatsOddColor or kAlienPlayerStatsOddColor
-					if index % 2 == 0 then
-						bgColor = isLost and kLostTechEvenColor or isMarine and kMarinePlayerStatsEvenColor or kAlienPlayerStatsEvenColor
-					end
-					
-					table.insert(self.techLogs[techLogEntry.teamNumber].rows, CreateTechLogRow(self.techLogs[techLogEntry.teamNumber].header.tableBackground, bgColor, rowTextColor, techLogEntry.finishedTime, techLogEntry.name, techLogEntry.activeRTs, techLogEntry.teamRes, techLogEntry.iconTexture, techLogEntry.iconCoords, techLogEntry.iconSizeX, techLogEntry.iconSizeY, logoColor))
-				end
-			end
-		end
-		
-		self.hiveSkillGraphs = {}
-		if #hiveSkillGraphTable > 0 then
-			table.sort(hiveSkillGraphTable, function(a, b)
-				return a.gameMinute < b.gameMinute
-			end)
-
-			self.hiveSkillGraphs[1] = {}
-			self.hiveSkillGraphs[2] = {}
-			local hiveSkill = {0, 0}
-			local lineOffset = {0, 0.5}
-			local maxHiveSkill = 0
-			local minHiveSkill = 0
-			local players = {0,0}
-			local curMaxPlayers = 1
-
-			-- Handle gameMinute 0 special to avoid artificially spikes because of arbitrary joining order
-			local next = 1
-			for i = next, #hiveSkillGraphTable do
-				local entry = hiveSkillGraphTable[i]
-				if entry.gameMinute > 0 then
-					next = i
-					break
-				end
-
-				local teamNumber = entry.teamNumber
-				local playerEntry = playerStatMap[teamNumber] and playerStatMap[teamNumber][entry.steamId]
-				local playerSkill = playerEntry and math.max(playerEntry.hiveSkill, 0) or 0
-
-				players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
-				curMaxPlayers = math.max(1,players[1],players[2])
-				hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
-			end
-
-			maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
-			minHiveSkill = maxHiveSkill
-
-			table.insert(self.hiveSkillGraphs[1], Vector(0, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-			table.insert(self.hiveSkillGraphs[2], Vector(0, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
-
-			-- Handle end game special to avoid artificially spikes because of arbitrary disjoin order
-			local skipAfter = miscDataTable.gameLengthMinutes - 5/60
-			for i = next, #hiveSkillGraphTable do
-				local entry = hiveSkillGraphTable[i]
-				if entry.gameMinute > skipAfter then break end
-
-				table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-				table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
-
-				local teamNumber = entry.teamNumber
-				local playerEntry = playerStatMap[teamNumber] and playerStatMap[teamNumber][entry.steamId]
-				local playerSkill = playerEntry and math.max(playerEntry.hiveSkill, 0) or 0
-
-				players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
-				curMaxPlayers = math.max(1,players[1],players[2])
-				hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
-				maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
-				minHiveSkill = math.min(minHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
-
-				table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-				table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
-			end
-
-			self.hiveSkillGraph:SetPoints(1, self.hiveSkillGraphs[1])
-			self.hiveSkillGraph:SetPoints(2, self.hiveSkillGraphs[2])
-			self.hiveSkillGraph:SetYBounds(math.floor((minHiveSkill-100)/100)*100, maxHiveSkill+100, true)
-
-			local gameLength = miscDataTable.gameLengthMinutes*60
-			local xSpacing = GetXSpacing(gameLength)
-
-			self.hiveSkillGraph:SetXBounds(0, gameLength)
-			self.hiveSkillGraph:SetXGridSpacing(xSpacing)
-			self.hiveSkillGraph:SetYGridSpacing(math.ceil(maxHiveSkill/(15*100))*100)
-		end		
-		
-		self.rtGraphs = {}
-		if #rtGraphTable > 0 then
-			table.sort(rtGraphTable, function(a, b)
-			return a.gameMinute < b.gameMinute
-			end)
-			
-			self.rtGraphs[1] = {}
-			self.rtGraphs[2] = {}
-			local rtCount = {0, 0}
-			local lineOffset = {0, 0.05}
-			local maxRTs = 0
-
-			for _, entry in ipairs(rtGraphTable) do
-				local teamNumber = entry.teamNumber
-				table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount[teamNumber]+lineOffset[teamNumber], 0))
-				rtCount[teamNumber] = rtCount[teamNumber] + ConditionalValue(entry.destroyed, -1, 1)
-				table.insert(self.rtGraphs[teamNumber], Vector(entry.gameMinute*60, rtCount[teamNumber]+lineOffset[teamNumber], 0))
-				maxRTs = math.max(maxRTs,rtCount[teamNumber])
-			end
-			
-			self.rtGraph:SetPoints(1, self.rtGraphs[1])
-			self.rtGraph:SetPoints(2, self.rtGraphs[2])
-			self.rtGraph:SetYBounds(0, maxRTs+1, true)
-			local gameLength = miscDataTable.gameLengthMinutes*60
-			local xSpacing = GetXSpacing(gameLength)
-			
-			self.rtGraph:SetXBounds(0, gameLength)
-			self.rtGraph:SetXGridSpacing(xSpacing)
-			
-			self.builtRTsComp:SetValues(miscDataTable.marineRTsBuilt, miscDataTable.alienRTsBuilt)
-			self.lostRTsComp:SetValues(miscDataTable.marineRTsLost, miscDataTable.alienRTsLost)
-			
-			if miscDataTable.marineRTsBuilt > 0 then
-				self.builtRTsComp:SetLeftText("(" .. printNum(miscDataTable.marineRTsBuilt/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(miscDataTable.marineRTsBuilt))
-			end
-			if miscDataTable.alienRTsBuilt > 0 then
-				self.builtRTsComp:SetRightText(tostring(miscDataTable.alienRTsBuilt) .. "  (" .. printNum(miscDataTable.alienRTsBuilt/miscDataTable.gameLengthMinutes) .. "/min)")
-			end
-			if miscDataTable.marineRTsLost > 0 then
-				self.lostRTsComp:SetLeftText("(" .. printNum(miscDataTable.marineRTsLost/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(miscDataTable.marineRTsLost))
-			end
-			if miscDataTable.alienRTsLost > 0 then
-				self.lostRTsComp:SetRightText(tostring(miscDataTable.alienRTsLost) .. "  (" .. printNum(miscDataTable.alienRTsLost/miscDataTable.gameLengthMinutes) .. "/min)")
-			end
-		end
-		
-		self.killGraphs = {}
-		if #killGraphTable > 0 then
-			table.sort(killGraphTable, function(a, b)
-				return a.gameMinute < b.gameMinute
-			end)
-			
-			self.killGraphs[1] = {}
-			self.killGraphs[2] = {}
-			local teamKills = {0, 0}
-			local lineOffsets = {0, 0.05}
-
-			for _, entry in ipairs(killGraphTable) do
-				local teamNumber = entry.teamNumber
-				table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, teamKills[teamNumber]+lineOffsets[teamNumber], 0))
-				teamKills[teamNumber] = teamKills[teamNumber] + 1
-				table.insert(self.killGraphs[teamNumber], Vector(entry.gameMinute*60, teamKills[teamNumber]+lineOffsets[teamNumber], 0))
-			end
-			
-			self.killGraph:SetPoints(1, self.killGraphs[1])
-			self.killGraph:SetPoints(2, self.killGraphs[2])
-			local yElems = math.max(teamKills[1], teamKills[2])+1
-			self.killGraph:SetYBounds(0, yElems, true)
-			local gameLength = miscDataTable.gameLengthMinutes*60
-			local xSpacing = GetXSpacing(gameLength)
-			local ySpacing = GetYSpacing(yElems)
-			
-			self.killGraph:SetXBounds(0, gameLength)
-			self.killGraph:SetXGridSpacing(xSpacing)
-			self.killGraph:SetYGridSpacing(ySpacing)
-			
-			self.killComparison:SetValues(teamKills[1], teamKills[2])
-			
-			if teamKills[1] > 0 then
-				self.killComparison:SetLeftText("(" .. printNum(teamKills[1]/miscDataTable.gameLengthMinutes) .. "/min)  " .. tostring(teamKills[1]))
-			end
-			if teamKills[2] > 0 then
-				self.killComparison:SetRightText(tostring(teamKills[2]) .. "  (" .. printNum(teamKills[2]/miscDataTable.gameLengthMinutes) .. "/min)")
-			end
-		end
-		
-		repositionStats(self)
-		
-		if not self.saved then
-			local savedStats = {}
-			savedStats.finalStatsTable = finalStatsTable
-			savedStats.avgAccTable = avgAccTable
-			savedStats.miscDataTable = miscDataTable
-			savedStats.cardsTable = cardsTable
-			savedStats.hiveSkillGraphTable = hiveSkillGraphTable
-			savedStats.rtGraphTable = rtGraphTable
-			savedStats.commanderStats = commanderStats
-			savedStats.killGraphTable = killGraphTable
-			savedStats.buildingSummaryTable = buildingSummaryTable
-			savedStats.statusSummaryTable = statusSummaryTable
-			savedStats.techLogTable = techLogTable
-			
-			local savedFile = io.open(lastRoundFile, "w+")
-			if savedFile then
-				savedFile:write(json.encode(savedStats, { indent = true }))
-				io.close(savedFile)
-			end
-			self.saved = true
-		end
-		
-		finalStatsTable = {}
-		playerStatMap = {}
-		avgAccTable = {}
-		miscDataTable = {}
-		cardsTable = {}
-		hiveSkillGraphTable = {}
-		rtGraphTable = {}
-		commanderStats = nil
-		killGraphTable = {}
-		buildingSummaryTable = {}
-		statusSummaryTable = {}
-		techLogTable = {}
 	end
 end
 
@@ -2554,9 +2580,7 @@ kFriendlyWeaponNames[kTechId.PulseGrenade] = "Pulse grenade"
 kFriendlyWeaponNames[kTechId.ClusterGrenade] = "Cluster grenade"
 kFriendlyWeaponNames[kTechId.GasGrenade] = "Gas grenade"
 kFriendlyWeaponNames[kTechId.WhipBomb] = "Whip bilebomb"
-if rawget( kTechId, "HeavyMachineGun" ) then
-	kFriendlyWeaponNames[kTechId.HeavyMachineGun] = "Heavy Machine Gun"
-end
+kFriendlyWeaponNames[kTechId.HeavyMachineGun] = "Heavy Machine Gun"
 
 local function CHUDSetWeaponStats(message)
 	
@@ -2862,10 +2886,7 @@ local lastDown = 0
 local kKeyTapTiming = 0.2
 function CHUDGUI_EndStats:SendKeyEvent(key, down)
 
-	-- Shine:IsExtensionEnabled was only returning plugin state, but not the plugin
-	local pgpEnabled = Shine and Shine.Plugins and Shine.Plugins["pregameplus"] and Shine.Plugins["pregameplus"].dt and Shine.Plugins["pregameplus"].dt.Enabled
-	
-	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (GetGameInfoEntity() and not GetGameInfoEntity():GetGameStarted() or pgpEnabled or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
+	if GetIsBinding(key, "RequestMenu") and CHUDGetOption("deathstats") > 0 and (GetGameInfoEntity() and not GetGameInfoEntity():GetGameStarted() or Client.GetLocalPlayer():GetTeamNumber() == kTeamReadyRoom or Client.GetLocalPlayer():GetTeamNumber() == kSpectatorIndex) and not ChatUI_EnteringChatMessage() and not MainMenu_GetIsOpened() and self.prevRequestKey ~= down then
 		
 		self.prevRequestKey = down
 		
