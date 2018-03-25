@@ -68,9 +68,9 @@ function Commander:UpdateClientEffects(deltaTime, isLocal)
     end
 end
 
-local originalCommanderUpdate = Commander.UpdateMisc
-function Commander:UpdateMisc(input)
-    originalCommanderUpdate(self, input)
+local originalUpdateMenu = Commander.UpdateMenu
+function Commander:UpdateMenu()
+	originalUpdateMenu(self)
 
     if self.gameTime then
         self.gameTime:SetText(CHUDGetGameTimeString())
