@@ -76,13 +76,20 @@ local originalMinimapOnResChanged = GUIMinimap.OnResolutionChanged
 function GUIMinimap:OnResolutionChanged(oldX, oldY, newX, newY)
 	originalMinimapOnResChanged(self, oldX, oldY, newX, newY)
 
-	local gameTime = GetGUIGameTime and GetGUIGameTime()
-	
+	local gameTime = GetGUIGameTime and GetGUIGameTime()	
 	if gameTime then
 		gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 		gameTime:SetScale(GetScaledVector())
 		gameTime:SetPosition(GUIScale(Vector(35, 60, 0)))
 		GUIMakeFontScale(gameTime)
+	end
+
+	local realTime = GetGUIRealTime and GetGUIRealTime()
+	if realTime then
+		realTime:SetFontName(GUIMarineHUD.kTextFontName)
+		realTime:SetScale(GetScaledVector())
+		realTime:SetPosition(GUIScale(Vector(35, 60, 0)))
+		GUIMakeFontScale(realTime)
 	end
 end
 

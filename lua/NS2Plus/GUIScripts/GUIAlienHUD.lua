@@ -2,24 +2,36 @@ PrecacheAsset("ui/oma_alien_hud_health.dds")
 PrecacheAsset("ui/rant_alien_hud_health.dds")
 
 function GUIAlienHUD:CHUDRepositionGUI()
-	local mingui = not CHUDGetOption("mingui")
-	local showcomm = CHUDGetOption("showcomm")
 	local gametime = CHUDGetOption("gametime")
+	local realtime = CHUDGetOption("realtime")
 	local biomass = ClientUI.GetScript("GUIBioMassDisplay")
-	local location = ClientUI.GetScript("GUINotifications")
+	local y = self.resourceDisplay.teamText:GetPosition().y
 
 	if gametime and self.gameTime then
+		y = y + 30
 		self.gameTime:SetFontName(GUIMarineHUD.kTextFontName)
 		self.gameTime:SetScale(GetScaledVector()*1.15)
-		self.gameTime:SetPosition(Vector(20, self.resourceDisplay.teamText:GetPosition().y+25, 0))
+		self.gameTime:SetPosition(Vector(20, y , 0))
 		GUIMakeFontScale(self.gameTime)
+	end
+
+	if realtime and self.realTime then
+		y = y + 30
+		self.realTime:SetFontName(GUIMarineHUD.kTextFontName)
+		self.realTime:SetScale(GetScaledVector()*1.15)
+		self.realTime:SetPosition(Vector(20, y, 0))
+		GUIMakeFontScale(self.realTime)
 	end
 
 	local biomassSmokeyBackground = ConditionalValue(mingui, "ui/alien_commander_bg_smoke.dds", "ui/transparent.dds")
 	local biomassTexture = ConditionalValue(mingui, "ui/biomass_bar.dds", "ui/transparent.dds")
+	local kBioMassBackgroundPos = GUIScale(Vector(20, 90, 0))
+	local kSmokeyBackgroundPos = GUIScale(Vector(-100, 10, 0))
 
 	biomass.smokeyBackground:SetAdditionalTexture("noise", biomassSmokeyBackground)
+	biomass.smokeyBackground:SetPosition(kSmokeyBackgroundPos)
 	biomass.background:SetTexture(biomassTexture)
+	biomass.background:SetPosition(kBioMassBackgroundPos)
 end
 
 function GUIAlienHUD:OnLocalPlayerChanged(newPlayer)
@@ -42,6 +54,12 @@ function GUIAlienHUD:Initialize()
 	self.gameTime:SetFontIsBold(true)
 	self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
 	self.gameTime:SetColor(kAlienTeamColorFloat)
+
+	self.realTime = self:CreateAnimatedTextItem()
+	self.realTime:SetFontName(GUIMarineHUD.kTextFontName)
+	self.realTime:SetFontIsBold(true)
+	self.realTime:SetLayer(kGUILayerPlayerHUDForeground2)
+	self.realTime:SetColor(kAlienTeamColorFloat)
 
 	local kTextureNameCHUD = CHUDGetOptionAssocVal("aliencircles")
 	local kBackgroundCHUD = ConditionalValue(mingui, PrecacheAsset("ui/alien_commander_bg_smoke.dds"), PrecacheAsset("ui/transparent.dds"))
@@ -169,6 +187,10 @@ function GUIAlienHUD:SetIsVisible(state)
 		self.gameTime:SetIsVisible(state)
 	end
 
+	if self.realTime then
+		self.realTime:SetIsVisible(state)
+	end
+
 end
 
 local originalAlienUpdate = GUIAlienHUD.Update
@@ -178,6 +200,7 @@ function GUIAlienHUD:Update(deltaTime)
 	local mingui = not CHUDGetOption("mingui")
 	local rtcount = CHUDGetOption("rtcount")
 	local gametime = CHUDGetOption("gametime")
+	local realtime = CHUDGetOption("realtime")
 	local showcomm = CHUDGetOption("showcomm")
 	local instanthealth = CHUDGetOption("instantalienhealth")
 
@@ -199,6 +222,11 @@ function GUIAlienHUD:Update(deltaTime)
 	if self.gameTime then
 		self.gameTime:SetText(CHUDGetGameTimeString())
 		self.gameTime:SetIsVisible(gametime and self.visible)
+	end
+	
+	if self.realTime then
+		self.realTime:SetText(CHUDGetRealTimeString())
+		self.realTime:SetIsVisible(realtime and self.visible)
 	end
 
 	self.resourceDisplay.teamText:SetIsVisible(showcomm)
@@ -254,6 +282,9 @@ function GUIAlienHUD:Uninitialize()
 
 	GUI.DestroyItem(self.gameTime)
 	self.gameTime = nil
+	
+	GUI.DestroyItem(self.realTime)
+	self.realTime = nil
 end
 
 function updateAlienVision()

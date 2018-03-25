@@ -7,6 +7,7 @@ function GUIMarineHUD:CHUDRepositionGUI()
 	local showcomm = CHUDGetOption("showcomm")
 	local commactions = CHUDGetOption("commactions")
 	local gametime = CHUDGetOption("gametime")
+	local realtime = CHUDGetOption("realtime")
 	
 	-- Position of toggleable elements
 	local y = 30
@@ -27,6 +28,14 @@ function GUIMarineHUD:CHUDRepositionGUI()
 		self.gameTime:SetScale(GetScaledVector()*1.15)
 		self.gameTime:SetPosition(Vector(20, y, 0))
 		GUIMakeFontScale(self.gameTime)
+		y = y + 30
+	end
+	
+	if realtime and self.realTime then
+		self.realTime:SetFontName(GUIMarineHUD.kTextFontName)
+		self.realTime:SetScale(GetScaledVector()*1.15)
+		self.realTime:SetPosition(Vector(20, y, 0))
+		GUIMakeFontScale(self.realTime)
 		y = y + 30
 	end
 	
@@ -59,6 +68,13 @@ function GUIMarineHUD:Initialize()
     self.gameTime:SetLayer(kGUILayerPlayerHUDForeground2)
     self.gameTime:SetColor(kBrightColor)
 	self.background:AddChild(self.gameTime)
+
+	self.realTime = self:CreateAnimatedTextItem()
+    self.realTime:SetFontName(GUIMarineHUD.kTextFontName)
+	self.realTime:SetFontIsBold(true)
+    self.realTime:SetLayer(kGUILayerPlayerHUDForeground2)
+    self.realTime:SetColor(kBrightColor)
+	self.background:AddChild(self.realTime)
 	
 	self.welderIcon = GetGUIManager():CreateGraphicItem()
 	self.welderIcon:SetAnchor(GUIItem.Right, GUIItem.Center)
@@ -83,9 +99,6 @@ function GUIMarineHUD:Initialize()
 	local mingui = not CHUDGetOption("mingui")
 	local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("hudbars_m") ~= 2
 	local minimap = CHUDGetOption("minimap")
-	local showcomm = CHUDGetOption("showcomm")
-	local commactions = CHUDGetOption("commactions")
-	local gametime = CHUDGetOption("gametime")
 
 	local alpha = ConditionalValue(mingui,1,0)
 	
@@ -209,6 +222,7 @@ function GUIMarineHUD:Update(deltaTime)
 	local rtcount = CHUDGetOption("rtcount")
 	local commactions = CHUDGetOption("commactions")
 	local gametime = CHUDGetOption("gametime")
+	local realtime = CHUDGetOption("realtime")
 	local hpbar = CHUDGetOption("hpbar") and CHUDGetOption("hudbars_m") ~= 2
 	local inventoryMode = CHUDGetOption("inventory")
 	local welderUpgrade = CHUDGetOption("welderup")
@@ -231,6 +245,11 @@ function GUIMarineHUD:Update(deltaTime)
 	if self.gameTime then
 		self.gameTime:SetText(CHUDGetGameTimeString())
 		self.gameTime:SetIsVisible(gametime)
+	end
+	
+	if self.realTime then
+		self.realTime:SetText(CHUDGetRealTimeString())
+		self.realTime:SetIsVisible(realtime)
 	end
 
 	if self.welderIcon then
@@ -340,6 +359,10 @@ function GUIMarineHUD:Uninitialize()
 	
 	GUI.DestroyItem(self.gameTime)
 	self.gameTime = nil
+
+	GUI.DestroyItem(self.realTime)
+	self.realTime = nil
+
 	self.commanderNameIsAnimating = nil
 	self.lastCommanderName = nil
 	self.welderIcon = nil

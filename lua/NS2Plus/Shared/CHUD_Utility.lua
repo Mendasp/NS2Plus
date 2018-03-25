@@ -128,6 +128,11 @@ if Client then
 		return(string.format("%d:%.2d", minutes, seconds))
 
 	end
+
+	function CHUDGetRealTimeString()
+		local time = os.time()
+		return os.date("%X", time)
+	end
 end
 
 function CHUDFormatDateTimeString(dateTime)

@@ -87,6 +87,21 @@ CHUDOptions =
 					"GUIAlienHUD",
 					}) end,
 			},
+			realtime = {
+				name = "CHUD_Realtime",
+				label = "Current time",
+				tooltip = "Adds or removes the current time on the top left of the HUD.",
+				type = "select",
+				values  = { "Off", "On" },
+				defaultValue = false,
+				category = "ui",
+				valueType = "bool",
+				sort = "A05",
+				applyFunction = function() CHUDRestartScripts({
+					"Hud/Marine/GUIMarineHUD",
+					"GUIAlienHUD",
+					}) end,
+			},
 			crosshairscale = {
 				name = "CHUD_CrosshairScale",
 				label = "Crosshair scale",
@@ -104,7 +119,7 @@ CHUDOptions =
 						GetGUIManager():GetGUIScriptSingle("NS2Plus/Client/CHUDGUI_HUDBars"):Reset()
 					end
 				end,
-				sort = "A05",
+				sort = "A06",
 			},
 			reloadindicator = {
 				name = "CHUD_ReloadIndicator",
@@ -115,7 +130,7 @@ CHUDOptions =
 				defaultValue = 1,
 				category = "ui",
 				valueType = "int",
-				sort = "A06",
+				sort = "A07",
 				applyFunction = function()
 					CHUDRestartScripts({"GUICrosshair"})
 				end,
@@ -129,7 +144,7 @@ CHUDOptions =
 				defaultValue = 0x00A0FF,
 				category = "ui",
 				valueType = "color",
-				sort = "A07",
+				sort = "A08",
 				applyFunction = function()
 					CHUDRestartScripts({"GUICrosshair"})
 				end,
@@ -143,7 +158,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "ui",
 				valueType = "bool",
-				sort = "A08",
+				sort = "A09",
 			},
 			unlocks = {
 				name = "CHUD_Unlocks",
@@ -154,7 +169,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "ui",
 				valueType = "bool",
-				sort = "A09",
+				sort = "A10",
 			},
 			inventory = {
 				name = "CHUD_Inventory",
@@ -172,7 +187,7 @@ CHUDOptions =
 					}) end,
 				helpImage = "ui/helpImages/inventory.dds",
 				helpImageSize = Vector(256, 128, 0),
-				sort = "A10",
+				sort = "A11",
 			},
 			
 			hivestatus = {
