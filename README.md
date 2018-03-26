@@ -6,7 +6,22 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
-- XX/12/2017
+
+- 26/3/2017
+    - Added an indicator icon for being on fire for everybody using the hidden viewmodel option
+    - Added an option to configurate the color of marines when using Cr4zy's Alienvision
+    - Added a graph displaying each team's avg. hive skill over the time of the round to the end round stats view.
+    - Added an option to display the current time below the minimap
+    - Added an option to display the probability of victory for each team at the scoreboard (needs to be enabled by the server admin)
+    - Fixed a comaptibility issue with some mods caused by a missing argument in GetEnergyCost
+    - Fixed that the custom alien minimap color was not applied to embyros (evolving players)
+    - Fixed that the current round time was not displayed for the commander when the given option is enabled
+    - Fixed a rare script error occurring while spectating a dying enemy.
+    - Fixed that the information (e.g. hp percentage) of the custom nameplates did not update instantly.
+    - Fixed that the research progress tooltip started fading out at creation of the tooltip. This caused the tooltip often to not even show up.
+    - Fixed that the exo's left minigun's cinematics did not get hidden with minimal particles or hidden viewmodel options enabled.
+
+- 26/12/2017
 	- Fixed compatibility problem with b320 emissive-toggle change (power-state changes)
 	- Fixed that the custom nameplate style options did not work. Please note that the displayed information of the custom nameplate styles may only update every 200 ms.
 	
