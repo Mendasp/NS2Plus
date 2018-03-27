@@ -139,6 +139,8 @@ local function estimateHiveSkillGraph()
 		end
 	end
 
+	if #teams < 2 then return end
+
 	table.sort(teams[1], function(a, b) return a.minutesPlaying > b.minutesPlaying end)
 	table.sort(teams[2], function(a, b) return a.minutesPlaying > b.minutesPlaying end)
 
@@ -1043,6 +1045,62 @@ function CHUDGUI_EndStats:SetTeamName(teamItem, teamName)
 	teamItem.teamNameText:SetText(teamName)
 end
 
+function CHUDGUI_EndStats:LoadLastRoundStats()
+	if not loadedLastRound and GetFileExists(lastRoundFile) then
+		local openedFile = io.open(lastRoundFile, "r")
+		if openedFile then
+
+			local parsedFile = json.decode(openedFile:read("*all"))
+			io.close(openedFile)
+
+			if parsedFile then
+				finalStatsTable = parsedFile.finalStatsTable or {}
+				avgAccTable = parsedFile.avgAccTable or {}
+				miscDataTable = parsedFile.miscDataTable or {}
+				cardsTable = parsedFile.cardsTable or {}
+				hiveSkillGraphTable = parsedFile.hiveSkillGraphTable or {}
+				rtGraphTable = parsedFile.rtGraphTable or {}
+				commanderStats = parsedFile.commanderStats or nil
+				techLogTable = parsedFile.techLogTable or {}
+				killGraphTable = parsedFile.killGraphTable or {}
+				buildingSummaryTable = parsedFile.buildingSummaryTable or {}
+				statusSummaryTable = parsedFile.statusSummaryTable or {}
+
+				if #hiveSkillGraphTable == 0 then
+					estimateHiveSkillGraph()
+				end
+			end
+
+			self.saved = true
+			loadedLastRound = true
+		end
+	end
+end
+
+function CHUDGUI_EndStats:SaveLastRoundStats()
+	if not self.saved then
+		local savedStats = {}
+		savedStats.finalStatsTable = finalStatsTable
+		savedStats.avgAccTable = avgAccTable
+		savedStats.miscDataTable = miscDataTable
+		savedStats.cardsTable = cardsTable
+		savedStats.hiveSkillGraphTable = hiveSkillGraphTable
+		savedStats.rtGraphTable = rtGraphTable
+		savedStats.commanderStats = commanderStats
+		savedStats.killGraphTable = killGraphTable
+		savedStats.buildingSummaryTable = buildingSummaryTable
+		savedStats.statusSummaryTable = statusSummaryTable
+		savedStats.techLogTable = techLogTable
+
+		local savedFile = io.open(lastRoundFile, "w+")
+		if savedFile then
+			savedFile:write(json.encode(savedStats, { indent = true }))
+			io.close(savedFile)
+		end
+		self.saved = true
+	end
+end
+
 function CHUDGUI_EndStats:Initialize()
 
 	UpdateSizeOfUI(self)
@@ -1413,35 +1471,7 @@ function CHUDGUI_EndStats:Initialize()
 	lastSortedT2 = "kills"
 	lastSortedT2WasInv = false
 	
-	if not loadedLastRound and GetFileExists(lastRoundFile) then
-		local openedFile = io.open(lastRoundFile, "r")
-		if openedFile then
-		
-			local parsedFile = json.decode(openedFile:read("*all"))
-			io.close(openedFile)
-			
-			if parsedFile then
-				finalStatsTable = parsedFile.finalStatsTable or {}
-				avgAccTable = parsedFile.avgAccTable or {}
-				miscDataTable = parsedFile.miscDataTable or {}
-				cardsTable = parsedFile.cardsTable or {}
-				hiveSkillGraphTable = parsedFile.hiveSkillGraphTable or {}
-				rtGraphTable = parsedFile.rtGraphTable or {}
-				commanderStats = parsedFile.commanderStats or nil
-				techLogTable = parsedFile.techLogTable or {}
-				killGraphTable = parsedFile.killGraphTable or {}
-				buildingSummaryTable = parsedFile.buildingSummaryTable or {}
-				statusSummaryTable = parsedFile.statusSummaryTable or {}
-
-				if #hiveSkillGraphTable == 0 then
-					estimateHiveSkillGraph()
-				end				
-			end
-			
-			self.saved = true
-			loadedLastRound = true
-		end
-	end
+	pcall(self.LoadLastRoundStats, self)
 	
 	self.actionIconGUI = GetGUIManager():CreateGUIScript("GUIActionIcon")
 	self.actionIconGUI:SetColor(kWhite)
@@ -2449,27 +2479,7 @@ function CHUDGUI_EndStats:ProcessStats()
 
 	repositionStats(self)
 
-	if not self.saved then
-		local savedStats = {}
-		savedStats.finalStatsTable = finalStatsTable
-		savedStats.avgAccTable = avgAccTable
-		savedStats.miscDataTable = miscDataTable
-		savedStats.cardsTable = cardsTable
-		savedStats.hiveSkillGraphTable = hiveSkillGraphTable
-		savedStats.rtGraphTable = rtGraphTable
-		savedStats.commanderStats = commanderStats
-		savedStats.killGraphTable = killGraphTable
-		savedStats.buildingSummaryTable = buildingSummaryTable
-		savedStats.statusSummaryTable = statusSummaryTable
-		savedStats.techLogTable = techLogTable
-
-		local savedFile = io.open(lastRoundFile, "w+")
-		if savedFile then
-			savedFile:write(json.encode(savedStats, { indent = true }))
-			io.close(savedFile)
-		end
-		self.saved = true
-	end
+	pcall(self.SaveLastRoundStats, self)
 
 	finalStatsTable = {}
 	playerStatMap = {}
