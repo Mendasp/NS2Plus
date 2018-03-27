@@ -3,6 +3,8 @@ Changelog
 - 27/3/2017
     - Fixed a script error that caused the end stats GUI to fail initializing causing the client's UI to become unresponsive.
     - Made sure that the end stats GUI initializes completely even if it fails to load the LastRoundStats.json due to a script error.
+    - Improved how the hiveskillgraph records players joining teams to fix issues with failed team join attempts and players moving to the spectator team
+    - Improved the y axis scaling of the hive skill graph to not start at negative values and use a more useful grid resolution.
 
 - 26/3/2017
     - Added an indicator icon for being on fire for everybody using the hidden viewmodel option
