@@ -139,7 +139,7 @@ function GUIScoreboard:Update(deltaTime)
 			local team1Text, team2Text
 			if self.showAvgSkill and self.showProbability then
 				team1Text = string.format("Avg. skill: %d, Probability of victory: %d%%", team1Skill, team1VictoryP)
-				team2Text = string.format("Avg. skill: %d, Probability of Victory: %d%%", team2Skill, 100 - team1VictoryP)
+				team2Text = string.format("Avg. skill: %d, Probability of victory: %d%%", team2Skill, 100 - team1VictoryP)
 			elseif self.showAvgSkill then
 				team1Text = string.format("Avg. skill: %d", team1Skill)
 				team2Text = string.format("Avg. skill: %d", team2Skill)
