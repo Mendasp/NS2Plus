@@ -1,9 +1,3 @@
--- The original unpack won't return everything if any element in the "middle" of the table is nil
--- This function uses a workaround that doesn't ignore nil elements
-function CHUDUnpackRetVals(t)
-	return unpack(t, 1, table.maxn(t))
-end
-
 -- As seen here: http://stackoverflow.com/questions/640642/how-do-you-copy-a-lua-table-by-value
 function CHUDCopyTable(obj, seen)
 	if type(obj) ~= 'table' then return obj end

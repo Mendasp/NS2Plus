@@ -148,20 +148,28 @@ local techLogBuildings = set {
 
 local oldJoinTeam
 oldJoinTeam = Class_ReplaceMethod("NS2Gamerules", "JoinTeam",
-	function(self, player, teamNumber, ...)
-		local retVals = { oldJoinTeam(self, player, teamNumber, ...) }
+	function(self, player, newTeamNumber, ...)
+		local oldTeamNumber = player:GetTeamNumber()
+		local success, newPlayer, c, d, e, f = oldJoinTeam(self, player, newTeamNumber, ...)
 
-		if CHUDGetGameStarted() then
+		if success and CHUDGetGameStarted() then
 			CHUDTeamStats[1].maxPlayers = math.max(CHUDTeamStats[1].maxPlayers, self.team1:GetNumPlayers())
 			CHUDTeamStats[2].maxPlayers = math.max(CHUDTeamStats[2].maxPlayers, self.team2:GetNumPlayers())
 
-			local joined = teamNumber ~= 0
-			local steamId = GetSteamIdForClientIndex(player.clientIndex)
-			local affectedTeamNumber = ConditionalValue(joined, teamNumber, player.teamAtEntrance)
-			table.insert(CHUDHiveSkillGraph, { gameMinute = CHUDGetGameTime(true), joined = joined, teamNumber = affectedTeamNumber, steamId = steamId } )
+			local function isPlayingTeam(tn)
+				return tn == kTeam1Index or tn == kTeam2Index
+			end
+
+			local joined = isPlayingTeam(newTeamNumber)
+			local left = isPlayingTeam(oldTeamNumber)
+			if joined or left then
+				local steamId = newPlayer:GetSteamId()
+				local affectedTeamNumber = ConditionalValue(joined, newTeamNumber, oldTeamNumber)
+				table.insert(CHUDHiveSkillGraph, { gameMinute = CHUDGetGameTime(true), joined = joined, teamNumber = affectedTeamNumber, steamId = steamId } )
+			end
 		end
 		
-		return CHUDUnpackRetVals(retVals)
+		return success, newPlayer, c, d, e, f
 	end)
 
 local oldTechResearched = ResearchMixin.TechResearched
@@ -1271,19 +1279,18 @@ end
 
 local originalAttackMeleeCapsule = AttackMeleeCapsule
 function AttackMeleeCapsule(weapon, player, damage, range, optionalCoords, altMode, filter)
-	local retVals = { originalAttackMeleeCapsule(weapon, player, damage, range, optionalCoords, altMode, filter) }
-	local target = retVals[2]
+	local a, target, c, d, e , f = originalAttackMeleeCapsule(weapon, player, damage, range, optionalCoords, altMode, filter)
 	if weapon and weapon.GetTechId and weapon.GetParent and weapon:GetParent() then
 		-- Drifters, buildings and teammates don't count towards accuracy as hits or misses
 		if (target and target:isa("Player") and GetAreEnemies(weapon:GetParent(), target)) or target == nil then
-			local steamId = GetSteamIdForClientIndex(weapon:GetParent():GetClientIndex())
+			local steamId = weapon:GetParent():GetSteamId()
 			if steamId then
 				AddAccuracyStat(steamId, weapon:GetTechId(), target ~= nil, target and target:isa("Onos"), weapon:GetParent():GetTeamNumber())
 			end
 		end
 	end
 
-	return CHUDUnpackRetVals(retVals)
+	return a, target, c, d, e , f
 end
 
 local originalBulletsMixinApplyBulletGameplayEffects = BulletsMixin.ApplyBulletGameplayEffects
