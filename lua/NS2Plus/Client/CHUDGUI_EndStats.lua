@@ -2381,14 +2381,21 @@ function CHUDGUI_EndStats:ProcessStats()
 
 		self.hiveSkillGraph:SetPoints(1, self.hiveSkillGraphs[1])
 		self.hiveSkillGraph:SetPoints(2, self.hiveSkillGraphs[2])
-		self.hiveSkillGraph:SetYBounds(math.floor((minHiveSkill-100)/100)*100, maxHiveSkill+100, true)
+
+		minHiveSkill = Round(math.max(minHiveSkill - 100, 0), -2)
+		maxHiveSkill = Round(maxHiveSkill + 100, -2)
+		self.hiveSkillGraph:SetYBounds(minHiveSkill, maxHiveSkill, true)
 
 		local gameLength = miscDataTable.gameLengthMinutes*60
 		local xSpacing = GetXSpacing(gameLength)
 
 		self.hiveSkillGraph:SetXBounds(0, gameLength)
 		self.hiveSkillGraph:SetXGridSpacing(xSpacing)
-		self.hiveSkillGraph:SetYGridSpacing(math.ceil(maxHiveSkill/(15*100))*100)
+
+		local diff = maxHiveSkill - minHiveSkill
+		local res = diff >= 1000 and -2 or -1
+		local yGridSpacing = math.max(Round(diff/15, res), 10)
+		self.hiveSkillGraph:SetYGridSpacing(yGridSpacing)
 	end
 
 	self.rtGraphs = {}
