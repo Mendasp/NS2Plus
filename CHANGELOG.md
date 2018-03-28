@@ -1,12 +1,16 @@
 Changelog
 ============
-- 27/3/2017
+- 28/3/2018
+    - Fixed that the hive skill graph uses the skill maximum as initial minimum
+    - Fixed that spectators were considered as alien players at the beginning of a round by the hive skill graph
+ 
+- 27/3/2018
     - Fixed a script error that caused the end stats GUI to fail initializing causing the client's UI to become unresponsive.
     - Made sure that the end stats GUI initializes completely even if it fails to load the LastRoundStats.json due to a script error.
     - Improved how the hiveskillgraph records players joining teams to fix issues with failed team join attempts and players moving to the spectator team
     - Improved the y axis scaling of the hive skill graph to not start at negative values and use a more useful grid resolution.
 
-- 26/3/2017
+- 26/3/2018
     - Added an indicator icon for being on fire for everybody using the hidden viewmodel option
     - Added an option to configurate the color of marines when using Cr4zy's Alienvision
     - Added a graph displaying each team's avg. hive skill over the time of the round to the end round stats view.
