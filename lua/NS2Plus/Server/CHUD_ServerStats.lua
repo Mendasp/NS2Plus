@@ -723,19 +723,23 @@ local function CHUDResetStats()
 	CHUDHiveSkillGraph = {}
 	
 	for _, playerInfo in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
-	
+
+		local teamNumber = playerInfo.teamNumber
+		local steamId = playerInfo.steamId
+
 		if playerInfo.isCommander then
-			if playerInfo.teamNumber == kTeam1Index then
-				CHUDMarineComm = playerInfo.steamId
-				CHUDResetCommStats(playerInfo.steamId)
+			if teamNumber == kTeam1Index then
+				CHUDMarineComm = steamId
+				CHUDResetCommStats(steamId)
 			end
 			-- Init the commander player stats so they show up at the end-game stats
-			MaybeInitCHUDClientStats(playerInfo.steamId, nil, playerInfo.teamNumber)
+			MaybeInitCHUDClientStats(steamId, nil, teamNumber)
 		end
 
-		if playerInfo.teamNumber ~= 0 then
-			table.insert(CHUDHiveSkillGraph, { gameMinute = 0, joined = true, teamNumber = playerInfo.teamNumber, steamId = playerInfo.steamId } )
+		if teamNumber == kTeam1Index or teamNumber == kTeam2Index then
+			table.insert(CHUDHiveSkillGraph, { gameMinute = 0, joined = true, teamNumber = teamNumber, steamId = steamId } )
 		end
+
 	end
 end
 
