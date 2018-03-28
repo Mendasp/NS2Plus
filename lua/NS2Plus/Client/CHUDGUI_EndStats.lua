@@ -2350,11 +2350,12 @@ function CHUDGUI_EndStats:ProcessStats()
 			hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
 		end
 
-		maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
-		minHiveSkill = maxHiveSkill
+		local avgTeam1Skill, avgTeam2Skill = hiveSkill[1]/curMaxPlayers, hiveSkill[2]/curMaxPlayers
+		maxHiveSkill = math.max(maxHiveSkill, avgTeam1Skill, avgTeam2Skill)
+		minHiveSkill = math.min(maxHiveSkill, avgTeam1Skill, avgTeam2Skill)
 
-		table.insert(self.hiveSkillGraphs[1], Vector(0, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-		table.insert(self.hiveSkillGraphs[2], Vector(0, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+		table.insert(self.hiveSkillGraphs[1], Vector(0, avgTeam1Skill + lineOffset[1], 0))
+		table.insert(self.hiveSkillGraphs[2], Vector(0, avgTeam2Skill + lineOffset[2], 0))
 
 		-- Handle end game special to avoid artificially spikes because of arbitrary disjoin order
 		local skipAfter = miscDataTable.gameLengthMinutes - 5/60
@@ -2362,8 +2363,9 @@ function CHUDGUI_EndStats:ProcessStats()
 			local entry = hiveSkillGraphTable[i]
 			if entry.gameMinute > skipAfter then break end
 
-			table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-			table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+			local gameSeconds = entry.gameMinute * 60
+			table.insert(self.hiveSkillGraphs[1], Vector(gameSeconds, avgTeam1Skill + lineOffset[1], 0))
+			table.insert(self.hiveSkillGraphs[2], Vector(gameSeconds, avgTeam2Skill + lineOffset[2], 0))
 
 			local teamNumber = entry.teamNumber
 			local playerEntry = playerStatMap[teamNumber] and playerStatMap[teamNumber][entry.steamId]
@@ -2372,11 +2374,13 @@ function CHUDGUI_EndStats:ProcessStats()
 			players[teamNumber] = math.max(0,players[teamNumber] + ConditionalValue(entry.joined, 1, -1))
 			curMaxPlayers = math.max(1,players[1],players[2])
 			hiveSkill[teamNumber] = math.max(0,hiveSkill[teamNumber] + ConditionalValue(entry.joined, playerSkill, -playerSkill))
-			maxHiveSkill = math.max(maxHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
-			minHiveSkill = math.min(minHiveSkill,hiveSkill[1]/curMaxPlayers,hiveSkill[2]/curMaxPlayers)
 
-			table.insert(self.hiveSkillGraphs[1], Vector(entry.gameMinute*60, hiveSkill[1]/curMaxPlayers+lineOffset[1], 0))
-			table.insert(self.hiveSkillGraphs[2], Vector(entry.gameMinute*60, hiveSkill[2]/curMaxPlayers+lineOffset[2], 0))
+			avgTeam1Skill, avgTeam2Skill = hiveSkill[1]/curMaxPlayers, hiveSkill[2]/curMaxPlayers
+			maxHiveSkill = math.max(maxHiveSkill, avgTeam1Skill, avgTeam2Skill)
+			minHiveSkill = math.min(minHiveSkill, avgTeam1Skill, avgTeam2Skill)
+
+			table.insert(self.hiveSkillGraphs[1], Vector(gameSeconds, avgTeam1Skill + lineOffset[1], 0))
+			table.insert(self.hiveSkillGraphs[2], Vector(gameSeconds, avgTeam2Skill + lineOffset[2], 0))
 		end
 
 		self.hiveSkillGraph:SetPoints(1, self.hiveSkillGraphs[1])
