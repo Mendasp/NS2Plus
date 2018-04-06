@@ -1623,6 +1623,24 @@ CHUDOptions =
 				sort = "A06.6",
 				ignoreCasterMode = true,
 			},
+			alien_weaponslots = {
+				name = "CHUD_AlienAbililitySelect",
+				label = "Alien abilility select method",
+				tooltip = "Lets you choose the way you select/activate alien abilities",
+				type = "select",
+				values  = { "Default", "Use weapon slots"}, --Todo: Add Keybound and both modes
+				defaultValue = 0,
+				category = "misc",
+				valueType = "int",
+				applyFunction = function()
+					local message = { }
+					message.slotMode = CHUDGetOption("alien_weaponslots")
+					Client.SendNetworkMessage("SetCHUDAlienWeaponSlot", message)
+				end,
+				hideValues = { false },
+				sort = "A07",
+				ignoreCasterMode = true,
+			},
 			fov_perteam = { 
 				name = "CHUD_FOVPerTeam",
 				label = "Team specific FOV",
@@ -1637,7 +1655,7 @@ CHUDOptions =
 				end,
 				children = { "fov_m", "fov_a" },
 				hideValues = { false },
-				sort = "A07",
+				sort = "A08",
 				ignoreCasterMode = true,
 			},
 			fov_m = { 
@@ -1654,7 +1672,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
-				sort = "A08",
+				sort = "A09",
 				ignoreCasterMode = true,
 			},
 			fov_a = { 
@@ -1671,7 +1689,7 @@ CHUDOptions =
 				applyFunction = function()
 					CHUDApplyTeamSpecificStuff()
 				end,
-				sort = "A09",
+				sort = "A10",
 				ignoreCasterMode = true,
 			},
 			autopickup = { 
@@ -1683,7 +1701,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A10",
+				sort = "A11",
 				applyFunction = function()
 					local message = { }
 					message.autoPickup = CHUDGetOption("autopickup")
@@ -1700,7 +1718,7 @@ CHUDOptions =
 				defaultValue = false,
 				category = "misc",
 				valueType = "bool",
-				sort = "A11",
+				sort = "A12",
 				applyFunction = function()
 					local message = { }
 					message.autoPickup = CHUDGetOption("autopickup")
@@ -1717,7 +1735,7 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "misc",
 				valueType = "int",
-				sort = "A12",
+				sort = "A13",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
@@ -1735,7 +1753,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A13",
+				sort = "A14",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
@@ -1750,7 +1768,7 @@ CHUDOptions =
 				defaultValue = true,
 				category = "misc",
 				valueType = "bool",
-				sort = "A13.1",
+				sort = "A14.1",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 					CHUDRestartScripts({"Hud/Marine/GUIMarineHUD"})
@@ -1765,7 +1783,7 @@ CHUDOptions =
 				defaultValue = 0,
 				category = "misc",
 				valueType = "int",
-				sort = "A14",
+				sort = "A15",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 				end,
@@ -1785,7 +1803,7 @@ CHUDOptions =
 				defaultValue = true,
 				valueType = "bool",
 				category = "misc",
-				sort = "A14.1",
+				sort = "A15.1",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 				end,
@@ -1799,7 +1817,7 @@ CHUDOptions =
 				defaultValue = true,
 				valueType = "bool",
 				category = "misc",
-				sort = "A14.2",
+				sort = "A15.2",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 				end,
@@ -1813,7 +1831,7 @@ CHUDOptions =
 				defaultValue = true,
 				valueType = "bool",
 				category = "misc",
-				sort = "A14.3",
+				sort = "A15.3",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 				end,
@@ -1827,7 +1845,7 @@ CHUDOptions =
 				defaultValue = true,
 				valueType = "bool",
 				category = "misc",
-				sort = "A14.4",
+				sort = "A15.4",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 				end,
@@ -1841,7 +1859,7 @@ CHUDOptions =
 				defaultValue = true,
 				valueType = "bool",
 				category = "misc",
-				sort = "A14.5",
+				sort = "A15.5",
 				applyFunction = function()
 					CHUDEvaluateGUIVis()
 				end,

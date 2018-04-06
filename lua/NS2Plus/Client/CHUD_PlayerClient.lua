@@ -103,6 +103,11 @@ originalPlayerOnInit = Class_ReplaceMethod("Player", "OnInitialized",
 		local message = { }
 		message.serverblood = CHUDGetOption("serverblood")
 		Client.SendNetworkMessage("SetCHUDServerBlood", message)
+
+		local message = {
+			slotMode = CHUDGetOption("alien_weaponslots")
+		}
+		Client.SendNetworkMessage("SetCHUDAlienWeaponSlot", message)
 	end)
 
 Event.Hook("Console_say", ClientSay)

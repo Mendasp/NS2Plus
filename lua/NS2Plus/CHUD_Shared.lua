@@ -142,10 +142,16 @@ if not CHUDMainMenu then
 		serverblood = "boolean",
 	}
 
+	local kCHUDAlienWeaponSlotMessage =
+	{
+		slotMode = "integer (0 to 3)"
+	}
+
 	Shared.RegisterNetworkMessage( "CHUDOption", kCHUDOptionMessage )
 	Shared.RegisterNetworkMessage( "SetCHUDAutopickup", kCHUDAutopickupMessage)
 	Shared.RegisterNetworkMessage( "SetCHUDOverkill", kCHUDOverkillMessage)
 	Shared.RegisterNetworkMessage( "SetCHUDServerBlood", kCHUDServerBloodMessage)
+	Shared.RegisterNetworkMessage( "SetCHUDAlienWeaponSlot", kCHUDAlienWeaponSlotMessage)
 	Shared.RegisterNetworkMessage( "CHUDDeathStats", kCHUDDeathStatsMessage)
 	Shared.RegisterNetworkMessage( "CHUDEndStatsWeapon", kCHUDEndStatsWeaponMessage)
 	Shared.RegisterNetworkMessage( "CHUDMarineCommStats", kCHUDMarineCommStatsMessage)
@@ -162,7 +168,8 @@ if not CHUDMainMenu then
 	Script.Load("lua/NS2Plus/Shared/CHUD_Autopickup.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_CommanderSelection.lua")
 	Script.Load("lua/NS2Plus/Shared/CHUD_PredictedBlood.lua")
-	
+	Script.Load("lua/NS2Plus/Shared/CHUD_AlienWeaponSlots.lua")
+
 	local gameInfoNetworkVars =
 	{
 		showAvgSkill = "boolean",
