@@ -6,6 +6,13 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- 4/6/2018
+    - Replaced all Elixer methods with the new DebugUltility methods
+    - Added an option to choose how to select alien abilities. This allows to select metabolize to be selected as weapon once again.
+      - Todo:
+        - I'm planning to expand this feature to support all abilities and  pure key bound ability activation.
+        - Additionally currently selecting metabolize has a short delay due to the way the weapon select is handled at the server side.
+
 - 28/3/2018
     - Fixed that the hive skill graph uses the skill maximum as initial minimum
     - Fixed that spectators were considered as alien players at the beginning of a round by the hive skill graph
@@ -15,19 +22,7 @@ Latest changes
     - Made sure that the end stats GUI initializes completely even if it fails to load the LastRoundStats.json due to a script error.
     - Improved how the hiveskillgraph records players joining teams to fix issues with failed team join attempts and players moving to the spectator team
     - Improved the y axis scaling of the hive skill graph to not start at negative values and use a more useful grid resolution. 
-- 26/3/2018
-    - Added an indicator icon for being on fire for everybody using the hidden viewmodel option
-    - Added an option to configurate the color of marines when using Cr4zy's Alienvision
-    - Added a graph displaying each team's avg. hive skill over the time of the round to the end round stats view.
-    - Added an option to display the current time below the minimap
-    - Added an option to display the probability of victory for each team at the scoreboard (needs to be enabled by the server admin)
-    - Fixed a comaptibility issue with some mods caused by a missing argument in GetEnergyCost
-    - Fixed that the custom alien minimap color was not applied to embyros (evolving players)
-    - Fixed that the current round time was not displayed for the commander when the given option is enabled
-    - Fixed a rare script error occurring while spectating a dying enemy.
-    - Fixed that the information (e.g. hp percentage) of the custom nameplates did not update instantly.
-    - Fixed that the research progress tooltip started fading out at creation of the tooltip. This caused the tooltip often to not even show up.
-    - Fixed that the exo's left minigun's cinematics did not get hidden with minimal particles or hidden viewmodel options enabled.	
+
 Server settings
 ===============
 Server operators can adjust some features for NS2+ through the console (typing "sv_plus" in console), or change them in the NS2PlusServerSettings.json file located in the server config folder.

@@ -1,5 +1,12 @@
 Changelog
 ============
+- 6/4/2018
+    - Replaced all Elixer methods with the new DebugUltility methods
+    - Added an option to choose how to select alien abilities. This allows to select metabolize to be selected as weapon once again.
+      - Todo:
+        - I'm planning to expand this feature to support all abilities and  pure key bound ability activation.
+        - Additionally currently selecting metabolize has a short delay due to the way the weapon select is handled at the server side.
+      
 - 28/3/2018
     - Fixed that the hive skill graph uses the skill maximum as initial minimum
     - Fixed that spectators were considered as alien players at the beginning of a round by the hive skill graph
