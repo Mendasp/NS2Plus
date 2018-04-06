@@ -116,6 +116,18 @@ function GUIMinimap:InitializeLocationNames()
 	end
 end
 
+--Fixed version Todo: Merge into build 323
+function OnCommandSetMapLocationColor(r, g, b, a)
+
+	local minimap = ClientUI.GetScript("GUIMinimapFrame")
+	if minimap then
+		for i = 1, #minimap.locationItems do
+			minimap.locationItems[i].text:SetColor( Color(tonumber(r)/255, tonumber(g)/255, tonumber(b)/255, tonumber(a)/255) )
+		end
+	end
+
+end
+
 local originalMinimapSendKeyEvent = GUIMinimap.SendKeyEvent
 function GUIMinimap:SendKeyEvent(key, down)
 
