@@ -382,3 +382,17 @@ if Client then
 		return math.floor(bit.lshift(color.r*255, 16) + bit.lshift(color.g*255, 8) + color.b*255)
 	end
 end
+
+-- Todo: Add this to vanilla DebugUltility.lua and Class.lua
+function Class_AddMethod( className, methodName, method )
+	assert( _G[className][methodName] == nil or _G[className][methodName] == method, "Attempting to add new method when class already has one -- use Class_ReplaceMethod instead" )
+
+	_G[className][methodName] = method
+
+	local derived = Script.GetDerivedClasses(className)
+	if derived == nil then return end
+
+	for _, d in ipairs(derived) do
+		Class_AddMethod(d, methodName, method )
+	end
+end

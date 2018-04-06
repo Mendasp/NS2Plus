@@ -1,16 +1,11 @@
--- CompMod v3 compat.
-if rawget( kTechId, "HeavyMachineGun" ) then
-    Marine.kPickupPriority[kTechId.HeavyMachineGun] = 3
-end
-
-function Marine:ShouldAutopickupWeapons()	
+function Marine:ShouldAutopickupWeapons()
 	return self.autoPickup 
 end
 
 function Marine:ShouldAutopickupBetterWeapons()
 	return self.autoPickupBetter
 end
-	
+
 Class_AddMethod( "Marine", "SetCHUDAutopickup",
 	function(self, message)
 		if message ~= nil then

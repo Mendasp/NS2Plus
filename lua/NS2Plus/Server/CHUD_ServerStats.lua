@@ -483,7 +483,7 @@ statusGrouping[kPlayerStatus.Evolving] = kPlayerStatus.Embryo
 
 -- Add commander playing teams separate per team
 -- Vanilla only tracks overall commanding time
-local ScoringSharedUpdate = GetUpValue(ScoringMixin.OnProcessMove, "SharedUpdate", { LocateRecurse = true })
+local ScoringSharedUpdate = debug.getupvaluex(ScoringMixin.OnProcessMove, "SharedUpdate")
 local function newScoringSharedUpdate(self, deltaTime)
 	ScoringSharedUpdate(self, deltaTime)
 	
@@ -514,8 +514,7 @@ local function newScoringSharedUpdate(self, deltaTime)
 		end
 	end
 end
-
-ReplaceUpValue(ScoringMixin.OnProcessMove, "SharedUpdate", newScoringSharedUpdate, { LocateRecurse = true, CopyUpValues = true })
+debug.replaceupvalue(ScoringMixin.OnProcessMove, "SharedUpdate", newScoringSharedUpdate, true)
 
 local originalScoringAddKill = ScoringMixin.AddKill
 function ScoringMixin:AddKill()
@@ -1381,7 +1380,7 @@ local function NewExecuteShot(self, startPoint, endPoint, player)
 	
 	end
 end
-ReplaceUpValue(Railgun.OnTag, "ExecuteShot", NewExecuteShot, { LocateRecurse = true; CopyUpValues = true; })
+debug.replaceupvalue(Railgun.OnTag, "ExecuteShot", NewExecuteShot, true)
 
 local originalParasiteAttack, kRange, kParasiteSize
 originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack",
@@ -1439,7 +1438,7 @@ originalParasiteAttack = Class_ReplaceMethod( "Parasite", "PerformPrimaryAttack"
 		
 		return success
 	end)
-CopyUpValues( Parasite.PerformPrimaryAttack, originalParasiteAttack )
+debug.joinupvalues(Parasite.PerformPrimaryAttack, originalParasiteAttack)
 	
 local kSpread, kSpikeSize
 local function NewFireSpikes(self)
@@ -1503,7 +1502,7 @@ local function NewFireSpikes(self)
 		
 	end
 end
-ReplaceUpValue(SpikesMixin.OnTag, "FireSpikes", NewFireSpikes, { LocateRecurse = true; CopyUpValues = true; })
+debug.replaceupvalue(SpikesMixin.OnTag, "FireSpikes", NewFireSpikes, true)
 
 local originalSpitProcessHit
 originalSpitProcessHit = Class_ReplaceMethod( "Spit", "ProcessHit",

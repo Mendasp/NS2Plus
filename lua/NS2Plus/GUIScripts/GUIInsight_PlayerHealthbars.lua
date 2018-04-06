@@ -19,6 +19,7 @@ function GUIInsight_PlayerHealthbars:CreatePlayerGUIItem()
 end
 	
 local originalIPHBUpdatePlayers = GUIInsight_PlayerHealthbars.UpdatePlayers
+local playerList
 function GUIInsight_PlayerHealthbars:UpdatePlayers(deltaTime)
 	originalIPHBUpdatePlayers(self, deltaTime)
 
@@ -30,8 +31,6 @@ function GUIInsight_PlayerHealthbars:UpdatePlayers(deltaTime)
 		local relevant = player:GetIsVisible() and player:GetIsAlive() and not player:isa("Commander") and not player:isa("Spectator") and not player:isa("ReadyRoomPlayer")
 
 		if relevant then
-
-			local playerList = GetUpValue( GUIInsight_PlayerHealthbars.UpdatePlayers, "playerList", { LocateRecurse = true } )
 			local health = math.max(math.ceil(player:GetHealth()), 1)
 			local armor = math.ceil(player:GetArmor())
 
@@ -55,8 +54,8 @@ function GUIInsight_PlayerHealthbars:UpdatePlayers(deltaTime)
 		end
 
 	end
-
 end
+debug.joinupvalues(GUIInsight_PlayerHealthbars.UpdatePlayers, originalIPHBUpdatePlayers)
 	
 local lastDown = false
 local originalIPHBSKE = GUIInsight_PlayerHealthbars.SendKeyEvent

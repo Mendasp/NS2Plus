@@ -1,4 +1,4 @@
-local kTeamMessages = GetUpValue(OnCommandTeamMessage, "kTeamMessages", { LocateRecurse = true })
+local kTeamMessages = debug.getupvaluex(OnCommandTeamMessage, "kTeamMessages")
 
 local function SetTeamMessage(messageType, messageData)
 	local player = Client.GetLocalPlayer()
@@ -18,5 +18,4 @@ local function SetTeamMessage(messageType, messageData)
 		end
 	end
 end
-
-ReplaceUpValue(OnCommandTeamMessage, "SetTeamMessage", SetTeamMessage, { LocateRecurse = true, CopyUpValues = true })
+debug.replaceupvalue(OnCommandTeamMessage, "SetTeamMessage", SetTeamMessage, true)
