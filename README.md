@@ -6,6 +6,10 @@ You can check some of the recommended settings [here](https://www.youtube.com/wa
 
 Latest changes
 ==============
+- 7/4/2018
+    - Fixed a script error that could occur opening the ns2+options in-game
+    - Fixed that predict conflicted with the weapon slot mode of the alien ability select option.
+
 - 4/6/2018
     - Replaced all Elixer methods with the new DebugUltility methods
     - Added an option to choose how to select alien abilities. This allows to select metabolize to be selected as weapon once again.
@@ -16,12 +20,6 @@ Latest changes
 - 28/3/2018
     - Fixed that the hive skill graph uses the skill maximum as initial minimum
     - Fixed that spectators were considered as alien players at the beginning of a round by the hive skill graph
- 
-- 27/3/2018
-    - Fixed a script error that caused the end stats GUI to fail initializing causing the client's UI to become unresponsive.
-    - Made sure that the end stats GUI initializes completely even if it fails to load the LastRoundStats.json due to a script error.
-    - Improved how the hiveskillgraph records players joining teams to fix issues with failed team join attempts and players moving to the spectator team
-    - Improved the y axis scaling of the hive skill graph to not start at negative values and use a more useful grid resolution. 
 
 Server settings
 ===============

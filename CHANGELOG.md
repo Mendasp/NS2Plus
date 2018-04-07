@@ -1,5 +1,9 @@
 Changelog
 ============
+- 7/4/2018
+    - Fixed a script error that could occur opening the ns2+options in-game
+    - Fixed that predict conflicted with the weapon slot mode of the alien ability select option.
+    
 - 6/4/2018
     - Replaced all Elixer methods with the new DebugUltility methods
     - Added an option to choose how to select alien abilities. This allows to select metabolize to be selected as weapon once again.
