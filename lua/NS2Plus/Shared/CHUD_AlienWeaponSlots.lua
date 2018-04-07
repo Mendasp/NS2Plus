@@ -17,15 +17,15 @@ end
 
 if Client then
 	function GetAlienWeaponSelectMode()
-		return CHUDGetOption( "alien_weaponslots" )
+		return CHUDGetOption("alien_weaponslots")
 	end
 end
 
 function Metabolize:GetHUDSlot()
 	local player = self:GetParent()
-	if GetAlienWeaponSelectMode(player) == 1 then
-		return 2
+	if GetAlienWeaponSelectMode and GetAlienWeaponSelectMode(player) == 0 then
+		return 0
 	end
 
-	return kNoWeaponSlot
+	return 2
 end

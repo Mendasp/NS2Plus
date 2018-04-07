@@ -1625,7 +1625,7 @@ CHUDOptions =
 			},
 			alien_weaponslots = {
 				name = "CHUD_AlienAbililitySelect",
-				label = "Alien abilility select method",
+				label = "Alien ability select method",
 				tooltip = "Lets you choose the way you select/activate alien abilities",
 				type = "select",
 				values  = { "Default", "Use weapon slots"}, --Todo: Add Keybound and both modes
@@ -1637,9 +1637,7 @@ CHUDOptions =
 					message.slotMode = CHUDGetOption("alien_weaponslots")
 					Client.SendNetworkMessage("SetCHUDAlienWeaponSlot", message)
 				end,
-				hideValues = { false },
 				sort = "A07",
-				ignoreCasterMode = true,
 			},
 			fov_perteam = { 
 				name = "CHUD_FOVPerTeam",
