@@ -1,10 +1,11 @@
-﻿NS2+
-==========
 
-**NS2+ has moved, and now maintained at [NS2CDT/NS2Plus](https://github.com/NS2CDT/NS2Plus).** Please go there to report issues or make pull requests.
+**NS2+ has moved, and now maintained at [NS2CDT/NS2Plus](https://github.com/NS2CDT/NS2Plus).** 
+Please go there to report issues or make pull requests.
 
 ---
 
+NS2+
+==========
 
 This Natural Selection 2 mod aims to improve, fix and expand the game in order to bring players a better experience. It contains extra customization options and quality of life improvements. This mod needs to be installed on the server.
 
